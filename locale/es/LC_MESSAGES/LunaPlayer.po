@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Luna Player\n"
 "Report-Msgid-Bugs-To: https://github.com/diamondStar35/luna_player/issues\n"
-"POT-Creation-Date: 2026-09-26 13:19+0300\n"
+"POT-Creation-Date: 2026-09-27 16:38+0200\n"
 "PO-Revision-Date: 2026-09-26 15:01-0300\n"
 "Last-Translator: anagisellear86\n"
 "Language-Team: Spanish\n"
@@ -99,6 +99,16 @@ msgstr "Acerca de"
 #: UI/MenuBuilder.cs:269
 msgid "Release notes"
 msgstr "Notas de la versión"
+
+#. Translators: Name of the command that opens the window where IPTV sources are added and edited.
+#: Actions/IptvActions.cs:17
+msgid "Manage IPTV sources"
+msgstr ""
+
+#. Translators: Name of the command that opens the list of channels the chosen IPTV source holds.
+#: Actions/IptvActions.cs:20
+msgid "Browse IPTV channels"
+msgstr ""
 
 #. Translators: Name of the command that opens one or more media files, in the shortcuts list.
 #: Actions/MediaActions.cs:22
@@ -676,7 +686,7 @@ msgstr "El nombre del marcador no puede estar vacío."
 #: Application/ActionHandlers/BookmarkActions.cs:45
 #: Application/ActionHandlers/BookmarkActions.cs:75
 #: Application/ActionHandlers/BookmarkActions.cs:112
-#: Application/ActionHandlers/BookmarkActions.cs:196 UI/MenuBuilder.cs:287
+#: Application/ActionHandlers/BookmarkActions.cs:196 UI/MenuBuilder.cs:295
 msgid "Bookmarks"
 msgstr "Marcadores"
 
@@ -726,10 +736,10 @@ msgstr "Administrar marcadores"
 
 #. Translators: Title of a message telling the user that something went wrong.
 #: Application/ActionHandlers/BookmarkActions.cs:133
-#: Application/ActionHandlers/FileActions.cs:157
-#: Application/ActionHandlers/FileActions.cs:188
-#: Application/ActionHandlers/FileActions.cs:199
-#: Application/ActionHandlers/FileActions.cs:206
+#: Application/ActionHandlers/FileActions.cs:158
+#: Application/ActionHandlers/FileActions.cs:189
+#: Application/ActionHandlers/FileActions.cs:200
+#: Application/ActionHandlers/FileActions.cs:207
 msgid "Error"
 msgstr "Error"
 
@@ -894,7 +904,7 @@ msgstr "No se pudo copiar el archivo actual al portapapeles."
 #. Translators: The short wording spoken once the current file has been copied to the clipboard.
 #. Translators: The short wording spoken once the address of a video has been copied.
 #: Application/ActionHandlers/EditActions.cs:119
-#: Application/ActionHandlers/FileActions.cs:473
+#: Application/ActionHandlers/FileActions.cs:474
 #: Application/ActionHandlers/MarkedFileActions.cs:70
 #: Application/ActionHandlers/MarkedFileActions.cs:149
 #: Application/ActionHandlers/YouTubeActions.cs:278
@@ -904,7 +914,7 @@ msgstr "Copiado."
 #. Translators: The short wording spoken when the current file could not be copied to the clipboard.
 #. Translators: The short wording spoken when the address of a video could not be copied.
 #: Application/ActionHandlers/EditActions.cs:121
-#: Application/ActionHandlers/FileActions.cs:473
+#: Application/ActionHandlers/FileActions.cs:474
 #: Application/ActionHandlers/MarkedFileActions.cs:70
 #: Application/ActionHandlers/YouTubeActions.cs:284
 msgid "Copy failed."
@@ -1069,19 +1079,21 @@ msgid "Remove favorite '{name}' ({kind})?"
 msgstr "¿Eliminar favorito '{name}' ({kind})?"
 
 #. Translators: Title of the window that asks the user to confirm removing a saved link.
+#. Translators: Title of the window that asks the user to confirm removing a saved IPTV source.
 #. Translators: Title of the window that asks the user to confirm removing a recording source.
 #: Application/ActionHandlers/FavoriteActions.cs:149
+#: Application/ActionHandlers/IptvActions.cs:257
 #: UI/Recording/RecordingDialog.cs:334
 msgid "Confirm remove"
 msgstr "Confirmar eliminación"
 
 #. Translators: Asks the user for the web address of the stream they want to play.
-#: Application/ActionHandlers/FileActions.cs:132
+#: Application/ActionHandlers/FileActions.cs:133
 msgid "Enter link to play."
 msgstr "Introduce el enlace para reproducir."
 
 #. Translators: Title of the window that asks for the web address of a stream to play.
-#: Application/ActionHandlers/FileActions.cs:134
+#: Application/ActionHandlers/FileActions.cs:135
 msgid "Open Link"
 msgstr "Abrir enlace"
 
@@ -1089,197 +1101,197 @@ msgstr "Abrir enlace"
 #. "http" and "https" are the names of the two web protocols and are not translated.
 #. Translators: Title of the message shown when what was typed is not a YouTube address.
 #. Translators: Shown when a favourite is saved with something that is not a web address.
-#: Application/ActionHandlers/FileActions.cs:144
+#: Application/ActionHandlers/FileActions.cs:145
 #: Application/ActionHandlers/YouTubeActions.cs:80
 #: Favorites/FavoriteStore.cs:128
 msgid "The link must start with http or https."
 msgstr "El enlace debe comenzar con http o https."
 
 #. Translators: Title of the message shown when the address typed into Open Link is not a web address.
-#: Application/ActionHandlers/FileActions.cs:146
+#: Application/ActionHandlers/FileActions.cs:147
 #: Application/ActionHandlers/YouTubeActions.cs:80
 msgid "Invalid link"
 msgstr "Enlace no válido"
 
 #. Translators: Shown when the stream at the address typed into Open Link could not be played.
-#: Application/ActionHandlers/FileActions.cs:157
+#: Application/ActionHandlers/FileActions.cs:158
 msgid "Could not open the link."
 msgstr "No se pudo abrir el enlace."
 
-#. Translators: Title of the progress window shown while an M3U playlist is downloaded.
-#: Application/ActionHandlers/FileActions.cs:170
+#. Translators: Title of the progress window shown while a playlist is downloaded.
+#: Application/ActionHandlers/FileActions.cs:171
 msgid "Opening playlist"
 msgstr "Abriendo lista de reproducción"
 
-#. Translators: Message shown while an M3U playlist is downloaded.
-#: Application/ActionHandlers/FileActions.cs:172
+#. Translators: Message shown while a playlist is downloaded.
 #: Application/ActionHandlers/FileActions.cs:173
+#: Application/ActionHandlers/FileActions.cs:174
 msgid "Downloading playlist..."
 msgstr "Descargando lista de reproducción..."
 
 #. Translators: Shown when an M3U or M3U8 playlist could not be read. {error} is the reason.
-#: Application/ActionHandlers/FileActions.cs:188
+#: Application/ActionHandlers/FileActions.cs:189
 msgid "Could not open the playlist: {error}"
 msgstr "No se pudo abrir la lista de reproducción: {error}"
 
 #. Translators: Shown when an M3U or M3U8 file contains no usable local files or web links.
-#: Application/ActionHandlers/FileActions.cs:199
+#: Application/ActionHandlers/FileActions.cs:200
 msgid "The playlist contains no playable entries."
 msgstr "La lista de reproducción no contiene entradas para reproducir."
 
 #. Translators: Shown when the entries in an M3U or M3U8 playlist could not be loaded.
-#: Application/ActionHandlers/FileActions.cs:206
+#: Application/ActionHandlers/FileActions.cs:207
 msgid "Could not load the playlist entries."
 msgstr "No se pudieron cargar las entradas de la lista de reproducción."
 
 #. Translators: Spoken when the chosen folder holds nothing this player can play.
 #. Translators: Spoken when the folder and the folders inside it hold nothing this player can play.
-#: Application/ActionHandlers/FileActions.cs:219
-#: Application/ActionHandlers/FileActions.cs:439
+#: Application/ActionHandlers/FileActions.cs:220
+#: Application/ActionHandlers/FileActions.cs:440
 msgid "No audio files found in that folder."
 msgstr "No se encontraron archivos de audio en esa carpeta."
 
 #. Translators: The short wording spoken when the chosen folder holds nothing this player can play.
 #. Translators: The short wording spoken when a folder holds nothing this player can play.
-#: Application/ActionHandlers/FileActions.cs:221
-#: Application/ActionHandlers/FileActions.cs:441
+#: Application/ActionHandlers/FileActions.cs:222
+#: Application/ActionHandlers/FileActions.cs:442
 msgid "No audio files."
 msgstr "Sin archivos de audio."
 
 #. Translators: Spoken when the user asks to show the folder of what is playing but it is a stream rather than a file on this computer.
-#: Application/ActionHandlers/FileActions.cs:227
+#: Application/ActionHandlers/FileActions.cs:228
 msgid "Open containing folder is available only for local files."
 msgstr ""
 "Abrir la carpeta contenedora solo está disponible para archivos locales."
 
 #. Translators: Spoken when the folder holding the current file could not be shown.
-#: Application/ActionHandlers/FileActions.cs:231
+#: Application/ActionHandlers/FileActions.cs:232
 msgid "Could not open containing folder."
 msgstr "No se pudo abrir la carpeta contenedora."
 
 #. Translators: Spoken when the user asks for the Windows properties of what is playing but it is a stream rather than a file on this computer.
-#: Application/ActionHandlers/FileActions.cs:237
+#: Application/ActionHandlers/FileActions.cs:238
 msgid "File properties are available only for local files."
 msgstr ""
 "Las propiedades del archivo solo están disponibles para archivos locales."
 
 #. Translators: Spoken when the Windows properties window for the current file could not be shown.
-#: Application/ActionHandlers/FileActions.cs:242
+#: Application/ActionHandlers/FileActions.cs:243
 msgid "Could not open file properties."
 msgstr "No se pudieron abrir las propiedades del archivo."
 
 #. Translators: The short wording spoken when Windows could not show a file's properties.
 #. Translators: The short wording spoken when Windows could not be asked to open a folder.
-#: Application/ActionHandlers/FileActions.cs:244
-#: Application/ActionHandlers/FileActions.cs:362
+#: Application/ActionHandlers/FileActions.cs:245
+#: Application/ActionHandlers/FileActions.cs:363
 msgid "Open failed."
 msgstr "Fallo al abrir."
 
 #. Translators: Title of the progress window shown while details of every file in the playlist are being read.
-#: Application/ActionHandlers/FileActions.cs:280
+#: Application/ActionHandlers/FileActions.cs:281
 msgid "Loading playlist info"
 msgstr "Cargando información de la lista de reproducción"
 
 #. Translators: First message in the progress window, shown before the first file has been read.
-#: Application/ActionHandlers/FileActions.cs:282
+#: Application/ActionHandlers/FileActions.cs:283
 msgid "Preparing..."
 msgstr "Preparando..."
 
 #. Translators: Progress message naming the file being read right now. {name} is the file name.
-#: Application/ActionHandlers/FileActions.cs:284
+#: Application/ActionHandlers/FileActions.cs:285
 msgid "Reading: {name}"
 msgstr "Leyendo: {name}"
 
 #. Translators: Title of the window listing details of every file in the playlist.
-#: Application/ActionHandlers/FileActions.cs:299
+#: Application/ActionHandlers/FileActions.cs:300
 msgid "Playlist Info"
 msgstr "Información de la lista de reproducción"
 
 #. Translators: The playlist summary. {count} is how many files are loaded.
-#: Application/ActionHandlers/FileActions.cs:308
+#: Application/ActionHandlers/FileActions.cs:309
 msgid "Number of files: {count}"
 msgstr "Número de archivos: {count}"
 
 #. Translators: The playlist summary. {value} is a size such as "12.5 MB".
-#: Application/ActionHandlers/FileActions.cs:310
+#: Application/ActionHandlers/FileActions.cs:311
 msgid "Total size: {value}"
 msgstr "Tamaño total: {value}"
 
 #. Translators: The playlist summary. {value} is a duration as hours:minutes:seconds.
-#: Application/ActionHandlers/FileActions.cs:312
+#: Application/ActionHandlers/FileActions.cs:313
 msgid "Total duration: {value}"
 msgstr "Duración total: {value}"
 
 #. Translators: The playlist summary: how much of the whole playlist has already played.
-#: Application/ActionHandlers/FileActions.cs:314
+#: Application/ActionHandlers/FileActions.cs:315
 msgid "Elapsed: {value}"
 msgstr "Transcurrido: {value}"
 
 #. Translators: The playlist summary: how much of the whole playlist is left to play.
-#: Application/ActionHandlers/FileActions.cs:316
+#: Application/ActionHandlers/FileActions.cs:317
 msgid "Remaining: {value}"
 msgstr "Restante: {value}"
 
 #. Translators: Spoken when the current file could not be taken out of the playlist.
-#: Application/ActionHandlers/FileActions.cs:334
+#: Application/ActionHandlers/FileActions.cs:335
 msgid "Could not close the file."
 msgstr "No se pudo cerrar el archivo."
 
 #. Translators: The short wording spoken when a file could not be closed.
 #. Translators: The short wording spoken when the files could not be closed.
-#: Application/ActionHandlers/FileActions.cs:336
-#: Application/ActionHandlers/FileActions.cs:351
+#: Application/ActionHandlers/FileActions.cs:337
+#: Application/ActionHandlers/FileActions.cs:352
 msgid "Close failed."
 msgstr "Fallo al cerrar."
 
 #. Translators: Spoken once the current file has been taken out of the playlist.
-#: Application/ActionHandlers/FileActions.cs:339
+#: Application/ActionHandlers/FileActions.cs:340
 msgid "File closed."
 msgstr "Archivo cerrado."
 
 #. Translators: Spoken when the loaded files could not be taken out of the playlist.
-#: Application/ActionHandlers/FileActions.cs:349
+#: Application/ActionHandlers/FileActions.cs:350
 msgid "Could not close files."
 msgstr "No se pudieron cerrar los archivos."
 
 #. Translators: Spoken once every file has been taken out of the playlist.
-#: Application/ActionHandlers/FileActions.cs:354
+#: Application/ActionHandlers/FileActions.cs:355
 msgid "All files closed."
 msgstr "Todos los archivos cerrados."
 
 #. Translators: Title of the progress window shown while a folder and the folders inside it are being searched for media.
-#: Application/ActionHandlers/FileActions.cs:419
+#: Application/ActionHandlers/FileActions.cs:420
 msgid "Opening files"
 msgstr "Abriendo archivos"
 
 #. Translators: First message in the progress window, before any file has been found.
-#: Application/ActionHandlers/FileActions.cs:421
+#: Application/ActionHandlers/FileActions.cs:422
 msgid "Loading files from folder and subfolders..."
 msgstr "Cargando archivos de la carpeta y subcarpetas..."
 
 #. Translators: Progress message while a folder is being searched. {found} is how many media files
 #. have been found so far.
-#: Application/ActionHandlers/FileActions.cs:424
+#: Application/ActionHandlers/FileActions.cs:425
 msgid "Opening files... {found} media files found"
 msgstr "Abriendo archivos... {found} archivos multimedia encontrados"
 
 #. Translators: Spoken once the full location of the current file has been copied to the clipboard.
-#: Application/ActionHandlers/FileActions.cs:470
+#: Application/ActionHandlers/FileActions.cs:471
 msgid "File path copied to clipboard."
 msgstr "Ruta del archivo copiada al portapapeles."
 
 #. Translators: Spoken when the full location of the current file could not be copied to the clipboard.
-#: Application/ActionHandlers/FileActions.cs:472
+#: Application/ActionHandlers/FileActions.cs:473
 msgid "Unable to copy to clipboard."
 msgstr "No se pudo copiar al portapapeles."
 
 #. Translators: Spoken when the current media file contains no title metadata.
-#: Application/ActionHandlers/FileActions.cs:488
+#: Application/ActionHandlers/FileActions.cs:489
 msgid "The current file has no title."
 msgstr "El archivo actual no tiene título."
 
 #. Translators: Short announcement when the current media file contains no title metadata.
-#: Application/ActionHandlers/FileActions.cs:490
+#: Application/ActionHandlers/FileActions.cs:491
 msgid "No title."
 msgstr "Sin título."
 
@@ -1302,6 +1314,94 @@ msgstr "No se pudieron abrir las notas de la versión."
 #: Application/ActionHandlers/HelpActions.cs:60
 msgid "Windows did not start an application for this item."
 msgstr "Windows no inició una aplicación para este elemento."
+
+#: Application/ActionHandlers/IptvActions.cs:113
+msgid "Uncategorized"
+msgstr ""
+
+#. Translators: Title of the progress window shown while an IPTV source's channels are loaded.
+#: Application/ActionHandlers/IptvActions.cs:116
+#, fuzzy
+msgid "Opening IPTV source"
+msgstr "Fuente de grabación"
+
+#. Translators: Message shown while an IPTV source's channels are loaded.
+#: Application/ActionHandlers/IptvActions.cs:118
+#: Application/ActionHandlers/IptvActions.cs:119
+#, fuzzy
+msgid "Loading channels..."
+msgstr "Cargando..."
+
+#. Translators: Shown when an IPTV source is of a kind Luna Player cannot open yet (Xtream or
+#. Stalker, before those are supported).
+#: Application/ActionHandlers/IptvActions.cs:139
+msgid "This kind of IPTV source is not supported yet."
+msgstr ""
+
+#. Translators: Title of the messages shown about IPTV.
+#. Translators: Name of the IPTV menu in the menu bar, holding the source manager and channel browser.
+#: Application/ActionHandlers/IptvActions.cs:141
+#: Application/ActionHandlers/IptvActions.cs:148
+#: Application/ActionHandlers/IptvActions.cs:182
+#: Application/ActionHandlers/IptvActions.cs:206
+#: Application/ActionHandlers/IptvActions.cs:215
+#: Application/ActionHandlers/IptvActions.cs:272 UI/MenuBuilder.cs:304
+msgid "IPTV"
+msgstr ""
+
+#. Translators: Shown when an IPTV source loaded but holds no channels to play.
+#: Application/ActionHandlers/IptvActions.cs:148
+msgid "This source holds no channels."
+msgstr ""
+
+#. Translators: Title of the channel browser window. {name} is the source being browsed.
+#: Application/ActionHandlers/IptvActions.cs:153
+msgid "Channels - {name}"
+msgstr ""
+
+#. Translators: Shown when a chosen channel carries no address and none could be worked out.
+#: Application/ActionHandlers/IptvActions.cs:182
+#, fuzzy
+msgid "This channel cannot be played."
+msgstr "El nombre del archivo no puede estar vacío."
+
+#. Translators: Title of the brief progress window shown while a channel's address is worked out.
+#: Application/ActionHandlers/IptvActions.cs:190
+#, fuzzy
+msgid "Opening channel"
+msgstr "Abriendo lista de reproducción"
+
+#. Translators: Message shown while a Stalker channel's short-lived play address is worked out.
+#: Application/ActionHandlers/IptvActions.cs:192
+#: Application/ActionHandlers/IptvActions.cs:193
+#, fuzzy
+msgid "Preparing the channel..."
+msgstr "Preparando..."
+
+#. Translators: Shown when a Stalker channel's play address could not be worked out.
+#. Translators: Shown when a chosen IPTV channel could not be played.
+#: Application/ActionHandlers/IptvActions.cs:206
+#: Application/ActionHandlers/IptvActions.cs:215
+#, fuzzy
+msgid "Could not open the channel."
+msgstr "No se pudo abrir el enlace."
+
+#. Translators: Title of the window for saving a new IPTV source.
+#: Application/ActionHandlers/IptvActions.cs:223
+msgid "Add IPTV source"
+msgstr ""
+
+#. Translators: Title of the window for changing an IPTV source already saved.
+#: Application/ActionHandlers/IptvActions.cs:240
+msgid "Edit IPTV source"
+msgstr ""
+
+#. Translators: Asks the user to confirm removing one saved IPTV source. {name} is what it is
+#. called and {kind} is what sort of source it is.
+#: Application/ActionHandlers/IptvActions.cs:255
+#, fuzzy
+msgid "Remove IPTV source '{name}' ({kind})?"
+msgstr "¿Eliminar favorito '{name}' ({kind})?"
 
 #. Translators: Title of the progress window shown while the marked files are being moved into another folder.
 #: Application/ActionHandlers/MarkedFileActions.cs:41
@@ -1485,10 +1585,12 @@ msgid "Total time:"
 msgstr "Tiempo total:"
 
 #. Translators: Spoken when playing starts or carries on again.
+#. Translators: Button that plays the channel chosen in the list.
 #. Translators: Button that plays the video chosen in the list of results.
 #: Application/ActionHandlers/PlaybackActions.cs:103
-#: Application/ActionHandlers/PlaybackActions.cs:111 UI/MainFrame.cs:104
-#: UI/MainFrame.cs:169 UI/YouTube/ResultsDialog.cs:41
+#: Application/ActionHandlers/PlaybackActions.cs:111
+#: UI/Iptv/ChannelBrowserDialog.cs:117 UI/MainFrame.cs:104 UI/MainFrame.cs:169
+#: UI/YouTube/ResultsDialog.cs:41
 msgid "Play"
 msgstr "Reproducir"
 
@@ -1697,6 +1799,8 @@ msgstr "Grabación pausada."
 msgid "Paused."
 msgstr "Pausada."
 
+#. Translators: Shown when the folder recordings are saved into could not be opened.
+#. {reason} is what went wrong, in the language of the system rather than the player.
 #: Application/ActionHandlers/RecordingActions.cs:185
 msgid "Could not open the recordings folder."
 msgstr "No se pudo abrir la carpeta de grabaciones."
@@ -1743,7 +1847,7 @@ msgstr "Dispositivo de entrada predeterminado"
 #. Translators: Name of the settings category for recording sound.
 #. Translators: Title of the window where recording is set up and started.
 #. Translators: Title of the messages shown about recording.
-#: Application/ActionHandlers/RecordingActions.cs:213 UI/MenuBuilder.cs:301
+#: Application/ActionHandlers/RecordingActions.cs:213 UI/MenuBuilder.cs:313
 #: UI/PreferencesDialog.cs:54 UI/Recording/RecordingDialog.cs:83
 #: UI/Recording/RecordingDialog.cs:720
 msgid "Recording"
@@ -2006,7 +2110,7 @@ msgstr "[En pausa]: {title} - {app}"
 msgid "{title} - {app}"
 msgstr "{title} - {app}"
 
-#: Application/ApplicationHost.cs:60
+#: Application/ApplicationHost.cs:61
 msgid ""
 "The settings file could not be loaded. Default settings will be used, and "
 "the existing file will not be overwritten. Import a valid settings file or "
@@ -2021,7 +2125,7 @@ msgstr ""
 "\n"
 "{error}"
 
-#: Application/ApplicationHost.cs:61
+#: Application/ApplicationHost.cs:62
 msgid "Settings error"
 msgstr "Error de configuración"
 
@@ -2129,7 +2233,8 @@ msgid "Custom"
 msgstr "Personalizado"
 
 #. Translators: Shown when the user saves a favourite without typing a name for it.
-#: Favorites/FavoriteStore.cs:101
+#. Translators: Shown when the user saves an IPTV source without typing a name for it.
+#: Favorites/FavoriteStore.cs:101 Iptv/IptvSourceStore.cs:103
 msgid "Name is required."
 msgstr "El nombre es obligatorio."
 
@@ -2195,43 +2300,143 @@ msgstr "Transmisión genérica"
 msgid "That favorite is no longer saved."
 msgstr "Ese favorito ya no está guardado."
 
+#. Translators: Shown when an IPTV source's address is not a web address. "http" and
+#. "https" are protocol names and are not translated.
+#: Iptv/IptvSourceStore.cs:116
+#, fuzzy
+msgid "The address must start with http or https."
+msgstr "El enlace debe comenzar con http o https."
+
+#. Translators: Shown when the user saves a file-based IPTV source without choosing a file.
+#: Iptv/IptvSourceStore.cs:124
+#, fuzzy
+msgid "A playlist file is required."
+msgstr "El archivo de lista de reproducción es demasiado grande."
+
+#. Translators: Shown when an Xtream IPTV source is saved without a username and password.
+#: Iptv/IptvSourceStore.cs:133
+msgid "Xtream sources need a username and password."
+msgstr ""
+
+#. Translators: Shown when a Stalker portal IPTV source is saved without a MAC address.
+#: Iptv/IptvSourceStore.cs:139
+msgid "Stalker sources need a MAC address."
+msgstr ""
+
+#. Translators: The kind of an IPTV source: an extended M3U playlist at a web address.
+#: Iptv/IptvSourceStore.cs:150
+msgid "M3U web address"
+msgstr ""
+
+#. Translators: The kind of an IPTV source: an extended M3U playlist file on this computer.
+#: Iptv/IptvSourceStore.cs:152
+#, fuzzy
+msgid "M3U file"
+msgstr "Sin archivo."
+
+#. Translators: The kind of an IPTV source: a provider portal using the Xtream Codes API.
+#: Iptv/IptvSourceStore.cs:154
+msgid "Xtream Codes"
+msgstr ""
+
+#. Translators: The kind of an IPTV source: a set-top-box portal using the Stalker protocol.
+#: Iptv/IptvSourceStore.cs:156
+msgid "Stalker portal"
+msgstr ""
+
+#. Translators: Shown when the user edits or removes an IPTV source that is no longer saved.
+#: Iptv/IptvSourceStore.cs:167
+#, fuzzy
+msgid "That IPTV source is no longer saved."
+msgstr "Ese favorito ya no está guardado."
+
+#: Iptv/PlaylistReader.cs:34 Media/M3uPlaylist.cs:36
+msgid "The playlist file is too large."
+msgstr "El archivo de lista de reproducción es demasiado grande."
+
+#: Iptv/PlaylistReader.cs:56 Iptv/PlaylistReader.cs:66 Media/M3uPlaylist.cs:55
+#: Media/M3uPlaylist.cs:65
+msgid "The network playlist is too large."
+msgstr "La lista de reproducción de red es demasiado grande."
+
+#: Iptv/PlaylistReader.cs:77 Media/M3uPlaylist.cs:76
+msgid "The playlist request timed out."
+msgstr ""
+"Se agotó el tiempo de espera de la solicitud de la lista de reproducción."
+
+#. Translators: Shown when a Stalker portal's address cannot be understood.
+#: Iptv/Stalker/StalkerClient.cs:38
+msgid "The Stalker portal address is not valid."
+msgstr ""
+
+#. Translators: Shown when a Stalker portal does not return a token, so it cannot be used.
+#: Iptv/Stalker/StalkerClient.cs:46
+msgid "The Stalker portal did not accept this MAC address."
+msgstr ""
+
+#. Translators: Shown when talking to a Stalker portal took too long and was given up on.
+#: Iptv/Stalker/StalkerClient.cs:75
+msgid "The Stalker portal did not respond in time."
+msgstr ""
+
+#. Translators: Shown when an Xtream IPTV source's server address cannot be understood.
+#: Iptv/Xtream/XtreamClient.cs:29
+#, fuzzy
+msgid "The Xtream server address is not valid."
+msgstr "La guía del usuario no está instalada."
+
+#. Translators: Shown when an Xtream panel rejects the saved username or password.
+#: Iptv/Xtream/XtreamClient.cs:40
+msgid "The Xtream server rejected the username or password."
+msgstr ""
+
+#. Translators: Shown when an Xtream account is no longer active (expired, disabled or banned).
+#: Iptv/Xtream/XtreamClient.cs:44
+#, fuzzy
+msgid "This Xtream account is not active."
+msgstr "Este video no está disponible."
+
+#. Translators: Shown when talking to an Xtream server took too long and was given up on.
+#: Iptv/Xtream/XtreamClient.cs:68
+msgid "The Xtream server did not respond in time."
+msgstr ""
+
 #. Translators: Shown when the user asks the player to open its file types but the system is not Windows.
 #: Media/Associations.cs:24 Media/Associations.cs:52
 msgid "File associations are available only on Windows."
 msgstr "Las asociaciones de archivos solo están disponibles en Windows."
 
-#: Media/M3uPlaylist.cs:27
-msgid "The playlist file is too large."
-msgstr "El archivo de lista de reproducción es demasiado grande."
-
-#: Media/M3uPlaylist.cs:46 Media/M3uPlaylist.cs:56
-msgid "The network playlist is too large."
-msgstr "La lista de reproducción de red es demasiado grande."
-
-#: Media/M3uPlaylist.cs:67
-msgid "The playlist request timed out."
-msgstr ""
-"Se agotó el tiempo de espera de la solicitud de la lista de reproducción."
-
-#: Media/MediaConverter.cs:331
+#: Media/MediaConverter.cs:342
 msgid "The file could not be converted."
 msgstr "No se pudo convertir el archivo."
 
-#: Media/MediaConverter.cs:333
+#: Media/MediaConverter.cs:344
 msgid "Unsupported file type."
 msgstr "Tipo de archivo no compatible."
 
-#: Media/MediaConverter.cs:335
+#: Media/MediaConverter.cs:346
 msgid "The file could not be found."
 msgstr "No se pudo encontrar el archivo."
 
-#: Media/MediaConverter.cs:337
+#: Media/MediaConverter.cs:348
 msgid "Access to the file was denied."
 msgstr "Se denegó el acceso al archivo."
 
-#: Media/MediaConverter.cs:339
+#: Media/MediaConverter.cs:350
 msgid "There is not enough free disk space."
 msgstr "No hay suficiente espacio libre en el disco."
+
+#: Media/MediaLibrary.cs:37 UI/Iptv/IptvSourceEditDialog.cs:186
+#, fuzzy
+msgid "All Files"
+msgstr "Marcar todos los archivos"
+
+#. Translators: The two names in the Open dialog's file-type list. The patterns beside them are
+#. literal and must not be translated.
+#: Media/MediaLibrary.cs:37
+#, fuzzy
+msgid "Media Files"
+msgstr "Archivos abiertos"
 
 #. Translators: Shown when recording was asked for with nothing to record from.
 #: Recording/RecordingSources.cs:65
@@ -2772,12 +2977,16 @@ msgstr "Archivos JSON (*.json)|*.json|Todos los archivos (*.*)|*.*"
 
 #. Translators: Heading of the bookmark list column holding what each bookmark is called.
 #. Translators: Label of the box holding the name of the equalizer preset being edited.
+#. Translators: Heading of the channel list column holding each channel's name.
+#. Translators: Label of the box holding what an IPTV source is called.
+#. Translators: Heading of the IPTV sources list column holding what each source is called.
 #. Translators: Label of the box holding what the user calls a recording source.
 #. Translators: Label of the box holding what a saved link is called.
 #. Translators: Heading of the favourites list column holding what each saved link is called.
 #: UI/BookmarkManagerDialog.cs:19 UI/Equalizer/EditDialog.cs:87
-#: UI/Recording/SourceDialogs.cs:49 UI/YouTube/FavoriteEditDialog.cs:26
-#: UI/YouTube/FavoritesDialog.cs:29
+#: UI/Iptv/ChannelBrowserDialog.cs:80 UI/Iptv/IptvSourceEditDialog.cs:56
+#: UI/Iptv/IptvSourcesDialog.cs:29 UI/Recording/SourceDialogs.cs:49
+#: UI/YouTube/FavoriteEditDialog.cs:26 UI/YouTube/FavoritesDialog.cs:29
 msgid "Name"
 msgstr "Nombre"
 
@@ -2792,7 +3001,7 @@ msgid "Jump"
 msgstr "Ir"
 
 #. Translators: Name of the Edit menu in the menu bar.
-#: UI/BookmarkManagerDialog.cs:36 UI/MenuBuilder.cs:285
+#: UI/BookmarkManagerDialog.cs:36 UI/MenuBuilder.cs:293
 msgid "Edit"
 msgstr "Editar"
 
@@ -2805,10 +3014,12 @@ msgstr "Eliminar"
 
 #. Translators: The button that closes a window.
 #. Translators: Button that closes a window when there is nothing to accept or cancel.
+#. Translators: The button that closes a window.
 #. Translators: Button that closes the media converter without converting anything.
 #. Translators: The button that closes a window.
 #: UI/BookmarkManagerDialog.cs:40 UI/ConversionReportDialog.cs:23
 #: UI/CrashDialog.cs:48 UI/Equalizer/PresetsDialog.cs:56
+#: UI/Iptv/ChannelBrowserDialog.cs:120 UI/Iptv/IptvSourcesDialog.cs:62
 #: UI/MediaConverterDialog.cs:217 UI/Recording/RecordingDialog.cs:171
 #: UI/TextInfoDialog.cs:18 UI/YouTube/FavoritesDialog.cs:62
 #: UI/YouTube/ResultsDialog.cs:47
@@ -2984,10 +3195,11 @@ msgid "New..."
 msgstr "Nuevo..."
 
 #. Translators: Button that opens the chosen equalizer preset for editing.
+#. Translators: Button that changes a saved IPTV source. The three dots mean it opens a window to change it in.
 #. Translators: Button that changes the recording source chosen in the list.
 #. Translators: Button that changes a saved link. The three dots mean it opens a window to change it in.
-#: UI/Equalizer/PresetsDialog.cs:50 UI/Recording/RecordingDialog.cs:93
-#: UI/YouTube/FavoritesDialog.cs:57
+#: UI/Equalizer/PresetsDialog.cs:50 UI/Iptv/IptvSourcesDialog.cs:57
+#: UI/Recording/RecordingDialog.cs:93 UI/YouTube/FavoritesDialog.cs:57
 msgid "Edit..."
 msgstr "Editar..."
 
@@ -3269,6 +3481,214 @@ msgstr "Segundos"
 msgid "The selected time exceeds the file duration."
 msgstr "El tiempo seleccionado supera la duración del archivo."
 
+#. Translators: Label of the list that filters channels by whether they are live TV, films or series.
+#: UI/Iptv/ChannelBrowserDialog.cs:51
+msgid "Show"
+msgstr ""
+
+#. Translators: Channel-browser filter choice: show channels of every kind.
+#: UI/Iptv/ChannelBrowserDialog.cs:54
+msgid "All"
+msgstr ""
+
+#. Translators: Channel-browser filter choice: show only live TV channels.
+#: UI/Iptv/ChannelBrowserDialog.cs:56
+#, fuzzy
+msgid "Live TV"
+msgstr "En vivo"
+
+#. Translators: Channel-browser filter choice: show only films (video on demand).
+#: UI/Iptv/ChannelBrowserDialog.cs:58
+msgid "Movies"
+msgstr ""
+
+#. Translators: Channel-browser filter choice: show only series.
+#: UI/Iptv/ChannelBrowserDialog.cs:60
+msgid "Series"
+msgstr ""
+
+#. Translators: Label of the list that filters channels by the category they belong to.
+#. Translators: Heading of the channel list column holding each channel's category.
+#: UI/Iptv/ChannelBrowserDialog.cs:64 UI/Iptv/ChannelBrowserDialog.cs:82
+msgid "Category"
+msgstr ""
+
+#. Translators: Channel-browser filter choice: show channels from every category.
+#: UI/Iptv/ChannelBrowserDialog.cs:67
+msgid "All categories"
+msgstr ""
+
+#. Translators: Label of the box that filters channels by part of their name as the user types.
+#: UI/Iptv/ChannelBrowserDialog.cs:73
+#, fuzzy
+msgid "Search"
+msgstr "Buscar en YouTube"
+
+#. Translators: Heading of the channel list column holding each channel's number.
+#: UI/Iptv/ChannelBrowserDialog.cs:78
+msgid "Number"
+msgstr ""
+
+#. Translators: Heading of the channel list column holding what is showing now (from the guide).
+#: UI/Iptv/ChannelBrowserDialog.cs:85
+#, fuzzy
+msgid "Now"
+msgstr "No"
+
+#. Translators: Channel-browser status line. {count} is how many channels pass the current filters.
+#: UI/Iptv/ChannelBrowserDialog.cs:184
+msgid "{count} channel"
+msgid_plural "{count} channels"
+msgstr[0] ""
+msgstr[1] ""
+
+#. Translators: Spoken when the user asks what is on a channel but no programme guide was loaded.
+#: UI/Iptv/ChannelBrowserDialog.cs:255
+#, fuzzy
+msgid "No programme guide is available for this source."
+msgstr "No hay ayuda detallada disponible para este control."
+
+#. Translators: Spoken when the guide holds nothing for the selected channel right now.
+#: UI/Iptv/ChannelBrowserDialog.cs:263
+msgid "No programme information for this channel."
+msgstr ""
+
+#. Translators: Spoken now-playing line. {title} is the programme showing on the channel now.
+#: UI/Iptv/ChannelBrowserDialog.cs:269
+msgid "Now: {title}"
+msgstr ""
+
+#. Translators: Spoken when nothing is scheduled on the channel at the moment.
+#: UI/Iptv/ChannelBrowserDialog.cs:271
+msgid "Now: nothing scheduled"
+msgstr ""
+
+#. Translators: Spoken next-up line. {title} is the programme showing on the channel next.
+#: UI/Iptv/ChannelBrowserDialog.cs:274
+msgid "Next: {title}"
+msgstr ""
+
+#. Translators: Spoken when the guide lists nothing after the current programme.
+#: UI/Iptv/ChannelBrowserDialog.cs:276
+msgid "Next: nothing scheduled"
+msgstr ""
+
+#. Translators: Spoken help for the channel browser, read aloud when the user presses F1.
+#: UI/Iptv/ChannelBrowserDialog.cs:282
+msgid ""
+"Choose what to show and a category from the lists, or type part of a name in "
+"the search box to narrow the channels. Press Enter on a channel to play it. "
+"Press Control plus I to hear what is on now and next. Press Escape to close."
+msgstr ""
+
+#. Translators: Label of the list saying what kind of IPTV source is being saved.
+#. Translators: Heading of the IPTV sources list column saying what kind of source each one is.
+#. Translators: Label of the list saying what kind of thing a saved link points at.
+#. Translators: Heading of the favourites list column saying what kind of thing each saved link points at.
+#: UI/Iptv/IptvSourceEditDialog.cs:60 UI/Iptv/IptvSourcesDialog.cs:31
+#: UI/YouTube/FavoriteEditDialog.cs:29 UI/YouTube/FavoritesDialog.cs:31
+msgid "Type"
+msgstr "Tipo"
+
+#. Translators: Label of the address box when the source is an M3U playlist at a web address.
+#: UI/Iptv/IptvSourceEditDialog.cs:67 UI/Iptv/IptvSourceEditDialog.cs:158
+msgid "Web address"
+msgstr ""
+
+#. Translators: Button beside the file box that opens a dialog to choose a playlist file.
+#. Translators: Button on the converter that opens a folder picker for the destination folder.
+#. Translators: Button that opens a window for choosing the folder recordings are saved into.
+#: UI/Iptv/IptvSourceEditDialog.cs:71 UI/MediaConverterDialog.cs:175
+#: UI/Recording/RecordingDialog.cs:148 UI/RecordingPreferences.cs:71
+msgid "Browse..."
+msgstr "Examinar..."
+
+#. Translators: Label of the box holding the username of an Xtream IPTV account.
+#: UI/Iptv/IptvSourceEditDialog.cs:75
+#, fuzzy
+msgid "Username"
+msgstr "Renombrado."
+
+#. Translators: Label of the box holding the password of an Xtream IPTV account.
+#: UI/Iptv/IptvSourceEditDialog.cs:78
+msgid "Password"
+msgstr ""
+
+#. Translators: Label of the box holding the MAC address a Stalker portal is bound to.
+#: UI/Iptv/IptvSourceEditDialog.cs:82
+msgid "MAC address"
+msgstr ""
+
+#. Translators: Label of the box holding the optional device serial some Stalker portals check.
+#: UI/Iptv/IptvSourceEditDialog.cs:85
+msgid "Serial (optional)"
+msgstr ""
+
+#. Translators: Label of the box holding an optional programme-guide address. "XMLTV" is a format name.
+#: UI/Iptv/IptvSourceEditDialog.cs:89
+msgid "EPG address (optional)"
+msgstr ""
+
+#. Translators: Tick box that opens live channels as HLS rather than as a transport stream.
+#: UI/Iptv/IptvSourceEditDialog.cs:94
+msgid "Open live channels as HLS"
+msgstr ""
+
+#. Translators: Label of the address box when the source is an M3U playlist file on this computer.
+#: UI/Iptv/IptvSourceEditDialog.cs:160
+#, fuzzy
+msgid "Playlist file"
+msgstr "Videos de la lista de reproducción"
+
+#. Translators: Label of the address box when the source is an Xtream Codes account (its server).
+#: UI/Iptv/IptvSourceEditDialog.cs:162
+msgid "Server address"
+msgstr ""
+
+#. Translators: Label of the address box when the source is a Stalker portal (its portal address).
+#: UI/Iptv/IptvSourceEditDialog.cs:164
+msgid "Portal address"
+msgstr ""
+
+#. Translators: The two names in the file picker's type list for choosing a playlist file. The
+#. patterns beside them are literal and must not be translated.
+#: UI/Iptv/IptvSourceEditDialog.cs:186
+#, fuzzy
+msgid "Playlists"
+msgstr "Lista de reproducción"
+
+#. Translators: Title of the message shown when an IPTV source cannot be saved as it was typed.
+#. Translators: Title of the window listing the IPTV sources the user has saved.
+#: UI/Iptv/IptvSourceEditDialog.cs:198 UI/Iptv/IptvSourcesDialog.cs:25
+#, fuzzy
+msgid "IPTV sources"
+msgstr "Fuentes"
+
+#. Translators: Heading of the IPTV sources list column holding the server or file each source points at.
+#: UI/Iptv/IptvSourcesDialog.cs:33
+msgid "Address"
+msgstr ""
+
+#. Translators: Button that opens the source chosen in the list and browses its channels.
+#. Translators: Button that plays the saved link chosen in the list.
+#: UI/Iptv/IptvSourcesDialog.cs:53 UI/YouTube/FavoritesDialog.cs:53
+msgid "Open"
+msgstr "Abrir"
+
+#. Translators: Button that saves a new IPTV source. The three dots mean it opens a window to type it in.
+#. Translators: Button that saves a new link. The three dots mean it opens a window to type it in.
+#: UI/Iptv/IptvSourcesDialog.cs:55 UI/YouTube/FavoritesDialog.cs:55
+msgid "Add..."
+msgstr "Añadir..."
+
+#. Translators: Button that removes a saved IPTV source. The three dots mean it asks first.
+#. Translators: Button that removes the recording source chosen in the list. It asks first.
+#. Translators: Button that removes a saved link. The three dots mean it asks first.
+#: UI/Iptv/IptvSourcesDialog.cs:59 UI/Recording/RecordingDialog.cs:95
+#: UI/YouTube/FavoritesDialog.cs:59
+msgid "Remove..."
+msgstr "Eliminar..."
+
 #. Translators: Player menu item that plays the file before the current one.
 #: UI/MainFrame.cs:102 UI/MenuBuilder.cs:165
 msgid "Previous"
@@ -3440,13 +3860,6 @@ msgstr "Conservar ubicación original de los archivos"
 msgid "Destination folder"
 msgstr "Carpeta de destino"
 
-#. Translators: Button on the converter that opens a folder picker for the destination folder.
-#. Translators: Button that opens a window for choosing the folder recordings are saved into.
-#: UI/MediaConverterDialog.cs:175 UI/Recording/RecordingDialog.cs:148
-#: UI/RecordingPreferences.cs:71
-msgid "Browse..."
-msgstr "Examinar..."
-
 #. Translators: Tick box on the converter that removes each source file once it has been converted.
 #: UI/MediaConverterDialog.cs:177
 msgid "Delete original files after conversion"
@@ -3482,6 +3895,8 @@ msgstr ""
 "Elige una carpeta para guardar los archivos convertidos o activa \"Conservar "
 "ubicaciones originales de los archivos\"."
 
+#. Translators: Shown when the chosen destination folder could not be created. {reason} is
+#. what went wrong, in the language of the system rather than the player.
 #: UI/MediaConverterDialog.cs:454
 msgid "The destination folder could not be created."
 msgstr "No se pudo crear la carpeta de destino."
@@ -3806,46 +4221,58 @@ msgstr "Actualizaciones"
 msgid "Media converter..."
 msgstr "Conversor de medios..."
 
+#. Translators: IPTV menu item that opens the window where IPTV sources are added and edited.
+#: UI/MenuBuilder.cs:285
+#, fuzzy
+msgid "Manage IPTV sources..."
+msgstr "Administrar ajustes preestablecidos..."
+
+#. Translators: IPTV menu item that opens the list of channels the chosen IPTV source holds.
+#: UI/MenuBuilder.cs:287
+#, fuzzy
+msgid "Browse channels..."
+msgstr "Examinar..."
+
 #. Translators: Name of the File menu in the menu bar.
-#: UI/MenuBuilder.cs:283
+#: UI/MenuBuilder.cs:291
 msgid "File"
 msgstr "Archivo"
 
 #. Translators: Name of the menu bar menu holding the things that can be done to the marked files at once.
-#: UI/MenuBuilder.cs:290
+#: UI/MenuBuilder.cs:298
 msgid "Actions for marked files"
 msgstr "Acciones para archivos marcados"
 
 #. Translators: Name of the Player menu in the menu bar, holding the playing, seeking and volume items.
-#: UI/MenuBuilder.cs:292
+#: UI/MenuBuilder.cs:300
 msgid "Player"
 msgstr "Reproductor"
 
 #. Translators: Name of the menu bar menu holding what can be done with the YouTube video being played.
-#: UI/MenuBuilder.cs:297
+#: UI/MenuBuilder.cs:309
 msgid "Video options"
 msgstr "Opciones de video"
 
 #. Translators: Name of the Tools menu in the menu bar, holding the media converter.
-#: UI/MenuBuilder.cs:304
+#: UI/MenuBuilder.cs:316
 msgid "Tools"
 msgstr "Herramientas"
 
 #. Translators: Name of the Help menu in the menu bar.
-#: UI/MenuBuilder.cs:306
+#: UI/MenuBuilder.cs:318
 msgid "Help"
 msgstr "Ayuda"
 
 #. Translators: Item in the Equalizer submenu that leaves the sound unequalized. It is ticked while no preset is in use.
-#: UI/MenuBuilder.cs:337
+#: UI/MenuBuilder.cs:349
 msgid "Off"
 msgstr "Desactivado"
 
-#: UI/MenuBuilder.cs:343
+#: UI/MenuBuilder.cs:355
 msgid "Edit current preset..."
 msgstr "Editar ajuste preestablecido actual..."
 
-#: UI/MenuBuilder.cs:346
+#: UI/MenuBuilder.cs:358
 msgid "Manage presets..."
 msgstr "Administrar ajustes preestablecidos..."
 
@@ -3912,12 +4339,6 @@ msgstr "No hay ayuda detallada disponible para este control."
 #: UI/Recording/RecordingDialog.cs:91
 msgid "Add"
 msgstr "Añadir"
-
-#. Translators: Button that removes the recording source chosen in the list. It asks first.
-#. Translators: Button that removes a saved link. The three dots mean it asks first.
-#: UI/Recording/RecordingDialog.cs:95 UI/YouTube/FavoritesDialog.cs:59
-msgid "Remove..."
-msgstr "Eliminar..."
 
 #. Translators: Label of the slider that sets how loud the chosen recording source is in the mix.
 #: UI/Recording/RecordingDialog.cs:108
@@ -4607,27 +5028,11 @@ msgstr "Sí"
 msgid "No"
 msgstr "No"
 
-#. Translators: Label of the list saying what kind of thing a saved link points at.
-#. Translators: Heading of the favourites list column saying what kind of thing each saved link points at.
-#: UI/YouTube/FavoriteEditDialog.cs:29 UI/YouTube/FavoritesDialog.cs:31
-msgid "Type"
-msgstr "Tipo"
-
 #. Translators: Label of the box holding the address a saved link points at.
 #. Translators: Heading of the favourites list column holding the address of each saved link.
 #: UI/YouTube/FavoriteEditDialog.cs:35 UI/YouTube/FavoritesDialog.cs:33
 msgid "Link"
 msgstr "Enlace"
-
-#. Translators: Button that plays the saved link chosen in the list.
-#: UI/YouTube/FavoritesDialog.cs:53
-msgid "Open"
-msgstr "Abrir"
-
-#. Translators: Button that saves a new link. The three dots mean it opens a window to type it in.
-#: UI/YouTube/FavoritesDialog.cs:55
-msgid "Add..."
-msgstr "Añadir..."
 
 #. Translators: Message shown when a YouTube address names a video and a playlist at the same time,
 #. asking which of the two the user wants.
@@ -4818,6 +5223,22 @@ msgstr ""
 #: UI/YouTube/ResultsDialog.cs:44 UI/YouTube/ResultsDialog.cs:157
 msgid "Download"
 msgstr "Descargar"
+
+#. Translators: Context menu item in the results list that copies the address of the chosen video.
+#: UI/YouTube/ResultsDialog.cs:150
+#, fuzzy
+msgid "Copy link"
+msgstr "Copiar enlace del video"
+
+#. Translators: Context menu item in the results list that shows the chosen video in the web browser.
+#: UI/YouTube/ResultsDialog.cs:152
+msgid "Open in browser"
+msgstr ""
+
+#. Translators: Context menu item in the results list that shows the channel that published the video.
+#: UI/YouTube/ResultsDialog.cs:154
+msgid "Navigate to channel"
+msgstr ""
 
 #. Translators: Shown when something needs the extra programs for yt-dlp and they are not installed.
 #: YouTube/Backend.cs:140

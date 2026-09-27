@@ -2,6 +2,7 @@ using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
 using LunaPlayer.Favorites;
 using LunaPlayer.Equalizer;
+using LunaPlayer.Iptv;
 using LunaPlayer.Playback;
 using LunaPlayer.UI.Equalizer;
 using LunaPlayer.YouTube;
@@ -26,6 +27,32 @@ internal readonly record struct FavoriteRequest(FavoriteAction Action, string Id
 
 /// <summary>What the user typed into the favourite editor, before anything has checked it.</summary>
 internal readonly record struct FavoriteDraft(string Name, FavoriteKind Kind, string Link);
+
+/// <summary>One row in the IPTV source manager: a saved source shown by name and kind.</summary>
+/// <param name="Id">The store's id, carried back on the request so the handler knows which source was
+/// chosen without the window knowing anything about the store.</param>
+/// <param name="Name">What the source is called.</param>
+/// <param name="Type">The kind of source, worded for the user ("Xtream Codes", "M3U web address"...).</param>
+/// <param name="Detail">A second column giving the server or file the source points at.</param>
+internal readonly record struct IptvSourceListItem(string Id, string Name, string Type, string Detail);
+internal enum IptvSourceAction { Open, Add, Edit, Remove }
+internal readonly record struct IptvSourceRequest(IptvSourceAction Action, string Id);
+
+/// <summary>Everything the channel browser needs to open: the source's loaded channels and categories, and
+/// a way to speak its own help. The browser filters the channels itself and answers with the index of the
+/// one the user chose to play, or null when they closed it without playing.</summary>
+/// <param name="Title">The window title, naming the source being browsed.</param>
+/// <param name="Categories">The groups the channels fall into, for the category filter.</param>
+/// <param name="Channels">Every channel the source holds, in load order.</param>
+/// <param name="SpeakHelp">Speaks a line of help, for the F1 key, on the UI thread.</param>
+/// <param name="Guide">The programme guide, when one was loaded, for the "Now" column and the on-demand
+/// now-and-next announcement. Null when the source carried no guide.</param>
+internal readonly record struct ChannelBrowserPrompt(
+    string Title,
+    IReadOnlyList<IptvCategory> Categories,
+    IReadOnlyList<IptvChannel> Channels,
+    Action<string> SpeakHelp,
+    EpgGuide? Guide = null);
 
 /// <summary>How the results window talks back to whoever opened it.</summary>
 ///
@@ -207,6 +234,17 @@ internal interface IMainView : IDisposable
     YouTubeLinkKind? ChooseYouTubeLinkKind();
     FavoriteRequest? ManageFavorites(IReadOnlyList<FavoriteListItem> favorites, string selectedId);
     FavoriteDraft? EditFavorite(string caption, FavoriteDraft value);
+    /// <summary>Opens the IPTV source manager and returns what the user asked to do with which source, or
+    /// null when they closed it. The manager reopens after add, edit and remove, like the favourites one.
+    /// </summary>
+    IptvSourceRequest? ManageIptvSources(IReadOnlyList<IptvSourceListItem> sources, string selectedId);
+    /// <summary>Opens the add-or-edit form for an IPTV source, giving back what was typed or null if the
+    /// user backed out. The form shows only the fields the chosen kind needs.</summary>
+    IptvSourceDraft? EditIptvSource(string caption, IptvSourceDraft value);
+    /// <summary>Opens the channel browser on a loaded source and returns the index into
+    /// <see cref="ChannelBrowserPrompt.Channels"/> of the channel the user chose to play, or null when they
+    /// closed it without playing anything.</summary>
+    int? BrowseChannels(ChannelBrowserPrompt prompt);
     /// <summary>Opens the list of results and returns the row the user chose to play, or null when they
     /// closed it without playing anything. Everything else the window offers it does for itself, through
     /// <see cref="IYouTubeResultsFeed"/>, without closing.</summary>
