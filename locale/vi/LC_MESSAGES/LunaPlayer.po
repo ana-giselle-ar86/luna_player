@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Luna Player\n"
 "Report-Msgid-Bugs-To: https://github.com/diamondStar35/luna_player/issues\n"
-"POT-Creation-Date: 2026-09-27 14:52+0200\n"
+"POT-Creation-Date: 2026-09-27 16:38+0200\n"
 "PO-Revision-Date: 2026-09-09 10:09+0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -470,13 +470,13 @@ msgstr "Bật hoặc tắt tính năng loại bỏ khoảng lặng"
 #. Translators: Name of the command that opens the equalizer editor on the preset in use, shown in the shortcut list.
 #: Actions/PlaybackActions.cs:133
 msgid "Edit the current equalizer preset"
-msgstr ""
+msgstr "Chỉnh sửa cấu hình bộ cân bằng âm thanh hiện tại"
 
 #. Translators: Name of the command that opens the window listing every equalizer preset, shown in the shortcut list.
 #. Translators: Title of the window listing every equalizer preset, where the user's own are made and removed.
 #: Actions/PlaybackActions.cs:135 UI/Equalizer/PresetsDialog.cs:37
 msgid "Manage equalizer presets"
-msgstr ""
+msgstr "Quản lý các cấu hình bộ cân bằng âm thanh"
 
 #. Translators: Name of the command that marks the beginning of a part of the file to play on its own.
 #: Actions/PlaybackActions.cs:137
@@ -517,9 +517,8 @@ msgstr "Mở thư mục chứa bản ghi âm"
 
 #. Translators: Name of the command that opens the window for converting files to another audio format.
 #: Actions/ToolsActions.cs:16
-#, fuzzy
 msgid "Open the media converter"
-msgstr "Mở giao diện ghi âm"
+msgstr "Mở công cụ chuyển đổi phương tiện"
 
 #. Translators: Name of the command that checks whether a newer Luna Player release is available.
 #. Translators: Help menu item that checks whether a newer Luna Player release is available.
@@ -687,7 +686,7 @@ msgstr "Tên dấu trang không được để trống."
 #: Application/ActionHandlers/BookmarkActions.cs:45
 #: Application/ActionHandlers/BookmarkActions.cs:75
 #: Application/ActionHandlers/BookmarkActions.cs:112
-#: Application/ActionHandlers/BookmarkActions.cs:196 UI/MenuBuilder.cs:294
+#: Application/ActionHandlers/BookmarkActions.cs:196 UI/MenuBuilder.cs:295
 msgid "Bookmarks"
 msgstr "Dấu trang"
 
@@ -1021,36 +1020,32 @@ msgstr[0] "Đã đánh dấu {count} tệp"
 
 #. Translators: Spoken when the equalizer preset the user chose could not be applied.
 #: Application/ActionHandlers/EqualizerActions.cs:78
-#, fuzzy
 msgid "Could not change the equalizer."
-msgstr "Không thể thay đổi bộ lọc loại bỏ khoảng lặng."
+msgstr "Không thể thay đổi cấu hình bộ cân bằng âm thanh."
 
 #. Translators: The short wording spoken when the equalizer preset could not be applied.
 #: Application/ActionHandlers/EqualizerActions.cs:80
-#, fuzzy
 msgid "Equalizer failed."
-msgstr "Bộ lọc thất bại."
+msgstr "Bộ cân bằng âm thanh thất bại."
 
 #. Translators: Title of the window for changing an equalizer preset. {name} is the preset's name.
 #: Application/ActionHandlers/EqualizerActions.cs:121
 #: UI/Equalizer/PresetsDialog.cs:144
-#, fuzzy
 msgid "Edit {name}"
-msgstr "Đang đọc: {name}"
+msgstr "Chỉnh sửa {name}"
 
 #. Translators: Shown when an equalizer preset could not be saved and there is no more detail to give.
 #: Application/ActionHandlers/EqualizerActions.cs:163
 #: UI/Equalizer/PresetsDialog.cs:191
-#, fuzzy
 msgid "The preset could not be saved."
-msgstr "Không thể mở thông tin bản phát hành."
+msgstr "Không thể lưu cấu hình bộ cân bằng âm thanh."
 
 #. Translators: Title of the window shown when an equalizer preset could not be saved.
 #. Translators: Player submenu holding the equalizer presets and the commands for editing them.
 #: Application/ActionHandlers/EqualizerActions.cs:165
 #: UI/Equalizer/PresetsDialog.cs:193 UI/MenuBuilder.cs:161
 msgid "Equalizer"
-msgstr ""
+msgstr "Bộ cân bằng âm thanh"
 
 #. Translators: Shown when the address saved as a plain stream could not be played.
 #: Application/ActionHandlers/FavoriteActions.cs:89
@@ -1347,7 +1342,7 @@ msgstr ""
 #: Application/ActionHandlers/IptvActions.cs:182
 #: Application/ActionHandlers/IptvActions.cs:206
 #: Application/ActionHandlers/IptvActions.cs:215
-#: Application/ActionHandlers/IptvActions.cs:272 UI/MenuBuilder.cs:313
+#: Application/ActionHandlers/IptvActions.cs:272 UI/MenuBuilder.cs:304
 msgid "IPTV"
 msgstr ""
 
@@ -1846,7 +1841,7 @@ msgstr "Thiết bị đầu vào mặc định"
 #. Translators: Name of the settings category for recording sound.
 #. Translators: Title of the window where recording is set up and started.
 #. Translators: Title of the messages shown about recording.
-#: Application/ActionHandlers/RecordingActions.cs:213 UI/MenuBuilder.cs:308
+#: Application/ActionHandlers/RecordingActions.cs:213 UI/MenuBuilder.cs:313
 #: UI/PreferencesDialog.cs:54 UI/Recording/RecordingDialog.cs:83
 #: UI/Recording/RecordingDialog.cs:720
 msgid "Recording"
@@ -1951,24 +1946,26 @@ msgstr "Vui lòng khởi động lại ứng dụng để thay đổi ngôn ng�
 #. the line above the reason.
 #: Application/ActionHandlers/ToolsActions.cs:64
 msgid "File: {path}"
-msgstr ""
+msgstr "Tệp: {path}"
 
 #. Translators: Follows the summary when some files failed, pointing at the list below it.
 #: Application/ActionHandlers/ToolsActions.cs:67
 msgid "Some files were not converted. Check the details below."
-msgstr ""
+msgstr "Một số tệp không thể chuyển đổi. Vui lòng kiểm tra chi tiết bên dưới."
 
 #. Translators: Title of the report shown when a batch converted but some files failed.
 #. Translators: Title of the prompt shown when the user tries to stop a running conversion.
 #: Application/ActionHandlers/ToolsActions.cs:69
 #: UI/ConversionProgressDialog.cs:180
 msgid "Warning"
-msgstr ""
+msgstr "Cảnh báo"
 
 #: Application/ActionHandlers/ToolsActions.cs:78
 msgid "Converted {count} file to {format}. The operation took {time}."
 msgid_plural "Converted {count} files to {format}. The operation took {time}."
 msgstr[0] ""
+"Đã chuyển đổi thành công {count} tệp sang định dạng {format}. Quá trình mất "
+"{time}."
 
 #. Translators: Asks the user for the address of the YouTube video or playlist they want to play.
 #: Application/ActionHandlers/YouTubeActions.cs:70
@@ -2097,12 +2094,12 @@ msgstr "Không có video YouTube."
 #. Translators: Window title while playback is paused. {title} is the track, {app} the program name.
 #: Application/ApplicationController.cs:208
 msgid "[Paused]: {title} - {app}"
-msgstr ""
+msgstr "[Tạm dừng]: {title} - {app}"
 
 #. Translators: Window title while a track is open. {title} is the track, {app} the program name.
 #: Application/ApplicationController.cs:210
 msgid "{title} - {app}"
-msgstr ""
+msgstr "{title} - {app}"
 
 #: Application/ApplicationHost.cs:61
 msgid ""
@@ -2138,95 +2135,92 @@ msgstr "Phím tắt toàn cục"
 #. Translators: Name of an equalizer preset that lifts the low frequencies.
 #: Equalizer/Presets.cs:93
 msgid "Bass Boost"
-msgstr ""
+msgstr "Tăng cường âm trầm (Bass Boost)"
 
 #. Translators: Name of an equalizer preset that reduces the low frequencies.
 #: Equalizer/Presets.cs:95
 msgid "Bass Reduce"
-msgstr ""
+msgstr "Giảm âm trầm (Bass Reduce)"
 
 #. Translators: Name of an equalizer preset that lifts the high frequencies.
 #: Equalizer/Presets.cs:97
 msgid "Treble Boost"
-msgstr ""
+msgstr "Tăng cường âm cao (Treble Boost)"
 
 #. Translators: Name of an equalizer preset meant for listening through headphones.
 #: Equalizer/Presets.cs:99
 msgid "Headphones"
-msgstr ""
+msgstr "Tai nghe (Headphones)"
 
 #. Translators: Name of an equalizer preset that makes speech easier to follow. It suits audiobooks, podcasts and lectures rather than music.
 #: Equalizer/Presets.cs:107
-#, fuzzy
 msgid "Voice"
-msgstr "Video"
+msgstr "Giọng nói (Voice)"
 
 #. Translators: Name of an equalizer preset for listening quietly, which lifts the lowest and highest frequencies without touching the middle.
 #: Equalizer/Presets.cs:119
 msgid "Loudness"
-msgstr ""
+msgstr "Âm lượng bù (Loudness)"
 
 #. Translators: Name of an equalizer preset suited to classical music.
 #: Equalizer/Presets.cs:125
 msgid "Classical"
-msgstr ""
+msgstr "Cổ điển (Classical)"
 
 #. Translators: Name of an equalizer preset suited to club and dance-floor music.
 #: Equalizer/Presets.cs:133
 msgid "Club"
-msgstr ""
+msgstr "Câu lạc bộ (Club)"
 
 #. Translators: Name of an equalizer preset suited to dance music.
 #: Equalizer/Presets.cs:135
-#, fuzzy
 msgid "Dance"
-msgstr "Hủy"
+msgstr "Nhạc khiêu vũ (Dance)"
 
 #. Translators: Name of an equalizer preset that imitates the sound of a live performance.
 #: Equalizer/Presets.cs:137
 msgid "Live"
-msgstr ""
+msgstr "Trực tiếp (Live)"
 
 #. Translators: Name of an equalizer preset suited to pop music.
 #: Equalizer/Presets.cs:140
 msgid "Pop"
-msgstr ""
+msgstr "Nhạc Pop"
 
 #. Translators: Name of an equalizer preset suited to reggae music.
 #: Equalizer/Presets.cs:143
 msgid "Reggae"
-msgstr ""
+msgstr "Nhạc Reggae"
 
 #. Translators: Name of an equalizer preset suited to rock music.
 #: Equalizer/Presets.cs:145
 msgid "Rock"
-msgstr ""
+msgstr "Nhạc Rock"
 
 #. Translators: Name of an equalizer preset suited to ska music.
 #: Equalizer/Presets.cs:148
 msgid "Ska"
-msgstr ""
+msgstr "Nhạc Ska"
 
 #. Translators: Name of an equalizer preset suited to soft and quiet music.
 #: Equalizer/Presets.cs:151
 msgid "Soft"
-msgstr ""
+msgstr "Nhẹ nhàng (Soft)"
 
 #. Translators: Name of an equalizer preset suited to soft rock music.
 #: Equalizer/Presets.cs:153
 msgid "Soft Rock"
-msgstr ""
+msgstr "Nhạc Soft Rock"
 
 #. Translators: Name of an equalizer preset suited to techno music.
 #: Equalizer/Presets.cs:155
 msgid "Techno"
-msgstr ""
+msgstr "Nhạc Techno"
 
 #. Translators: Name of the equalizer preset that changes nothing, and which the user is meant to edit into whatever they want.
 #: Equalizer/Presets.cs:161
-#, fuzzy
 msgid "Custom"
-msgstr "Giá trị tùy chỉnh"
+msgstr "Tùy chỉnh (Custom)"
 
 #. Translators: Shown when the user saves a favourite without typing a name for it.
 #. Translators: Shown when the user saves an IPTV source without typing a name for it.
@@ -2401,27 +2395,24 @@ msgid "File associations are available only on Windows."
 msgstr "Liên kết tệp chỉ khả dụng trên Windows."
 
 #: Media/MediaConverter.cs:342
-#, fuzzy
 msgid "The file could not be converted."
-msgstr "Không thể mở hướng dẫn sử dụng."
+msgstr "Không thể chuyển đổi tệp."
 
 #: Media/MediaConverter.cs:344
 msgid "Unsupported file type."
-msgstr ""
+msgstr "Định dạng tệp không được hỗ trợ."
 
 #: Media/MediaConverter.cs:346
-#, fuzzy
 msgid "The file could not be found."
-msgstr "Không thể mở hướng dẫn sử dụng."
+msgstr "Không tìm thấy tệp."
 
 #: Media/MediaConverter.cs:348
-#, fuzzy
 msgid "Access to the file was denied."
-msgstr "Không có tệp nào khác được nạp."
+msgstr "Quyền truy cập tệp bị từ chối."
 
 #: Media/MediaConverter.cs:350
 msgid "There is not enough free disk space."
-msgstr ""
+msgstr "Không đủ dung lượng trống trên đĩa."
 
 #: Media/MediaLibrary.cs:37 UI/Iptv/IptvSourceEditDialog.cs:186
 msgid "All Files"
@@ -2987,7 +2978,7 @@ msgid "Jump"
 msgstr "Nhảy đến"
 
 #. Translators: Name of the Edit menu in the menu bar.
-#: UI/BookmarkManagerDialog.cs:36 UI/MenuBuilder.cs:292
+#: UI/BookmarkManagerDialog.cs:36 UI/MenuBuilder.cs:293
 msgid "Edit"
 msgstr "Chỉnh sửa"
 
@@ -3015,7 +3006,7 @@ msgstr "Đóng"
 #. Translators: Shown in the converter's progress window before the first file has reported.
 #: UI/ConversionProgressDialog.cs:73
 msgid "Preparing to convert…"
-msgstr ""
+msgstr "Đang chuẩn bị chuyển đổi…"
 
 #. Translators: The button that stops a running conversion. It asks for confirmation first.
 #. Translators: The button that closes a window and leaves everything as it was.
@@ -3031,13 +3022,12 @@ msgstr "Hủy"
 #. there are, {name} the file being converted right now.
 #: UI/ConversionProgressDialog.cs:152
 msgid "Converting file {number} of {total}: {name}"
-msgstr ""
+msgstr "Đang chuyển đổi tệp {number}/{total}: {name}"
 
 #. Translators: How far the file being converted right now has got. {percent} is a whole number.
 #: UI/ConversionProgressDialog.cs:155
-#, fuzzy
 msgid "Percentage: {percent}%"
-msgstr "{percent} phần trăm"
+msgstr "Tiến trình tệp: {percent}%"
 
 #. Translators: How many files have not been converted yet. {count} is a whole number.
 #: UI/ConversionProgressDialog.cs:157
@@ -3047,37 +3037,33 @@ msgstr "Số tệp còn lại: {count}"
 #. Translators: A guess at the time left. {time} is a clock such as 3:20 or 1:05:00, or the word
 #. for a guess not yet worth making.
 #: UI/ConversionProgressDialog.cs:160
-#, fuzzy
 msgid "Estimated time left: {time}"
-msgstr "Bắt đầu chọn: {time}"
+msgstr "Thời gian còn lại ước tính: {time}"
 
 #. Translators: Shown for the estimated time left before enough is done to guess it.
 #: UI/ConversionProgressDialog.cs:164
 msgid "calculating…"
-msgstr ""
+msgstr "đang tính toán…"
 
 #. Translators: How far the whole batch has got. {percent} is a whole number.
 #: UI/ConversionProgressDialog.cs:166
-#, fuzzy
 msgid "Total percentage: {percent}%"
-msgstr "{percent} phần trăm"
+msgstr "Tổng tiến trình: {percent}%"
 
 #. Translators: Asks the user to confirm stopping a conversion that is still running.
 #: UI/ConversionProgressDialog.cs:178
 msgid "The conversion is still running. Would you like to stop it?"
-msgstr ""
+msgstr "Quá trình chuyển đổi vẫn đang diễn ra. Bạn có muốn dừng lại không?"
 
 #. Translators: Title of the window shown while files are being converted.
 #: UI/ConversionProgressDialog.cs:235
-#, fuzzy
 msgid "Converting files"
-msgstr "Đang mở các tệp"
+msgstr "Đang chuyển đổi tệp"
 
 #. Translators: Label of the box listing the files a conversion could not convert.
 #: UI/ConversionReportDialog.cs:18
-#, fuzzy
 msgid "Details"
-msgstr "Sao chép chi tiết"
+msgstr "Chi tiết lỗi"
 
 #. Translators: Title of the window shown when the player has hit an error it cannot carry on from.
 #: UI/CrashDialog.cs:30 UI/CrashDialog.cs:81
@@ -3115,55 +3101,52 @@ msgstr ""
 #. Translators: Label of the list for choosing which preset a preset being edited starts out from.
 #: UI/Equalizer/EditDialog.cs:79
 msgid "Base preset"
-msgstr ""
+msgstr "Cấu hình gốc"
 
 #. Translators: Button in the equalizer editor that puts every band back the way the chosen base preset ships.
 #: UI/Equalizer/EditDialog.cs:106
-#, fuzzy
 msgid "Reset to defaults"
 msgstr "Đặt lại về mặc định"
 
 #. Translators: Button in the equalizer editor that keeps the changes.
 #: UI/Equalizer/EditDialog.cs:111
-#, fuzzy
 msgid "Save"
-msgstr "Ổn định"
+msgstr "Lưu"
 
 #. Translators: Label of the box holding the centre frequency of one equalizer band, in hertz.
 #: UI/Equalizer/EditDialog.cs:152
 msgid "Frequency (Hz)"
-msgstr ""
+msgstr "Tần số (Hz)"
 
 #. Translators: Label of the box holding how far one equalizer band lifts or cuts, in decibels.
 #: UI/Equalizer/EditDialog.cs:158
 msgid "Gain (dB)"
-msgstr ""
+msgstr "Độ lợi (dB)"
 
 #. Translators: Label of the box holding how wide one equalizer band is. Q is the usual name for it and is normally left as it is.
 #: UI/Equalizer/EditDialog.cs:161
 msgid "Q (width)"
-msgstr ""
+msgstr "Hệ số Q (độ rộng)"
 
 #. Translators: Title of the group of settings for the equalizer band that lifts or cuts everything below a frequency.
 #: UI/Equalizer/EditDialog.cs:185
 msgid "Low shelf"
-msgstr ""
+msgstr "Bộ lọc Low shelf (dải trầm)"
 
 #. Translators: Title of the group of settings for the equalizer band that lifts or cuts everything above a frequency.
 #: UI/Equalizer/EditDialog.cs:187
 msgid "High shelf"
-msgstr ""
+msgstr "Bộ lọc High shelf (dải cao)"
 
 #. Translators: Title of the group of settings for one equalizer band. {frequency} is the band's frequency in hertz, such as 250.
 #: UI/Equalizer/EditDialog.cs:189
 msgid "{frequency} Hz"
-msgstr ""
+msgstr "{frequency} Hz"
 
 #. Translators: Shown when the user saves an equalizer preset without giving it a name.
 #: UI/Equalizer/EditDialog.cs:234
-#, fuzzy
 msgid "Enter a name for the preset."
-msgstr "Nhập tên mới cho tệp."
+msgstr "Vui lòng nhập tên cho cấu hình."
 
 #. Translators: Shown when a gain typed into the equalizer editor is not a number or is out of range. {band} names the band, such as "250 Hz"; {minimum} and {maximum} are the smallest and largest allowed.
 #: UI/Equalizer/EditDialog.cs:268
@@ -3171,21 +3154,24 @@ msgid ""
 "The gain for {band} must be a number between {minimum} and {maximum} "
 "decibels."
 msgstr ""
+"Độ lợi cho {band} phải là một số trong khoảng từ {minimum} đến {maximum} "
+"decibel."
 
 #. Translators: Shown when a Q typed into the equalizer editor is not a number or is out of range. {band} names the band, such as "250 Hz"; {minimum} and {maximum} are the smallest and largest allowed. Q is the usual name for a band's width.
 #: UI/Equalizer/EditDialog.cs:278
 msgid "The Q for {band} must be a number between {minimum} and {maximum}."
 msgstr ""
+"Hệ số Q cho {band} phải là một số trong khoảng từ {minimum} đến {maximum}."
 
 #. Translators: Label above the list of equalizer presets.
 #: UI/Equalizer/PresetsDialog.cs:41
 msgid "Presets"
-msgstr ""
+msgstr "Các cấu hình"
 
 #. Translators: Button that makes a new equalizer preset.
 #: UI/Equalizer/PresetsDialog.cs:47
 msgid "New..."
-msgstr ""
+msgstr "Tạo mới..."
 
 #. Translators: Button that opens the chosen equalizer preset for editing.
 #. Translators: Button that changes a saved IPTV source. The three dots mean it opens a window to change it in.
@@ -3199,18 +3185,17 @@ msgstr "Chỉnh sửa..."
 #. Translators: Title of the window for making a new equalizer preset.
 #: UI/Equalizer/PresetsDialog.cs:117
 msgid "New equalizer preset"
-msgstr ""
+msgstr "Cấu hình bộ cân bằng âm thanh mới"
 
 #. Translators: Asks the user to confirm removing an equalizer preset. {name} is the preset's name.
 #: UI/Equalizer/PresetsDialog.cs:170
 msgid "Delete the preset {name}? This cannot be undone."
-msgstr ""
+msgstr "Bạn có muốn xóa cấu hình {name}? Thao tác này không thể hoàn tác."
 
 #. Translators: Title of the window asking the user to confirm removing an equalizer preset.
 #: UI/Equalizer/PresetsDialog.cs:172
-#, fuzzy
 msgid "Delete preset"
-msgstr "Đã xóa xong"
+msgstr "Xóa cấu hình"
 
 #. Translators: Label of the list for choosing the language the player speaks and shows its windows in.
 #: UI/GeneralPreferences.cs:27
@@ -3245,12 +3230,12 @@ msgstr "Lưu cài đặt khi đóng"
 #. Translators: Tick box on the General settings page: keep the player out of the system's media controls entirely.
 #: UI/GeneralPreferences.cs:47
 msgid "Disable system media controls"
-msgstr ""
+msgstr "Vô hiệu hóa điều khiển đa phương tiện hệ thống"
 
 #. Translators: Tick box on the General settings page: show the playing track in the window title.
 #: UI/GeneralPreferences.cs:49
 msgid "Show the playing track in the window title"
-msgstr ""
+msgstr "Hiển thị bài đang phát trên tiêu đề cửa sổ"
 
 #. Translators: Label of the list that chooses how much detail the player speaks.
 #: UI/GeneralPreferences.cs:51
@@ -3395,12 +3380,17 @@ msgid ""
 "keys on a keyboard or headset. Enable this if those keys misbehave with your "
 "headphones."
 msgstr ""
+"Không cho Luna nhận các điều khiển đa phương tiện của hệ thống cũng như các "
+"phím phát, tạm dừng và chuyển bài trên bàn phím hoặc tai nghe. Bật tùy chọn "
+"này nếu các phím đó hoạt động không đúng với tai nghe của bạn."
 
 #. Translators: Help text for the tick box that shows the playing track in the window title.
 #: UI/GeneralPreferences.cs:132
 msgid ""
 "Shows the playing track in the window title, marked as paused when it is."
 msgstr ""
+"Hiển thị tên bài đang phát trên tiêu đề cửa sổ, kèm trạng thái tạm dừng khi "
+"đang tạm dừng."
 
 #. Translators: Help text for the list that chooses how much detail the player speaks.
 #: UI/GeneralPreferences.cs:135
@@ -3480,8 +3470,9 @@ msgstr ""
 
 #. Translators: Channel-browser filter choice: show only live TV channels.
 #: UI/Iptv/ChannelBrowserDialog.cs:56
+#, fuzzy
 msgid "Live TV"
-msgstr ""
+msgstr "Trực tiếp (Live)"
 
 #. Translators: Channel-browser filter choice: show only films (video on demand).
 #: UI/Iptv/ChannelBrowserDialog.cs:58
@@ -3705,7 +3696,7 @@ msgstr "Tiếp tục"
 #. Translators: Title of the messages the media converter shows.
 #: UI/MediaConverterDialog.cs:94 UI/MediaConverterDialog.cs:513
 msgid "Media converter"
-msgstr ""
+msgstr "Chuyển đổi phương tiện"
 
 #. Translators: Title of the group holding the list of files to be converted and its buttons.
 #. Translators: Title of the group of the recording window holding what to record from.
@@ -3715,31 +3706,28 @@ msgstr "Nguồn"
 
 #. Translators: Button on the media converter that adds one or more files to the list to convert.
 #: UI/MediaConverterDialog.cs:108
-#, fuzzy
 msgid "Add file..."
-msgstr "Thêm..."
+msgstr "Thêm tệp..."
 
 #. Translators: Button on the media converter that adds every supported file in a folder to the list.
 #: UI/MediaConverterDialog.cs:110
-#, fuzzy
 msgid "Add folder..."
-msgstr "Mở thư mục..."
+msgstr "Thêm thư mục..."
 
 #. Translators: Button on the media converter that takes the selected files back out of the list.
 #: UI/MediaConverterDialog.cs:112
-#, fuzzy
 msgid "Remove"
-msgstr "Xóa..."
+msgstr "Xóa khỏi danh sách"
 
 #. Translators: Title of the group holding the format the files are converted to and its options.
 #: UI/MediaConverterDialog.cs:115
 msgid "Output"
-msgstr ""
+msgstr "Đầu ra"
 
 #. Translators: Label of the list that chooses the format the files are converted to.
 #: UI/MediaConverterDialog.cs:117
 msgid "Convert to"
-msgstr ""
+msgstr "Chuyển đổi sang"
 
 #. Translators: Label of the list that chooses the sample rate the converted files are written at.
 #. Translators: Label of the list that chooses how many times a second a recording is sampled.
@@ -3752,7 +3740,7 @@ msgstr "Tần số lấy mẫu"
 #: UI/MediaConverterDialog.cs:125 UI/MediaConverterDialog.cs:132
 #: UI/MediaConverterDialog.cs:140
 msgid "Preserve original"
-msgstr ""
+msgstr "Giữ nguyên định dạng gốc"
 
 #. Translators: One sample rate in the converter's sample-rate list. {rate} is a number in hertz.
 #: UI/MediaConverterDialog.cs:128
@@ -3784,9 +3772,8 @@ msgstr "Stereo"
 
 #. Translators: Label of the list that chooses the audio quality (bitrate) of the converted files.
 #: UI/MediaConverterDialog.cs:138
-#, fuzzy
 msgid "Quality"
-msgstr "Chất lượng video"
+msgstr "Chất lượng"
 
 #. Translators: One bitrate in the converter's quality list. {rate} is a number in kilobits per second.
 #: UI/MediaConverterDialog.cs:143
@@ -3795,89 +3782,85 @@ msgstr "{rate} kbps"
 
 #. Translators: Label of the list that chooses whether Opus uses a constant or variable bitrate.
 #: UI/MediaConverterDialog.cs:145
-#, fuzzy
 msgid "Bitrate mode"
-msgstr "Tốc độ bit"
+msgstr "Chế độ tốc độ bit"
 
 #. Translators: The Opus bitrate mode that holds one steady rate. Written in full rather than as "CBR".
 #: UI/MediaConverterDialog.cs:148
 msgid "Constant bitrate"
-msgstr ""
+msgstr "Tốc độ bit cố định (CBR)"
 
 #. Translators: The Opus bitrate mode that varies the rate with the sound. Written in full rather than as "VBR".
 #: UI/MediaConverterDialog.cs:150
 msgid "Variable bitrate"
-msgstr ""
+msgstr "Tốc độ bit thay đổi (VBR)"
 
 #. Translators: Label of the list that chooses what Opus tunes its variable bitrate for.
 #: UI/MediaConverterDialog.cs:152
 msgid "Optimize for"
-msgstr ""
+msgstr "Tối ưu hóa cho"
 
 #. Translators: The Opus profile for music and general audio.
 #: UI/MediaConverterDialog.cs:155
 msgid "Music"
-msgstr ""
+msgstr "Âm nhạc"
 
 #. Translators: The Opus profile for speech.
 #: UI/MediaConverterDialog.cs:157
-#, fuzzy
 msgid "Speech"
-msgstr "Tốc độ"
+msgstr "Giọng nói"
 
 #. Translators: The Opus profile that keeps the delay as short as possible.
 #: UI/MediaConverterDialog.cs:159
 msgid "Low delay"
-msgstr ""
+msgstr "Độ trễ thấp"
 
 #. Translators: Label of the box that chooses how many files are converted at the same time.
 #: UI/MediaConverterDialog.cs:161
 msgid "Maximum simultaneous conversions"
-msgstr ""
+msgstr "Số tệp chuyển đổi đồng thời tối đa"
 
 #. Translators: Title of the group holding where the converted files are written and what happens to
 #. the originals.
 #: UI/MediaConverterDialog.cs:166
-#, fuzzy
 msgid "Location"
-msgstr "Hành động"
+msgstr "Vị trí lưu"
 
 #. Translators: Tick box on the converter. When on, each converted file is written beside the file it
 #. came from; when off, they all go to one chosen folder instead.
 #: UI/MediaConverterDialog.cs:169
 msgid "Preserve original file locations"
-msgstr ""
+msgstr "Lưu cùng vị trí với tệp gốc"
 
 #. Translators: Label of the box holding the folder the converted files are written to.
 #: UI/MediaConverterDialog.cs:172
-#, fuzzy
 msgid "Destination folder"
-msgstr "Chế độ phát hiện"
+msgstr "Thư mục đích"
 
 #. Translators: Tick box on the converter that removes each source file once it has been converted.
 #: UI/MediaConverterDialog.cs:177
 msgid "Delete original files after conversion"
-msgstr ""
+msgstr "Xóa tệp gốc sau khi chuyển đổi xong"
 
 #. Translators: Button that starts the conversion and closes the window.
 #: UI/MediaConverterDialog.cs:214
 msgid "Convert"
-msgstr ""
+msgstr "Chuyển đổi"
 
 #. Translators: Title of the picker the converter's "Add file" button opens.
 #: UI/MediaConverterDialog.cs:298
 msgid "Add files to convert"
-msgstr ""
+msgstr "Chọn các tệp cần chuyển đổi"
 
 #. Translators: Title of the picker the converter's "Add folder" button opens.
 #: UI/MediaConverterDialog.cs:313
 msgid "Add a folder of files to convert"
-msgstr ""
+msgstr "Chọn thư mục chứa các tệp cần chuyển đổi"
 
 #. Translators: Title of the picker the converter's "Browse" button opens for the destination folder.
 #: UI/MediaConverterDialog.cs:416
 msgid "Choose where converted files are written"
-msgstr ""
+msgstr "Chọn nơi lưu các tệp đã chuyển đổi"
 
 #. Translators: Shown when Convert is pressed with no destination folder chosen and files
 #. are not being written beside their sources.
@@ -3886,13 +3869,14 @@ msgid ""
 "Choose a folder to write the converted files to, or turn on \"Preserve "
 "original file locations\"."
 msgstr ""
+"Vui lòng chọn thư mục để lưu các tệp đã chuyển đổi, hoặc bật tùy chọn \"Lưu "
+"cùng vị trí với tệp gốc\"."
 
 #. Translators: Shown when the chosen destination folder could not be created. {reason} is
 #. what went wrong, in the language of the system rather than the player.
 #: UI/MediaConverterDialog.cs:454
-#, fuzzy
 msgid "The destination folder could not be created."
-msgstr "Không thể mở thông tin bản phát hành."
+msgstr "Không thể tạo thư mục đích."
 
 #. Translators: File menu item that opens one or more media files. The three dots mean it opens a window to choose them.
 #: UI/MenuBuilder.cs:42
@@ -4212,61 +4196,62 @@ msgstr "Cập nhật"
 #. Translators: Tools menu item that opens the window for converting files to another audio format.
 #: UI/MenuBuilder.cs:279
 msgid "Media converter..."
-msgstr ""
+msgstr "Chuyển đổi phương tiện..."
 
 #. Translators: IPTV menu item that opens the window where IPTV sources are added and edited.
-#: UI/MenuBuilder.cs:284
+#: UI/MenuBuilder.cs:285
+#, fuzzy
 msgid "Manage IPTV sources..."
-msgstr ""
+msgstr "Quản lý các cấu hình..."
 
 #. Translators: IPTV menu item that opens the list of channels the chosen IPTV source holds.
-#: UI/MenuBuilder.cs:286
+#: UI/MenuBuilder.cs:287
 #, fuzzy
 msgid "Browse channels..."
 msgstr "Duyệt..."
 
 #. Translators: Name of the File menu in the menu bar.
-#: UI/MenuBuilder.cs:290
+#: UI/MenuBuilder.cs:291
 msgid "File"
 msgstr "Tệp"
 
 #. Translators: Name of the menu bar menu holding the things that can be done to the marked files at once.
-#: UI/MenuBuilder.cs:297
+#: UI/MenuBuilder.cs:298
 msgid "Actions for marked files"
 msgstr "Thao tác cho các tệp đã đánh dấu"
 
 #. Translators: Name of the Player menu in the menu bar, holding the playing, seeking and volume items.
-#: UI/MenuBuilder.cs:299
+#: UI/MenuBuilder.cs:300
 msgid "Player"
 msgstr "Trình phát"
 
 #. Translators: Name of the menu bar menu holding what can be done with the YouTube video being played.
-#: UI/MenuBuilder.cs:304
+#: UI/MenuBuilder.cs:309
 msgid "Video options"
 msgstr "Tùy chọn video"
 
 #. Translators: Name of the Tools menu in the menu bar, holding the media converter.
-#: UI/MenuBuilder.cs:311
+#: UI/MenuBuilder.cs:316
 msgid "Tools"
-msgstr ""
+msgstr "Công cụ"
 
 #. Translators: Name of the Help menu in the menu bar.
-#: UI/MenuBuilder.cs:315
+#: UI/MenuBuilder.cs:318
 msgid "Help"
 msgstr "Trợ giúp"
 
 #. Translators: Item in the Equalizer submenu that leaves the sound unequalized. It is ticked while no preset is in use.
-#: UI/MenuBuilder.cs:346
+#: UI/MenuBuilder.cs:349
 msgid "Off"
-msgstr ""
-
-#: UI/MenuBuilder.cs:352
-msgid "Edit current preset..."
-msgstr ""
+msgstr "Tắt"
 
 #: UI/MenuBuilder.cs:355
+msgid "Edit current preset..."
+msgstr "Chỉnh sửa cấu hình hiện tại..."
+
+#: UI/MenuBuilder.cs:358
 msgid "Manage presets..."
-msgstr ""
+msgstr "Quản lý các cấu hình..."
 
 #. Translators: Title of the window listing the files currently loaded in the player.
 #: UI/OpenedFilesDialog.cs:19
