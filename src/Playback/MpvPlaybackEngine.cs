@@ -10,12 +10,15 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
 {
     private readonly MPV _mpv;
     private readonly IDisposable _endRegistration;
+    private readonly IDisposable _sampleRateRegistration;
     private double _volume = 100;
     private double _pitch;
     private bool _pitchFilterActive;
     private double _pan;
     private bool _panFilterActive;
     private bool _normalizationEnabled;
+    private Preset? _equalizerPreset;
+    private double _equalizerSampleRate;
     private bool _equalizerFilterActive;
     private bool _disposed;
 
@@ -37,10 +40,11 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
         SetPropertySafely("network-timeout", 10);
         ApplyMediaControls(mediaControls);
         _endRegistration = _mpv.OnEvent(HandleEndFile, MpvEventId.EndFile);
-        // First into the chain, and before anything the settings switch on later, so that what the
-        // equalizer lifts is still ahead of the limiter normalization puts at the end. Added here
-        // rather than when a preset is chosen: it stays for the life of the engine.
-        BuildEqualizer(Bands.Slots(null));
+        // The equalizer is left out of the chain entirely until a preset asks for it, and which bands it
+        // then carries depends on the file's sample rate: a band at the Nyquist frequency rings rather
+        // than filters, so the graph is rebuilt whenever that rate changes under it. Off is nothing at
+        // all, not a row of flat bands.
+        _sampleRateRegistration = _mpv.ObserveProperty("audio-params/samplerate", HandleSampleRateChange);
     }
 
     public event Action<PlaybackEndReason>? Ended;
@@ -256,9 +260,13 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
     }
 
     public bool SetEqualizer(Preset? preset)
-        => BuildEqualizer(Bands.Slots(preset));
+    {
+        _equalizerPreset = preset;
+        return BuildEqualizer();
+    }
 
-    /// <summary>Puts the equalizer into the chain, carrying the bands it is to apply.</summary>
+    /// <summary>Puts the equalizer the current preset asks for into the chain, or takes it out when the
+    /// preset is Off.</summary>
     ///
     /// <remarks>
     /// Built afresh for every change rather than adjusted in place, and that is the point of it. mpv keeps
@@ -271,16 +279,53 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
     /// What it costs is the chain rebuilt each time a preset is chosen, which is what switching
     /// normalization or silence removal on already costs, and it happens only when the user asks for it.
     ///
+    /// Off is the empty chain, not a row of flat bands: a flat band is transparent everywhere except at
+    /// the Nyquist frequency, where the biquad rings whatever its gain, so a file whose Nyquist lands on
+    /// a band beeps even with nothing turned up. The Nyquist-aware graph would drop that one band, but
+    /// leaving the whole filter out when there is nothing to apply is both cheaper and plainly right.
+    ///
     /// Prepended rather than appended, so the equalizer stays ahead of the limiter normalization puts in
     /// the chain and a lifted band is still limited. If this build of mpv will not take <c>pre</c> it goes
     /// on the end instead - the wrong side of the limiter, but present and right in every other respect.
     /// </remarks>
-    private bool BuildEqualizer(Band[] bands)
+    private bool BuildEqualizer()
     {
-        var filter = $"@{AudioFilters.EqualizerLabel}:lavfi=[{AudioFilters.EqualizerGraph(bands)}]";
         RemoveFilter($"@{AudioFilters.EqualizerLabel}");
+        _equalizerFilterActive = false;
+        if (_equalizerPreset is null)
+            return true;
+
+        // The rate the decoded audio runs at, so bands at or beyond its Nyquist are left out. Null before
+        // a file is loaded; the graph is then built whole and rebuilt once the real rate is known.
+        _equalizerSampleRate = ReadDouble("audio-params/samplerate") ?? 0;
+        var graph = AudioFilters.EqualizerGraph(
+            Bands.Slots(_equalizerPreset), _equalizerSampleRate > 0 ? _equalizerSampleRate : null);
+        if (graph.Length == 0)
+            return true;
+
+        var filter = $"@{AudioFilters.EqualizerLabel}:lavfi=[{graph}]";
         _equalizerFilterActive = TryDo(mpv => mpv.Command("af", "pre", filter)) || AddFilter(filter);
         return _equalizerFilterActive;
+    }
+
+    /// <summary>Rebuilds the equalizer when the decoded sample rate changes under it, so a graph that was
+    /// safe for one file's Nyquist frequency is made safe for the next. Does nothing while the equalizer
+    /// is Off, and ignores the report mpv sends when a file stops and the rate becomes unknown.</summary>
+    private void HandleSampleRateChange(string name, object? value)
+    {
+        if (_disposed || _equalizerPreset is null || value is null)
+            return;
+        double rate;
+        try
+        {
+            rate = Convert.ToDouble(value, CultureInfo.InvariantCulture);
+        }
+        catch (Exception exception) when (exception is FormatException or InvalidCastException or OverflowException)
+        {
+            return;
+        }
+        if (rate > 0 && rate != _equalizerSampleRate)
+            BuildEqualizer();
     }
 
 
@@ -290,6 +335,7 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
             return;
         _disposed = true;
         _endRegistration.Dispose();
+        _sampleRateRegistration.Dispose();
         _mpv.Dispose();
     }
 

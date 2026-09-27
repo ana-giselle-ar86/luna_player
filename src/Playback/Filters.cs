@@ -40,7 +40,21 @@ internal static class AudioFilters
         return $"equalizer@eqband{slot - Bands.FirstPeakingSlot}";
     }
 
-    /// <summary>The equalizer as one lavfi graph: every slot in turn.</summary>
+    /// <summary>The proportion of the Nyquist frequency at or past which a band is left out of the
+    /// graph.</summary>
+    /// <remarks>
+    /// A peaking biquad centred on the Nyquist frequency has its poles on the unit circle: it rings
+    /// rather than filters, an audible tone that is there at any gain, a flat band included. ffmpeg's
+    /// shelves come apart the same way as their corner nears Nyquist. So a band is dropped once its
+    /// frequency reaches most of the way to Nyquist - close enough that there is no real content above it
+    /// to equalize regardless. The margin below one keeps a band that merely sits high, rather than at
+    /// the very edge, in the graph: at 44.1 kHz nothing is dropped, and at 8 kHz the 4 kHz band that
+    /// lands exactly on Nyquist is.
+    /// </remarks>
+    private const double SafeNyquistFraction = 0.94;
+
+    /// <summary>The equalizer as one lavfi graph: every slot that the sample rate leaves room for, in
+    /// turn.</summary>
     ///
     /// <remarks>
     /// A row of single-band filters rather than one multi-band filter, because every parameter of every
@@ -51,13 +65,24 @@ internal static class AudioFilters
     ///
     /// Every one of these is linear and time-invariant, so their order is free; they are written low to
     /// high because that is the order somebody reading the graph will expect.
+    ///
+    /// A band whose centre sits at or above <see cref="SafeNyquistFraction"/> of the current file's
+    /// Nyquist frequency is skipped rather than emitted, since at the edge it self-oscillates instead of
+    /// filtering. <paramref name="sampleRate"/> is the decoded rate the chain will run at; when it is not
+    /// yet known - before a file is loaded - every band is kept and the graph is rebuilt with the real
+    /// rate once one is.
     /// </remarks>
-    internal static string EqualizerGraph(IReadOnlyList<Band> slots)
+    internal static string EqualizerGraph(IReadOnlyList<Band> slots, double? sampleRate = null)
     {
+        var ceiling = sampleRate is > 0
+            ? sampleRate.Value / 2 * SafeNyquistFraction
+            : double.PositiveInfinity;
         var stages = new List<string>(slots.Count);
         for (var slot = 0; slot < slots.Count; slot++)
         {
             var band = slots[slot];
+            if (band.Frequency >= ceiling)
+                continue;
             stages.Add(string.Join(':',
                 $"{EqualizerSlotName(slot)}=f={Bands.Format(band.Frequency)}",
                 "t=q",
