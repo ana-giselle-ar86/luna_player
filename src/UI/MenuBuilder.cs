@@ -278,6 +278,13 @@ internal static class MainMenuBuilder
         // Translators: Tools menu item that opens the window for converting files to another audio format.
         toolsMenu.Append(commandIds[ActionId.OpenMediaConverter], Label(Tr("Media converter..."), ActionId.OpenMediaConverter, shortcuts));
 
+        // Alongside Tools, after the indexed menus: nothing counts the IPTV menu by position either.
+        var iptvMenu = new Menu();
+        // Translators: IPTV menu item that opens the window where IPTV sources are added and edited.
+        iptvMenu.Append(commandIds[ActionId.OpenIptvSources], Label(Tr("Manage IPTV sources..."), ActionId.OpenIptvSources, shortcuts));
+        // Translators: IPTV menu item that opens the list of channels the chosen IPTV source holds.
+        iptvMenu.Append(commandIds[ActionId.OpenIptvChannels], Label(Tr("Browse channels..."), ActionId.OpenIptvChannels, shortcuts));
+
         var menuBar = new MenuBar();
         // Translators: Name of the File menu in the menu bar.
         menuBar.Append(fileMenu, Tr("File"));
@@ -302,6 +309,8 @@ internal static class MainMenuBuilder
         // Safe after the indexed menus above: nothing counts the tools or help menus by position.
         // Translators: Name of the Tools menu in the menu bar, holding the media converter.
         menuBar.Append(toolsMenu, Tr("Tools"));
+        // Translators: Name of the IPTV menu in the menu bar, holding the source manager and channel browser.
+        menuBar.Append(iptvMenu, Tr("IPTV"));
         // Translators: Name of the Help menu in the menu bar.
         menuBar.Append(helpMenu, Tr("Help"));
         frame.SetMenuBar(menuBar);

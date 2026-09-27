@@ -1,6 +1,7 @@
 using LunaPlayer.Accessibility;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Iptv;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
 using LunaPlayer.Media;
@@ -160,22 +161,22 @@ internal sealed class FileActions
     private bool OpenLocalPlaylist(string path)
     {
         _settings.General.LastDirectory = Path.GetDirectoryName(path) ?? string.Empty;
-        return UsePlaylistResult(path, M3uPlaylist.ReadLocal(path), network: false);
+        return UsePlaylistResult(path, PlaylistReader.ReadLocal(path), network: false);
     }
 
     private void OpenNetworkPlaylist(string address)
     {
         var prompt = new ProgressPrompt(
-            // Translators: Title of the progress window shown while an M3U playlist is downloaded.
+            // Translators: Title of the progress window shown while a playlist is downloaded.
             Tr("Opening playlist"),
-            // Translators: Message shown while an M3U playlist is downloaded.
+            // Translators: Message shown while a playlist is downloaded.
             Tr("Downloading playlist..."),
             _ => Tr("Downloading playlist..."))
         {
             Proportional = false,
         };
         BackgroundProgress.Start(_view, _dispatcher, prompt,
-            (_, token) => M3uPlaylist.ReadNetwork(address, token),
+            (_, token) => PlaylistReader.ReadNetwork(address, token),
             result => UsePlaylistResult(address, result, network: true));
     }
 
