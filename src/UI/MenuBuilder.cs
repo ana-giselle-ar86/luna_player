@@ -278,7 +278,8 @@ internal static class MainMenuBuilder
         // Translators: Tools menu item that opens the window for converting files to another audio format.
         toolsMenu.Append(commandIds[ActionId.OpenMediaConverter], Label(Tr("Media converter..."), ActionId.OpenMediaConverter, shortcuts));
 
-        // Alongside Tools, after the indexed menus: nothing counts the IPTV menu by position either.
+        // Built here, appended right after the Player menu below at the maintainer's request. It lands
+        // ahead of the indexed Video menu, so videoMenuIndex is counted with it already in place.
         var iptvMenu = new Menu();
         // Translators: IPTV menu item that opens the window where IPTV sources are added and edited.
         iptvMenu.Append(commandIds[ActionId.OpenIptvSources], Label(Tr("Manage IPTV sources..."), ActionId.OpenIptvSources, shortcuts));
@@ -297,9 +298,13 @@ internal static class MainMenuBuilder
         menuBar.Append(markedMenu, Tr("Actions for marked files"));
         // Translators: Name of the Player menu in the menu bar, holding the playing, seeking and volume items.
         menuBar.Append(playerMenu, Tr("Player"));
-        // Appended last on purpose: the two indices returned below are written out as numbers, so a menu
+        // IPTV sits directly after Player at the maintainer's request. It is not counted by position, but
+        // it precedes the Video menu, so videoMenuIndex below already accounts for it.
+        // Translators: Name of the IPTV menu in the menu bar, holding the source manager and channel browser.
+        menuBar.Append(iptvMenu, Tr("IPTV"));
+        // Appended after IPTV: the two indices returned below are written out as numbers, so a menu
         // inserted before them would leave the bookmark and marked-file updates pointing at the wrong one.
-        var videoMenuIndex = 5;
+        var videoMenuIndex = 6;
         // Translators: Name of the menu bar menu holding what can be done with the YouTube video being played.
         menuBar.Append(videoMenu, Tr("Video options"));
         // Last, and it has to be: the three indices returned below are written out as numbers, so a menu
@@ -309,8 +314,6 @@ internal static class MainMenuBuilder
         // Safe after the indexed menus above: nothing counts the tools or help menus by position.
         // Translators: Name of the Tools menu in the menu bar, holding the media converter.
         menuBar.Append(toolsMenu, Tr("Tools"));
-        // Translators: Name of the IPTV menu in the menu bar, holding the source manager and channel browser.
-        menuBar.Append(iptvMenu, Tr("IPTV"));
         // Translators: Name of the Help menu in the menu bar.
         menuBar.Append(helpMenu, Tr("Help"));
         frame.SetMenuBar(menuBar);
