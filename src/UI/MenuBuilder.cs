@@ -271,20 +271,21 @@ internal static class MainMenuBuilder
         // Translators: Help submenu containing the commands that update Luna Player and its YouTube tools.
         helpMenu.AppendSubMenu(updatesMenu, Tr("Updates"));
 
-        // Every index returned to the caller is written out as a number, and the last of them is the video
-        // menu. This is appended after all of them, so it disturbs none - it lands between Recording and
-        // Help, which nothing counts by position.
+        // Appended after all the indexed menus below, between Recording and Help, which nothing counts by
+        // position - so the Tools menu can hold whatever it likes without disturbing the returned indices.
         var toolsMenu = new Menu();
         // Translators: Tools menu item that opens the window for converting files to another audio format.
         toolsMenu.Append(commandIds[ActionId.OpenMediaConverter], Label(Tr("Media converter..."), ActionId.OpenMediaConverter, shortcuts));
 
-        // Built here, appended right after the Player menu below at the maintainer's request. It lands
-        // ahead of the indexed Video menu, so videoMenuIndex is counted with it already in place.
+        // IPTV is a submenu of Tools rather than a top-level menu: two items do not earn a place on the menu
+        // bar, and the source manager and channel browser are tools like the converter above them.
         var iptvMenu = new Menu();
         // Translators: IPTV menu item that opens the window where IPTV sources are added and edited.
         iptvMenu.Append(commandIds[ActionId.OpenIptvSources], Label(Tr("Manage IPTV sources..."), ActionId.OpenIptvSources, shortcuts));
         // Translators: IPTV menu item that opens the list of channels the chosen IPTV source holds.
         iptvMenu.Append(commandIds[ActionId.OpenIptvChannels], Label(Tr("Browse channels..."), ActionId.OpenIptvChannels, shortcuts));
+        // Translators: Tools submenu holding the IPTV source manager and channel browser.
+        toolsMenu.AppendSubMenu(iptvMenu, Tr("IPTV"));
 
         var menuBar = new MenuBar();
         // Translators: Name of the File menu in the menu bar.
@@ -298,13 +299,9 @@ internal static class MainMenuBuilder
         menuBar.Append(markedMenu, Tr("Actions for marked files"));
         // Translators: Name of the Player menu in the menu bar, holding the playing, seeking and volume items.
         menuBar.Append(playerMenu, Tr("Player"));
-        // IPTV sits directly after Player at the maintainer's request. It is not counted by position, but
-        // it precedes the Video menu, so videoMenuIndex below already accounts for it.
-        // Translators: Name of the IPTV menu in the menu bar, holding the source manager and channel browser.
-        menuBar.Append(iptvMenu, Tr("IPTV"));
-        // Appended after IPTV: the two indices returned below are written out as numbers, so a menu
-        // inserted before them would leave the bookmark and marked-file updates pointing at the wrong one.
-        var videoMenuIndex = 6;
+        // The index returned below is written out as a number, so a menu inserted before the Video menu would
+        // leave it pointing at the wrong one.
+        var videoMenuIndex = 5;
         // Translators: Name of the menu bar menu holding what can be done with the YouTube video being played.
         menuBar.Append(videoMenu, Tr("Video options"));
         // Last, and it has to be: the three indices returned below are written out as numbers, so a menu
