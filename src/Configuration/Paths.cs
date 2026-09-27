@@ -36,6 +36,10 @@ internal static class Paths
     /// <summary>The saved links file.</summary>
     internal static string FavoritesFile { get; } = Path.Combine(RootDirectory, "favorites.json");
 
+    /// <summary>The saved IPTV sources file. Apart from the settings, because a source is content the user
+    /// builds up rather than configuration, the same way favourites and presets are.</summary>
+    internal static string IptvSourcesFile { get; } = Path.Combine(RootDirectory, "iptv-sources.json");
+
     /// <summary>What a path is compared and stored under, so that two spellings of one file - a relative
     /// path and an absolute one, or two different cases - are recognised as the same file.</summary>
     ///
