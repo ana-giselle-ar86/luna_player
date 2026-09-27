@@ -14,7 +14,7 @@ internal static class MediaLibrary
 
     private static readonly HashSet<string> PlaylistExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
-        ".m3u", ".m3u8",
+        ".m3u", ".m3u8", ".pls", ".xspf", ".asx", ".cue",
     };
 
     internal static IReadOnlyList<string> SupportedExtensions { get; } = MediaExtensions

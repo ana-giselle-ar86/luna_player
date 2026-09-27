@@ -4,6 +4,7 @@ using LunaPlayer.Application.ActionHandlers;
 using LunaPlayer.Bookmarks;
 using LunaPlayer.Favorites;
 using LunaPlayer.Configuration;
+using LunaPlayer.Iptv;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
 using LunaPlayer.Media;
@@ -104,6 +105,7 @@ internal sealed class ApplicationHost : IDisposable
         _ = new RecordingActions(
             router, _view, _settings, _speech, _dispatcher, _catalog, _recordingSources, _recorder);
         _tools = new ToolsActions(router, _view);
+        _ = new IptvActions(router, _view, _player, _speech, _dispatcher, new IptvSourceStore(Paths.IptvSourcesFile));
         router.EnsureComplete(ActionRegistry.All);
         _controller = new ApplicationController(
             _view,
