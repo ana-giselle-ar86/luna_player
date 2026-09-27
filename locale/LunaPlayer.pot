@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Luna Player\n"
 "Report-Msgid-Bugs-To: https://github.com/diamondStar35/luna_player/issues\n"
-"POT-Creation-Date: 2026-09-27 14:52+0200\n"
+"POT-Creation-Date: 2026-09-27 16:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -672,7 +672,7 @@ msgstr ""
 #: Application/ActionHandlers/BookmarkActions.cs:45
 #: Application/ActionHandlers/BookmarkActions.cs:75
 #: Application/ActionHandlers/BookmarkActions.cs:112
-#: Application/ActionHandlers/BookmarkActions.cs:196 UI/MenuBuilder.cs:294
+#: Application/ActionHandlers/BookmarkActions.cs:196 UI/MenuBuilder.cs:295
 msgid "Bookmarks"
 msgstr ""
 
@@ -1327,7 +1327,7 @@ msgstr ""
 #: Application/ActionHandlers/IptvActions.cs:182
 #: Application/ActionHandlers/IptvActions.cs:206
 #: Application/ActionHandlers/IptvActions.cs:215
-#: Application/ActionHandlers/IptvActions.cs:272 UI/MenuBuilder.cs:313
+#: Application/ActionHandlers/IptvActions.cs:272 UI/MenuBuilder.cs:304
 msgid "IPTV"
 msgstr ""
 
@@ -1822,7 +1822,7 @@ msgstr ""
 #. Translators: Name of the settings category for recording sound.
 #. Translators: Title of the window where recording is set up and started.
 #. Translators: Title of the messages shown about recording.
-#: Application/ActionHandlers/RecordingActions.cs:213 UI/MenuBuilder.cs:308
+#: Application/ActionHandlers/RecordingActions.cs:213 UI/MenuBuilder.cs:313
 #: UI/PreferencesDialog.cs:54 UI/Recording/RecordingDialog.cs:83
 #: UI/Recording/RecordingDialog.cs:720
 msgid "Recording"
@@ -2889,7 +2889,7 @@ msgid "Jump"
 msgstr ""
 
 #. Translators: Name of the Edit menu in the menu bar.
-#: UI/BookmarkManagerDialog.cs:36 UI/MenuBuilder.cs:292
+#: UI/BookmarkManagerDialog.cs:36 UI/MenuBuilder.cs:293
 msgid "Edit"
 msgstr ""
 
@@ -4064,55 +4064,55 @@ msgid "Media converter..."
 msgstr ""
 
 #. Translators: IPTV menu item that opens the window where IPTV sources are added and edited.
-#: UI/MenuBuilder.cs:284
+#: UI/MenuBuilder.cs:285
 msgid "Manage IPTV sources..."
 msgstr ""
 
 #. Translators: IPTV menu item that opens the list of channels the chosen IPTV source holds.
-#: UI/MenuBuilder.cs:286
+#: UI/MenuBuilder.cs:287
 msgid "Browse channels..."
 msgstr ""
 
 #. Translators: Name of the File menu in the menu bar.
-#: UI/MenuBuilder.cs:290
+#: UI/MenuBuilder.cs:291
 msgid "File"
 msgstr ""
 
 #. Translators: Name of the menu bar menu holding the things that can be done to the marked files at once.
-#: UI/MenuBuilder.cs:297
+#: UI/MenuBuilder.cs:298
 msgid "Actions for marked files"
 msgstr ""
 
 #. Translators: Name of the Player menu in the menu bar, holding the playing, seeking and volume items.
-#: UI/MenuBuilder.cs:299
+#: UI/MenuBuilder.cs:300
 msgid "Player"
 msgstr ""
 
 #. Translators: Name of the menu bar menu holding what can be done with the YouTube video being played.
-#: UI/MenuBuilder.cs:304
+#: UI/MenuBuilder.cs:309
 msgid "Video options"
 msgstr ""
 
 #. Translators: Name of the Tools menu in the menu bar, holding the media converter.
-#: UI/MenuBuilder.cs:311
+#: UI/MenuBuilder.cs:316
 msgid "Tools"
 msgstr ""
 
 #. Translators: Name of the Help menu in the menu bar.
-#: UI/MenuBuilder.cs:315
+#: UI/MenuBuilder.cs:318
 msgid "Help"
 msgstr ""
 
 #. Translators: Item in the Equalizer submenu that leaves the sound unequalized. It is ticked while no preset is in use.
-#: UI/MenuBuilder.cs:346
+#: UI/MenuBuilder.cs:349
 msgid "Off"
 msgstr ""
 
-#: UI/MenuBuilder.cs:352
+#: UI/MenuBuilder.cs:355
 msgid "Edit current preset..."
 msgstr ""
 
-#: UI/MenuBuilder.cs:355
+#: UI/MenuBuilder.cs:358
 msgid "Manage presets..."
 msgstr ""
 
