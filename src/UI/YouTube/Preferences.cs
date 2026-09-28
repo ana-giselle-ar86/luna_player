@@ -6,10 +6,9 @@ namespace LunaPlayer.UI.YouTube;
 /// <summary>The YouTube page of the Preferences window.</summary>
 ///
 /// <remarks>
-/// Two of these settings govern the player's own resolver and two govern yt-dlp, which is optional:
-/// nothing here needs it until <see cref="YouTubeSettings.UseYtDlp"/> is turned on or a download is
-/// asked for. The yt-dlp controls are therefore grouped below the switch that brings them into play,
-/// rather than sitting among the settings that always apply.
+/// Most of these settings always apply. The last three govern yt-dlp, which the player fetches the first
+/// time a YouTube search is run and which every YouTube feature then leans on; they are grouped together
+/// below the settings that shape a search and its results.
 /// </remarks>
 internal sealed class Preferences : UI.Preferences
 {
@@ -17,8 +16,8 @@ internal sealed class Preferences : UI.Preferences
     private readonly CheckBox _audioOnly;
     private readonly Choice _quality;
     private readonly SpinCtrl _resultCount;
+    private readonly CheckBox _searchSuggestions;
     private readonly Choice _mixedLink;
-    private readonly CheckBox _useYtDlp;
     private readonly Choice _channel;
     private readonly CheckBox _checkUpdates;
 
@@ -44,6 +43,8 @@ internal sealed class Preferences : UI.Preferences
         // Translators: Label of the box holding how many videos a search should look for.
         var resultCountLabel = new StaticText(panel, label: Tr("Number of search results"));
         _resultCount = new SpinCtrl(panel, settings.SearchResultCount, 5, 100);
+        // Translators: Tick box on the YouTube settings page: offer search suggestions as the user types.
+        _searchSuggestions = new CheckBox(panel, label: Tr("Show search suggestions while typing")) { Checked = settings.SearchSuggestions };
         // Translators: Label of the list that chooses what to do with a link naming a video and a playlist at once.
         var mixedLinkLabel = new StaticText(panel, label: Tr("Video+playlist link behavior"));
         _mixedLink = Choice(panel, [
@@ -54,9 +55,6 @@ internal sealed class Preferences : UI.Preferences
             // Translators: One of the choices for a link naming both: always open the whole playlist.
             Tr("Open the playlist")], (int)settings.MixedLink);
 
-        // Translators: Tick box on the YouTube settings page: use the separate yt-dlp program to find streams
-        // instead of the player's own way of finding them. "yt-dlp" is the name of that program and is not translated.
-        _useYtDlp = new CheckBox(panel, label: Tr("Use yt-dlp to resolve streams")) { Checked = settings.UseYtDlp };
         // Translators: Label of the list that chooses which line of yt-dlp releases to follow. "yt-dlp" is a
         // program name and is not translated.
         var channelLabel = new StaticText(panel, label: Tr("yt-dlp update channel"));
@@ -67,13 +65,6 @@ internal sealed class Preferences : UI.Preferences
             Tr("Nightly"),
             // Translators: One of the yt-dlp release lines: rebuilt from the latest source.
             Tr("Master")], (int)settings.Channel);
-        // Asked as soon as the box is ticked rather than when a stream is next resolved, so the answer
-        // arrives while the user is still looking at the setting that caused the question.
-        _useYtDlp.Toggled += (_, _) =>
-        {
-            if (_useYtDlp.Checked && !operations.EnsureYouTubeComponents(SelectedChannel))
-                _useYtDlp.Checked = false;
-        };
         // Translators: Tick box on the YouTube settings page: look for a newer yt-dlp each time the player starts.
         // "yt-dlp" is a program name and is not translated.
         _checkUpdates = new CheckBox(panel, label: Tr("Check for yt-dlp updates on startup")) { Checked = settings.CheckComponentUpdates };
@@ -85,8 +76,8 @@ internal sealed class Preferences : UI.Preferences
         sizer.Add(_audioOnly, flags: SizerFlags.All, border: 8);
         AddField(sizer, qualityLabel, _quality);
         AddField(sizer, resultCountLabel, _resultCount);
+        sizer.Add(_searchSuggestions, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
         AddField(sizer, mixedLinkLabel, _mixedLink);
-        sizer.Add(_useYtDlp, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
         AddField(sizer, channelLabel, _channel);
         sizer.Add(_checkUpdates, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
         sizer.Add(download, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
@@ -102,14 +93,12 @@ internal sealed class Preferences : UI.Preferences
             // Translators: Help text for the box holding how many videos a search should look for. The two numbers are
             // the smallest and largest it accepts.
             Tr("Sets the size of the first result page, from 5 through 100 videos. Larger pages take longer to fetch; reaching the end still loads more results."));
+        Help(_searchSuggestions,
+            // Translators: Help text for the tick box that offers search suggestions while typing.
+            Tr("Offers a list of completions as you type in the search box, fetched from YouTube. Clear this option to type without those background network requests."));
         Help(_mixedLink,
             // Translators: Help text for the list that chooses what to do with a link naming a video and a playlist at once.
             Tr("For an address containing both a video and a playlist, Luna can ask each time, open only that video, or list the complete playlist."));
-        Help(_useYtDlp,
-            // Translators: Help text for the tick box that hands stream finding to yt-dlp. "yt-dlp" is a program name
-            // and is not translated.
-            Tr("Lets the separate yt-dlp program find playable sound and picture streams. Luna offers to download it when needed; " +
-            "leave this clear unless the built-in resolver cannot open a video."));
         Help(_channel,
             // Translators: Help text for the list that chooses which line of yt-dlp releases to follow. "yt-dlp" is a program name and is not translated.
             Tr("Stable changes least often and is intended for normal use. Nightly is rebuilt each night. Master follows the newest source and may be unreliable."));
@@ -120,7 +109,7 @@ internal sealed class Preferences : UI.Preferences
         Help(download,
             // Translators: Help text for the button that fetches the extra programs YouTube downloads need. "yt-dlp" is
             // a program name and is not translated.
-            Tr("Fetches yt-dlp for video downloads and optional stream resolution. The other YouTube features do not require this component."));
+            Tr("Fetches yt-dlp and the JavaScript runtime it needs. YouTube playback and downloads do not work until these are installed."));
     }
 
     /// <summary>The release line the page is showing, which is not the one in the settings until the
@@ -132,8 +121,8 @@ internal sealed class Preferences : UI.Preferences
         _settings.AudioOnly = _audioOnly.Checked;
         _settings.Quality = (YouTubeQuality)Math.Max(0, _quality.SelectedIndex);
         _settings.SearchResultCount = _resultCount.Value;
+        _settings.SearchSuggestions = _searchSuggestions.Checked;
         _settings.MixedLink = (MixedLinkBehavior)Math.Max(0, _mixedLink.SelectedIndex);
-        _settings.UseYtDlp = _useYtDlp.Checked;
         _settings.Channel = SelectedChannel;
         _settings.CheckComponentUpdates = _checkUpdates.Checked;
     }
@@ -143,8 +132,8 @@ internal sealed class Preferences : UI.Preferences
         _audioOnly.Checked = _settings.AudioOnly;
         _quality.SelectedIndex = (int)_settings.Quality;
         _resultCount.Value = _settings.SearchResultCount;
+        _searchSuggestions.Checked = _settings.SearchSuggestions;
         _mixedLink.SelectedIndex = (int)_settings.MixedLink;
-        _useYtDlp.Checked = _settings.UseYtDlp;
         _channel.SelectedIndex = (int)_settings.Channel;
         _checkUpdates.Checked = _settings.CheckComponentUpdates;
     }

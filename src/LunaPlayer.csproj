@@ -67,14 +67,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="YoutubeExplode" Version="6.6.2" />
-  </ItemGroup>
-
-  <ItemGroup>
     <TranslationPo Include="$(RepositoryRoot)locale\**\LunaPlayer.po" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PyYt\PyYt.csproj">
+      <AdditionalProperties>Configuration=$(Configuration)</AdditionalProperties>
+    </ProjectReference>
     <ProjectReference Include="..\third-party\WxSharp\src\WxSharp\WxSharp.csproj">
       <AdditionalProperties>Configuration=$(Configuration)</AdditionalProperties>
     </ProjectReference>

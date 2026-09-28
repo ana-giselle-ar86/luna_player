@@ -135,15 +135,38 @@ internal sealed class YouTubeActions
 
     private void Search()
     {
-        var typed = _view.PromptText(
-            // Translators: Asks the user what to look for on YouTube.
-            Tr("Enter search text."),
-            // Translators: Title of the window that asks what to look for on YouTube.
-            Tr("Search YouTube"));
-        if (typed is null || typed.Trim().Length == 0)
+        var prompt = new YouTubeSearchPrompt(
+            InitialQuery: string.Empty,
+            SuggestionsEnabled: _settings.YouTube.SearchSuggestions,
+            FetchSuggestions: _backend.Suggestions,
+            AnnounceSuggestions: AnnounceSuggestions);
+        if (_view.SearchYouTube(prompt) is not { } asked || asked.Query.Length == 0)
             return;
-        _sessions.Search(typed.Trim());
+        RunSearch(asked.Query, asked.Filter);
     }
+
+    /// <remarks>
+    /// The programs are ensured here, not at the dialog: a search prefetches and plays its first result,
+    /// which needs yt-dlp. When they are missing the offer is made and the search picked up again once they
+    /// arrive; when it is declined nothing happens, which is the whole of "I would rather not install them".
+    /// </remarks>
+    private void RunSearch(string query, int filter)
+    {
+        if (!Backend.HasComponents
+            && _components.Ensure(_settings.YouTube.Channel, () => RunSearch(query, filter))
+                is not Components.ComponentsState.Ready)
+            return;
+        _sessions.Search(query, filter);
+    }
+
+    /// <summary>Speaks that suggestions have appeared under the search box, on the UI thread.</summary>
+    /// <remarks>Without interrupting, so it does not talk over the word the user is still typing.</remarks>
+    private void AnnounceSuggestions() =>
+        _speech.Speak(
+            // Translators: Spoken when the list of search suggestions appears under the YouTube search box.
+            Tr("Search suggestions shown"),
+            // Translators: The short wording spoken when search suggestions appear.
+            Tr("Suggestions shown"), interrupt: false);
 
     private void Download()
     {
@@ -155,15 +178,13 @@ internal sealed class YouTubeActions
     /// Off the UI thread behind a progress window, because a download is as long as the file is. The job
     /// gets only the strings it needs; everything it reports is turned into words back on this thread.
     ///
-    /// Saving needs nothing installed. It goes through yt-dlp when the setting asks for it and through the
-    /// player's own resolver otherwise, so somebody who has never fetched a thing can still save a video -
-    /// which the Python player, where saving is yt-dlp's job alone, cannot do.
+    /// Saving goes through yt-dlp, the only thing that can turn a video into a file, so it needs the
+    /// programs present. When they are not, the offer is made here rather than a refusal shown: accepting
+    /// it fetches them and comes back to this.
     /// </remarks>
     internal void DownloadTo(string url)
     {
-        // Only the yt-dlp route needs anything installed, and even then the offer is made here rather than
-        // refused: accepting it fetches the programs and comes back to this.
-        if (_settings.YouTube.UseYtDlp && !Backend.HasComponents
+        if (!Backend.HasComponents
             && _components.Ensure(_settings.YouTube.Channel, () => DownloadTo(url))
                 is not Components.ComponentsState.Ready)
             return;

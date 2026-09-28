@@ -388,25 +388,22 @@ internal sealed class YouTubeSettings
     /// </remarks>
     public int SearchResultCount { get; set; } = 50;
 
+    /// <summary>Whether the search box offers live suggestions as the user types.</summary>
+    /// <remarks>
+    /// On by default, matching the Python player. Each keystroke that settles fetches a short list of
+    /// completions from YouTube, so somebody who would rather type undisturbed - or is on a slow or metered
+    /// connection - can turn the network chatter off here.
+    /// </remarks>
+    public bool SearchSuggestions { get; set; } = true;
+
     /// <summary>What to do with a link that names a video and a playlist at once.</summary>
     [JsonConverter(typeof(JsonStringEnumConverter<MixedLinkBehavior>))]
     public MixedLinkBehavior MixedLink { get; set; } = MixedLinkBehavior.Ask;
-
-    /// <summary>Whether streams are resolved with yt-dlp rather than the player's own resolver.</summary>
-    ///
-    /// <remarks>
-    /// Nothing needs yt-dlp until this is on. It is the switch that makes the program an option rather
-    /// than a requirement, and it decides whether the player ever offers to fetch it.
-    /// </remarks>
-    public bool UseYtDlp { get; set; }
 
     [JsonConverter(typeof(JsonStringEnumConverter<YtDlpChannel>))]
     public YtDlpChannel Channel { get; set; } = YtDlpChannel.Stable;
 
     public bool CheckComponentUpdates { get; set; }
-
-    /// <summary>Whether the user has asked not to be offered the download again.</summary>
-    public bool SkipComponentPrompt { get; set; }
 
     internal YouTubeSettings Copy() => (YouTubeSettings)MemberwiseClone();
 
@@ -415,11 +412,10 @@ internal sealed class YouTubeSettings
         AudioOnly = source.AudioOnly;
         Quality = source.Quality;
         SearchResultCount = source.SearchResultCount;
+        SearchSuggestions = source.SearchSuggestions;
         MixedLink = source.MixedLink;
-        UseYtDlp = source.UseYtDlp;
         Channel = source.Channel;
         CheckComponentUpdates = source.CheckComponentUpdates;
-        SkipComponentPrompt = source.SkipComponentPrompt;
     }
 }
 

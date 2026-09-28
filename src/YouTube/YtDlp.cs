@@ -370,14 +370,14 @@ internal sealed partial class YtDlpClient
             url = raw.StartsWith("http", StringComparison.OrdinalIgnoreCase)
                 ? raw
                 : id.Length > 0
-                    ? ExplodeClient.WatchUrl(id)
-                    : raw.Length > 0 ? ExplodeClient.WatchUrl(raw) : string.Empty;
+                    ? PyYtClient.WatchUrl(id)
+                    : raw.Length > 0 ? PyYtClient.WatchUrl(raw) : string.Empty;
         }
         if (url.Length == 0)
             return null;
         // Spelled the one way the player spells them, so an address from here and one from a search name
         // the same cache entry and the same playlist source.
-        url = ExplodeClient.Canonical(url) ?? url;
+        url = PyYtClient.Canonical(url) ?? url;
         var duration = entry.TryGetProperty("duration", out var seconds)
             && seconds.ValueKind == JsonValueKind.Number
             && seconds.TryGetDouble(out var value) && value > 0

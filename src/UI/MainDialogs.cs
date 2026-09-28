@@ -45,13 +45,14 @@ internal sealed partial class MainFrame
     public OpenedFilesRequest? ChooseOpenedFile(int count, Func<int, string> nameAt, int selectedIndex) { using var dialog = new OpenedFilesDialog(DialogParent, count, nameAt, selectedIndex); return dialog.Show(); }
     public IProgressView BeginProgress(string title, string message, bool proportional, bool detailed) => new ProgressView(DialogParent, title, message, proportional, detailed);
     public YouTubeLinkKind? ChooseYouTubeLinkKind() { using var dialog = new YouTube.LinkKindDialog(DialogParent); return dialog.Show(); }
+    public YouTubeSearchRequest? SearchYouTube(YouTubeSearchPrompt prompt) { using var dialog = new YouTube.SearchDialog(DialogParent, _dispatcher, prompt); return dialog.Show(); }
     public FavoriteRequest? ManageFavorites(IReadOnlyList<FavoriteListItem> favorites, string selectedId) { using var dialog = new YouTube.FavoritesDialog(DialogParent, favorites, selectedId); return dialog.Show(); }
     public FavoriteDraft? EditFavorite(string caption, FavoriteDraft value) { using var dialog = new YouTube.FavoriteEditDialog(DialogParent, caption, value); return dialog.Show(); }
     public IptvSourceRequest? ManageIptvSources(IReadOnlyList<IptvSourceListItem> sources, string selectedId) { using var dialog = new Iptv.IptvSourcesDialog(DialogParent, sources, selectedId); return dialog.Show(); }
     public LunaPlayer.Iptv.IptvSourceDraft? EditIptvSource(string caption, LunaPlayer.Iptv.IptvSourceDraft value) { using var dialog = new Iptv.IptvSourceEditDialog(DialogParent, caption, value); return dialog.Show(); }
     public int? BrowseChannels(ChannelBrowserPrompt prompt) { using var dialog = new Iptv.ChannelBrowserDialog(DialogParent, prompt); return dialog.Show(); }
     public int? ShowYouTubeResults(YouTubeResultsPrompt prompt) { using var dialog = new YouTube.ResultsDialog(DialogParent, prompt); return dialog.Show(); }
-    public bool OfferYouTubeComponents(out bool doNotAskAgain) { using var dialog = new YouTube.ComponentsDialog(DialogParent); return dialog.Show(out doNotAskAgain); }
+    public bool OfferYouTubeComponents() { using var dialog = new YouTube.ComponentsDialog(DialogParent); return dialog.Show(); }
     public void ShowTextInfo(string title, string text) { using var dialog = new TextInfoDialog(DialogParent, title, text); dialog.Show(); }
     public void ShowRecording(
         LunaPlayer.Recording.AudioCatalog catalog, LunaPlayer.Recording.RecordingSources sources, LunaPlayer.Recording.RecordingEngine engine)

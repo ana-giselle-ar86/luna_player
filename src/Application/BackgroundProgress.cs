@@ -92,6 +92,9 @@ internal static class BackgroundProgress
         private IDisposable? _ticker;
         private bool _finished;
         private int _percent;
+        // The step (ProgressUpdate.Found) the bar is currently tracking. A change means a new
+        // sub-task has begun, which is the one time the monotonic bar is allowed back to nought.
+        private int _lastFound = -1;
 
         internal Job(
             IMainView view,
@@ -134,6 +137,16 @@ internal static class BackgroundProgress
                 var percent = shown.Total > 0
                     ? (int)Math.Clamp(100.0 * shown.Value / shown.Total, 0, 100)
                     : 0;
+                // A multi-file job (fetching several components) counts each file from nought, so the
+                // bar has to reset when the step changes rather than stay pinned at the last file's 100%.
+                // This is safe for the aggregate single-count jobs that reuse Job: their proportion only
+                // ever climbs, so resetting then taking the max lands on the same figure, and a job that
+                // never sets Found never changes step and so never resets.
+                if (shown.Found != _lastFound)
+                {
+                    _lastFound = shown.Found;
+                    _percent = 0;
+                }
                 _percent = Math.Max(_percent, percent);
                 _progress.Update(_percent, _prompt.Describe(shown));
             }

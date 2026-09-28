@@ -13,9 +13,10 @@ namespace LunaPlayer.YouTube;
 /// <remarks>
 /// The offer is made at the point of use rather than at startup, which is where the Python player makes
 /// it. Nothing the player does by default needs either program - searching, playing and saving are its own
-/// work - so somebody who never turns yt-dlp on is never asked about it, and somebody who is asked has
-/// just done something that wants it. The tick box that stops the asking is what makes that possible: an
-/// offer at the point of use can be declined once and for good.
+/// work - so somebody who never touches YouTube is never asked about it, and somebody who is asked has just
+/// tried to search, which is the one thing that cannot go anywhere without them. There is no "do not ask
+/// again": the programs are the only route to YouTube, so declining is answered next time by asking again
+/// rather than by giving up on the feature for good.
 /// </remarks>
 internal sealed class Components
 {
@@ -63,22 +64,11 @@ internal sealed class Components
     /// GitHub takes; this returns at once and calls <paramref name="installed"/> when it is over, so the
     /// player stays usable and the caller can pick up where it left off.
     /// </remarks>
-    /// <param name="ignoreSkip">Whether to offer even to somebody who asked not to be offered again.
-    /// True where the user has just asked for something that is nothing but these programs - ticking the
-    /// yt-dlp box - because "stop interrupting me" is not an answer to a question they went and asked.
-    /// </param>
-    internal ComponentsState Ensure(
-        YtDlpChannel channel, Action? installed = null, bool ignoreSkip = false)
+    internal ComponentsState Ensure(YtDlpChannel channel, Action? installed = null)
     {
         if (Ready)
             return ComponentsState.Ready;
-        if (_settings.YouTube.SkipComponentPrompt && !ignoreSkip)
-            return ComponentsState.Declined;
-        var accepted = _view.OfferYouTubeComponents(out var doNotAskAgain);
-        // Honoured whichever way they answered: "stop asking" is a separate question from "fetch them now".
-        if (doNotAskAgain)
-            _settings.YouTube.SkipComponentPrompt = true;
-        if (!accepted)
+        if (!_view.OfferYouTubeComponents())
             return ComponentsState.Declined;
         Install(channel, success =>
         {

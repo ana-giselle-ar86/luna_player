@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <IsAotCompatible>true</IsAotCompatible>
+    <IsTrimmable>true</IsTrimmable>
+    <PackageId>PyYt</PackageId>
+    <Version>0.8.0</Version>
+    <Description>A dependency-free, Native-AOT-compatible .NET port of py_yt.</Description>
+    <RepositoryUrl>https://github.com/alexmercerind/youtube-search-python</RepositoryUrl>
+  </PropertyGroup>
+</Project>

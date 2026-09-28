@@ -49,7 +49,7 @@ internal sealed class YouTubeSessions : IDisposable
     private readonly PlayerSettings _settings;
     private readonly ISpeechOutput _speech;
     private readonly IApplicationDispatcher _dispatcher;
-    private readonly ExplodeClient _client;
+    private readonly PyYtClient _client;
     private readonly Backend _backend;
     private readonly ResolveCache _cache;
     private readonly Action<string> _download;
@@ -67,7 +67,7 @@ internal sealed class YouTubeSessions : IDisposable
         PlayerSettings settings,
         ISpeechOutput speech,
         IApplicationDispatcher dispatcher,
-        ExplodeClient client,
+        PyYtClient client,
         Backend backend,
         ResolveCache cache,
         Action<string> download,
@@ -98,7 +98,9 @@ internal sealed class YouTubeSessions : IDisposable
     /// sign of a rate limit or a broken network in the progress window the user is already looking at
     /// rather than in a message box after they have picked something.
     /// </remarks>
-    internal void Search(string query)
+    /// <param name="filter">The kind of result the user asked for in the search dialog, 0-5. It decides
+    /// which YouTube search is run and whether the rows are videos, playlists, or channels.</param>
+    internal void Search(string query, int filter)
     {
         var audioOnly = _settings.YouTube.AudioOnly;
         var quality = _settings.YouTube.Quality;
@@ -114,7 +116,7 @@ internal sealed class YouTubeSessions : IDisposable
             Tr("Searching videos..."),
             update => update.Name) { Proportional = false };
         BackgroundProgress.Start(_view, _dispatcher, prompt,
-            (report, token) => RunSearch(query, count, audioOnly, quality, fetching, report, token),
+            (report, token) => RunSearch(query, filter, count, audioOnly, quality, fetching, report, token),
             found =>
             {
                 if (found.Failure is ResolveFailure.Cancelled)
@@ -184,13 +186,54 @@ internal sealed class YouTubeSessions : IDisposable
             });
     }
 
+    /// <summary>Lists the playlists a channel publishes and shows them; choosing one browses into it.</summary>
+    /// <remarks>
+    /// The Python player opens a dialog of a channel's playlists here; older Luna only opened the channel
+    /// page in the browser. The rows are playlists, so choosing one runs <see cref="OpenPlaylist"/> and
+    /// browses a further level in.
+    /// </remarks>
+    private void OpenChannel(YouTubeResult channel)
+    {
+        var audioOnly = _settings.YouTube.AudioOnly;
+        var quality = _settings.YouTube.Quality;
+        var channelId = channel.Id;
+        var prompt = new ProgressPrompt(
+            // Translators: Title of the window shown while a YouTube channel's playlists are being listed.
+            Tr("Loading channel"),
+            // Translators: First message shown while a YouTube channel's playlists are being listed.
+            Tr("Loading channel playlists..."),
+            update => update.Name) { Proportional = false };
+        BackgroundProgress.Start(_view, _dispatcher, prompt,
+            (_, token) => RunChannel(channelId, token),
+            found =>
+            {
+                if (found.Failure is ResolveFailure.Cancelled)
+                    return;
+                if (found.Failure is not ResolveFailure.None)
+                {
+                    ShowError(Describe(found.Failure, found.Detail,
+                        // Translators: Shown when a YouTube channel's playlists could not be read.
+                        Tr("Could not read this YouTube channel.")));
+                    return;
+                }
+                if (found.Items.Count == 0)
+                {
+                    ShowError(
+                        // Translators: Shown when a YouTube channel publishes no playlists.
+                        Tr("This channel has no public playlists."));
+                    return;
+                }
+                Show(new YouTubeSession(SessionKind.Channel, found.Items, audioOnly, quality));
+            });
+    }
+
     /// <summary>Plays one video, named by a link rather than chosen from a list.</summary>
     /// <remarks>There is no session: nothing follows a single video, so there is no next and Escape has
     /// nothing to go back to. Any session already open is closed, as the Python player closes it.</remarks>
     internal void PlayLink(string link)
     {
         Clear();
-        var watchUrl = ExplodeClient.Canonical(link);
+        var watchUrl = PyYtClient.Canonical(link);
         if (watchUrl is null)
         {
             ShowError(
@@ -326,6 +369,19 @@ internal sealed class YouTubeSessions : IDisposable
             }
             session.Selected = index;
             var item = session.Items[index];
+            // A playlist or channel row is not played; choosing it browses one level in, replacing this
+            // list with the videos of the playlist or the playlists of the channel. The Python player does
+            // the same, opening a fresh dialog rather than trying to play the thing itself.
+            if (item.ItemType is YouTubeItemType.Playlist)
+            {
+                OpenPlaylist(item.Url);
+                return;
+            }
+            if (item.ItemType is YouTubeItemType.Channel)
+            {
+                OpenChannel(item);
+                return;
+            }
             // A video already resolved starts here and now, with no window in between. That is what the
             // prefetching is for, and it is the difference the user actually notices.
             if (Ready(session, item) is Resolved ready)
@@ -502,6 +558,10 @@ internal sealed class YouTubeSessions : IDisposable
         for (var index = Math.Max(0, start); index < end; index++)
         {
             var item = session.Items[index];
+            // Only videos resolve to a stream; a playlist or channel row is browsed into, not played, so
+            // there is nothing to make ready for it.
+            if (item.ItemType is not YouTubeItemType.Video)
+                continue;
             _cache.Prefetch(item.Url, item, session.AudioOnly, session.Quality, session.Token);
         }
     }
@@ -513,6 +573,7 @@ internal sealed class YouTubeSessions : IDisposable
 
     private SearchResults RunSearch(
         string query,
+        int filter,
         int count,
         bool audioOnly,
         YouTubeQuality quality,
@@ -522,19 +583,24 @@ internal sealed class YouTubeSessions : IDisposable
     {
         try
         {
-            var (items, page) = _client.Search(query, count, token);
+            var (items, page) = _client.Search(query, filter, count, token);
             if (items.Count == 0)
                 return new SearchResults([], null, ResolveFailure.None, string.Empty);
-            report(new ProgressUpdate(0, 0, fetching));
-            // Waited for, not merely started: the list opens on its first row, and the point of doing this
-            // before the window appears is that choosing that row plays at once. A video that will not
-            // resolve is not an error - the user still gets their results - so the outcome is dropped.
-            _ = _cache.Wait(items[0].Url, items[0], audioOnly, quality, token, token);
+            // Only a video is worth resolving ahead: a playlist or channel row opens a browse dialog, not a
+            // stream, so a search filtered to those has nothing here to make ready.
+            if (items[0].ItemType is YouTubeItemType.Video)
+            {
+                report(new ProgressUpdate(0, 0, fetching));
+                // Waited for, not merely started: the list opens on its first row, and the point of doing
+                // this before the window appears is that choosing that row plays at once. A video that will
+                // not resolve is not an error - the user still gets their results - so the outcome is dropped.
+                _ = _cache.Wait(items[0].Url, items[0], audioOnly, quality, token, token);
+            }
             return new SearchResults(items, page, ResolveFailure.None, string.Empty);
         }
         catch (Exception failure)
         {
-            var explained = ExplodeClient.Explain(failure, token);
+            var explained = PyYtClient.Explain(failure, token);
             return new SearchResults([], null, explained.Failure, explained.Detail);
         }
     }
@@ -543,6 +609,20 @@ internal sealed class YouTubeSessions : IDisposable
     {
         var (title, items, failure, detail) = _backend.Playlist(link, token);
         return new PlaylistResults(title, items, failure, detail);
+    }
+
+    private PlaylistResults RunChannel(string channelId, CancellationToken token)
+    {
+        try
+        {
+            var (title, items) = _client.ChannelPlaylists(channelId, token);
+            return new PlaylistResults(title, items, ResolveFailure.None, string.Empty);
+        }
+        catch (Exception failure)
+        {
+            var explained = PyYtClient.Explain(failure, token);
+            return new PlaylistResults(string.Empty, [], explained.Failure, explained.Detail);
+        }
     }
 
     // ---- wording ----
@@ -567,9 +647,9 @@ internal sealed class YouTubeSessions : IDisposable
             ResolveFailure.Unplayable => Tr("YouTube will not play this video here."),
             // Translators: Shown when a video exists but offers nothing the player can play.
             ResolveFailure.NoStream => Tr("Could not resolve a playable stream."),
-            // Translators: Shown when the yt-dlp resolver is turned on and the programs it needs are not
-            // installed. "yt-dlp" is a program name and is not translated.
-            ResolveFailure.MissingComponents => Tr("YouTube components are missing. Download them in the YouTube settings, or turn off the yt-dlp resolver there."),
+            // Translators: Shown when the programs YouTube playback needs are not installed. "yt-dlp" is a
+            // program name and is not translated.
+            ResolveFailure.MissingComponents => Tr("YouTube components are missing. Download them from the YouTube settings to play or download videos."),
             // Translators: Shown when YouTube is refusing requests from this computer for the time being.
             // "HTTP 429" is the numbered error it answers with and is not translated.
             ResolveFailure.RateLimited => Tr("YouTube returned HTTP 429 (Too Many Requests). Your IP may be temporarily rate-limited."),

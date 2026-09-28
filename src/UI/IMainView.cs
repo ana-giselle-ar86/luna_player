@@ -21,6 +21,31 @@ internal readonly record struct AppUpdatePrompt(string CurrentVersion, string Av
 /// <summary>Which half of a link naming a video and a playlist at once the user meant.</summary>
 internal enum YouTubeLinkKind { Video, Playlist }
 
+/// <summary>What the user asked to search YouTube for, and which kind of result they filtered to.</summary>
+/// <param name="Query">The words to search for, already trimmed.</param>
+/// <param name="Filter">The row chosen in the search dialog's filter, 0-5: no filter, live, upload date,
+/// view count, playlist, channels.</param>
+internal readonly record struct YouTubeSearchRequest(string Query, int Filter);
+
+/// <summary>Everything the search window needs beyond the widgets it builds for itself.</summary>
+///
+/// <remarks>
+/// The window owns the debounce and the thread the suggestions are fetched on - that is presentation, and
+/// keeps the network work off the UI thread without the action handler having to know how the box is laid
+/// out - but it is handed the fetch itself and the words to announce rather than reaching for the client
+/// or the screen reader, neither of which the UI layer knows about.
+/// </remarks>
+/// <param name="InitialQuery">What to put in the box before it opens; usually empty.</param>
+/// <param name="SuggestionsEnabled">Whether the box offers live suggestions as the user types.</param>
+/// <param name="FetchSuggestions">Fetches the words YouTube offers to finish a query. Called on a
+/// background thread, so it may block; an empty list is a fine answer.</param>
+/// <param name="AnnounceSuggestions">Speaks that suggestions have appeared, on the UI thread.</param>
+internal sealed record YouTubeSearchPrompt(
+    string InitialQuery,
+    bool SuggestionsEnabled,
+    Func<string, CancellationToken, IReadOnlyList<string>> FetchSuggestions,
+    Action AnnounceSuggestions);
+
 internal readonly record struct FavoriteListItem(string Id, string Name, string Type, string Link);
 internal enum FavoriteAction { Open, Add, Edit, Remove }
 internal readonly record struct FavoriteRequest(FavoriteAction Action, string Id);
@@ -124,12 +149,6 @@ internal sealed record PrefsOps(
     /// fetch from whichever line was chosen last time, not the one on screen.
     /// </remarks>
     Action<YtDlpChannel> DownloadYouTubeComponents,
-    /// <summary>Makes sure the programs the yt-dlp resolver needs are present, offering to fetch them if
-    /// not. False means the setting that asked for them should be put back.</summary>
-    /// <summary>Makes sure those programs are there, offering to fetch them from the release line the
-    /// page currently shows. False means the page should put its tick box back - the user declined - rather
-    /// than that the programs are absent, which is also true while they are on their way.</summary>
-    Func<YtDlpChannel, bool> EnsureYouTubeComponents,
     Action<PlayerSettings> ApplyImmediate);
 
 internal interface IProgressView : IDisposable
@@ -232,6 +251,9 @@ internal interface IMainView : IDisposable
     /// <summary>Asks which half of a link naming a video and a playlist the user meant. Null when they
     /// backed out.</summary>
     YouTubeLinkKind? ChooseYouTubeLinkKind();
+    /// <summary>Opens the search window and returns what the user asked to search for, or null when they
+    /// closed it without searching.</summary>
+    YouTubeSearchRequest? SearchYouTube(YouTubeSearchPrompt prompt);
     FavoriteRequest? ManageFavorites(IReadOnlyList<FavoriteListItem> favorites, string selectedId);
     FavoriteDraft? EditFavorite(string caption, FavoriteDraft value);
     /// <summary>Opens the IPTV source manager and returns what the user asked to do with which source, or
@@ -250,8 +272,7 @@ internal interface IMainView : IDisposable
     /// <see cref="IYouTubeResultsFeed"/>, without closing.</summary>
     int? ShowYouTubeResults(YouTubeResultsPrompt prompt);
     /// <summary>Offers to fetch the programs a YouTube download needs. True when the user accepted.</summary>
-    /// <param name="doNotAskAgain">Whether they asked not to be offered again, whatever they answered.</param>
-    bool OfferYouTubeComponents(out bool doNotAskAgain);
+    bool OfferYouTubeComponents();
     /// <summary>Opens the window where recording is set up and run. It is modal, but closing it does not
     /// end a recording: the sources and the recorder outlive it.</summary>
     void ShowRecording(

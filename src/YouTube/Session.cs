@@ -2,13 +2,15 @@ using LunaPlayer.Configuration;
 
 namespace LunaPlayer.YouTube;
 
-/// <summary>Where a list of videos came from.</summary>
+/// <summary>Where a list of rows came from.</summary>
 internal enum SessionKind
 {
     /// <summary>A search, which can be asked for more.</summary>
     Search,
     /// <summary>A playlist, which arrives whole.</summary>
     Playlist,
+    /// <summary>The playlists a channel publishes, which arrive whole.</summary>
+    Channel,
 }
 
 /// <summary>A list of videos the user is working through, and everything that follows from it.</summary>
@@ -61,6 +63,8 @@ internal sealed class YouTubeSession : IDisposable
     {
         // Translators: Heading above the list of videos a YouTube search found.
         SessionKind.Search => Tr("Search results"),
+        // Translators: Heading above the list of playlists a YouTube channel publishes.
+        SessionKind.Channel => Tr("Channel playlists"),
         // Translators: Heading above the list of videos in a YouTube playlist.
         _ => Tr("Playlist videos"),
     };

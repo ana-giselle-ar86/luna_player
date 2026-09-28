@@ -11,36 +11,24 @@ namespace LunaPlayer.YouTube;
 /// finishes: saving it, and reading what the uploader wrote under it. Both run on a worker thread behind a
 /// progress window, so both report a raw failure rather than a translated one.
 ///
-/// Each of them can be done two ways. The player resolves and saves by itself, and yt-dlp does the same
-/// through a program the user has to fetch first; which one runs is the one setting that decides it, and
-/// the yt-dlp route falls back to the player's own when the program turns out not to be there. Saving in
-/// particular therefore works out of the box, which in the Python player - where saving is yt-dlp's job
-/// alone - it does not.
+/// Reading about a video - its description, or the contents of a playlist - goes through PyYt, which needs
+/// nothing installed. Saving one goes through yt-dlp, which the user has to fetch first and which is the
+/// only thing that can turn a video into a playable file; when the programs it needs are not there, the
+/// user is told so rather than quietly getting nothing.
 /// </remarks>
 internal sealed class Backend
 {
-    private readonly ExplodeClient _client;
+    private readonly PyYtClient _client;
     private readonly YtDlpClient _ytDlp;
-    private readonly PlayerSettings _settings;
 
-    internal Backend(ExplodeClient client, YtDlpClient ytDlp, PlayerSettings settings)
+    internal Backend(PyYtClient client, YtDlpClient ytDlp)
     {
         _client = client;
         _ytDlp = ytDlp;
-        _settings = settings;
     }
 
     /// <summary>Whether the programs yt-dlp needs have been fetched.</summary>
     internal static bool HasComponents => Tools.HasAll;
-
-    /// <summary>Whether the work below should go through yt-dlp.</summary>
-    /// <remarks>
-    /// The setting alone, with no test for whether the programs are there. Somebody who turns this on has
-    /// chosen yt-dlp for a reason - usually a video the player's own resolver will not play - so quietly
-    /// answering with the resolver they rejected would hide the very failure they turned it on to avoid.
-    /// When the programs are missing they are told so, and nothing else answers in yt-dlp's place.
-    /// </remarks>
-    internal bool PrefersYtDlp => _settings.YouTube.UseYtDlp;
 
     /// <summary>The text the uploader wrote under a video.</summary>
     /// <remarks>Runs on a worker thread, so the failure it reports is a code and a raw detail; the
@@ -50,47 +38,51 @@ internal sealed class Backend
     {
         try
         {
-            if (!PrefersYtDlp)
-                return (_client.Description(watchUrl, token), ResolveFailure.None, string.Empty);
-            if (!Tools.HasAll)
-                return (null, ResolveFailure.MissingComponents, string.Empty);
-            return _ytDlp.Description(watchUrl, token) is string described
-                ? (described, ResolveFailure.None, string.Empty)
-                : (null, ResolveFailure.Unavailable, string.Empty);
+            return (_client.Description(watchUrl, token), ResolveFailure.None, string.Empty);
         }
         catch (Exception failure)
         {
-            var explained = ExplodeClient.Explain(failure, token);
+            var explained = PyYtClient.Explain(failure, token);
             return (null, explained.Failure, explained.Detail);
         }
     }
 
     /// <summary>Every video in a playlist, and what the playlist is called.</summary>
     /// <remarks>
-    /// Through the same resolver as everything else, so a user who turned yt-dlp on gets it here too. A
-    /// search is the one thing that does not: the Python player searches with a separate library rather
-    /// than with yt-dlp, and so does this one.
+    /// Through PyYt, which reads the listing without needing anything installed - the same as a search, and
+    /// the same library. Only turning a video into a playable file needs yt-dlp.
     /// </remarks>
     internal (string Title, IReadOnlyList<YouTubeResult> Items, ResolveFailure Failure, string Detail) Playlist(
         string link, CancellationToken token)
     {
         try
         {
-            if (!PrefersYtDlp)
-            {
-                var (title, items) = _client.Playlist(link, token);
-                return (title, items, ResolveFailure.None, string.Empty);
-            }
-            if (!Tools.HasAll)
-                return (string.Empty, [], ResolveFailure.MissingComponents, string.Empty);
-            if (_ytDlp.Playlist(link, token) is not { } found)
-                return (string.Empty, [], ResolveFailure.Unavailable, string.Empty);
-            return (found.Title, found.Items, ResolveFailure.None, string.Empty);
+            var (title, items) = _client.Playlist(link, token);
+            return (title, items, ResolveFailure.None, string.Empty);
         }
         catch (Exception failure)
         {
-            var explained = ExplodeClient.Explain(failure, token);
+            var explained = PyYtClient.Explain(failure, token);
             return (string.Empty, [], explained.Failure, explained.Detail);
+        }
+    }
+
+    /// <summary>The words YouTube offers to finish what the user has typed, for the search box's live
+    /// suggestions.</summary>
+    /// <remarks>
+    /// Through PyYt, needing nothing installed. Called on the background thread the search dialog starts on
+    /// each keystroke; a failed or empty fetch is simply no suggestions, so anything that goes wrong reads as
+    /// an empty list rather than an error the box has no way to show.
+    /// </remarks>
+    internal IReadOnlyList<string> Suggestions(string query, CancellationToken token)
+    {
+        try
+        {
+            return _client.Suggestions(query, token);
+        }
+        catch
+        {
+            return Array.Empty<string>();
         }
     }
 
@@ -105,17 +97,10 @@ internal sealed class Backend
     {
         try
         {
-            if (PrefersYtDlp)
-            {
-                if (!Tools.HasAll)
-                    return new YouTubeOutcome(false, MissingComponents);
-                _ytDlp.Download(watchUrl, folder, audioOnly, quality,
-                    (name, got, size) => report(Bytes(name, got, size)), token);
-                return YouTubeOutcome.Ok;
-            }
-            _client.Download(watchUrl, folder, audioOnly, quality,
-                (name, fraction) => report(Bytes(name, (long)(fraction * 100), 100)),
-                token);
+            if (!Tools.HasAll)
+                return new YouTubeOutcome(false, MissingComponents);
+            _ytDlp.Download(watchUrl, folder, audioOnly, quality,
+                (name, got, size) => report(Bytes(name, got, size)), token);
             return YouTubeOutcome.Ok;
         }
         catch (OperationCanceledException)
@@ -129,7 +114,7 @@ internal sealed class Backend
         }
     }
 
-    /// <summary>What the user is told when yt-dlp was asked for and is not installed.</summary>
+    /// <summary>What the user is told when the programs YouTube playback needs are not installed.</summary>
     /// <remarks>
     /// A property rather than a constant, so it is read at the moment it is needed. <c>Tr</c> may only be
     /// called on the UI thread, and a static initialiser would run wherever this type is first touched -
@@ -142,9 +127,8 @@ internal sealed class Backend
     /// <summary>One progress report from a download.</summary>
     /// <remarks>
     /// Bytes where the source knows them and hundredths where it does not, because the window shows the two
-    /// sizes as well as the bar and a proportion cannot be turned back into them. The player's own
-    /// downloader reports only a fraction, so its sizes read as unknown - which is honest, and is what the
-    /// Python player shows for a download whose total yt-dlp did not state either.
+    /// sizes as well as the bar and a proportion cannot be turned back into them. yt-dlp states the total
+    /// for most videos; a download whose total it did not state reads as unknown, which is honest.
     /// </remarks>
     private static ProgressUpdate Bytes(string name, long got, long size)
         => new((int)Math.Min(got, int.MaxValue), (int)Math.Min(size, int.MaxValue), name);

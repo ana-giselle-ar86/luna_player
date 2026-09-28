@@ -33,7 +33,7 @@ internal sealed class ResultsDialog : IDisposable
         _label = new StaticText(_dialog, label: prompt.Label);
         _list = new ListBox(_dialog);
         foreach (var result in _results)
-            _list.Add(result.Title);
+            _list.Add(Compose(result));
         if (_results.Count > 0)
             _list.SelectedIndex = Math.Clamp(prompt.SelectedIndex, 0, _results.Count - 1);
 
@@ -140,8 +140,54 @@ internal sealed class ResultsDialog : IDisposable
         }
         _results.AddRange(page);
         foreach (var result in page)
-            _list.Add(result.Title);
+            _list.Add(Compose(result));
     }
+
+    /// <summary>The one line a row shows, built as the Python player builds it: the title, then the few
+    /// secondary facts the kind of row has, joined with commas and skipping the ones the listing left out.
+    /// </summary>
+    private static string Compose(YouTubeResult result)
+    {
+        var parts = new List<string>(5) { result.Title };
+        switch (result.ItemType)
+        {
+            case YouTubeItemType.Playlist:
+                // Translators: Marks a row in the results list as a playlist rather than a single video.
+                parts.Add(Tr("Playlist"));
+                if (result.Author.Length > 0)
+                    // Translators: Names who published a result. {author} is a channel name.
+                    parts.Add(TrFormat("by {author}", result.Author));
+                if (!string.IsNullOrEmpty(result.Views))
+                    // Translators: How many videos a playlist holds. {count} is a number.
+                    parts.Add(TrFormat("contains {count} videos", result.Views));
+                break;
+            case YouTubeItemType.Channel:
+                // Translators: Marks a row in the results list as a channel rather than a single video.
+                parts.Add(Tr("Channel"));
+                if (!string.IsNullOrEmpty(result.Views))
+                    parts.Add(result.Views);
+                if (!string.IsNullOrEmpty(result.PublishedTime))
+                    parts.Add(TrFormat("contains {count} videos", result.PublishedTime));
+                break;
+            default:
+                if (result.Duration is { } duration)
+                    parts.Add(FormatDuration(duration));
+                if (result.Author.Length > 0)
+                    parts.Add(TrFormat("by {author}", result.Author));
+                if (!string.IsNullOrEmpty(result.Views))
+                    parts.Add(result.Views);
+                if (!string.IsNullOrEmpty(result.PublishedTime))
+                    parts.Add(result.PublishedTime);
+                break;
+        }
+        return string.Join(", ", parts);
+    }
+
+    /// <summary>A duration as "m:ss", or "h:mm:ss" once it runs past an hour.</summary>
+    private static string FormatDuration(TimeSpan duration)
+        => duration.TotalHours >= 1
+            ? $"{(int)duration.TotalHours}:{duration.Minutes:D2}:{duration.Seconds:D2}"
+            : $"{duration.Minutes}:{duration.Seconds:D2}";
 
     private Menu BuildMenu()
     {

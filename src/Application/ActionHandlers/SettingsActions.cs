@@ -83,13 +83,6 @@ internal sealed class SettingsActions
         // window, which is what keeps the Preferences window answering for the length of a download.
         void DownloadYouTubeComponents(YtDlpChannel channel) => youTubeComponents.Install(channel);
 
-        // The tick box goes back only when the user actually said no. While the programs are on their way
-        // it stays as they left it, and the setting falls back to the player's own resolver until they
-        // arrive. Ticking the box is itself a request for them, so the offer is made even to somebody who
-        // once said "stop asking" - that answer was about being interrupted, not about this.
-        bool EnsureYouTubeComponents(YtDlpChannel channel)
-            => youTubeComponents.Ensure(channel, ignoreSkip: true) is not Components.ComponentsState.Declined;
-
         var operations = new PrefsOps(
             backup.SettingsPath,
             backup.BookmarksPath,
@@ -104,7 +97,6 @@ internal sealed class SettingsActions
             () => Register(false),
             () => Register(true),
             DownloadYouTubeComponents,
-            EnsureYouTubeComponents,
             source =>
             {
                 ApplyRuntime(source);
