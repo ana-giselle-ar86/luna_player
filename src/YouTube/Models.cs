@@ -1,5 +1,13 @@
 namespace LunaPlayer.YouTube;
 
+/// <summary>What a result row stands for: a video to play, or a playlist or channel to browse into.</summary>
+internal enum YouTubeItemType
+{
+    Video,
+    Playlist,
+    Channel,
+}
+
 /// <summary>One video, as a search or a playlist reports it.</summary>
 /// <remarks>
 /// A port of the Python player's <c>YtItem</c>. Everything here comes from the listing itself; nothing
@@ -21,6 +29,19 @@ internal readonly record struct YouTubeResult(
     string Url,
     string ChannelUrl)
 {
+    /// <summary>The view count as the listing worded it ("1.2M views"), or null when it said nothing.
+    /// For a playlist row this instead carries the count of videos, and for a channel the subscriber
+    /// count - the one secondary figure each of those kinds has to show.</summary>
+    internal string? Views { get; init; }
+
+    /// <summary>When it was published, as the listing worded it ("3 years ago"), or null. For a channel
+    /// row this instead carries the count of videos.</summary>
+    internal string? PublishedTime { get; init; }
+
+    /// <summary>Whether this row is a video, a playlist, or a channel. Defaults to a video, which is what
+    /// every row was before playlists and channels could appear among the results.</summary>
+    internal YouTubeItemType ItemType { get; init; }
+
     internal static YouTubeResult None { get; } =
         new(string.Empty, string.Empty, string.Empty, null, string.Empty, string.Empty);
 }

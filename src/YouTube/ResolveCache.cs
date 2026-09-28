@@ -31,39 +31,29 @@ internal sealed class ResolveCache : IDisposable
     private readonly Lock _sync = new();
     private readonly Dictionary<string, Entry> _entries = new(StringComparer.Ordinal);
     private readonly SemaphoreSlim _gate = new(Workers, Workers);
-    private readonly ExplodeClient _client;
     private readonly YtDlpClient _ytDlp;
-    private readonly Backend _backend;
     private long _clock;
     private bool _disposed;
 
-    internal ResolveCache(ExplodeClient client, YtDlpClient ytDlp, Backend backend)
+    internal ResolveCache(YtDlpClient ytDlp)
     {
-        _client = client;
         _ytDlp = ytDlp;
-        _backend = backend;
     }
 
-    /// <summary>Resolves one video, through yt-dlp when the setting asks for it.</summary>
-    /// <remarks>
-    /// The fallback is not a silent second attempt: yt-dlp is chosen precisely for the videos the player's
-    /// own resolver cannot manage, so falling back to the one that has already been ruled out would report
-    /// its failure in place of yt-dlp's. It runs only when yt-dlp is not there to run.
-    /// </remarks>
+    /// <summary>Resolves one video through yt-dlp, the only thing that can turn it into a playable
+    /// address.</summary>
     private ResolveOutcome Resolve(
         string watchUrl, YouTubeResult item, bool audioOnly, YouTubeQuality quality, CancellationToken token)
-        => _backend.PrefersYtDlp
-            ? _ytDlp.Resolve(watchUrl, item, audioOnly, quality, token)
-            : _client.Resolve(watchUrl, item, audioOnly, quality, token);
+        => _ytDlp.Resolve(watchUrl, item, audioOnly, quality, token);
 
     /// <summary>The name one set of options gives a video.</summary>
     /// <remarks>
-    /// Two settings that would resolve differently must not share an entry, which is why the options are
-    /// part of it - the resolver among them. yt-dlp and the player's own choose different streams for the
-    /// same request, and turning the setting over mid-session should not hand back the other one's answer.
+    /// Two requests that would resolve differently must not share an entry, which is why the options are
+    /// part of the name: the same video wanted as sound alone and as picture resolves to different
+    /// addresses, and one must not be handed back for the other.
     /// </remarks>
     internal string Key(string watchUrl, bool audioOnly, YouTubeQuality quality)
-        => $"{watchUrl}|a={(audioOnly ? 1 : 0)}|q={quality}|r={(_backend.PrefersYtDlp ? "y" : "e")}";
+        => $"{watchUrl}|a={(audioOnly ? 1 : 0)}|q={quality}";
 
     /// <summary>What has already been resolved for a video, or null. Never starts work and never blocks,
     /// so it is safe on the UI thread - which is the point of it: it decides whether a video can be played
@@ -169,7 +159,7 @@ internal sealed class ResolveCache : IDisposable
             // Task.Wait rethrows a faulted task wrapped in an AggregateException. Letting that out would
             // fault the job it runs inside, and a faulted job is rethrown on the UI thread as a crash -
             // the wrong end for something as ordinary as a request that went wrong.
-            return ExplodeClient.Explain(failure.InnerException ?? failure, waitToken);
+            return PyYtClient.Explain(failure.InnerException ?? failure, waitToken);
         }
         return task.IsCompletedSuccessfully ? task.Result : ResolveOutcome.Cancelled;
     }

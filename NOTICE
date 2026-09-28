@@ -75,20 +75,19 @@ into the LunaPlayer executable.
 
 
 -------------------------------------------------------------------------------
-YoutubeExplode                                                  (compiled in)
+PyYt                                                            (compiled in)
 -------------------------------------------------------------------------------
 
-Copyright (c) 2016-2026 Oleksii Holub
+Copyright (c) Hitesh Kumar Saini and contributors
 
-  Version:   6.6.2
-  Home page: https://github.com/Tyrrrz/YoutubeExplode
-  Source:    https://github.com/Tyrrrz/YoutubeExplode/tree/6b90e284c8775056fdd35d5770e3adb28dd80759
+  Version:   0.8.0
+  Home page: https://github.com/alexmercerind/youtube-search-python
   Licence:   MIT License
              third-party/licenses/MIT.txt
 
-YoutubeExplode provides the client used to search YouTube and resolve video,
-playlist, and stream information. It is compiled into the LunaPlayer
-executable.
+PyYt is a dependency-free, Native-AOT-compatible .NET port of youtube-search-
+python. It provides the client used to search YouTube and read video, playlist,
+and channel information. It is compiled into the LunaPlayer executable.
 
 
 -------------------------------------------------------------------------------

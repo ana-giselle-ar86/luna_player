@@ -58,10 +58,11 @@ with Luna's Native AOT fixes.
 - Version: 3.1.0
 - Licence: MIT
 
-## YoutubeExplode
+## PyYt
 
-YouTube search and stream metadata.
+YouTube search, playlist and channel metadata. A dependency-free, Native-AOT-
+compatible .NET port of youtube-search-python.
 
-- Source: https://github.com/Tyrrrz/YoutubeExplode
-- Version: 6.6.2
+- Source: https://github.com/alexmercerind/youtube-search-python
+- Version: 0.8.0
 - Licence: MIT
