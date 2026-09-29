@@ -42,6 +42,7 @@ internal sealed partial class MainFrame
     public double? ChooseTime(double duration, double elapsed) { using var dialog = new GoToTimeDialog(DialogParent, duration, elapsed); return dialog.Show(); }
     public SleepTimerDialogResult? ChooseSleepTimer(SleepTimerRequest initial, bool armed, string? statusText) { using var dialog = new SleepTimerDialog(DialogParent, initial, armed, statusText); return dialog.Show(); }
     public int? ChooseAudioDevice(IReadOnlyList<string> descriptions, int selectedIndex) { using var dialog = new AudioDeviceDialog(DialogParent, descriptions, selectedIndex); return dialog.Show(); }
+    public int? ChooseAudioTrack(IReadOnlyList<string> labels, int selectedIndex) { using var dialog = new AudioTrackDialog(DialogParent, labels, selectedIndex); return dialog.Show(); }
     public BookmarkManagementRequest? ManageBookmarks(IReadOnlyList<BookmarkListItem> bookmarks) { using var dialog = new BookmarkManagerDialog(DialogParent, bookmarks); return dialog.Show(); }
     public OpenedFilesRequest? ChooseOpenedFile(int count, Func<int, string> nameAt, int selectedIndex) { using var dialog = new OpenedFilesDialog(DialogParent, count, nameAt, selectedIndex); return dialog.Show(); }
     public IProgressView BeginProgress(string title, string message, bool proportional, bool detailed) => new ProgressView(DialogParent, title, message, proportional, detailed);

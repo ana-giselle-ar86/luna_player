@@ -62,6 +62,7 @@ internal sealed class ApplicationController : IDisposable
         _player.StateChanged += SyncViewState;
         _player.Ended += OnPlaybackEnded;
         _player.VideoAvailabilityChanged += OnVideoAvailabilityChanged;
+        _player.AudioTracksChanged += OnAudioTracksChanged;
         // Button presses arrive on a Windows Runtime thread, so they are posted like any other outside
         // request rather than run where they land.
         _mediaControls.ButtonPressed += action => _dispatcher.Post(() => HandleAction(action));
@@ -88,6 +89,7 @@ internal sealed class ApplicationController : IDisposable
         _view.SetMarkedActionsEnabled(false);
         _view.SetVideoOptionsEnabled(false);
         _view.SetFullScreenAvailable(false);
+        _view.SetAudioTrackControlsEnabled(false);
         _view.SetSilenceRemovalChecked(_player.IsSilenceRemovalEnabled);
         // Both belong to a playlist rather than to the player, so they change when a list of videos is put
         // in front of the one the user opened and change back when it goes.
@@ -139,6 +141,7 @@ internal sealed class ApplicationController : IDisposable
         _player.StateChanged -= SyncViewState;
         _player.Ended -= OnPlaybackEnded;
         _player.VideoAvailabilityChanged -= OnVideoAvailabilityChanged;
+        _player.AudioTracksChanged -= OnAudioTracksChanged;
         _view.EscapePressed -= _sessions.HandleEscape;
         Shutdown();
         StopMediaControlsClock();
@@ -177,6 +180,9 @@ internal sealed class ApplicationController : IDisposable
         _view.SetVideoOptionsEnabled(
             LinkValidator.IsYouTubeUrl(_player.CurrentSource ?? _player.CurrentPath));
         _view.SetFullScreenAvailable(_player.HasVideo);
+        // More than one audio track to switch between, or the commands stay greyed out. Like HasVideo, the
+        // count settles a moment after a load, when AudioTracksChanged brings us back through here.
+        _view.SetAudioTrackControlsEnabled(_player.GetAudioTracks().Count > 1);
         // Leave full screen when the current item stops being a video; once out, IsFullScreen is false so it
         // will not fire again. Moving between two videos keeps HasVideo true and stays silent.
         if (!_player.HasVideo && _view.IsFullScreen)
@@ -315,6 +321,9 @@ internal sealed class ApplicationController : IDisposable
     }
 
     private void OnVideoAvailabilityChanged()
+        => _dispatcher.Post(SyncViewState);
+
+    private void OnAudioTracksChanged()
         => _dispatcher.Post(SyncViewState);
 
     private void OnPlaybackEnded(PlaybackEndReason reason)

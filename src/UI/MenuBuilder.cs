@@ -17,6 +17,7 @@ internal sealed record MainMenuComponents(
     IReadOnlyList<MenuItem> LocalEditItems,
     IReadOnlyList<MenuItem> BookmarkItems,
     IReadOnlyList<MenuItem> VideoItems,
+    IReadOnlyList<MenuItem> AudioTrackItems,
     IReadOnlyDictionary<int, string> EqualizerCommands,
     IReadOnlyDictionary<string, MenuItem> EqualizerItems,
     Menu EqualizerMenu,
@@ -229,6 +230,19 @@ internal static class MainMenuBuilder
         playerMenu.AppendSeparator();
         // Translators: Player menu item that opens the list of audio output devices to play through.
         playerMenu.Append(commandIds[ActionId.SoundCards], Label(Tr("Sound Cards..."), ActionId.SoundCards, shortcuts));
+        // Switching between a file's audio tracks. Gated on there being more than one to switch between, not
+        // on a file being loaded, so the three stay out of playbackItems and travel in their own list.
+        var audioTrackItems = new List<MenuItem>();
+        var audioTrackMenu = new Menu();
+        // Translators: Item in the Audio track submenu that switches to the next audio track in the file.
+        Add(audioTrackMenu, audioTrackItems, commandIds, shortcuts, ActionId.NextAudioTrack, Tr("Next"));
+        // Translators: Item in the Audio track submenu that switches to the previous audio track in the file.
+        Add(audioTrackMenu, audioTrackItems, commandIds, shortcuts, ActionId.PreviousAudioTrack, Tr("Previous"));
+        audioTrackMenu.AppendSeparator();
+        // Translators: Item in the Audio track submenu that opens the window listing the file's audio tracks to choose from.
+        Add(audioTrackMenu, audioTrackItems, commandIds, shortcuts, ActionId.OpenAudioTracks, Tr("Track list..."));
+        // Translators: Player submenu holding the commands that switch between a file's audio tracks.
+        playerMenu.AppendSubMenu(audioTrackMenu, Tr("Audio track"));
         // Full screen is gated on a picture playing, not on a file being loaded, so it stays out of playbackItems.
         var fullScreenItem = playerMenu.AppendCheckItem(
             commandIds[ActionId.ToggleFullScreen],
@@ -332,7 +346,7 @@ internal static class MainMenuBuilder
         // Translators: Name of the Help menu in the menu bar.
         menuBar.Append(helpMenu, Tr("Help"));
         frame.SetMenuBar(menuBar);
-        return new MainMenuComponents(menuBar, 2, markedMenuIndex, videoMenuIndex, playbackItems, mediaFileItems, localFileItems, markedItems, localEditItems, bookmarkItems, videoItems, equalizerCommands, equalizerItems, equalizerMenu, markCurrentItem, markAllItem, shuffleItem, repeatItem, silenceItem, fullScreenItem, startRecordingItem, pauseRecordingItem, stopRecordingItem);
+        return new MainMenuComponents(menuBar, 2, markedMenuIndex, videoMenuIndex, playbackItems, mediaFileItems, localFileItems, markedItems, localEditItems, bookmarkItems, videoItems, audioTrackItems, equalizerCommands, equalizerItems, equalizerMenu, markCurrentItem, markAllItem, shuffleItem, repeatItem, silenceItem, fullScreenItem, startRecordingItem, pauseRecordingItem, stopRecordingItem);
     }
 
     /// <summary>What <see cref="MainMenuComponents.EqualizerCommands"/> holds for the item that switches

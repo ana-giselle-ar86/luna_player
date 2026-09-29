@@ -78,6 +78,7 @@ internal sealed class ApplicationHost : IDisposable
         var bookmarks = new BookmarkStore(Paths.BookmarksFile);
         _ = new BookmarkActions(router, _view, _player, _speech, bookmarks);
         _ = new DeviceActions(router, _view, _player, _settings, _settingsStore, _speech);
+        _ = new AudioTrackActions(router, _view, _player, _speech);
         _equalizer = new EqualizerActions(
             router, _view, _player, _settings, _settingsStore, _speech, _equalizerLibrary);
         var pyYt = new LunaPlayer.YouTube.PyYtClient();

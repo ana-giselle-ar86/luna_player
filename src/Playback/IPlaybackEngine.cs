@@ -11,6 +11,14 @@ internal enum PlaybackEndReason
 
 internal readonly record struct AudioDevice(string Name, string Description);
 
+/// <param name="Id">mpv's own track id, the value written to <c>aid</c> to select it.</param>
+/// <param name="Title">The track's own title from the file, or null when it carries none.</param>
+/// <param name="Language">The raw language code (such as "eng"), or null when the track names none.
+/// Turned into a readable name for the user at the point it is shown.</param>
+/// <param name="Channels">How many channels the track carries, or 0 when mpv has not said.</param>
+/// <param name="Selected">Whether this is the track currently playing.</param>
+internal readonly record struct AudioTrack(int Id, string? Title, string? Language, int Channels, bool Selected);
+
 internal interface IPlaybackEngine : IDisposable
 {
     event Action<PlaybackEndReason>? Ended;
@@ -18,6 +26,10 @@ internal interface IPlaybackEngine : IDisposable
     /// <summary>Raised when <see cref="HasVideo"/> may have changed. mpv learns a file's video parameters
     /// after the load returns, so the answer is not known the moment a file opens.</summary>
     event Action? VideoAvailabilityChanged;
+
+    /// <summary>Raised when the set of tracks may have changed - a file's tracks are learned after the load
+    /// returns, so <see cref="GetAudioTracks"/> is not settled the moment a file opens.</summary>
+    event Action? AudioTracksChanged;
 
     /// <param name="audioFile">A separate stream carrying the sound, played alongside
     /// <paramref name="path"/>. Null for anything that carries its own sound, which is everything but a
@@ -47,6 +59,13 @@ internal interface IPlaybackEngine : IDisposable
     IReadOnlyList<AudioDevice> GetAudioDevices();
     string CurrentAudioDevice { get; }
     bool SetAudioDevice(string name);
+
+    /// <summary>The audio tracks the current file carries, empty when nothing is open. Not settled the
+    /// moment a file opens - see <see cref="AudioTracksChanged"/>.</summary>
+    IReadOnlyList<AudioTrack> GetAudioTracks();
+
+    /// <summary>Switches the playing audio track to the one with this mpv track id.</summary>
+    bool SetAudioTrack(int id);
     bool SetNormalization(bool enabled);
     bool SetMono(bool enabled);
     bool SetSilenceRemoval(bool enabled, string graph);

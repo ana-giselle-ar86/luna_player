@@ -250,6 +250,10 @@ internal interface IMainView : IDisposable
     /// <summary>Enables or greys out the full-screen menu item; on only while a real picture is playing.</summary>
     void SetFullScreenAvailable(bool available);
 
+    /// <summary>Enables or greys out the audio-track commands; on only while the file has more than one
+    /// audio track to switch between.</summary>
+    void SetAudioTrackControlsEnabled(bool enabled);
+
     /// <summary>Puts the recording menu into the state the recorder is in.</summary>
     void SetRecordingState(LunaPlayer.Recording.RecordingState state);
     FileSelection? ChooseFile(string initialDirectory);
@@ -269,6 +273,9 @@ internal interface IMainView : IDisposable
     /// Null means the window was cancelled.</summary>
     SleepTimerDialogResult? ChooseSleepTimer(SleepTimerRequest initial, bool armed, string? statusText);
     int? ChooseAudioDevice(IReadOnlyList<string> descriptions, int selectedIndex);
+    /// <summary>Shows the file's audio tracks to switch between, each already worded for the user. Null means
+    /// the window was cancelled.</summary>
+    int? ChooseAudioTrack(IReadOnlyList<string> labels, int selectedIndex);
     BookmarkManagementRequest? ManageBookmarks(IReadOnlyList<BookmarkListItem> bookmarks);
     /// <summary>Shows the list of loaded files. The names are asked for a row at a time rather than handed
     /// over up front, so a playlist of any size opens at once.</summary>
