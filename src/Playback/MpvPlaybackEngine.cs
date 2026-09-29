@@ -12,6 +12,7 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
     private readonly IDisposable _endRegistration;
     private readonly IDisposable _sampleRateRegistration;
     private readonly IDisposable _videoParamsRegistration;
+    private readonly IDisposable _trackListRegistration;
     // Cached from the video-params observer; mpv learns it asynchronously after a load, not on demand.
     private bool _hasVideo;
     private double _volume = 100;
@@ -50,11 +51,16 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
         _sampleRateRegistration = _mpv.ObserveProperty("audio-params/samplerate", HandleSampleRateChange);
         // Video parameters are not known when the load returns, so the width is watched rather than read.
         _videoParamsRegistration = _mpv.ObserveProperty("video-params/w", HandleVideoParamsChange);
+        // Tracks are learned after the load returns as well, so the count is watched to tell when the audio
+        // tracks a file offers have changed under the menu that gates on them.
+        _trackListRegistration = _mpv.ObserveProperty("track-list/count", HandleTrackListChange);
     }
 
     public event Action<PlaybackEndReason>? Ended;
 
     public event Action? VideoAvailabilityChanged;
+
+    public event Action? AudioTracksChanged;
 
     public bool HasVideo => _hasVideo;
 
@@ -236,6 +242,40 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
         return TrySetProperty("audio-device", target);
     }
 
+    public IReadOnlyList<AudioTrack> GetAudioTracks()
+    {
+        if (ReadObject("track-list") is not IEnumerable<object?> values)
+            return [];
+        var tracks = new List<AudioTrack>();
+        foreach (var value in values)
+        {
+            if (value is not IDictionary<string, object?> track
+                || !track.TryGetValue("type", out var rawType)
+                || Convert.ToString(rawType, CultureInfo.InvariantCulture) != "audio"
+                || !track.TryGetValue("id", out var rawId))
+                continue;
+            var id = Convert.ToInt32(rawId, CultureInfo.InvariantCulture);
+            track.TryGetValue("title", out var rawTitle);
+            var title = Convert.ToString(rawTitle, CultureInfo.InvariantCulture);
+            track.TryGetValue("lang", out var rawLang);
+            var lang = Convert.ToString(rawLang, CultureInfo.InvariantCulture);
+            var channels = track.TryGetValue("demux-channel-count", out var rawChannels) && rawChannels is not null
+                ? Convert.ToInt32(rawChannels, CultureInfo.InvariantCulture)
+                : 0;
+            var selected = track.TryGetValue("selected", out var rawSelected)
+                && Convert.ToBoolean(rawSelected, CultureInfo.InvariantCulture);
+            tracks.Add(new AudioTrack(
+                id,
+                string.IsNullOrWhiteSpace(title) ? null : title,
+                string.IsNullOrWhiteSpace(lang) ? null : lang,
+                channels,
+                selected));
+        }
+        return tracks;
+    }
+
+    public bool SetAudioTrack(int id) => TrySetProperty("aid", id);
+
     public bool SetNormalization(bool enabled)
     {
         RemoveFilter("@audionormalize");
@@ -348,6 +388,13 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
         VideoAvailabilityChanged?.Invoke();
     }
 
+    private void HandleTrackListChange(string name, object? value)
+    {
+        if (_disposed)
+            return;
+        AudioTracksChanged?.Invoke();
+    }
+
     // A decoded video track with real dimensions that is neither a still image nor album art.
     private bool ComputeHasVideo()
     {
@@ -366,6 +413,7 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
         _endRegistration.Dispose();
         _sampleRateRegistration.Dispose();
         _videoParamsRegistration.Dispose();
+        _trackListRegistration.Dispose();
         _mpv.Dispose();
     }
 

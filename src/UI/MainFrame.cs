@@ -22,6 +22,7 @@ internal sealed partial class MainFrame : IMainView
     private readonly List<MenuItem> _localFileItems = [];
     private readonly List<MenuItem> _markedItems = [];
     private readonly List<MenuItem> _videoItems = [];
+    private readonly List<MenuItem> _audioTrackItems = [];
     private readonly List<MenuItem> _localEditItems = [];
     private readonly List<MenuItem> _bookmarkItems = [];
     private readonly Dictionary<int, string> _equalizerCommands = [];
@@ -83,6 +84,7 @@ internal sealed partial class MainFrame : IMainView
         _localFileItems.AddRange(menu.LocalFileItems);
         _markedItems.AddRange(menu.MarkedItems);
         _videoItems.AddRange(menu.VideoItems);
+        _audioTrackItems.AddRange(menu.AudioTrackItems);
         _localEditItems.AddRange(menu.LocalEditItems);
         _bookmarkItems.AddRange(menu.BookmarkItems);
         foreach (var command in menu.EqualizerCommands)
@@ -300,6 +302,11 @@ internal sealed partial class MainFrame : IMainView
     {
         foreach (var item in _videoItems) item.Enabled = enabled;
         _menuBar.EnableTop(_videoMenuIndex, enabled);
+    }
+
+    public void SetAudioTrackControlsEnabled(bool enabled)
+    {
+        foreach (var item in _audioTrackItems) item.Enabled = enabled;
     }
 
     public void SetMarkedActionsEnabled(bool enabled)

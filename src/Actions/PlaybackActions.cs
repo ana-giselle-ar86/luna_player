@@ -84,6 +84,12 @@ internal static class PlaybackActionDefinitions
             new(ActionId.SoundCards, Tr("Sound cards dialog"), new("a", ShortcutModifiers.Control | ShortcutModifiers.Shift)),
             // Translators: Name of the command that fills the whole screen with the video, or leaves that mode, shown in the shortcut list and the Player menu.
             new(ActionId.ToggleFullScreen, Tr("Full screen"), new("f11")),
+            // Translators: Name of the command that opens the window listing the file's audio tracks to switch between.
+            new(ActionId.OpenAudioTracks, Tr("Audio tracks dialog"), new("t", ShortcutModifiers.Control | ShortcutModifiers.Shift)),
+            // Translators: Name of the command that switches to the next audio track in the file.
+            new(ActionId.NextAudioTrack, Tr("Next audio track"), new("page_down", ShortcutModifiers.Shift)),
+            // Translators: Name of the command that switches to the previous audio track in the file.
+            new(ActionId.PreviousAudioTrack, Tr("Previous audio track"), new("page_up", ShortcutModifiers.Shift)),
             // Translators: Name of the command that makes the sound louder.
             new(ActionId.VolumeUp, Tr("Increase volume"), new("up")),
             // Translators: Name of the command that makes the sound quieter.

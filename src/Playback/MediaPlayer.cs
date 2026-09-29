@@ -27,6 +27,7 @@ internal sealed class MediaPlayer : IDisposable
         _positions = positions;
         _engine.Ended += OnEnded;
         _engine.VideoAvailabilityChanged += OnVideoAvailabilityChanged;
+        _engine.AudioTracksChanged += OnAudioTracksChanged;
     }
 
     /// <summary>Whether a list of videos is playing in front of the playlist the user opened.</summary>
@@ -127,6 +128,10 @@ internal sealed class MediaPlayer : IDisposable
 
     /// <summary>Raised when <see cref="HasVideo"/> may have changed, a moment after a file loads.</summary>
     internal event Action? VideoAvailabilityChanged;
+
+    /// <summary>Raised when the audio tracks the current file offers may have changed, a moment after a file
+    /// loads.</summary>
+    internal event Action? AudioTracksChanged;
 
     internal string? CurrentPath => _playlist.CurrentPath;
     internal int Count => _playlist.Count;
@@ -342,6 +347,8 @@ internal sealed class MediaPlayer : IDisposable
     internal IReadOnlyList<AudioDevice> GetAudioDevices() => _engine.GetAudioDevices();
     internal string CurrentAudioDevice => _engine.CurrentAudioDevice;
     internal bool SetAudioDevice(string name) => _engine.SetAudioDevice(name);
+    internal IReadOnlyList<AudioTrack> GetAudioTracks() => _running ? _engine.GetAudioTracks() : [];
+    internal bool SetAudioTrack(int id) => _running && _engine.SetAudioTrack(id);
     internal void TrackPositions(bool enabled) => _trackPositions = enabled;
 
     internal void SavePosition()
@@ -499,6 +506,7 @@ internal sealed class MediaPlayer : IDisposable
         _disposed = true;
         _engine.Ended -= OnEnded;
         _engine.VideoAvailabilityChanged -= OnVideoAvailabilityChanged;
+        _engine.AudioTracksChanged -= OnAudioTracksChanged;
         _engine.Dispose();
     }
 
@@ -587,6 +595,12 @@ internal sealed class MediaPlayer : IDisposable
     {
         if (!_disposed)
             VideoAvailabilityChanged?.Invoke();
+    }
+
+    private void OnAudioTracksChanged()
+    {
+        if (!_disposed)
+            AudioTracksChanged?.Invoke();
     }
 
     private void StopEngine()
