@@ -26,6 +26,7 @@ internal sealed class ApplicationController : IDisposable
     private string? _tagsPath;
     private MediaTags _tags = MediaTags.None;
     private readonly YouTube.YouTubeSessions _sessions;
+    private readonly SleepTimer _sleepTimer;
     private bool _shutDown;
 
     internal ApplicationController(
@@ -37,7 +38,8 @@ internal sealed class ApplicationController : IDisposable
         ActionRouter router,
         FileActions fileActions,
         PlaybackSelection selection,
-        YouTube.YouTubeSessions sessions)
+        YouTube.YouTubeSessions sessions,
+        SleepTimer sleepTimer)
     {
         _view = view;
         _player = player;
@@ -48,6 +50,7 @@ internal sealed class ApplicationController : IDisposable
         _fileActions = fileActions;
         _selection = selection;
         _sessions = sessions;
+        _sleepTimer = sleepTimer;
         _view.ActionRequested += HandleAction;
         _view.CloseRequested += Shutdown;
         _view.EscapePressed += _sessions.HandleEscape;
@@ -104,6 +107,10 @@ internal sealed class ApplicationController : IDisposable
         // Nothing after this wants the overlay published again, and the clock would keep firing until the
         // controller is disposed.
         StopMediaControlsClock();
+        // Before the volume is read into settings: a timer fading out has lowered the player's volume, and
+        // disposing it puts the user's own volume back so that is what gets saved. Quiet, unlike Cancel: the
+        // screen reader is moving to the next application and an announcement here would talk over it.
+        _sleepTimer.Dispose();
         _settings.Audio.Volume = _player.Volume;
         _settings.Audio.Speed = _player.Speed;
         _settings.Audio.Pitch = _player.Pitch;
@@ -299,6 +306,14 @@ internal sealed class ApplicationController : IDisposable
             return;
         if (_player.CurrentPath is null)
             return;
+        // An end-of-track sleep timer fires here, ahead of the repeat and advance logic, and takes over the
+        // end of the track: SyncViewState reflects the pause it may have left, and returning stops the player
+        // advancing or looping past the point the user meant it to stop.
+        if (_sleepTimer.OnTrackEnded())
+        {
+            SyncViewState();
+            return;
+        }
         if (_player.IsRepeatFileEnabled)
         {
             _player.RestartCurrent();
