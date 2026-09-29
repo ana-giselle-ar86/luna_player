@@ -15,7 +15,7 @@ namespace LunaPlayer.YouTube;
 /// gate because the feed can ask for more before the previous ask has returned. It keeps the same name and
 /// shape as the paging enumerator the previous client exposed, so the session layer did not have to change.
 /// </remarks>
-internal sealed class SearchPage : IAsyncDisposable
+internal sealed class SearchPage : IResultPage, IAsyncDisposable
 {
     private readonly SearchBase _search;
     private readonly SemaphoreSlim _turn = new(1, 1);
@@ -26,9 +26,9 @@ internal sealed class SearchPage : IAsyncDisposable
 
     internal SearchPage(SearchBase search) => _search = search;
 
-    internal bool HasMore => !_exhausted;
+    public bool HasMore => !_exhausted;
 
-    internal async Task<IReadOnlyList<YouTubeResult>> Take(int count, CancellationToken token)
+    public async Task<IReadOnlyList<YouTubeResult>> Take(int count, CancellationToken token)
     {
         var found = new List<YouTubeResult>();
         await _turn.WaitAsync(token).ConfigureAwait(false);

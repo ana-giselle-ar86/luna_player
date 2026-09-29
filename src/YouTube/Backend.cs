@@ -87,20 +87,23 @@ internal sealed class Backend
     }
 
     /// <summary>Saves a video into <paramref name="folder"/>, naming the file after the video.</summary>
+    /// <param name="exactQuality">The picture height or audio bitrate the user chose from what the video
+    /// offers, or null to save at the quality set in preferences.</param>
     internal YouTubeOutcome Download(
         string watchUrl,
         string folder,
         bool audioOnly,
-        YouTubeQuality quality,
+        int quality,
         Action<ProgressUpdate> report,
-        CancellationToken token)
+        CancellationToken token,
+        int? exactQuality = null)
     {
         try
         {
             if (!Tools.HasAll)
                 return new YouTubeOutcome(false, MissingComponents);
             _ytDlp.Download(watchUrl, folder, audioOnly, quality,
-                (name, got, size) => report(Bytes(name, got, size)), token);
+                (name, got, size) => report(Bytes(name, got, size)), token, exactQuality);
             return YouTubeOutcome.Ok;
         }
         catch (OperationCanceledException)
@@ -111,6 +114,57 @@ internal sealed class Backend
         catch (Exception failure)
         {
             return new YouTubeOutcome(false, failure.Message);
+        }
+    }
+
+    /// <summary>The distinct qualities a video offers, best first, for the download picker.</summary>
+    /// <remarks>
+    /// Runs on a worker thread. Anything that goes wrong reading the video's formats reads as an empty list,
+    /// so the caller simply falls back to the settings quality rather than a picker it cannot fill - except a
+    /// cancellation, which is the user's doing and must travel on so the progress window closes without a
+    /// picker appearing.
+    /// </remarks>
+    internal IReadOnlyList<int> AvailableQualities(string watchUrl, bool audioOnly, CancellationToken token)
+    {
+        if (!Tools.HasAll)
+            return [];
+        try
+        {
+            return _ytDlp.AvailableQualities(watchUrl, audioOnly, token);
+        }
+        catch (Exception failure) when (failure is not OperationCanceledException)
+        {
+            return [];
+        }
+    }
+
+    /// <summary>The first window of a channel tab, and a page to draw the rest from.</summary>
+    /// <param name="Items">The rows of the first window, empty when the tab holds nothing.</param>
+    /// <param name="Page">The page the results window pages the tab through, or null on failure.</param>
+    internal readonly record struct ChannelTabResult(
+        IReadOnlyList<YouTubeResult> Items, IResultPage? Page, ResolveFailure Failure, string Detail);
+
+    /// <summary>Opens one tab of a channel: builds the page and draws its first window.</summary>
+    /// <remarks>
+    /// Runs on a worker thread, behind a progress window when it is the tab a channel first opens on, and
+    /// straight on the background thread when the user switches tabs. The first window is drawn here rather
+    /// than left to the window so a channel that cannot be read fails before anything is shown.
+    /// </remarks>
+    internal ChannelTabResult OpenChannelTab(string channelBase, string tabKey, CancellationToken token)
+    {
+        if (!Tools.HasAll)
+            return new ChannelTabResult([], null, ResolveFailure.MissingComponents, string.Empty);
+        var page = new ChannelTabPage(_ytDlp, channelBase, tabKey);
+        try
+        {
+            var first = page.Take(ChannelTabPage.Batch, token).GetAwaiter().GetResult();
+            return new ChannelTabResult(first, page, ResolveFailure.None, string.Empty);
+        }
+        catch (Exception failure)
+        {
+            var explained = PyYtClient.Explain(failure, token);
+            _ = page.DisposeAsync();
+            return new ChannelTabResult([], null, explained.Failure, explained.Detail);
         }
     }
 

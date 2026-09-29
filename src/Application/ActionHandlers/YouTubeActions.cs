@@ -195,16 +195,50 @@ internal sealed class YouTubeActions
         if (string.IsNullOrEmpty(folder))
             return;
         _settings.General.LastDirectory = folder;
+        // A download saves the picture at the video quality. The audio-only setting that once governed this
+        // is gone - playback now chooses picture or sound per play, but a saved file is a video - so the
+        // picker below lists heights, and the sound is carried inside the file as yt-dlp muxes it.
+        const bool audioOnly = false;
+        var quality = (int)_settings.YouTube.VideoQuality;
+        // Ask yt-dlp which qualities this video really offers, off-thread behind a short window, so the
+        // picker only ever lists qualities the download can honour. It sweeps rather than fills, because a
+        // single probe cannot say how far through it is.
+        var probe = new ProgressPrompt(
+            // Translators: Title of the short window shown while a video's available qualities are read.
+            Tr("Reading qualities"),
+            // Translators: Message shown while a video's available download qualities are being read.
+            Tr("Reading available qualities..."),
+            _ => Tr("Reading available qualities...")) { Proportional = false };
+        BackgroundProgress.Start(_view, _dispatcher, probe,
+            (report, token) => _backend.AvailableQualities(url, audioOnly, token),
+            options => StartDownload(url, folder, audioOnly, quality, options));
+    }
+
+    /// <summary>Shows the quality picker, then saves the video at the chosen quality.</summary>
+    /// <remarks>
+    /// On the UI thread, once the probe has come back. A video that offered qualities gets the picker, and
+    /// backing out of it abandons the download; one whose formats could not be read comes back with nothing
+    /// to offer and is saved at the settings quality, exactly as it was before the picker existed.
+    /// </remarks>
+    private void StartDownload(
+        string url, string folder, bool audioOnly, int quality, IReadOnlyList<int> options)
+    {
+        int? exactQuality = null;
+        if (options.Count > 0)
+        {
+            var chosen = _view.ChooseYouTubeQuality(options, audioOnly);
+            if (chosen is null)
+                return;
+            exactQuality = chosen;
+        }
         var prompt = new ProgressPrompt(
             // Translators: Title of the window shown while a video is being saved to this computer.
-            Tr("Downloading audio"),
+            Tr("Downloading video"),
             // Translators: First message in the download window, before anything has arrived.
             Tr("Starting download..."),
             Describe) { Detailed = true };
-        var audioOnly = _settings.YouTube.AudioOnly;
-        var quality = _settings.YouTube.Quality;
         BackgroundProgress.Start(_view, _dispatcher, prompt,
-            (report, token) => _backend.Download(url, folder, audioOnly, quality, report, token),
+            (report, token) => _backend.Download(url, folder, audioOnly, quality, report, token, exactQuality),
             Saved);
     }
 
@@ -277,9 +311,7 @@ internal sealed class YouTubeActions
                     ? found.Text.Trim()
                     // Translators: Shown in place of the text under a video when the uploader wrote none.
                     : Tr("No description is available.");
-                // Translators: Title of the window showing the text the uploader wrote under a video.
-                _view.ShowTextInfo(Tr("Video description"),
-                    title.Length > 0 ? title + "\n\n" + text : text);
+                _view.ShowVideoDescription(title, text);
             });
     }
 

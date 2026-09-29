@@ -81,10 +81,12 @@ internal sealed class ApplicationHost : IDisposable
         _equalizer = new EqualizerActions(
             router, _view, _player, _settings, _settingsStore, _speech, _equalizerLibrary);
         var pyYt = new LunaPlayer.YouTube.PyYtClient();
-        var ytDlp = new LunaPlayer.YouTube.YtDlpClient();
+        var ytDlp = new LunaPlayer.YouTube.YtDlpClient(_settings);
         var youTube = new LunaPlayer.YouTube.Backend(pyYt, ytDlp);
         _resolveCache = new LunaPlayer.YouTube.ResolveCache(ytDlp);
         _components = new LunaPlayer.YouTube.Components(_view, _settings, _speech, _dispatcher, ytDlp);
+        // Shared by the favourites actions and the results window's Ctrl+Space add, so both write the same store.
+        var favorites = new FavoriteStore(Paths.FavoritesFile);
         // Sessions need three YouTube actions. Callbacks avoid giving either object access to the other's
         // unrelated responsibilities.
         YouTubeActions? youTubeActions = null;
@@ -92,10 +94,12 @@ internal sealed class ApplicationHost : IDisposable
             _view, _player, _settings, _speech, _dispatcher, pyYt, youTube, _resolveCache,
             url => youTubeActions!.DownloadTo(url),
             url => youTubeActions!.CopyToClipboard(url),
-            url => youTubeActions!.OpenInBrowser(url));
+            url => youTubeActions!.OpenInBrowser(url),
+            favorites,
+            _components);
         youTubeActions = new YouTubeActions(
             router, _view, _player, _settings, _speech, clipboard, youTube, _sessions, _components, _dispatcher);
-        _ = new FavoriteActions(router, _view, _player, _speech, new FavoriteStore(Paths.FavoritesFile), _sessions);
+        _ = new FavoriteActions(router, _view, _player, _speech, favorites, _sessions);
         _ = new PlaylistActions(router, _view, _player, _settings, _speech, _sessions);
         _ = new SettingsActions(router, _view, _settings, _settingsStore,
             new BackupService(_settingsStore, bookmarks), new FileAssociations(), _player, _shortcuts,

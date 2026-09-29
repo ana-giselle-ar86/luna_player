@@ -3,78 +3,132 @@ using WxSharp;
 
 namespace LunaPlayer.UI.YouTube;
 
-/// <summary>The window listing what a search or a playlist turned up.</summary>
+/// <summary>The window listing what a search or a playlist turned up, or a channel's tabbed browser.</summary>
 ///
 /// <remarks>
 /// Non-play actions leave the dialog open and preserve the current selection. Results are paged into a
-/// regular list because each page is small and rows arrive incrementally.
+/// regular list because each page is small and rows arrive incrementally. A channel carries several such
+/// lists at once, one per section, held behind a notebook: each is its own tab with its own list, loaded
+/// the first time it is opened and then kept, so returning to a tab is instant. The Play, Download and
+/// Close buttons sit in a row of their own below the notebook, not inside any one tab.
 /// </remarks>
 internal sealed class ResultsDialog : IDisposable
 {
     private readonly Dialog _dialog;
     private readonly StaticText _label;
-    private readonly ListBox _list;
-    private readonly List<YouTubeResult> _results;
+    private readonly Notebook? _notebook;
     private readonly IYouTubeResultsFeed _feed;
+    private readonly List<TabPage> _tabs = [];
     private readonly int _copyId = IdManager.NewId();
     private readonly int _browserId = IdManager.NewId();
     private readonly int _channelId = IdManager.NewId();
     private readonly int _downloadId = IdManager.NewId();
     private readonly Menu _menu;
-    private int? _chosen;
-    private bool _exhausted;
-    private bool _loading;
+    private TabPage _active;
+    private ResultChoice? _chosen;
+
+    /// <summary>Set the moment the window is disposed, so a tab load that answers back afterwards touches
+    /// none of the controls that have gone with it.</summary>
+    private bool _closed;
+
+    /// <summary>One tab's list and the rows behind it. A search or a playlist has exactly one; a channel
+    /// has one per section, each paged and populated on its own.</summary>
+    private sealed class TabPage
+    {
+        internal required ListBox List { get; init; }
+        internal List<YouTubeResult> Results { get; } = [];
+        /// <summary>Whether this window has put this tab's rows into its list yet.</summary>
+        internal bool Loaded { get; set; }
+        /// <summary>Whether a fetch for this tab - a switch to it or another page of it - is in flight.
+        /// </summary>
+        internal bool Loading { get; set; }
+        /// <summary>Whether this tab has given everything it has, so the end need not be asked for again.
+        /// </summary>
+        internal bool Exhausted { get; set; }
+    }
 
     internal ResultsDialog(Window parent, YouTubeResultsPrompt prompt)
     {
-        _results = [.. prompt.Results];
         _feed = prompt.Feed;
         _dialog = new Dialog(parent, title: prompt.Title, style: DialogStyle.Default | DialogStyle.ResizeBorder);
         _label = new StaticText(_dialog, label: prompt.Label);
-        _list = new ListBox(_dialog);
-        foreach (var result in _results)
-            _list.Add(Compose(result));
-        if (_results.Count > 0)
-            _list.SelectedIndex = Math.Clamp(prompt.SelectedIndex, 0, _results.Count - 1);
-
-        // Translators: Button that plays the video chosen in the list of results.
-        var play = new Button(_dialog, label: Tr("Play"));
-        play.Click += (_, _) => Play();
-        // Translators: Button that saves the video chosen in the list of results to a folder on this computer.
-        var download = new Button(_dialog, label: Tr("Download"));
-        download.Click += (_, _) => WithSelection(_feed.Download);
-        // Translators: The button that closes a window.
-        var close = new Button(_dialog, StandardId.Cancel, Tr("Close"));
-
-        var buttons = new BoxSizer(Orientation.Horizontal);
-        buttons.Add(play, flags: SizerFlags.BorderRight, border: 6);
-        buttons.Add(download, flags: SizerFlags.BorderRight, border: 6);
-        buttons.AddStretchSpacer();
-        buttons.Add(close);
 
         var sizer = new BoxSizer(Orientation.Vertical);
         sizer.Add(_label, flags: SizerFlags.All | SizerFlags.Expand, border: 8);
-        sizer.Add(_list, proportion: 1, flags: SizerFlags.Expand | SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
-        sizer.Add(buttons, flags: SizerFlags.Expand | SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
+
+        if (prompt.Tabs is { Count: > 0 } tabNames)
+        {
+            // A channel: a notebook with a page per section. Each page carries its own list and its own
+            // Play and Download buttons, so all three ride with the tab; only Close sits apart, below the
+            // notebook. Only the tab the channel opened on is filled here; the rest fill when first opened.
+            _notebook = new Notebook(_dialog);
+            foreach (var name in tabNames)
+            {
+                var panel = new Panel(_notebook);
+                var list = new ListBox(panel);
+                var pageSizer = new BoxSizer(Orientation.Vertical);
+                pageSizer.Add(list, proportion: 1, flags: SizerFlags.Expand | SizerFlags.All, border: 4);
+                pageSizer.Add(PageButtons(panel), flags: SizerFlags.BorderLeft | SizerFlags.BorderBottom, border: 4);
+                panel.SetSizer(pageSizer);
+                _notebook.AddPage(panel, name);
+                var tab = new TabPage { List = list };
+                _tabs.Add(tab);
+                Wire(list);
+            }
+            sizer.Add(_notebook, proportion: 1,
+                flags: SizerFlags.Expand | SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom,
+                border: 8);
+            var opening = Math.Clamp(prompt.SelectedTab, 0, _tabs.Count - 1);
+            _active = _tabs[opening];
+            Populate(_active, prompt.Results, prompt.SelectedIndex);
+            _notebook.SelectedIndex = opening;
+        }
+        else
+        {
+            // A search or a playlist: the plain single list, no notebook. The list and its Play and
+            // Download buttons still sit together, with only Close set apart below.
+            var list = new ListBox(_dialog);
+            var tab = new TabPage { List = list };
+            _tabs.Add(tab);
+            _active = tab;
+            Wire(list);
+            sizer.Add(list, proportion: 1,
+                flags: SizerFlags.Expand | SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom,
+                border: 8);
+            sizer.Add(PageButtons(_dialog),
+                flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
+            Populate(tab, prompt.Results, prompt.SelectedIndex);
+        }
+
+        // Translators: The button that closes a window.
+        var close = new Button(_dialog, StandardId.Cancel, Tr("Close"));
+        var closeRow = new BoxSizer(Orientation.Horizontal);
+        closeRow.AddStretchSpacer();
+        closeRow.Add(close);
+        sizer.Add(closeRow,
+            flags: SizerFlags.Expand | SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom,
+            border: 8);
+
         _dialog.SetSizer(sizer);
         _dialog.Fit();
         _dialog.MinSize = new Size(600, 380);
         _dialog.Center(onParent: true);
 
-        _list.ItemActivated += (_, _) => Play();
-        _list.SelectionChanged += OnSelectionChanged;
-        _list.Bind(WxEvents.ContextMenu, OnContextMenu);
         _menu = BuildMenu();
         _dialog.Bind(WxEvents.MenuCommand, (_, _) => WithSelection(_feed.CopyLink), _copyId);
         _dialog.Bind(WxEvents.MenuCommand, (_, _) => WithSelection(_feed.OpenInBrowser), _browserId);
         _dialog.Bind(WxEvents.MenuCommand, (_, _) => WithSelection(_feed.OpenChannel), _channelId);
         _dialog.Bind(WxEvents.MenuCommand, (_, _) => WithSelection(_feed.Download), _downloadId);
         _dialog.Bind(WxEvents.CharHook, OnCharHook);
-        _list.Focus();
+        // Bound after the opening tab is chosen above, so selecting it fires no switch of its own.
+        if (_notebook is not null)
+            _notebook.PageChanged += OnPageChanged;
+        _active.List.Focus();
     }
 
-    /// <summary>The row the user chose to play, or null when they closed the window instead.</summary>
-    internal int? Show()
+    /// <summary>The row the user chose to play and whether they asked for its picture or its sound, or null
+    /// when they closed the window instead.</summary>
+    internal ResultChoice? Show()
     {
         _dialog.ShowModal();
         return _chosen;
@@ -88,59 +142,148 @@ internal sealed class ResultsDialog : IDisposable
     /// </remarks>
     public void Dispose()
     {
-        // Before anything else: a page already on its way must not be handed to a list that has gone.
+        // Before anything else: a page or a tab already on its way must not be handed to a list that has
+        // gone. The flag stops the deferred callbacks, and closing the feed stops any it has not yet made.
+        _closed = true;
         _feed.Close();
         _menu.Dispose();
         _dialog.Dispose();
     }
 
-    /// <summary>Ends the window, naming the row to play. The one thing here that closes it.</summary>
-    private void Play()
+    private void Wire(ListBox list)
     {
-        if (_list.SelectedIndex < 0)
+        list.ItemActivated += (_, _) => Play();
+        list.SelectionChanged += OnSelectionChanged;
+        list.Bind(WxEvents.ContextMenu, OnContextMenu);
+    }
+
+    /// <summary>The Play and Download buttons that ride with a list - inside each notebook page for a
+    /// channel, beside the single list otherwise. Both act on whichever tab is current, which is always the
+    /// one whose buttons are on screen.</summary>
+    private BoxSizer PageButtons(Window parent)
+    {
+        // Translators: Button that plays the video chosen in the list of results.
+        var play = new Button(parent, label: Tr("Play"));
+        play.Click += (_, _) => Play();
+        // Translators: Button that saves the video chosen in the list of results to a folder on this computer.
+        var download = new Button(parent, label: Tr("Download"));
+        download.Click += (_, _) => WithSelection(_feed.Download);
+        var row = new BoxSizer(Orientation.Horizontal);
+        row.Add(play, flags: SizerFlags.BorderRight, border: 6);
+        row.Add(download);
+        return row;
+    }
+
+    /// <summary>Fills one tab's list with a set of rows and marks it loaded.</summary>
+    private void Populate(TabPage tab, IReadOnlyList<YouTubeResult> items, int selected)
+    {
+        tab.Results.Clear();
+        tab.List.Clear();
+        tab.Results.AddRange(items);
+        foreach (var result in items)
+            tab.List.Add(Compose(result));
+        if (tab.Results.Count > 0)
+            tab.List.SelectedIndex = Math.Clamp(selected, 0, tab.Results.Count - 1);
+        tab.Loaded = true;
+        tab.Loading = false;
+        tab.Exhausted = false;
+    }
+
+    /// <summary>The user moved to another channel tab. A tab already loaded is shown at once; one not yet
+    /// seen is fetched and filled when it arrives.</summary>
+    private void OnPageChanged(object? sender, BookEventArgs args)
+    {
+        if (_closed || _notebook is null)
             return;
-        _chosen = _list.SelectedIndex;
+        var index = args.Selection;
+        if (index < 0 || index >= _tabs.Count)
+            return;
+        var tab = _tabs[index];
+        _active = tab;
+        if (tab.Loaded)
+        {
+            // Its rows are already in hand; only the session need be told which tab is current now. No
+            // fetch - this is the whole point of keeping each visited tab.
+            _feed.SwitchTab(index, _ => { });
+            tab.List.Focus();
+            return;
+        }
+        if (tab.Loading)
+            return;
+        tab.Loading = true;
+        _feed.SwitchTab(index, items => OnTabLoaded(index, items));
+    }
+
+    /// <summary>A channel tab's rows have come back. Null means the fetch failed or was refused, so the tab
+    /// is left unloaded and a later visit tries it again.</summary>
+    private void OnTabLoaded(int index, IReadOnlyList<YouTubeResult>? items)
+    {
+        if (_closed || index < 0 || index >= _tabs.Count)
+            return;
+        var tab = _tabs[index];
+        tab.Loading = false;
+        if (items is null)
+            return;
+        // The rows land in the list, but focus is left where it is: a fetch finishes on its own schedule,
+        // and pulling focus to the list after the user has moved on is jarring.
+        Populate(tab, items, 0);
+    }
+
+    /// <summary>Ends the window, naming the row to play and how. Enter plays the picture, Ctrl+Enter the
+    /// sound alone. The one thing here that closes it.</summary>
+    private void Play() => Choose(PlayMode.Video);
+
+    private void PlayAudio() => Choose(PlayMode.Audio);
+
+    private void Choose(PlayMode mode)
+    {
+        if (_active.List.SelectedIndex < 0)
+            return;
+        _chosen = new ResultChoice(_active.List.SelectedIndex, mode);
         _dialog.EndModal(StandardId.Ok);
     }
 
     /// <summary>Runs one of the things that leave the window open, on the row the user is on.</summary>
     private void WithSelection(Action<int> action)
     {
-        if (_list.SelectedIndex >= 0)
-            action(_list.SelectedIndex);
+        if (_active.List.SelectedIndex >= 0)
+            action(_active.List.SelectedIndex);
     }
 
-    /// <summary>Asks for the next page once the user reaches the bottom of the list.</summary>
+    /// <summary>Asks for the next page once the user reaches the bottom of the current tab's list.</summary>
     /// <remarks>
     /// Both guards are needed. Adding rows raises a selection change of its own, so without
-    /// <c>_loading</c> the first fetch would ask for the second before it had finished; and without
-    /// <c>_exhausted</c> the end of the results would be asked for again on every keypress. The request
+    /// <c>Loading</c> the first fetch would ask for the second before it had finished; and without
+    /// <c>Exhausted</c> the end of the results would be asked for again on every keypress. The request
     /// returns immediately and the rows arrive later, so the list keeps answering while a page is on its
-    /// way.
+    /// way. Every flag is the current tab's own, so paging one tab never blocks another.
     /// </remarks>
     private void OnSelectionChanged(object? sender, CommandEventArgs args)
     {
-        var selected = _list.SelectedIndex;
+        var tab = _active;
+        var selected = tab.List.SelectedIndex;
         if (selected < 0)
             return;
         _feed.Selected(selected);
-        if (_exhausted || _loading || selected != _results.Count - 1)
+        if (tab.Exhausted || tab.Loading || selected != tab.Results.Count - 1)
             return;
-        _loading = true;
-        _feed.RequestMore(Append);
+        tab.Loading = true;
+        _feed.RequestMore(page => Append(tab, page));
     }
 
-    private void Append(IReadOnlyList<YouTubeResult> page)
+    private void Append(TabPage tab, IReadOnlyList<YouTubeResult> page)
     {
-        _loading = false;
+        if (_closed)
+            return;
+        tab.Loading = false;
         if (page.Count == 0)
         {
-            _exhausted = true;
+            tab.Exhausted = true;
             return;
         }
-        _results.AddRange(page);
+        tab.Results.AddRange(page);
         foreach (var result in page)
-            _list.Add(Compose(result));
+            tab.List.Add(Compose(result));
     }
 
     /// <summary>The one line a row shows, built as the Python player builds it: the title, then the few
@@ -206,7 +349,7 @@ internal sealed class ResultsDialog : IDisposable
 
     private void OnContextMenu(object? sender, ContextMenuEventArgs args)
     {
-        if (_list.SelectedIndex >= 0)
+        if (_active.List.SelectedIndex >= 0)
             _dialog.PopupMenu(_menu);
     }
 
@@ -221,19 +364,28 @@ internal sealed class ResultsDialog : IDisposable
             _dialog.EndModal(StandardId.Cancel);
             return;
         }
-        if (args.Code is Key.Enter or Key.NumpadEnter && ReferenceEquals(Window.FindFocus(), _list))
+        if (args.Code is Key.Enter or Key.NumpadEnter && ReferenceEquals(Window.FindFocus(), _active.List))
         {
-            Play();
+            // Enter plays the picture; Ctrl+Enter plays the sound alone. The same row, two streams.
+            if (args.Control)
+                PlayAudio();
+            else
+                Play();
             return;
         }
         // A letter arrives as its uppercase ASCII value on a key-down event.
-        if (args.Control && _list.SelectedIndex >= 0)
+        if (args.Control && _active.List.SelectedIndex >= 0)
         {
+            if (args.Code is Key.Space or Key.NumpadSpace)
+            {
+                _feed.AddFavorite(_active.List.SelectedIndex);
+                return;
+            }
             switch ((char)args.Code)
             {
-                case 'C': _feed.CopyLink(_list.SelectedIndex); return;
-                case 'B': _feed.OpenInBrowser(_list.SelectedIndex); return;
-                case 'N': _feed.OpenChannel(_list.SelectedIndex); return;
+                case 'C': _feed.CopyLink(_active.List.SelectedIndex); return;
+                case 'B': _feed.OpenInBrowser(_active.List.SelectedIndex); return;
+                case 'N': _feed.OpenChannel(_active.List.SelectedIndex); return;
             }
         }
         args.Skip();
