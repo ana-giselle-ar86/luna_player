@@ -287,6 +287,18 @@ internal static class MainMenuBuilder
         // Translators: Tools submenu holding the IPTV source manager and channel browser.
         toolsMenu.AppendSubMenu(iptvMenu, Tr("IPTV"));
 
+        // A submenu of Tools for the same reason IPTV is: setting, cancelling and querying the timer are three
+        // small commands that belong together rather than each on the menu bar.
+        var sleepMenu = new Menu();
+        // Translators: Sleep-timer menu item that opens the window where a timer is set.
+        sleepMenu.Append(commandIds[ActionId.OpenSleepTimer], Label(Tr("Set timer..."), ActionId.OpenSleepTimer, shortcuts));
+        // Translators: Sleep-timer menu item that turns off a timer that is counting down.
+        sleepMenu.Append(commandIds[ActionId.CancelSleepTimer], Label(Tr("Cancel timer"), ActionId.CancelSleepTimer, shortcuts));
+        // Translators: Sleep-timer menu item that speaks how long is left before the timer fires.
+        sleepMenu.Append(commandIds[ActionId.AnnounceSleepTimerRemaining], Label(Tr("Time remaining"), ActionId.AnnounceSleepTimerRemaining, shortcuts));
+        // Translators: Tools submenu holding the sleep-timer commands.
+        toolsMenu.AppendSubMenu(sleepMenu, Tr("Sleep timer"));
+
         var menuBar = new MenuBar();
         // Translators: Name of the File menu in the menu bar.
         menuBar.Append(fileMenu, Tr("File"));

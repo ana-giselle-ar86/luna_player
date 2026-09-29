@@ -26,10 +26,12 @@ internal enum VideoQuality
 internal enum AudioQuality { Kbps64 = 64, Kbps128 = 128, Kbps256 = 256 }
 internal enum MixedLinkBehavior { Ask, Video, Playlist }
 internal enum YtDlpChannel { Stable, Nightly, Master }
+internal enum SleepTimerMode { Duration, EndOfTrack }
+internal enum SleepTimerAction { Pause, Stop }
 
 internal sealed class PlayerSettings
 {
-    public int Version { get; set; } = 3;
+    public int Version { get; set; } = 4;
     public GeneralSettings General { get; set; } = new();
     public AudioSettings Audio { get; set; } = new();
     public PlaybackSettings Playback { get; set; } = new();
@@ -38,6 +40,7 @@ internal sealed class PlayerSettings
     public ShortcutSettings Shortcuts { get; set; } = new();
     public YouTubeSettings YouTube { get; set; } = new();
     public RecordingSettings Recording { get; set; } = new();
+    public SleepTimerSettings SleepTimer { get; set; } = new();
 
     internal PlayerSettings Copy() => new()
     {
@@ -50,11 +53,12 @@ internal sealed class PlayerSettings
         Shortcuts = Shortcuts.Copy(),
         YouTube = YouTube.Copy(),
         Recording = Recording.Copy(),
+        SleepTimer = SleepTimer.Copy(),
     };
 
     internal void Apply(PlayerSettings source)
     {
-        Version = Math.Max(3, source.Version);
+        Version = Math.Max(4, source.Version);
         General.Apply(source.General);
         Audio.Apply(source.Audio);
         Playback.Apply(source.Playback);
@@ -63,6 +67,7 @@ internal sealed class PlayerSettings
         Shortcuts.Apply(source.Shortcuts);
         YouTube.Apply(source.YouTube);
         Recording.Apply(source.Recording);
+        SleepTimer.Apply(source.SleepTimer);
         Validate();
     }
 
@@ -70,7 +75,8 @@ internal sealed class PlayerSettings
     internal void ValidateStored()
     {
         if (General is null || Audio is null || Playback is null || Silence is null
-            || Shortcuts is null || YouTube is null || Recording is null || Equalizer is null)
+            || Shortcuts is null || YouTube is null || Recording is null || Equalizer is null
+            || SleepTimer is null)
             throw new JsonException("The settings file is missing a required section.");
 
         Require(Version >= 1, "version");
@@ -109,6 +115,13 @@ internal sealed class PlayerSettings
             "silence.stopSilence");
         Require(double.IsFinite(Silence.Window) && Silence.Window > 0, "silence.window");
         Require(Enum.IsDefined(Silence.Detection), "silence.detection");
+
+        Require(Enum.IsDefined(SleepTimer.Mode), "sleepTimer.mode");
+        Require(Enum.IsDefined(SleepTimer.Action), "sleepTimer.action");
+        Require(SleepTimer.DurationMinutes >= SleepTimerSettings.MinimumDuration
+            && SleepTimer.DurationMinutes <= SleepTimerSettings.MaximumDuration, "sleepTimer.durationMinutes");
+        Require(SleepTimer.FadeSeconds >= SleepTimerSettings.MinimumFadeSeconds
+            && SleepTimer.FadeSeconds <= SleepTimerSettings.MaximumFadeSeconds, "sleepTimer.fadeSeconds");
 
         Require(!string.IsNullOrWhiteSpace(Equalizer.Preset), "equalizer.preset");
         // Written out rather than run through Require, because the compiler cannot see that Require throws
@@ -168,6 +181,10 @@ internal sealed class PlayerSettings
         Recording.Bitrate = Math.Clamp(Recording.Bitrate, 8000, 512000);
         Recording.Folder = string.IsNullOrWhiteSpace(Recording.Folder)
             ? Paths.DefaultRecordingsDirectory : Recording.Folder.Trim();
+        SleepTimer.DurationMinutes = Math.Clamp(
+            SleepTimer.DurationMinutes, SleepTimerSettings.MinimumDuration, SleepTimerSettings.MaximumDuration);
+        SleepTimer.FadeSeconds = Math.Clamp(
+            SleepTimer.FadeSeconds, SleepTimerSettings.MinimumFadeSeconds, SleepTimerSettings.MaximumFadeSeconds);
         Playback.LastPosition = Precision.Normalize(Math.Max(0, Playback.LastPosition));
         Silence.StartPeriods = Math.Max(0, Silence.StartPeriods);
         Silence.StartDuration = Precision.Normalize(Math.Max(0, Silence.StartDuration));
@@ -475,6 +492,48 @@ internal sealed class RecordingSettings
         Channels = source.Channels;
         Bitrate = source.Bitrate;
         Folder = source.Folder;
+    }
+}
+
+/// <summary>The sleep-timer choices remembered between sessions, so the window opens on what was set last.
+/// </summary>
+///
+/// <remarks>
+/// These are the last-used preferences, not a timer that survives a restart: closing the player always
+/// ends any countdown. The window is prefilled from here, and its choices are written back here when the
+/// user sets a timer.
+/// </remarks>
+internal sealed class SleepTimerSettings
+{
+    internal const int MinimumDuration = 1;
+    internal const int MaximumDuration = 24 * 60;
+    internal const int MinimumFadeSeconds = 1;
+    internal const int MaximumFadeSeconds = 120;
+
+    [JsonConverter(typeof(JsonStringEnumConverter<SleepTimerMode>))]
+    public SleepTimerMode Mode { get; set; } = SleepTimerMode.Duration;
+
+    [JsonConverter(typeof(JsonStringEnumConverter<SleepTimerAction>))]
+    public SleepTimerAction Action { get; set; } = SleepTimerAction.Pause;
+
+    /// <summary>How long a duration timer runs, in minutes.</summary>
+    public int DurationMinutes { get; set; } = 30;
+
+    /// <summary>Whether the volume is faded down over the last seconds before the timer fires.</summary>
+    public bool Fade { get; set; } = true;
+
+    /// <summary>How many seconds the fade lasts.</summary>
+    public int FadeSeconds { get; set; } = 20;
+
+    internal SleepTimerSettings Copy() => (SleepTimerSettings)MemberwiseClone();
+
+    internal void Apply(SleepTimerSettings source)
+    {
+        Mode = source.Mode;
+        Action = source.Action;
+        DurationMinutes = source.DurationMinutes;
+        Fade = source.Fade;
+        FadeSeconds = source.FadeSeconds;
     }
 }
 

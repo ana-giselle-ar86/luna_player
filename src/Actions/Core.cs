@@ -29,6 +29,7 @@ internal enum ActionId
     AnnounceTitle,
     OpenMediaConverter,
     OpenIptvSources, OpenIptvChannels,
+    OpenSleepTimer, CancelSleepTimer, AnnounceSleepTimerRemaining,
 }
 
 internal sealed record ActionDefinition(ActionId Id, string Label, Shortcut? PrimaryShortcut = null, Shortcut? SecondaryShortcut = null);
@@ -38,5 +39,6 @@ internal static class ActionRegistry
     internal static IReadOnlyList<ActionDefinition> All { get; } =
     [.. MediaActionDefinitions.All, .. PlaybackActionDefinitions.All, .. YouTubeActionDefinitions.All,
         .. HelpActionDefinitions.All, .. UpdateActionDefinitions.All,
-        .. RecordingActionDefinitions.All, .. ToolsActionDefinitions.All, .. IptvActionDefinitions.All];
+        .. RecordingActionDefinitions.All, .. ToolsActionDefinitions.All, .. IptvActionDefinitions.All,
+        .. SleepTimerActionDefinitions.All];
 }
