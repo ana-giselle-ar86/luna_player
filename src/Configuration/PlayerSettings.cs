@@ -13,7 +13,17 @@ internal enum SpeechVerbosity { Beginner, Advanced }
 internal enum OpenFilesMode { FileOnly, MainFolder, MainAndSubfolders }
 internal enum EndBehavior { Advance, Loop, None }
 internal enum SilenceDetection { Peak, Rms }
-internal enum YouTubeQuality { Low, Medium, Best }
+/// <summary>The picture heights the player offers, matching Hex Player's list. The backing number is the
+/// height in pixels, so it goes straight to yt-dlp's height cap.</summary>
+internal enum VideoQuality
+{
+    P144 = 144, P240 = 240, P360 = 360, P480 = 480,
+    P720 = 720, P1080 = 1080, P1440 = 1440, P2160 = 2160,
+}
+
+/// <summary>The audio bitrates the player offers, matching Hex Player's list. The backing number is the
+/// bitrate in kilobits per second.</summary>
+internal enum AudioQuality { Kbps64 = 64, Kbps128 = 128, Kbps256 = 256 }
 internal enum MixedLinkBehavior { Ask, Video, Playlist }
 internal enum YtDlpChannel { Stable, Nightly, Master }
 
@@ -146,6 +156,7 @@ internal sealed class PlayerSettings
         Audio.SeekStepKey = Audio.SeekStepKey.Length == 1 && "1234567890-".Contains(Audio.SeekStepKey, StringComparison.Ordinal)
             ? Audio.SeekStepKey : "2";
         YouTube.SearchResultCount = Math.Clamp(YouTube.SearchResultCount, 5, 100);
+        YouTube.CookiesPath ??= string.Empty;
         // Only that it is one of the rates the player offers at all. Whether the chosen format can be
         // written at it is a question for the encoder, asked when a recording starts rather than here:
         // this runs at load, and loading an encoder to interrogate it is not something to do then.
@@ -376,10 +387,13 @@ internal sealed class ShortcutSettings
 
 internal sealed class YouTubeSettings
 {
-    public bool AudioOnly { get; set; } = true;
+    /// <summary>The picture height a video is played and prefetched at, when Enter plays the video.</summary>
+    [JsonConverter(typeof(JsonStringEnumConverter<VideoQuality>))]
+    public VideoQuality VideoQuality { get; set; } = VideoQuality.P720;
 
-    [JsonConverter(typeof(JsonStringEnumConverter<YouTubeQuality>))]
-    public YouTubeQuality Quality { get; set; } = YouTubeQuality.Medium;
+    /// <summary>The bitrate the sound is played and prefetched at, when Ctrl+Enter plays the audio.</summary>
+    [JsonConverter(typeof(JsonStringEnumConverter<AudioQuality>))]
+    public AudioQuality AudioQuality { get; set; } = AudioQuality.Kbps256;
 
     /// <summary>How many search results to ask for.</summary>
     /// <remarks>
@@ -405,17 +419,30 @@ internal sealed class YouTubeSettings
 
     public bool CheckComponentUpdates { get; set; }
 
+    /// <summary>A Netscape-format cookie file yt-dlp is given with <c>--cookies</c>, or empty for none.</summary>
+    /// <remarks>
+    /// Mutually exclusive with <see cref="CookiesFromFirefox"/>: choosing a file clears the Firefox flag and
+    /// vice versa, so only one cookie source is ever handed to yt-dlp.
+    /// </remarks>
+    public string CookiesPath { get; set; } = "";
+
+    /// <summary>Whether yt-dlp is told to read cookies live from Firefox (<c>--cookies-from-browser
+    /// firefox</c>) rather than from a saved file.</summary>
+    public bool CookiesFromFirefox { get; set; }
+
     internal YouTubeSettings Copy() => (YouTubeSettings)MemberwiseClone();
 
     internal void Apply(YouTubeSettings source)
     {
-        AudioOnly = source.AudioOnly;
-        Quality = source.Quality;
+        VideoQuality = source.VideoQuality;
+        AudioQuality = source.AudioQuality;
         SearchResultCount = source.SearchResultCount;
         SearchSuggestions = source.SearchSuggestions;
         MixedLink = source.MixedLink;
         Channel = source.Channel;
         CheckComponentUpdates = source.CheckComponentUpdates;
+        CookiesPath = source.CookiesPath;
+        CookiesFromFirefox = source.CookiesFromFirefox;
     }
 }
 

@@ -51,9 +51,11 @@ internal sealed partial class MainFrame
     public IptvSourceRequest? ManageIptvSources(IReadOnlyList<IptvSourceListItem> sources, string selectedId) { using var dialog = new Iptv.IptvSourcesDialog(DialogParent, sources, selectedId); return dialog.Show(); }
     public LunaPlayer.Iptv.IptvSourceDraft? EditIptvSource(string caption, LunaPlayer.Iptv.IptvSourceDraft value) { using var dialog = new Iptv.IptvSourceEditDialog(DialogParent, caption, value); return dialog.Show(); }
     public int? BrowseChannels(ChannelBrowserPrompt prompt) { using var dialog = new Iptv.ChannelBrowserDialog(DialogParent, prompt); return dialog.Show(); }
-    public int? ShowYouTubeResults(YouTubeResultsPrompt prompt) { using var dialog = new YouTube.ResultsDialog(DialogParent, prompt); return dialog.Show(); }
+    public ResultChoice? ShowYouTubeResults(YouTubeResultsPrompt prompt) { using var dialog = new YouTube.ResultsDialog(DialogParent, prompt); return dialog.Show(); }
+    public int? ChooseYouTubeQuality(IReadOnlyList<int> options, bool audioOnly) { using var dialog = new YouTube.QualitySelectionDialog(DialogParent, options, audioOnly); return dialog.Show(); }
     public bool OfferYouTubeComponents() { using var dialog = new YouTube.ComponentsDialog(DialogParent); return dialog.Show(); }
     public void ShowTextInfo(string title, string text) { using var dialog = new TextInfoDialog(DialogParent, title, text); dialog.Show(); }
+    public void ShowVideoDescription(string title, string description) { using var dialog = new YouTube.DescriptionDialog(DialogParent, title, description); dialog.Show(); }
     public void ShowRecording(
         LunaPlayer.Recording.AudioCatalog catalog, LunaPlayer.Recording.RecordingSources sources, LunaPlayer.Recording.RecordingEngine engine)
     { using var dialog = new Recording.RecordingDialog(DialogParent, _dispatcher, catalog, sources, engine); dialog.Show(); }

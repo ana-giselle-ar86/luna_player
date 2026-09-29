@@ -1,6 +1,15 @@
-using LunaPlayer.Configuration;
-
 namespace LunaPlayer.YouTube;
+
+/// <summary>Whether a play resolves the video stream or the audio stream alone. Chosen per play - Enter for
+/// the video, Ctrl+Enter for the sound - rather than fixed for the session, so one list serves both.
+/// </summary>
+internal enum PlayMode
+{
+    /// <summary>The picture, at the video quality.</summary>
+    Video,
+    /// <summary>The sound alone, at the audio quality.</summary>
+    Audio,
+}
 
 /// <summary>Where a list of rows came from.</summary>
 internal enum SessionKind
@@ -9,7 +18,7 @@ internal enum SessionKind
     Search,
     /// <summary>A playlist, which arrives whole.</summary>
     Playlist,
-    /// <summary>The playlists a channel publishes, which arrive whole.</summary>
+    /// <summary>A channel browser, whose tabs are each paged on their own and kept once loaded.</summary>
     Channel,
 }
 
@@ -21,13 +30,29 @@ internal enum SessionKind
 /// stream addresses, which say nothing about order or about what comes next, and this holds the order the
 /// results window showed.
 ///
-/// The options are frozen when it is made. Changing the quality setting halfway through should not leave
-/// the first half of a list resolved one way and the second another, and the cache is keyed on them, so a
-/// session that read them afresh each time would quietly stop finding its own prefetches.
+/// A channel is several lists at once - videos, shorts, streams and the rest - and this keeps each tab it
+/// has visited, its rows and its paging both, so switching back to a tab is instant rather than another
+/// fetch. A search or a playlist is one list, which is simply the single tab that is always current.
+///
+/// The two qualities are frozen when it is made. Changing a quality setting halfway through should not
+/// leave the first half of a list resolved one way and the second another, and the cache is keyed on them,
+/// so a session that read them afresh each time would quietly stop finding its own prefetches. Which of the
+/// two a play uses - picture or sound - is not frozen: it is chosen at the moment of playing, and both are
+/// prefetched, so either is ready at once.
 /// </remarks>
 internal sealed class YouTubeSession : IDisposable
 {
-    private readonly List<YouTubeResult> _items;
+    /// <summary>One tab's rows and the source they are paged from. A search or a playlist has exactly one;
+    /// a channel has one per section it has opened.</summary>
+    private sealed class TabState
+    {
+        internal List<YouTubeResult> Items { get; } = [];
+        internal IResultPage? Page { get; set; }
+        internal bool Exhausted { get; set; }
+        internal int Selected { get; set; }
+    }
+
+    private readonly Dictionary<int, TabState> _tabs = [];
     private readonly CancellationTokenSource _cancellation = new();
 
     /// <summary>Taken while the source is alive and kept.</summary>
@@ -42,17 +67,26 @@ internal sealed class YouTubeSession : IDisposable
     internal YouTubeSession(
         SessionKind kind,
         IEnumerable<YouTubeResult> items,
-        bool audioOnly,
-        YouTubeQuality quality,
-        SearchPage? page = null)
+        int videoQuality,
+        int audioQuality,
+        IResultPage? page = null,
+        string channelBase = "",
+        int currentTab = 0,
+        string channelTitle = "")
     {
         Kind = kind;
-        _items = [.. items];
-        AudioOnly = audioOnly;
-        Quality = quality;
-        Page = page;
+        VideoQuality = videoQuality;
+        AudioQuality = audioQuality;
+        ChannelBase = channelBase;
+        CurrentTab = currentTab;
+        ChannelTitle = channelTitle;
         _token = _cancellation.Token;
+        var initial = new TabState { Page = page };
+        initial.Items.AddRange(items);
+        _tabs[currentTab] = initial;
     }
+
+    private TabState Active => _tabs[CurrentTab];
 
     internal SessionKind Kind { get; }
 
@@ -63,25 +97,59 @@ internal sealed class YouTubeSession : IDisposable
     {
         // Translators: Heading above the list of videos a YouTube search found.
         SessionKind.Search => Tr("Search results"),
-        // Translators: Heading above the list of playlists a YouTube channel publishes.
-        SessionKind.Channel => Tr("Channel playlists"),
+        // A channel names itself when it is known; the generic word covers the rare case where it is not.
+        SessionKind.Channel => ChannelTitle.Length > 0
+            ? ChannelTitle
+            // Translators: Heading above a YouTube channel's browser when the channel's name is not known.
+            : Tr("Channel"),
         // Translators: Heading above the list of videos in a YouTube playlist.
         _ => Tr("Playlist videos"),
     };
 
-    internal IReadOnlyList<YouTubeResult> Items => _items;
+    /// <summary>The rows of the tab that is current.</summary>
+    internal IReadOnlyList<YouTubeResult> Items => Active.Items;
 
-    internal bool AudioOnly { get; }
+    /// <summary>The picture height a video play resolves at.</summary>
+    internal int VideoQuality { get; }
 
-    internal YouTubeQuality Quality { get; }
+    /// <summary>The bitrate an audio play resolves at.</summary>
+    internal int AudioQuality { get; }
 
-    /// <summary>The search this came from, held so it can be asked for more. Null for a playlist, which
-    /// has no more to give.</summary>
-    internal SearchPage? Page { get; }
+    /// <summary>Whether the next play is the picture or the sound alone. Set by the results window from the
+    /// key the user pressed - Enter for video, Ctrl+Enter for audio - just before the play is asked for.
+    /// </summary>
+    internal PlayMode Mode { get; set; } = PlayMode.Video;
 
-    /// <summary>Which row the user was on. Kept so closing the results window and coming back to it lands
-    /// where they left rather than at the top.</summary>
-    internal int Selected { get; set; }
+    /// <summary>Whether a mode resolves the audio stream alone. The word the resolve and the cache still
+    /// speak in.</summary>
+    internal static bool AudioFor(PlayMode mode) => mode is PlayMode.Audio;
+
+    /// <summary>The quality a mode resolves at: the audio bitrate for sound, the picture height otherwise.
+    /// </summary>
+    internal int QualityFor(PlayMode mode) => mode is PlayMode.Audio ? AudioQuality : VideoQuality;
+
+    /// <summary>The source the current tab is paged from, held so it can be asked for more. Null for a
+    /// playlist, which has no more to give; a search page for a search; a channel-tab page for a channel.
+    /// </summary>
+    internal IResultPage? Page => Active.Page;
+
+    /// <summary>Whether the current tab has given everything it has, so no more should be asked for.
+    /// </summary>
+    internal bool Exhausted { get => Active.Exhausted; set => Active.Exhausted = value; }
+
+    /// <summary>The canonical channel address a channel session's tabs are built from. Empty otherwise.
+    /// </summary>
+    internal string ChannelBase { get; }
+
+    /// <summary>Which channel tab is showing, as an index into <see cref="ChannelTabs.Keys"/>.</summary>
+    internal int CurrentTab { get; private set; }
+
+    /// <summary>The channel's name, shown as the heading of a channel session. Empty otherwise.</summary>
+    internal string ChannelTitle { get; }
+
+    /// <summary>Which row the user was on in the current tab. Kept so closing the results window and coming
+    /// back to it lands where they left rather than at the top.</summary>
+    internal int Selected { get => Active.Selected; set => Active.Selected = value; }
 
     /// <summary>Cancelled when the session ends, abandoning every resolve started on its behalf.</summary>
     /// <remarks>
@@ -93,21 +161,43 @@ internal sealed class YouTubeSession : IDisposable
 
     internal bool IsCancelled => _token.IsCancellationRequested;
 
-    /// <summary>Adds a page of results to the end.</summary>
-    internal void Append(IEnumerable<YouTubeResult> items) => _items.AddRange(items);
+    /// <summary>Whether a channel tab has already been loaded and can be shown again without a fetch.
+    /// </summary>
+    internal bool HasTab(int index) => _tabs.ContainsKey(index);
 
-    /// <summary>Where in the list a video is, or -1.</summary>
+    /// <summary>Makes an already-loaded tab the current one. No fetch: this is what makes returning to a
+    /// tab free.</summary>
+    internal void ActivateTab(int index)
+    {
+        if (_tabs.ContainsKey(index))
+            CurrentTab = index;
+    }
+
+    /// <summary>Keeps a freshly-loaded tab's rows and page, and makes it the current one.</summary>
+    internal void CacheTab(int index, IEnumerable<YouTubeResult> items, IResultPage? page)
+    {
+        var state = new TabState { Page = page };
+        state.Items.AddRange(items);
+        _tabs[index] = state;
+        CurrentTab = index;
+    }
+
+    /// <summary>Adds a page of results to the end of the current tab.</summary>
+    internal void Append(IEnumerable<YouTubeResult> items) => Active.Items.AddRange(items);
+
+    /// <summary>Where in the current tab a video is, or -1.</summary>
     internal int IndexOf(string watchUrl)
-        => _items.FindIndex(item => string.Equals(item.Url, watchUrl, StringComparison.Ordinal));
+        => Active.Items.FindIndex(item => string.Equals(item.Url, watchUrl, StringComparison.Ordinal));
 
     public void Dispose()
     {
         _cancellation.Cancel();
         _cancellation.Dispose();
-        // The enumerator holds a live response from YouTube. Closing it waits for a page still being
-        // taken - advancing and disposing the same enumerator at once is undefined - but nothing here
-        // waits for that, because nobody is reading a search that has ended.
-        if (Page is SearchPage page)
-            _ = page.DisposeAsync().AsTask();
+        // Every tab holds a live response from YouTube. Closing them waits for a batch still being taken -
+        // advancing and disposing the same source at once is undefined - but nothing here waits for that,
+        // because nobody is reading a list that has ended.
+        foreach (var tab in _tabs.Values)
+            if (tab.Page is IAsyncDisposable page)
+                _ = page.DisposeAsync().AsTask();
     }
 }

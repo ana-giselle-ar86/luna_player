@@ -109,6 +109,14 @@ internal interface IYouTubeResultsFeed
     /// <summary>Saves a row to a folder on this computer, asking which folder first.</summary>
     void Download(int index);
 
+    /// <summary>Adds a row to the favourites, under its own title and address.</summary>
+    void AddFavorite(int index);
+
+    /// <summary>Switches a channel browser to another tab. Returns at once; <paramref name="replaced"/>
+    /// runs later on the UI thread with the new tab's rows, or with null when the switch failed or was
+    /// refused so the window can restore its tab selector.</summary>
+    void SwitchTab(int tabIndex, Action<IReadOnlyList<YouTubeResult>?> replaced);
+
     /// <summary>Asks for the next page. Returns at once; <paramref name="appended"/> runs later on the UI
     /// thread, and is given an empty list when there is nothing more to come.</summary>
     void RequestMore(Action<IReadOnlyList<YouTubeResult>> appended);
@@ -118,12 +126,24 @@ internal interface IYouTubeResultsFeed
     void Close();
 }
 
+/// <summary>What the user chose from the results list: which row, and whether to play its picture or its
+/// sound alone.</summary>
+/// <remarks>
+/// The mode is the whole point of returning a record rather than a bare index: Enter asks for the video and
+/// Ctrl+Enter for the audio, and the session needs to know which before it resolves the row.
+/// </remarks>
+internal readonly record struct ResultChoice(int Index, PlayMode Mode);
+
 internal sealed record YouTubeResultsPrompt(
     string Title,
     string Label,
     IReadOnlyList<YouTubeResult> Results,
     int SelectedIndex,
-    IYouTubeResultsFeed Feed);
+    IYouTubeResultsFeed Feed,
+    /// <summary>The channel browser's tab names, or null for a search or playlist, which has no tabs.</summary>
+    IReadOnlyList<string>? Tabs = null,
+    /// <summary>Which tab is showing when the window opens.</summary>
+    int SelectedTab = 0);
 internal sealed record PrefsOps(
     string SettingsPath,
     string BookmarksPath,
@@ -248,6 +268,9 @@ internal interface IMainView : IDisposable
     /// detailed window shows them in a read-only text area; the rest get a label.</param>
     IProgressView BeginProgress(string title, string message, bool proportional, bool detailed);
     void ShowTextInfo(string title, string text);
+    /// <summary>Shows the text an uploader wrote under a video, in the purpose-built window that can open its
+    /// links and save it. <paramref name="title"/> is the video's title, shown above the text.</summary>
+    void ShowVideoDescription(string title, string description);
     /// <summary>Asks which half of a link naming a video and a playlist the user meant. Null when they
     /// backed out.</summary>
     YouTubeLinkKind? ChooseYouTubeLinkKind();
@@ -267,10 +290,15 @@ internal interface IMainView : IDisposable
     /// <see cref="ChannelBrowserPrompt.Channels"/> of the channel the user chose to play, or null when they
     /// closed it without playing anything.</summary>
     int? BrowseChannels(ChannelBrowserPrompt prompt);
-    /// <summary>Opens the list of results and returns the row the user chose to play, or null when they
-    /// closed it without playing anything. Everything else the window offers it does for itself, through
-    /// <see cref="IYouTubeResultsFeed"/>, without closing.</summary>
-    int? ShowYouTubeResults(YouTubeResultsPrompt prompt);
+    /// <summary>Opens the list of results and returns the row the user chose to play and whether they asked
+    /// for its picture or its sound alone, or null when they closed it without playing anything. Everything
+    /// else the window offers it does for itself, through <see cref="IYouTubeResultsFeed"/>, without closing.
+    /// </summary>
+    ResultChoice? ShowYouTubeResults(YouTubeResultsPrompt prompt);
+    /// <summary>Asks which of the qualities a video actually offers it should be saved at. The numbers are
+    /// picture heights for a video download and audio bitrates in kbps for an audio-only one. Returns the
+    /// chosen number, or null when the user backed out.</summary>
+    int? ChooseYouTubeQuality(IReadOnlyList<int> options, bool audioOnly);
     /// <summary>Offers to fetch the programs a YouTube download needs. True when the user accepted.</summary>
     bool OfferYouTubeComponents();
     /// <summary>Opens the window where recording is set up and run. It is modal, but closing it does not

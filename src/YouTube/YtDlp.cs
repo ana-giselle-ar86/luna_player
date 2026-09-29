@@ -22,19 +22,24 @@ internal readonly record struct YtDlpRun(IReadOnlyList<string> Lines, string Dia
 /// </remarks>
 internal sealed partial class YtDlpClient
 {
-    /// <summary>What to ask for when only the sound is wanted.</summary>
-    private const string AudioFormat = "bestaudio[ext=m4a]/bestaudio/best";
+    private readonly PlayerSettings _settings;
 
-    /// <summary>The yt-dlp format selector for each video quality.</summary>
-    private static string VideoFormat(YouTubeQuality quality) => quality switch
-    {
-        YouTubeQuality.Low => "best[height<=?360][ext=mp4]/best[height<=?360]/best[ext=mp4]/best",
-        YouTubeQuality.Best => "best[ext=mp4]/best",
-        _ => "best[height<=?720][ext=mp4]/best[height<=?720]/best[ext=mp4]/best",
-    };
+    /// <param name="settings">Read live on each run, so a cookie source chosen in preferences takes effect
+    /// on the next yt-dlp call without the client being rebuilt.</param>
+    internal YtDlpClient(PlayerSettings settings) => _settings = settings;
 
-    internal static string Format(bool audioOnly, YouTubeQuality quality)
-        => audioOnly ? AudioFormat : VideoFormat(quality);
+    /// <summary>The yt-dlp format selector for sound alone, capped at a bitrate in kbps.</summary>
+    private static string AudioFormat(int abr)
+        => $"bestaudio[abr<=?{abr}][ext=m4a]/bestaudio[abr<=?{abr}]/bestaudio[ext=m4a]/bestaudio/best";
+
+    /// <summary>The yt-dlp format selector for a video capped at a picture height.</summary>
+    private static string VideoFormat(int height)
+        => $"best[height<=?{height}][ext=mp4]/best[height<=?{height}]/best[ext=mp4]/best";
+
+    /// <summary>The format selector for a play: sound alone capped at a bitrate, or picture capped at a
+    /// height. The number is a bitrate in kbps when <paramref name="audioOnly"/>, a height otherwise.</summary>
+    internal static string Format(bool audioOnly, int quality)
+        => audioOnly ? AudioFormat(quality) : VideoFormat(quality);
 
     /// <summary>Turns a video into something playable.</summary>
     ///
@@ -43,7 +48,7 @@ internal sealed partial class YtDlpClient
     /// Later attempts provide less control over the selected format.
     /// </remarks>
     internal ResolveOutcome Resolve(
-        string watchUrl, YouTubeResult item, bool audioOnly, YouTubeQuality quality, CancellationToken token)
+        string watchUrl, YouTubeResult item, bool audioOnly, int quality, CancellationToken token)
     {
         // Deno is required as well as yt-dlp; without it, returned stream URLs can be severely throttled.
         if (!Tools.HasAll)
@@ -123,6 +128,78 @@ internal sealed partial class YtDlpClient
         return (Text(data, "title") ?? string.Empty, items);
     }
 
+    /// <summary>One window of rows from a channel tab, and how many raw entries that window held.</summary>
+    /// <remarks>
+    /// <paramref name="start"/> and <paramref name="end"/> are 1-based and inclusive, the way Hex Player's
+    /// <c>playliststart</c>/<c>playlistend</c> are. The raw count is returned alongside the mapped rows
+    /// because the paging decision - whether more windows remain - is about how much the tab held, not how
+    /// much of it was playable: a window can be full of community posts that map to nothing and still not be
+    /// the last one. A failed run with nothing to say is treated as the end of the tab rather than an error,
+    /// because <c>--ignore-errors</c> lets yt-dlp finish a partial tab.
+    /// </remarks>
+    internal (IReadOnlyList<YouTubeResult> Items, int RawCount) ChannelTab(
+        string channelBase, string tabKey, int start, int end, CancellationToken token)
+    {
+        var url = ChannelTabs.TabUrl(channelBase, tabKey);
+        var run = Run(
+            ["--flat-playlist", "--dump-single-json", "--ignore-errors", "-I", $"{start}:{end}", url],
+            token);
+        if (Parse(run.Lines) is not JsonElement data)
+        {
+            if (run.Failed)
+                throw new InvalidOperationException(run.Diagnostic);
+            return ([], 0);
+        }
+        var items = new List<YouTubeResult>();
+        var raw = 0;
+        if (data.TryGetProperty("entries", out var entries) && entries.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var entry in entries.EnumerateArray())
+            {
+                if (entry.ValueKind != JsonValueKind.Object)
+                    continue;
+                raw++;
+                if (ChannelEntry(entry, tabKey) is YouTubeResult found)
+                    items.Add(found);
+            }
+        }
+        return (items, raw);
+    }
+
+    /// <summary>The distinct qualities a video actually offers, best first, for the download picker.</summary>
+    /// <remarks>
+    /// Video mode returns the picture heights (720, 1080...); audio mode the audio bitrates in kbps. The
+    /// numbers come straight from yt-dlp's own format list, so the picker can only ever offer what the video
+    /// has. An empty list means yt-dlp said nothing usable, and the caller falls back to the settings
+    /// quality rather than showing an empty picker.
+    /// </remarks>
+    internal IReadOnlyList<int> AvailableQualities(string watchUrl, bool audioOnly, CancellationToken token)
+    {
+        var run = Run(["--no-playlist", "--dump-single-json", "--no-warnings", watchUrl], token);
+        if (Parse(run.Lines) is not JsonElement data
+            || !data.TryGetProperty("formats", out var formats)
+            || formats.ValueKind != JsonValueKind.Array)
+            return [];
+        var found = new SortedSet<int>();
+        foreach (var format in formats.EnumerateArray())
+        {
+            if (format.ValueKind != JsonValueKind.Object)
+                continue;
+            if (audioOnly)
+            {
+                // An audio format carries sound and no picture; its bitrate rounds to the nearest kbps.
+                if (Has(format, "acodec") && !Has(format, "vcodec")
+                    && Number(format, "abr") is double abr && abr > 0)
+                    found.Add((int)Math.Round(abr));
+            }
+            // A video format carries a picture; its height names the quality.
+            else if (Has(format, "vcodec") && Number(format, "height") is double height && height > 0)
+                found.Add((int)Math.Round(height));
+        }
+        // SortedSet is ascending; the picker wants the best first.
+        return found.Reverse().ToArray();
+    }
+
     /// <summary>Saves a video into <paramref name="folder"/>, reporting as the bytes arrive.</summary>
     ///
     /// <remarks>
@@ -134,9 +211,10 @@ internal sealed partial class YtDlpClient
         string watchUrl,
         string folder,
         bool audioOnly,
-        YouTubeQuality quality,
+        int quality,
         Action<string, long, long> report,
-        CancellationToken token)
+        CancellationToken token,
+        int? exactQuality = null)
     {
         var arguments = new List<string>
         {
@@ -145,10 +223,13 @@ internal sealed partial class YtDlpClient
             "--no-warnings",
             "--no-playlist",
         };
+        // The quality picker's exact pick wins over the settings quality; both are plain numbers now - a
+        // bitrate in kbps for sound, a picture height for video.
+        var chosen = exactQuality ?? quality;
         if (audioOnly)
-            arguments.AddRange(["-x", "--audio-format", "m4a"]);
+            arguments.AddRange(["-x", "--audio-format", "m4a", "--audio-quality", $"{chosen}K"]);
         else
-            arguments.AddRange(["-f", VideoFormat(quality)]);
+            arguments.AddRange(["-f", VideoFormat(chosen)]);
         arguments.AddRange(["-o", Path.Combine(folder, "%(title)s.%(ext)s")]);
         if (Tools.DenoRuntime is string runtime)
             arguments.AddRange(["--js-runtimes", runtime]);
@@ -224,7 +305,7 @@ internal sealed partial class YtDlpClient
 
     // ---- running it ----
 
-    private static YtDlpRun Run(
+    private YtDlpRun Run(
         IEnumerable<string> arguments,
         CancellationToken token,
         Action<string>? onLine = null,
@@ -236,6 +317,7 @@ internal sealed partial class YtDlpClient
         // its own argument list rather than going through the common prefix.
         if (Tools.DenoRuntime is string runtime && !all.Contains("--js-runtimes"))
             all.AddRange(["--js-runtimes", runtime]);
+        AddCookies(all);
 
         using var process = Tools.Start(Tools.YtDlpPath, all);
         // Killed the moment the token is set rather than at the next line of output. yt-dlp can sit for a
@@ -300,6 +382,25 @@ internal sealed partial class YtDlpClient
         {
             // It finished between the test and the kill, which is the outcome that was wanted.
         }
+    }
+
+    /// <summary>Adds the cookie source the user chose, if any, to a yt-dlp argument list.</summary>
+    /// <remarks>
+    /// The two sources are mutually exclusive - the preferences page enforces that - so at most one of these
+    /// is ever added. A file that no longer exists is silently skipped rather than handed to yt-dlp, which
+    /// would fail the run outright. This one insertion point covers resolving, downloading, descriptions,
+    /// playlists and the channel tabs, because every one of them routes through <see cref="Run"/>.
+    /// </remarks>
+    private void AddCookies(List<string> arguments)
+    {
+        if (_settings.YouTube.CookiesFromFirefox)
+        {
+            arguments.AddRange(["--cookies-from-browser", "firefox"]);
+            return;
+        }
+        var path = _settings.YouTube.CookiesPath;
+        if (!string.IsNullOrEmpty(path) && File.Exists(path))
+            arguments.AddRange(["--cookies", path]);
     }
 
     // ---- reading what it said ----
@@ -392,10 +493,95 @@ internal sealed partial class YtDlpClient
             Text(entry, "channel_url") ?? Text(entry, "uploader_url") ?? string.Empty);
     }
 
+    /// <summary>One row of a channel tab, tagged with what kind of thing it is so the browser knows whether
+    /// to play it, page into a playlist or open another channel.</summary>
+    /// <remarks>
+    /// The tab a row came from settles its kind for the tabs that hold only one - the videos, shorts and
+    /// streams tabs are all videos, playlists are playlists, channels are channels. Only the mixed home and
+    /// community tabs fall back to reading the row's own shape. A playlist or channel row keeps its own list
+    /// or channel address rather than being canonicalised to a watch URL, which would name nothing.
+    /// </remarks>
+    private static YouTubeResult? ChannelEntry(JsonElement entry, string tabKey)
+    {
+        var id = Text(entry, "id") ?? string.Empty;
+        var rawUrl = Text(entry, "url") ?? Text(entry, "webpage_url") ?? string.Empty;
+        var type = ChannelItemType(entry, tabKey, rawUrl);
+        if (type is YouTubeItemType.Video)
+            return Entry(entry) is YouTubeResult video ? video with { ItemType = YouTubeItemType.Video } : null;
+
+        var url = type is YouTubeItemType.Playlist ? PlaylistUrl(id, rawUrl) : ChannelUrl(id, rawUrl);
+        if (url.Length == 0)
+            return null;
+        return new YouTubeResult(
+            id,
+            Text(entry, "title") is { Length: > 0 } title ? title : url,
+            Text(entry, "channel") ?? Text(entry, "uploader") ?? string.Empty,
+            null,
+            url,
+            Text(entry, "channel_url") ?? Text(entry, "uploader_url") ?? string.Empty)
+        {
+            ItemType = type,
+        };
+    }
+
+    private static YouTubeItemType ChannelItemType(JsonElement entry, string tabKey, string rawUrl)
+    {
+        // The single-kind tabs answer for every row in them.
+        if (tabKey is "videos" or "shorts" or "streams")
+            return YouTubeItemType.Video;
+        if (tabKey is "playlists")
+            return YouTubeItemType.Playlist;
+        if (tabKey is "channels")
+            return YouTubeItemType.Channel;
+        var tag = Text(entry, "_type");
+        if (string.Equals(tag, "playlist", StringComparison.OrdinalIgnoreCase)
+            || rawUrl.Contains("list=", StringComparison.Ordinal)
+            || rawUrl.Contains("/playlist", StringComparison.OrdinalIgnoreCase))
+            return YouTubeItemType.Playlist;
+        if (string.Equals(tag, "channel", StringComparison.OrdinalIgnoreCase)
+            || rawUrl.Contains("/channel/", StringComparison.OrdinalIgnoreCase)
+            || rawUrl.Contains("/@", StringComparison.Ordinal))
+            return YouTubeItemType.Channel;
+        return YouTubeItemType.Video;
+    }
+
+    private static string PlaylistUrl(string id, string rawUrl)
+    {
+        if (rawUrl.Contains("list=", StringComparison.Ordinal)
+            || rawUrl.Contains("/playlist", StringComparison.OrdinalIgnoreCase))
+            return rawUrl;
+        return id.Length > 0 ? $"https://www.youtube.com/playlist?list={id}" : rawUrl;
+    }
+
+    private static string ChannelUrl(string id, string rawUrl)
+    {
+        if (rawUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            return rawUrl;
+        return id.Length > 0 ? $"https://www.youtube.com/channel/{id}" : rawUrl;
+    }
+
     private static string? Text(JsonElement value, string name)
         => value.TryGetProperty(name, out var found) && found.ValueKind == JsonValueKind.String
             ? found.GetString()?.Trim()
             : null;
+
+    /// <summary>Reads a number, whether yt-dlp wrote it as a JSON number or as a numeric string.</summary>
+    private static double? Number(JsonElement value, string name)
+    {
+        if (!value.TryGetProperty(name, out var found))
+            return null;
+        if (found.ValueKind == JsonValueKind.Number && found.TryGetDouble(out var number))
+            return number;
+        return found.ValueKind == JsonValueKind.String
+            && double.TryParse(found.GetString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed)
+                ? parsed
+                : null;
+    }
+
+    /// <summary>Whether a format names a real codec for a track, rather than yt-dlp's "none".</summary>
+    private static bool Has(JsonElement format, string codec)
+        => Text(format, codec) is { Length: > 0 } value
+            && !string.Equals(value, "none", StringComparison.OrdinalIgnoreCase);
 
     private static string ShortDiagnostic(IReadOnlyList<string> lines)
     {

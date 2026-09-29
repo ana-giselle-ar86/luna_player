@@ -1,5 +1,3 @@
-using LunaPlayer.Configuration;
-
 namespace LunaPlayer.YouTube;
 
 /// <summary>Resolves videos ahead of when they are wanted, and hands out what it has already resolved.
@@ -43,7 +41,7 @@ internal sealed class ResolveCache : IDisposable
     /// <summary>Resolves one video through yt-dlp, the only thing that can turn it into a playable
     /// address.</summary>
     private ResolveOutcome Resolve(
-        string watchUrl, YouTubeResult item, bool audioOnly, YouTubeQuality quality, CancellationToken token)
+        string watchUrl, YouTubeResult item, bool audioOnly, int quality, CancellationToken token)
         => _ytDlp.Resolve(watchUrl, item, audioOnly, quality, token);
 
     /// <summary>The name one set of options gives a video.</summary>
@@ -52,7 +50,7 @@ internal sealed class ResolveCache : IDisposable
     /// part of the name: the same video wanted as sound alone and as picture resolves to different
     /// addresses, and one must not be handed back for the other.
     /// </remarks>
-    internal string Key(string watchUrl, bool audioOnly, YouTubeQuality quality)
+    internal string Key(string watchUrl, bool audioOnly, int quality)
         => $"{watchUrl}|a={(audioOnly ? 1 : 0)}|q={quality}";
 
     /// <summary>What has already been resolved for a video, or null. Never starts work and never blocks,
@@ -88,7 +86,7 @@ internal sealed class ResolveCache : IDisposable
         string watchUrl,
         YouTubeResult item,
         bool audioOnly,
-        YouTubeQuality quality,
+        int quality,
         CancellationToken token)
     {
         lock (_sync)
@@ -108,7 +106,7 @@ internal sealed class ResolveCache : IDisposable
 
     /// <summary>Starts resolving a video and forgets about it. What prefetching is.</summary>
     internal void Prefetch(
-        string watchUrl, YouTubeResult item, bool audioOnly, YouTubeQuality quality, CancellationToken token)
+        string watchUrl, YouTubeResult item, bool audioOnly, int quality, CancellationToken token)
     {
         if (_disposed || token.IsCancellationRequested)
             return;
@@ -131,7 +129,7 @@ internal sealed class ResolveCache : IDisposable
         string watchUrl,
         YouTubeResult item,
         bool audioOnly,
-        YouTubeQuality quality,
+        int quality,
         CancellationToken token,
         CancellationToken waitToken)
     {
@@ -165,7 +163,7 @@ internal sealed class ResolveCache : IDisposable
     }
 
     private async Task<ResolveOutcome> Run(
-        string watchUrl, YouTubeResult item, bool audioOnly, YouTubeQuality quality, CancellationToken token)
+        string watchUrl, YouTubeResult item, bool audioOnly, int quality, CancellationToken token)
     {
         try
         {
