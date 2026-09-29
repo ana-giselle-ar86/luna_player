@@ -15,6 +15,10 @@ internal interface IPlaybackEngine : IDisposable
 {
     event Action<PlaybackEndReason>? Ended;
 
+    /// <summary>Raised when <see cref="HasVideo"/> may have changed. mpv learns a file's video parameters
+    /// after the load returns, so the answer is not known the moment a file opens.</summary>
+    event Action? VideoAvailabilityChanged;
+
     /// <param name="audioFile">A separate stream carrying the sound, played alongside
     /// <paramref name="path"/>. Null for anything that carries its own sound, which is everything but a
     /// YouTube video above 360p.</param>
@@ -65,4 +69,9 @@ internal interface IPlaybackEngine : IDisposable
     /// <summary>The title the media declares for itself, from tags or a stream's metadata. Null when the
     /// media carries none, in which case callers fall back to the file name.</summary>
     string? MediaTitle { get; }
+
+    /// <summary>Whether a real picture is playing: a decoded video track that is neither a still image nor
+    /// cover art. False for audio and for audio-only tracks in a video container. Not known synchronously
+    /// after a load - see <see cref="VideoAvailabilityChanged"/>.</summary>
+    bool HasVideo { get; }
 }

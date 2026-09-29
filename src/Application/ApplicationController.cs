@@ -1,4 +1,5 @@
 using LunaPlayer.Actions;
+using LunaPlayer.Accessibility;
 using LunaPlayer.Application.ActionHandlers;
 using LunaPlayer.Configuration;
 using LunaPlayer.Media;
@@ -17,6 +18,7 @@ internal sealed class ApplicationController : IDisposable
     private readonly ActionRouter _router;
     private readonly FileActions _fileActions;
     private readonly PlaybackSelection _selection;
+    private readonly ISpeechOutput _speech;
     private readonly SystemMediaControls _mediaControls = new();
     /// <summary>The clock keeping the overlay's scrubber moving, or null while nothing needs one. See
     /// <see cref="UpdateMediaControlsClock"/>.</summary>
@@ -39,7 +41,8 @@ internal sealed class ApplicationController : IDisposable
         FileActions fileActions,
         PlaybackSelection selection,
         YouTube.YouTubeSessions sessions,
-        SleepTimer sleepTimer)
+        SleepTimer sleepTimer,
+        ISpeechOutput speech)
     {
         _view = view;
         _player = player;
@@ -51,12 +54,14 @@ internal sealed class ApplicationController : IDisposable
         _selection = selection;
         _sessions = sessions;
         _sleepTimer = sleepTimer;
+        _speech = speech;
         _view.ActionRequested += HandleAction;
         _view.CloseRequested += Shutdown;
         _view.EscapePressed += _sessions.HandleEscape;
         _player.CurrentChanged += OnCurrentChanged;
         _player.StateChanged += SyncViewState;
         _player.Ended += OnPlaybackEnded;
+        _player.VideoAvailabilityChanged += OnVideoAvailabilityChanged;
         // Button presses arrive on a Windows Runtime thread, so they are posted like any other outside
         // request rather than run where they land.
         _mediaControls.ButtonPressed += action => _dispatcher.Post(() => HandleAction(action));
@@ -82,6 +87,7 @@ internal sealed class ApplicationController : IDisposable
         _view.SetMarkState(false, false);
         _view.SetMarkedActionsEnabled(false);
         _view.SetVideoOptionsEnabled(false);
+        _view.SetFullScreenAvailable(false);
         _view.SetSilenceRemovalChecked(_player.IsSilenceRemovalEnabled);
         // Both belong to a playlist rather than to the player, so they change when a list of videos is put
         // in front of the one the user opened and change back when it goes.
@@ -132,6 +138,7 @@ internal sealed class ApplicationController : IDisposable
         _player.CurrentChanged -= OnCurrentChanged;
         _player.StateChanged -= SyncViewState;
         _player.Ended -= OnPlaybackEnded;
+        _player.VideoAvailabilityChanged -= OnVideoAvailabilityChanged;
         _view.EscapePressed -= _sessions.HandleEscape;
         Shutdown();
         StopMediaControlsClock();
@@ -169,6 +176,16 @@ internal sealed class ApplicationController : IDisposable
         // being loaded either - with nothing open there is neither a source nor a path.
         _view.SetVideoOptionsEnabled(
             LinkValidator.IsYouTubeUrl(_player.CurrentSource ?? _player.CurrentPath));
+        _view.SetFullScreenAvailable(_player.HasVideo);
+        // Leave full screen when the current item stops being a video; once out, IsFullScreen is false so it
+        // will not fire again. Moving between two videos keeps HasVideo true and stays silent.
+        if (!_player.HasVideo && _view.IsFullScreen)
+        {
+            _view.SetFullScreen(false);
+            // Translators: Spoken when full-screen mode ends on its own because the video stopped playing.
+            // Translators: The short advanced-verbosity wording for the same automatic end of full-screen mode.
+            _speech.Speak(Tr("Full-screen mode off."), Tr("Full-screen off"));
+        }
         _view.SetSilenceRemovalChecked(_player.IsSilenceRemovalEnabled);
         ApplyMediaControlsSetting();
         SyncMediaControls();
@@ -296,6 +313,9 @@ internal sealed class ApplicationController : IDisposable
         _mediaControlsClock?.Dispose();
         _mediaControlsClock = null;
     }
+
+    private void OnVideoAvailabilityChanged()
+        => _dispatcher.Post(SyncViewState);
 
     private void OnPlaybackEnded(PlaybackEndReason reason)
         => _dispatcher.Post(() => HandlePlaybackEnded(reason));

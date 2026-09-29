@@ -11,6 +11,9 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
     private readonly MPV _mpv;
     private readonly IDisposable _endRegistration;
     private readonly IDisposable _sampleRateRegistration;
+    private readonly IDisposable _videoParamsRegistration;
+    // Cached from the video-params observer; mpv learns it asynchronously after a load, not on demand.
+    private bool _hasVideo;
     private double _volume = 100;
     private double _pitch;
     private bool _pitchFilterActive;
@@ -45,9 +48,15 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
         // than filters, so the graph is rebuilt whenever that rate changes under it. Off is nothing at
         // all, not a row of flat bands.
         _sampleRateRegistration = _mpv.ObserveProperty("audio-params/samplerate", HandleSampleRateChange);
+        // Video parameters are not known when the load returns, so the width is watched rather than read.
+        _videoParamsRegistration = _mpv.ObserveProperty("video-params/w", HandleVideoParamsChange);
     }
 
     public event Action<PlaybackEndReason>? Ended;
+
+    public event Action? VideoAvailabilityChanged;
+
+    public bool HasVideo => _hasVideo;
 
     /// <remarks>
     /// <paramref name="audioFile"/> is set as a property rather than passed as a loadfile option, and set
@@ -328,6 +337,26 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
             BuildEqualizer();
     }
 
+    private void HandleVideoParamsChange(string name, object? value)
+    {
+        if (_disposed)
+            return;
+        var hasVideo = ComputeHasVideo();
+        if (hasVideo == _hasVideo)
+            return;
+        _hasVideo = hasVideo;
+        VideoAvailabilityChanged?.Invoke();
+    }
+
+    // A decoded video track with real dimensions that is neither a still image nor album art.
+    private bool ComputeHasVideo()
+    {
+        if ((ReadDouble("video-params/w") ?? 0) <= 0)
+            return false;
+        if (ReadBoolean("current-tracks/video/image") == true)
+            return false;
+        return ReadBoolean("current-tracks/video/albumart") != true;
+    }
 
     public void Dispose()
     {
@@ -336,6 +365,7 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
         _disposed = true;
         _endRegistration.Dispose();
         _sampleRateRegistration.Dispose();
+        _videoParamsRegistration.Dispose();
         _mpv.Dispose();
     }
 

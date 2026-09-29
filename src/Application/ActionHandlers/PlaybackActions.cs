@@ -50,6 +50,7 @@ internal sealed partial class PlaybackActions
         router.Register(ActionId.SeekStart, SeekStart);
         router.Register(ActionId.SeekEnd, SeekEnd);
         router.Register(ActionId.GoToTime, GoToTime);
+        router.Register(ActionId.ToggleFullScreen, ToggleFullScreen);
         router.Register(ActionId.VolumeUp, () => ChangeVolume(_settings.Audio.VolumeStep));
         router.Register(ActionId.VolumeDown, () => ChangeVolume(-_settings.Audio.VolumeStep));
         router.Register(ActionId.VolumeMaximize, () => SetVolume(AudioSettings.MaximumVolume));
@@ -159,6 +160,21 @@ internal sealed partial class PlaybackActions
         if (!position.HasValue)
             return;
         _player.SeekAbsolute(position.Value);
+    }
+
+    private void ToggleFullScreen()
+    {
+        // The F11 accelerator fires even while the menu item is disabled, so gate on HasVideo.
+        if (!_player.HasVideo)
+            return;
+        var enable = !_view.IsFullScreen;
+        _view.SetFullScreen(enable);
+        _speech.Speak(
+            // Translators: Spoken when full-screen mode is turned on. The beginner form names the F11 key so the
+            // user knows how to leave it again.
+            enable ? Tr("Full-screen mode on. Press F11 again to turn it off.") : Tr("Full-screen mode off."),
+            // Translators: The short advanced-verbosity wording spoken when full-screen mode is turned on or off.
+            enable ? Tr("Full-screen on") : Tr("Full-screen off"));
     }
 
     private void ChangeVolume(double delta) => AnnounceVolumeValue(_player.ChangeVolume(delta));

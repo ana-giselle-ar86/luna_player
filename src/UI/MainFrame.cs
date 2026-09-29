@@ -37,6 +37,7 @@ internal sealed partial class MainFrame : IMainView
     private readonly MenuItem _shuffleItem;
     private readonly MenuItem _repeatFileItem;
     private readonly MenuItem _silenceRemovalItem;
+    private readonly MenuItem _fullScreenItem;
     private readonly MenuItem _startRecordingItem;
     private readonly MenuItem _pauseRecordingItem;
     private readonly MenuItem _stopRecordingItem;
@@ -94,6 +95,7 @@ internal sealed partial class MainFrame : IMainView
         _shuffleItem = menu.ShuffleItem;
         _repeatFileItem = menu.RepeatFileItem;
         _silenceRemovalItem = menu.SilenceRemovalItem;
+        _fullScreenItem = menu.FullScreenItem;
         _startRecordingItem = menu.StartRecordingItem;
         _pauseRecordingItem = menu.PauseRecordingItem;
         _stopRecordingItem = menu.StopRecordingItem;
@@ -180,6 +182,16 @@ internal sealed partial class MainFrame : IMainView
     public void SetRepeatFileChecked(bool isChecked) => _repeatFileItem.Checked = isChecked;
 
     public void SetSilenceRemovalChecked(bool isChecked) => _silenceRemovalItem.Checked = isChecked;
+
+    public void SetFullScreen(bool fullScreen)
+    {
+        _frame.ShowFullScreen(fullScreen, FullScreenStyle.All);
+        _fullScreenItem.Checked = fullScreen;
+    }
+
+    public bool IsFullScreen => _frame.IsFullScreen;
+
+    public void SetFullScreenAvailable(bool available) => _fullScreenItem.Enabled = available;
 
     public void SetEqualizerPreset(string? presetId)
     {

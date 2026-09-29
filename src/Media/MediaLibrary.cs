@@ -2,15 +2,25 @@ namespace LunaPlayer.Media;
 
 internal static class MediaLibrary
 {
-    private static readonly HashSet<string> MediaExtensions = new(StringComparer.OrdinalIgnoreCase)
+    // Audio and video are kept apart so a file can be classified by extension alone. This is only a
+    // container-level guess; mpv decides whether a picture is really there (IPlaybackEngine.HasVideo).
+    private static readonly HashSet<string> AudioExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".aac", ".ac3", ".aiff", ".alac", ".ape", ".au", ".dts", ".eac3",
         ".flac", ".m4a", ".mka", ".mp1", ".mp2", ".mp3", ".mpc", ".oga",
         ".ogg", ".ogm", ".opus", ".tak", ".thd", ".tta", ".wav", ".wma", ".wv",
+    };
+
+    private static readonly HashSet<string> VideoExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
         ".3g2", ".3gp", ".avi", ".flv", ".ivf", ".m2ts", ".m4v", ".mj2",
         ".mkv", ".mov", ".mp4", ".mpeg", ".mpg", ".mxf", ".ogv", ".rmvb",
         ".ts", ".webm", ".wmv", ".y4m",
     };
+
+    /// <summary>Every playable-media extension, audio and video together, for the file walk and Open dialog.</summary>
+    private static readonly HashSet<string> MediaExtensions =
+        new(AudioExtensions.Concat(VideoExtensions), StringComparer.OrdinalIgnoreCase);
 
     private static readonly HashSet<string> PlaylistExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -25,6 +35,19 @@ internal static class MediaLibrary
         if (LinkValidator.TryGetHttpUrl(path, out var uri))
             return PlaylistExtensions.Contains(Path.GetExtension(uri.AbsolutePath));
         return PlaylistExtensions.Contains(Path.GetExtension(path));
+    }
+
+    /// <summary>Classifies a path by extension alone: playlist, video, or audio (the fallback, including
+    /// unknown extensions). A container-level guess for lists and menus, not the authority on whether a
+    /// picture is really playing - that is <see cref="Playback.IPlaybackEngine.HasVideo"/>.</summary>
+    internal static MediaKind KindOf(string path)
+    {
+        if (IsPlaylist(path))
+            return MediaKind.Playlist;
+        var extension = LinkValidator.TryGetHttpUrl(path, out var uri)
+            ? Path.GetExtension(uri.AbsolutePath)
+            : Path.GetExtension(path);
+        return VideoExtensions.Contains(extension) ? MediaKind.Video : MediaKind.Audio;
     }
 
     internal static string DialogWildcard
