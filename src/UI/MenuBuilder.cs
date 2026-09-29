@@ -25,6 +25,7 @@ internal sealed record MainMenuComponents(
     MenuItem ShuffleItem,
     MenuItem RepeatFileItem,
     MenuItem SilenceRemovalItem,
+    MenuItem FullScreenItem,
     MenuItem StartRecordingItem,
     MenuItem PauseRecordingItem,
     MenuItem StopRecordingItem);
@@ -228,6 +229,11 @@ internal static class MainMenuBuilder
         playerMenu.AppendSeparator();
         // Translators: Player menu item that opens the list of audio output devices to play through.
         playerMenu.Append(commandIds[ActionId.SoundCards], Label(Tr("Sound Cards..."), ActionId.SoundCards, shortcuts));
+        // Full screen is gated on a picture playing, not on a file being loaded, so it stays out of playbackItems.
+        var fullScreenItem = playerMenu.AppendCheckItem(
+            commandIds[ActionId.ToggleFullScreen],
+            // Translators: Player menu item that fills the whole screen with the video, or leaves that mode. It is ticked while full screen.
+            Label(Tr("Full screen"), ActionId.ToggleFullScreen, shortcuts));
 
         var videoItems = new List<MenuItem>();
         var videoMenu = new Menu();
@@ -326,7 +332,7 @@ internal static class MainMenuBuilder
         // Translators: Name of the Help menu in the menu bar.
         menuBar.Append(helpMenu, Tr("Help"));
         frame.SetMenuBar(menuBar);
-        return new MainMenuComponents(menuBar, 2, markedMenuIndex, videoMenuIndex, playbackItems, mediaFileItems, localFileItems, markedItems, localEditItems, bookmarkItems, videoItems, equalizerCommands, equalizerItems, equalizerMenu, markCurrentItem, markAllItem, shuffleItem, repeatItem, silenceItem, startRecordingItem, pauseRecordingItem, stopRecordingItem);
+        return new MainMenuComponents(menuBar, 2, markedMenuIndex, videoMenuIndex, playbackItems, mediaFileItems, localFileItems, markedItems, localEditItems, bookmarkItems, videoItems, equalizerCommands, equalizerItems, equalizerMenu, markCurrentItem, markAllItem, shuffleItem, repeatItem, silenceItem, fullScreenItem, startRecordingItem, pauseRecordingItem, stopRecordingItem);
     }
 
     /// <summary>What <see cref="MainMenuComponents.EqualizerCommands"/> holds for the item that switches

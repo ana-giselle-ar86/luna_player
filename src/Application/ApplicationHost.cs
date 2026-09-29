@@ -123,7 +123,8 @@ internal sealed class ApplicationHost : IDisposable
             fileActions,
             selection,
             _sessions,
-            sleepTimer);
+            sleepTimer,
+            _speech);
         // After the controller, which sets the rest of the audio state up from the same settings.
         _equalizer.Restore();
         _pathQueue = new PathRequestQueue(HandleExternalPaths, _dispatcher);

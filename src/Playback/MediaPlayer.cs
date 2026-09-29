@@ -26,6 +26,7 @@ internal sealed class MediaPlayer : IDisposable
         _engine = engine;
         _positions = positions;
         _engine.Ended += OnEnded;
+        _engine.VideoAvailabilityChanged += OnVideoAvailabilityChanged;
     }
 
     /// <summary>Whether a list of videos is playing in front of the playlist the user opened.</summary>
@@ -124,6 +125,9 @@ internal sealed class MediaPlayer : IDisposable
     internal event Action? CurrentChanged;
     internal event Action? StateChanged;
 
+    /// <summary>Raised when <see cref="HasVideo"/> may have changed, a moment after a file loads.</summary>
+    internal event Action? VideoAvailabilityChanged;
+
     internal string? CurrentPath => _playlist.CurrentPath;
     internal int Count => _playlist.Count;
     internal int CurrentIndex => _playlist.CurrentIndex;
@@ -139,6 +143,17 @@ internal sealed class MediaPlayer : IDisposable
     /// <summary>Whether a file is open and running: <see cref="IsLoaded"/> and not held where it is.
     /// </summary>
     internal bool IsPlaying => _running && !_engine.IsPaused;
+
+    /// <summary>Whether a real picture is playing, from mpv itself; false for audio. The full-screen command
+    /// is gated on this. Settles shortly after a load - see <see cref="VideoAvailabilityChanged"/>.</summary>
+    internal bool HasVideo => _running && _engine.HasVideo;
+
+    /// <summary>What the current item is: mpv's runtime answer while something is loaded, falling back to the
+    /// extension-based guess otherwise.</summary>
+    internal MediaKind CurrentKind => CurrentPath is not { } path
+        ? MediaKind.Audio
+        : _running ? (_engine.HasVideo ? MediaKind.Video : MediaKind.Audio) : MediaLibrary.KindOf(path);
+
     internal double? Duration => _engine.Duration;
     internal double? Elapsed => _engine.Elapsed;
     internal double? Remaining => Precision.Normalize(_engine.Remaining
@@ -483,6 +498,7 @@ internal sealed class MediaPlayer : IDisposable
             return;
         _disposed = true;
         _engine.Ended -= OnEnded;
+        _engine.VideoAvailabilityChanged -= OnVideoAvailabilityChanged;
         _engine.Dispose();
     }
 
@@ -565,6 +581,12 @@ internal sealed class MediaPlayer : IDisposable
     {
         if (!_disposed)
             Ended?.Invoke(reason);
+    }
+
+    private void OnVideoAvailabilityChanged()
+    {
+        if (!_disposed)
+            VideoAvailabilityChanged?.Invoke();
     }
 
     private void StopEngine()

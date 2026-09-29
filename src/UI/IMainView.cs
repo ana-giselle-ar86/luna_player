@@ -241,6 +241,15 @@ internal interface IMainView : IDisposable
     void SetMarkedActionsEnabled(bool enabled);
     void SetVideoOptionsEnabled(bool enabled);
 
+    /// <summary>Fills the whole screen with the window, or restores it, ticking the menu item to match.</summary>
+    void SetFullScreen(bool fullScreen);
+
+    /// <summary>Whether the window is filling the screen right now.</summary>
+    bool IsFullScreen { get; }
+
+    /// <summary>Enables or greys out the full-screen menu item; on only while a real picture is playing.</summary>
+    void SetFullScreenAvailable(bool available);
+
     /// <summary>Puts the recording menu into the state the recorder is in.</summary>
     void SetRecordingState(LunaPlayer.Recording.RecordingState state);
     FileSelection? ChooseFile(string initialDirectory);

@@ -82,6 +82,8 @@ internal static class PlaybackActionDefinitions
             new(ActionId.GoToTime, Tr("Go to time dialog"), new("g", ShortcutModifiers.Control | ShortcutModifiers.Shift)),
             // Translators: Name of the command that opens the window listing the audio output devices to play through.
             new(ActionId.SoundCards, Tr("Sound cards dialog"), new("a", ShortcutModifiers.Control | ShortcutModifiers.Shift)),
+            // Translators: Name of the command that fills the whole screen with the video, or leaves that mode, shown in the shortcut list and the Player menu.
+            new(ActionId.ToggleFullScreen, Tr("Full screen"), new("f11")),
             // Translators: Name of the command that makes the sound louder.
             new(ActionId.VolumeUp, Tr("Increase volume"), new("up")),
             // Translators: Name of the command that makes the sound quieter.

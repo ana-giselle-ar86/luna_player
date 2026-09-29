@@ -19,7 +19,7 @@ internal enum ActionId
     JumpPercent30, JumpPercent35, JumpPercent40, JumpPercent45, JumpPercent50, JumpPercent55, JumpPercent60,
     JumpPercent65, JumpPercent70, JumpPercent75, JumpPercent80, JumpPercent85, JumpPercent90, JumpPercent95,
     JumpPercent100, PreviousTrack, NextTrack, FirstTrack, GoToFile, LastTrack, ToggleShuffle, ToggleRepeatFile,
-    GoToTime, SoundCards,
+    GoToTime, SoundCards, ToggleFullScreen,
     ToggleSilenceRemoval, EditEqualizerPreset, ManageEqualizerPresets,
     OpenYouTubeLink, SearchYouTube, OpenFavorites, VideoDownload, VideoDescription, VideoCopyLink,
     UserGuide, About, ReleaseNotes, CheckAppUpdates, UpdateYouTubeComponents,
