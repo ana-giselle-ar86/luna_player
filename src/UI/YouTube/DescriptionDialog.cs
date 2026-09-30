@@ -17,7 +17,9 @@ internal sealed partial class DescriptionDialog : IDisposable
 {
     // Gruber's "liberal, accurate" URL pattern, the one Hex uses: it finds the links in a description so each
     // can be put on its own line, opened from its line, and wrapped in an anchor when the text is exported.
-    [GeneratedRegex("""\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))""", RegexOptions.IgnoreCase)]
+    // A verbatim string rather than a raw one so the old xgettext that builds the translation template can
+    // still lex this file; the two hold the same pattern, the verbatim form only doubling its one quote.
+    [GeneratedRegex(@"\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'"".,<>?«»“”‘’]))", RegexOptions.IgnoreCase)]
     private static partial Regex Url();
 
     private readonly Dialog _dialog;
