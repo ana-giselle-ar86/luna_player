@@ -1,3 +1,4 @@
+using System.Globalization;
 using LunaPlayer.Actions;
 using LunaPlayer.Equalizer;
 using LunaPlayer.Playback;
@@ -18,6 +19,9 @@ internal sealed record MainMenuComponents(
     IReadOnlyList<MenuItem> BookmarkItems,
     IReadOnlyList<MenuItem> VideoItems,
     IReadOnlyList<MenuItem> AudioTrackItems,
+    IReadOnlyDictionary<int, string> SubtitleCommands,
+    IReadOnlyDictionary<string, MenuItem> SubtitleItems,
+    Menu SubtitleMenu,
     IReadOnlyDictionary<int, string> EqualizerCommands,
     IReadOnlyDictionary<string, MenuItem> EqualizerItems,
     Menu EqualizerMenu,
@@ -243,6 +247,15 @@ internal static class MainMenuBuilder
         Add(audioTrackMenu, audioTrackItems, commandIds, shortcuts, ActionId.OpenAudioTracks, Tr("Track list..."));
         // Translators: Player submenu holding the commands that switch between a file's audio tracks.
         playerMenu.AppendSubMenu(audioTrackMenu, Tr("Audio track"));
+        // The embedded subtitles to read aloud. A radio list rebuilt per file: Off, then one item per track.
+        // Off is the default, and like the equalizer the items carry no ActionId - which tracks exist changes
+        // with the file. The quick on/off key (ActionId.ToggleSubtitles) is a bare accelerator, not shown here.
+        var subtitleCommands = new Dictionary<int, string>();
+        var subtitleItems = new Dictionary<string, MenuItem>(StringComparer.Ordinal);
+        var subtitleMenu = new Menu();
+        FillSubtitleMenu(subtitleMenu, [], null, subtitleCommands, subtitleItems);
+        // Translators: Player submenu listing the file's embedded subtitles to read aloud, with Off at the top.
+        playerMenu.AppendSubMenu(subtitleMenu, Tr("Subtitles"));
         // Full screen is gated on a picture playing, not on a file being loaded, so it stays out of playbackItems.
         var fullScreenItem = playerMenu.AppendCheckItem(
             commandIds[ActionId.ToggleFullScreen],
@@ -346,13 +359,53 @@ internal static class MainMenuBuilder
         // Translators: Name of the Help menu in the menu bar.
         menuBar.Append(helpMenu, Tr("Help"));
         frame.SetMenuBar(menuBar);
-        return new MainMenuComponents(menuBar, 2, markedMenuIndex, videoMenuIndex, playbackItems, mediaFileItems, localFileItems, markedItems, localEditItems, bookmarkItems, videoItems, audioTrackItems, equalizerCommands, equalizerItems, equalizerMenu, markCurrentItem, markAllItem, shuffleItem, repeatItem, silenceItem, fullScreenItem, startRecordingItem, pauseRecordingItem, stopRecordingItem);
+        return new MainMenuComponents(menuBar, 2, markedMenuIndex, videoMenuIndex, playbackItems, mediaFileItems, localFileItems, markedItems, localEditItems, bookmarkItems, videoItems, audioTrackItems, subtitleCommands, subtitleItems, subtitleMenu, equalizerCommands, equalizerItems, equalizerMenu, markCurrentItem, markAllItem, shuffleItem, repeatItem, silenceItem, fullScreenItem, startRecordingItem, pauseRecordingItem, stopRecordingItem);
     }
 
     /// <summary>What <see cref="MainMenuComponents.EqualizerCommands"/> holds for the item that switches
     /// the equalizer off, in place of a preset name. Not a name any preset can have, because a preset
     /// whose name was empty could not be stored.</summary>
     internal const string EqualizerOffKey = "";
+
+    /// <summary>The key the Subtitles menu holds for the Off item, in place of a track id.</summary>
+    internal const string SubtitleOffKey = "";
+
+    /// <summary>Puts Off and one radio item per subtitle track into the submenu, ticking the active one.</summary>
+    ///
+    /// <remarks>
+    /// Called again whenever a file's subtitle tracks change, so it fills a menu rather than making one: the
+    /// submenu is already on the menu bar and outlives its contents. Off and the tracks are one unbroken run
+    /// of radio items, for the same reason the equalizer's are - see <see cref="FillEqualizerMenu"/>.
+    /// </remarks>
+    internal static void FillSubtitleMenu(
+        Menu menu,
+        IReadOnlyList<SubtitleMenuEntry> entries,
+        int? activeId,
+        IDictionary<int, string> commands,
+        IDictionary<string, MenuItem> items)
+    {
+        // Translators: Item at the top of the Subtitles menu that reads no subtitles. Ticked by default.
+        AddSubtitleItem(menu, commands, items, SubtitleOffKey, Tr("Off"));
+        foreach (var entry in entries)
+            AddSubtitleItem(menu, commands, items, entry.Id.ToString(CultureInfo.InvariantCulture), entry.Label);
+        var key = activeId?.ToString(CultureInfo.InvariantCulture) ?? SubtitleOffKey;
+        if (items.TryGetValue(key, out var item))
+            item.Checked = true;
+    }
+
+    /// <remarks>Carries no shortcut and no <see cref="ActionId"/>, like the equalizer presets: which subtitle
+    /// tracks exist changes with the file, so there is no fixed action for a key to be bound to.</remarks>
+    private static void AddSubtitleItem(
+        Menu menu,
+        IDictionary<int, string> commands,
+        IDictionary<string, MenuItem> items,
+        string trackKey,
+        string label)
+    {
+        var id = IdManager.NewId();
+        commands[id] = trackKey;
+        items[trackKey] = menu.AppendRadioItem(id, label);
+    }
 
     /// <summary>Puts Off, every preset and the two editing commands into the equalizer submenu.</summary>
     ///

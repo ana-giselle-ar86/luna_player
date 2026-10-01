@@ -90,6 +90,8 @@ internal static class PlaybackActionDefinitions
             new(ActionId.NextAudioTrack, Tr("Next audio track"), new("page_down", ShortcutModifiers.Shift)),
             // Translators: Name of the command that switches to the previous audio track in the file.
             new(ActionId.PreviousAudioTrack, Tr("Previous audio track"), new("page_up", ShortcutModifiers.Shift)),
+            // Translators: Name of the command that starts or stops reading the file's subtitles aloud.
+            new(ActionId.ToggleSubtitles, Tr("Turn subtitle reading on or off"), new("u", ShortcutModifiers.Control)),
             // Translators: Name of the command that makes the sound louder.
             new(ActionId.VolumeUp, Tr("Increase volume"), new("up")),
             // Translators: Name of the command that makes the sound quieter.
