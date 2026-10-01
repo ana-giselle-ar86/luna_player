@@ -178,10 +178,10 @@ internal sealed class ResultsDialog : IDisposable
     private void Populate(TabPage tab, IReadOnlyList<YouTubeResult> items, int selected)
     {
         tab.Results.Clear();
-        tab.List.Clear();
         tab.Results.AddRange(items);
-        foreach (var result in items)
-            tab.List.Add(Compose(result));
+        // One bulk crossing - Set replaces the list and settles it as a single change, rather than redrawing
+        // and re-announcing a row at a time.
+        tab.List.Set(items.Select(Compose));
         if (tab.Results.Count > 0)
             tab.List.SelectedIndex = Math.Clamp(selected, 0, tab.Results.Count - 1);
         tab.Loaded = true;
@@ -282,8 +282,8 @@ internal sealed class ResultsDialog : IDisposable
             return;
         }
         tab.Results.AddRange(page);
-        foreach (var result in page)
-            tab.List.Add(Compose(result));
+        // The new page joins the list in one crossing rather than a row at a time.
+        tab.List.AppendRange(page.Select(Compose));
     }
 
     /// <summary>The one line a row shows, built as the Python player builds it: the title, then the few

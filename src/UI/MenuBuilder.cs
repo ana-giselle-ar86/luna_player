@@ -22,6 +22,7 @@ internal sealed record MainMenuComponents(
     IReadOnlyDictionary<int, string> SubtitleCommands,
     IReadOnlyDictionary<string, MenuItem> SubtitleItems,
     Menu SubtitleMenu,
+    MenuItem SubtitleMenuItem,
     IReadOnlyDictionary<int, string> EqualizerCommands,
     IReadOnlyDictionary<string, MenuItem> EqualizerItems,
     Menu EqualizerMenu,
@@ -255,7 +256,7 @@ internal static class MainMenuBuilder
         var subtitleMenu = new Menu();
         FillSubtitleMenu(subtitleMenu, [], null, subtitleCommands, subtitleItems);
         // Translators: Player submenu listing the file's embedded subtitles to read aloud, with Off at the top.
-        playerMenu.AppendSubMenu(subtitleMenu, Tr("Subtitles"));
+        var subtitleMenuItem = playerMenu.AppendSubMenu(subtitleMenu, Tr("Subtitles"));
         // Full screen is gated on a picture playing, not on a file being loaded, so it stays out of playbackItems.
         var fullScreenItem = playerMenu.AppendCheckItem(
             commandIds[ActionId.ToggleFullScreen],
@@ -359,7 +360,7 @@ internal static class MainMenuBuilder
         // Translators: Name of the Help menu in the menu bar.
         menuBar.Append(helpMenu, Tr("Help"));
         frame.SetMenuBar(menuBar);
-        return new MainMenuComponents(menuBar, 2, markedMenuIndex, videoMenuIndex, playbackItems, mediaFileItems, localFileItems, markedItems, localEditItems, bookmarkItems, videoItems, audioTrackItems, subtitleCommands, subtitleItems, subtitleMenu, equalizerCommands, equalizerItems, equalizerMenu, markCurrentItem, markAllItem, shuffleItem, repeatItem, silenceItem, fullScreenItem, startRecordingItem, pauseRecordingItem, stopRecordingItem);
+        return new MainMenuComponents(menuBar, 2, markedMenuIndex, videoMenuIndex, playbackItems, mediaFileItems, localFileItems, markedItems, localEditItems, bookmarkItems, videoItems, audioTrackItems, subtitleCommands, subtitleItems, subtitleMenu, subtitleMenuItem, equalizerCommands, equalizerItems, equalizerMenu, markCurrentItem, markAllItem, shuffleItem, repeatItem, silenceItem, fullScreenItem, startRecordingItem, pauseRecordingItem, stopRecordingItem);
     }
 
     /// <summary>What <see cref="MainMenuComponents.EqualizerCommands"/> holds for the item that switches

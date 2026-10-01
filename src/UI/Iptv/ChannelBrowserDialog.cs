@@ -64,9 +64,10 @@ internal sealed class ChannelBrowserDialog : IDisposable
         var categoryLabel = new StaticText(_dialog, label: Tr("Category"));
         _category = new Choice(_dialog);
         // Translators: Channel-browser filter choice: show channels from every category.
-        _category.Add(Tr("All categories"));
-        foreach (var category in _categories)
-            _category.Add(category.Name);
+        var categoryItems = new List<string>(_categories.Count + 1) { Tr("All categories") };
+        categoryItems.AddRange(_categories.Select(category => category.Name));
+        // One bulk crossing rather than an Add per category - a source can carry a great many of them.
+        _category.Set(categoryItems);
         _category.SelectedIndex = 0;
 
         // Translators: Label of the box that filters channels by part of their name as the user types.

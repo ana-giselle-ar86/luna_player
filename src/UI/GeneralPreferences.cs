@@ -27,11 +27,9 @@ internal sealed class GeneralPreferences : Preferences
         // Translators: Label of the list for choosing the language the player speaks and shows its windows in.
         var languageLabel = new StaticText(panel, label: Tr("Language"));
         // What the player can be switched to is whatever it ships a catalogue for, so the list is built from
-        // those rather than from a fixed table that would drift as translations arrive.
-        var available = Localization.AvailableLanguages()
-            .Select(code => (Code: code, Name: Localization.LanguageName(code)))
-            .OrderBy(language => language.Name, StringComparer.CurrentCultureIgnoreCase)
-            .ToArray();
+        // those rather than from a fixed table that would drift as translations arrive. The set is resolved
+        // and sorted once and cached, so opening this page again does not re-scan the catalogues.
+        var available = Localization.DisplayLanguages();
         _languages = [Localization.SystemLanguage, .. available.Select(language => language.Code)];
         // Translators: First entry in the language list: use whatever language Windows itself is set to.
         _language = Choice(panel, [Tr("System default"), .. available.Select(language => language.Name)],

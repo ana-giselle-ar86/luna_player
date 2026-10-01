@@ -57,7 +57,7 @@ internal sealed class SubtitleActions : IDisposable
         var tracks = _player.GetSubtitleTracks();
         var index = tracks.ToList().FindIndex(track => track.Id == id.Value);
         if (index >= 0)
-            Enable(tracks[index]);
+            Enable(tracks[index], index + 1);
     }
 
     // The quick on/off key. With no subtitles it says so; otherwise it flips between the active track and Off,
@@ -80,10 +80,11 @@ internal sealed class SubtitleActions : IDisposable
             return;
         }
         var index = _lastTrackId is int last ? tracks.ToList().FindIndex(track => track.Id == last) : -1;
-        Enable(tracks[index < 0 ? 0 : index]);
+        var position = index < 0 ? 0 : index;
+        Enable(tracks[position], position + 1);
     }
 
-    private void Enable(SubtitleTrack track)
+    private void Enable(SubtitleTrack track, int number)
     {
         if (!_player.SetSubtitleTrack(track.Id))
         {
@@ -98,8 +99,8 @@ internal sealed class SubtitleActions : IDisposable
         _view.SetSubtitleSelection(track.Id);
         _speech.Speak(
             // Translators: Spoken when subtitle reading starts. {name} is the subtitle's name, such as "English".
-            TrFormat("Reading subtitles: {name}", Describe(track)),
-            Describe(track));
+            TrFormat("Reading subtitles: {name}", Describe(track, number)),
+            Describe(track, number));
     }
 
     private void TurnOff(bool announce)
@@ -119,7 +120,7 @@ internal sealed class SubtitleActions : IDisposable
     private void RebuildMenu()
     {
         var tracks = _player.GetSubtitleTracks();
-        var entries = tracks.Select(track => new SubtitleMenuEntry(track.Id, Describe(track))).ToArray();
+        var entries = tracks.Select((track, i) => new SubtitleMenuEntry(track.Id, Describe(track, i + 1))).ToArray();
         int? activeId = null;
         foreach (var track in tracks)
             if (track.Selected) { activeId = track.Id; break; }
@@ -131,14 +132,19 @@ internal sealed class SubtitleActions : IDisposable
     private void OnSubtitleText(string text)
         => _dispatcher.Post(() => _speech.SpeakText(text, _settings.General.SubtitleInterrupt));
 
-    // The track's own title, or a stand-in, then its language - the same shape as an audio track's label.
-    private static string Describe(SubtitleTrack track)
+    // The label a track shows: its own title, else its language name, and only a numbered stand-in when it
+    // has neither - so tracks are not all prefixed with "Subtitle", and an unnamed one still stays distinct.
+    private static string Describe(SubtitleTrack track, int number)
     {
-        // Translators: Stand-in name for a subtitle track that has no title of its own.
-        var parts = new List<string>(2) { track.Title ?? Tr("Subtitle") };
-        if (Localization.LanguageName(track.Language) is { Length: > 0 } language)
-            parts.Add(language);
-        return string.Join(", ", parts);
+        var language = Localization.LanguageName(track.Language);
+        if (!string.IsNullOrWhiteSpace(track.Title))
+            return language.Length > 0 && !track.Title.Contains(language, StringComparison.CurrentCultureIgnoreCase)
+                ? $"{track.Title}, {language}"
+                : track.Title;
+        if (language.Length > 0)
+            return language;
+        // Translators: Stand-in label for a subtitle track with no title or language. {number} is its place in the list.
+        return TrFormat("Subtitle {number}", number);
     }
 
     public void Dispose()

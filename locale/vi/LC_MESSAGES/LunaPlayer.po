@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Luna Player\n"
 "Report-Msgid-Bugs-To: https://github.com/diamondStar35/luna_player/issues\n"
-"POT-Creation-Date: 2026-09-30 15:56+0300\n"
+"POT-Creation-Date: 2026-10-01 17:44+0300\n"
 "PO-Revision-Date: 2026-09-09 10:09+0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -38,13 +38,13 @@ msgstr "Tua tới một bước"
 
 #. Translators: Name of the command that makes the sound louder, here in the list of shortcuts that work while another program is in front.
 #. Translators: Name of the command that makes the sound louder.
-#: Actions/GlobalActions.cs:20 Actions/PlaybackActions.cs:94
+#: Actions/GlobalActions.cs:20 Actions/PlaybackActions.cs:96
 msgid "Increase volume"
 msgstr "Tăng âm lượng"
 
 #. Translators: Name of the command that makes the sound quieter, here in the list of shortcuts that work while another program is in front.
 #. Translators: Name of the command that makes the sound quieter.
-#: Actions/GlobalActions.cs:22 Actions/PlaybackActions.cs:96
+#: Actions/GlobalActions.cs:22 Actions/PlaybackActions.cs:98
 msgid "Decrease volume"
 msgstr "Giảm âm lượng"
 
@@ -64,7 +64,7 @@ msgstr "Phát tệp trước đó"
 #. Translators: Name of the command that begins recording.
 #. Translators: Recording menu item that begins recording.
 #: Actions/GlobalActions.cs:30 Actions/RecordingActions.cs:20
-#: UI/MenuBuilder.cs:269
+#: UI/MenuBuilder.cs:283
 msgid "Start recording"
 msgstr "Bắt đầu ghi âm"
 
@@ -83,20 +83,20 @@ msgstr "Dừng ghi âm"
 #. Translators: Name of the command that opens the Luna Player user guide.
 #. Translators: Help menu item that opens the user guide matching the application language.
 #: Actions/HelpActions.cs:9 Application/ActionHandlers/HelpActions.cs:33
-#: Application/ActionHandlers/HelpActions.cs:40 UI/MenuBuilder.cs:285
+#: Application/ActionHandlers/HelpActions.cs:40 UI/MenuBuilder.cs:299
 msgid "User guide"
 msgstr "Hướng dẫn sử dụng"
 
 #. Translators: Name of the command that shows information about Luna Player.
 #. Translators: Help menu item that shows information about Luna Player.
-#: Actions/HelpActions.cs:11 UI/MenuBuilder.cs:287
+#: Actions/HelpActions.cs:11 UI/MenuBuilder.cs:301
 msgid "About"
 msgstr "Giới thiệu"
 
 #. Translators: Name of the command that opens the notes for the installed Luna Player release.
 #. Translators: Help menu item that opens the GitHub page for the installed release.
 #: Actions/HelpActions.cs:13 Application/ActionHandlers/HelpActions.cs:50
-#: UI/MenuBuilder.cs:289
+#: UI/MenuBuilder.cs:303
 msgid "Release notes"
 msgstr "Thông tin bản phát hành"
 
@@ -147,7 +147,7 @@ msgstr "Đóng tệp hiện tại"
 
 #. Translators: Name of the command that removes every loaded file from the player.
 #. Translators: File menu item that removes every loaded file from the player.
-#: Actions/MediaActions.cs:36 UI/MenuBuilder.cs:66
+#: Actions/MediaActions.cs:36 UI/MenuBuilder.cs:71
 msgid "Close all files"
 msgstr "Đóng tất cả các tệp"
 
@@ -369,7 +369,7 @@ msgstr "Hộp thoại card âm thanh"
 
 #. Translators: Name of the command that fills the whole screen with the video, or leaves that mode, shown in the shortcut list and the Player menu.
 #. Translators: Player menu item that fills the whole screen with the video, or leaves that mode. It is ticked while full screen.
-#: Actions/PlaybackActions.cs:86 UI/MenuBuilder.cs:250
+#: Actions/PlaybackActions.cs:86 UI/MenuBuilder.cs:264
 msgid "Full screen"
 msgstr ""
 
@@ -389,141 +389,147 @@ msgstr ""
 msgid "Previous audio track"
 msgstr ""
 
+#. Translators: Name of the command that starts or stops reading the file's subtitles aloud.
+#: Actions/PlaybackActions.cs:94
+#, fuzzy
+msgid "Turn subtitle reading on or off"
+msgstr "Bật hoặc tắt tính năng loại bỏ khoảng lặng"
+
 #. Translators: Name of the command that sets the volume to the loudest setting in one step.
-#: Actions/PlaybackActions.cs:98
+#: Actions/PlaybackActions.cs:100
 msgid "Set volume to maximum"
 msgstr "Đặt âm lượng ở mức tối đa"
 
 #. Translators: Name of the command that sets the volume to the quietest setting in one step.
-#: Actions/PlaybackActions.cs:101
+#: Actions/PlaybackActions.cs:103
 msgid "Set volume to minimum"
 msgstr "Đặt âm lượng ở mức tối thiểu"
 
 #. Translators: Name of the command that speaks the current volume.
-#: Actions/PlaybackActions.cs:104
+#: Actions/PlaybackActions.cs:106
 msgid "Speak current volume"
 msgstr "Đọc âm lượng hiện tại"
 
 #. Translators: Name of the command that speaks how much of the file has already played.
-#: Actions/PlaybackActions.cs:106
+#: Actions/PlaybackActions.cs:108
 msgid "Speak elapsed time"
 msgstr "Đọc thời gian đã phát"
 
 #. Translators: Name of the command that speaks how much of the file is left to play.
-#: Actions/PlaybackActions.cs:108
+#: Actions/PlaybackActions.cs:110
 msgid "Speak remaining time"
 msgstr "Đọc thời gian còn lại"
 
 #. Translators: Name of the command that speaks the total length of the file.
-#: Actions/PlaybackActions.cs:110
+#: Actions/PlaybackActions.cs:112
 msgid "Speak total duration"
 msgstr "Đọc tổng thời lượng"
 
 #. Translators: Name of the command that speaks how far through the file playing has reached, as a percentage.
-#: Actions/PlaybackActions.cs:112
+#: Actions/PlaybackActions.cs:114
 msgid "Speak position as a percentage"
 msgstr "Đọc vị trí theo phần trăm"
 
 #. Translators: Name of the command that speaks how fast the file is playing.
-#: Actions/PlaybackActions.cs:114
+#: Actions/PlaybackActions.cs:116
 msgid "Speak playback speed"
 msgstr "Đọc tốc độ phát"
 
 #. Translators: Name of the command that switches between short and detailed spoken announcements.
-#: Actions/PlaybackActions.cs:116
+#: Actions/PlaybackActions.cs:118
 msgid "Switch between brief and detailed announcements"
 msgstr "Chuyển đổi giữa thông báo ngắn gọn và chi tiết"
 
 #. Translators: Name of the command that plays the file faster.
-#: Actions/PlaybackActions.cs:118
+#: Actions/PlaybackActions.cs:120
 msgid "Increase playback speed"
 msgstr "Tăng tốc độ phát"
 
 #. Translators: Name of the command that plays the file slower.
-#: Actions/PlaybackActions.cs:120
+#: Actions/PlaybackActions.cs:122
 msgid "Decrease playback speed"
 msgstr "Giảm tốc độ phát"
 
 #. Translators: Name of the command that returns the playing speed to normal.
-#: Actions/PlaybackActions.cs:122
+#: Actions/PlaybackActions.cs:124
 msgid "Reset playback speed to normal"
 msgstr "Đặt lại tốc độ phát về bình thường"
 
 #. Translators: Name of the command that raises audio pitch without changing playback speed.
-#: Actions/PlaybackActions.cs:124
+#: Actions/PlaybackActions.cs:126
 msgid "Raise pitch"
 msgstr "Tăng cao độ"
 
 #. Translators: Name of the command that lowers audio pitch without changing playback speed.
-#: Actions/PlaybackActions.cs:126
+#: Actions/PlaybackActions.cs:128
 msgid "Lower pitch"
 msgstr "Giảm cao độ"
 
 #. Translators: Name of the command that returns audio pitch to its original value.
-#: Actions/PlaybackActions.cs:128
+#: Actions/PlaybackActions.cs:130
 msgid "Reset pitch to normal"
 msgstr "Đặt lại cao độ về bình thường"
 
 #. Translators: Name of the command that speaks the current audio pitch.
-#: Actions/PlaybackActions.cs:131
+#: Actions/PlaybackActions.cs:133
 msgid "Speak current pitch"
 msgstr "Đọc cao độ hiện tại"
 
 #. Translators: Name of the command that moves the sound toward the left speaker.
-#: Actions/PlaybackActions.cs:133
+#: Actions/PlaybackActions.cs:135
 msgid "Pan audio left"
 msgstr "Chuyển âm thanh sang trái"
 
 #. Translators: Name of the command that moves the sound toward the right speaker.
-#: Actions/PlaybackActions.cs:135
+#: Actions/PlaybackActions.cs:137
 msgid "Pan audio right"
 msgstr "Chuyển âm thanh sang phải"
 
 #. Translators: Name of the command that speaks the current left/right audio balance.
-#: Actions/PlaybackActions.cs:137
+#: Actions/PlaybackActions.cs:139
 msgid "Speak current pan"
 msgstr "Đọc cân bằng âm thanh hiện tại"
 
 #. Translators: Name of the command that turns skipping the silent parts of the file on or off.
-#: Actions/PlaybackActions.cs:139
+#: Actions/PlaybackActions.cs:141
 msgid "Turn silence removal on or off"
 msgstr "Bật hoặc tắt tính năng loại bỏ khoảng lặng"
 
 #. Translators: Name of the command that opens the equalizer editor on the preset in use, shown in the shortcut list.
-#: Actions/PlaybackActions.cs:141
+#: Actions/PlaybackActions.cs:143
 msgid "Edit the current equalizer preset"
 msgstr "Chỉnh sửa cấu hình bộ cân bằng âm thanh hiện tại"
 
 #. Translators: Name of the command that opens the window listing every equalizer preset, shown in the shortcut list.
 #. Translators: Title of the window listing every equalizer preset, where the user's own are made and removed.
-#: Actions/PlaybackActions.cs:143 UI/Equalizer/PresetsDialog.cs:37
+#: Actions/PlaybackActions.cs:145 UI/Equalizer/PresetsDialog.cs:37
 msgid "Manage equalizer presets"
 msgstr "Quản lý các cấu hình bộ cân bằng âm thanh"
 
 #. Translators: Name of the command that marks the beginning of a part of the file to play on its own.
-#: Actions/PlaybackActions.cs:145
+#: Actions/PlaybackActions.cs:147
 msgid "Mark start of selection"
 msgstr "Đánh dấu điểm bắt đầu vùng chọn"
 
 #. Translators: Name of the command that marks the end of a part of the file to play on its own.
-#: Actions/PlaybackActions.cs:147
+#: Actions/PlaybackActions.cs:149
 msgid "Mark end of selection"
 msgstr "Đánh dấu điểm kết thúc vùng chọn"
 
 #. Translators: Name of the command that forgets the marked part and plays the whole file again.
-#: Actions/PlaybackActions.cs:149
+#: Actions/PlaybackActions.cs:151
 msgid "Clear the selection"
 msgstr "Xóa vùng chọn"
 
 #. Translators: Name of the command that chooses how far a single rewind or fast forward moves.
 #. {amount} is one of the seek step amounts, such as "10 seconds".
-#: Actions/PlaybackActions.cs:156
+#: Actions/PlaybackActions.cs:158
 msgid "Set seek step to {amount}"
 msgstr "Đặt bước tua thành {amount}"
 
 #. Translators: Name of the command that jumps to a position given as a percentage of the file.
 #. {percent} is a whole number from 10 to 100.
-#: Actions/PlaybackActions.cs:172
+#: Actions/PlaybackActions.cs:174
 msgid "Jump to {percent}% of the file"
 msgstr "Nhảy đến {percent}% của tệp"
 
@@ -560,7 +566,7 @@ msgstr "Mở công cụ chuyển đổi phương tiện"
 
 #. Translators: Name of the command that checks whether a newer Luna Player release is available.
 #. Translators: Help menu item that checks whether a newer Luna Player release is available.
-#: Actions/UpdateActions.cs:9 UI/MenuBuilder.cs:280
+#: Actions/UpdateActions.cs:9 UI/MenuBuilder.cs:294
 msgid "Check for app updates"
 msgstr "Kiểm tra bản cập nhật ứng dụng"
 
@@ -598,7 +604,7 @@ msgstr "Sao chép liên kết video"
 #. Translators: Name of the command that fetches a newer yt-dlp. "yt-dlp" is a program name and is
 #. not translated.
 #. Translators: Help menu item that fetches a newer yt-dlp. "YouTube" is a service name.
-#: Actions/YouTubeActions.cs:30 UI/MenuBuilder.cs:282
+#: Actions/YouTubeActions.cs:30 UI/MenuBuilder.cs:296
 msgid "Update YouTube components"
 msgstr "Cập nhật thành phần YouTube"
 
@@ -773,7 +779,7 @@ msgid "Bookmark {time}"
 msgstr "Dấu trang {time}"
 
 #. Translators: Bookmarks menu item that saves the current position in the file as a bookmark.
-#: Application/ActionHandlers/BookmarkActions.cs:37 UI/MenuBuilder.cs:95
+#: Application/ActionHandlers/BookmarkActions.cs:37 UI/MenuBuilder.cs:100
 msgid "Add a new bookmark"
 msgstr "Thêm dấu trang mới"
 
@@ -793,7 +799,7 @@ msgstr "Tên dấu trang không được để trống."
 #: Application/ActionHandlers/BookmarkActions.cs:45
 #: Application/ActionHandlers/BookmarkActions.cs:75
 #: Application/ActionHandlers/BookmarkActions.cs:112
-#: Application/ActionHandlers/BookmarkActions.cs:196 UI/MenuBuilder.cs:328
+#: Application/ActionHandlers/BookmarkActions.cs:196 UI/MenuBuilder.cs:342
 msgid "Bookmarks"
 msgstr "Dấu trang"
 
@@ -837,7 +843,7 @@ msgstr "Chỉnh sửa tên dấu trang"
 
 #. Translators: Bookmarks menu item that opens the window for renaming and deleting bookmarks.
 #: Application/ActionHandlers/BookmarkActions.cs:125
-#: UI/BookmarkManagerDialog.cs:16 UI/MenuBuilder.cs:97
+#: UI/BookmarkManagerDialog.cs:16 UI/MenuBuilder.cs:102
 msgid "Manage bookmarks"
 msgstr "Quản lý dấu trang"
 
@@ -1150,7 +1156,7 @@ msgstr "Không thể lưu cấu hình bộ cân bằng âm thanh."
 #. Translators: Title of the window shown when an equalizer preset could not be saved.
 #. Translators: Player submenu holding the equalizer presets and the commands for editing them.
 #: Application/ActionHandlers/EqualizerActions.cs:165
-#: UI/Equalizer/PresetsDialog.cs:193 UI/MenuBuilder.cs:163
+#: UI/Equalizer/PresetsDialog.cs:193 UI/MenuBuilder.cs:168
 msgid "Equalizer"
 msgstr "Bộ cân bằng âm thanh"
 
@@ -1449,7 +1455,7 @@ msgstr ""
 #: Application/ActionHandlers/IptvActions.cs:182
 #: Application/ActionHandlers/IptvActions.cs:206
 #: Application/ActionHandlers/IptvActions.cs:215
-#: Application/ActionHandlers/IptvActions.cs:272 UI/MenuBuilder.cs:308
+#: Application/ActionHandlers/IptvActions.cs:272 UI/MenuBuilder.cs:322
 msgid "IPTV"
 msgstr ""
 
@@ -1690,7 +1696,7 @@ msgstr "Tổng thời gian:"
 #. Translators: Button that plays the video chosen in the list of results.
 #: Application/ActionHandlers/PlaybackActions.cs:104
 #: Application/ActionHandlers/PlaybackActions.cs:112
-#: UI/Iptv/ChannelBrowserDialog.cs:117 UI/MainFrame.cs:108 UI/MainFrame.cs:173
+#: UI/Iptv/ChannelBrowserDialog.cs:118 UI/MainFrame.cs:119 UI/MainFrame.cs:185
 #: UI/YouTube/ResultsDialog.cs:166
 msgid "Play"
 msgstr "Phát"
@@ -1701,8 +1707,8 @@ msgstr "Phát"
 #. Translators: Button that holds a recording where it is, and starts it again when pressed a second time.
 #. Translators: Button that holds a recording where it is.
 #. Translators: The timer action that pauses playback.
-#: Application/ActionHandlers/PlaybackActions.cs:114 UI/MainFrame.cs:173
-#: UI/MainFrame.cs:297 UI/MenuBuilder.cs:271
+#: Application/ActionHandlers/PlaybackActions.cs:114 UI/MainFrame.cs:185
+#: UI/MainFrame.cs:328 UI/MenuBuilder.cs:285
 #: UI/Recording/RecordingDialog.cs:169 UI/Recording/RecordingDialog.cs:625
 #: UI/SleepTimerDialog.cs:83
 msgid "Pause"
@@ -1717,7 +1723,7 @@ msgstr "Chuyển đến thời gian"
 #. Translators: Spoken when full-screen mode ends on its own because the video stopped playing.
 #. Translators: The short advanced-verbosity wording for the same automatic end of full-screen mode.
 #: Application/ActionHandlers/PlaybackActions.cs:175
-#: Application/ApplicationController.cs:193
+#: Application/ApplicationController.cs:197
 msgid "Full-screen mode off."
 msgstr ""
 
@@ -1728,7 +1734,7 @@ msgid "Full-screen mode on. Press F11 again to turn it off."
 msgstr ""
 
 #: Application/ActionHandlers/PlaybackActions.cs:177
-#: Application/ApplicationController.cs:193
+#: Application/ApplicationController.cs:197
 msgid "Full-screen off"
 msgstr ""
 
@@ -1971,8 +1977,8 @@ msgstr "Thiết bị đầu vào mặc định"
 #. Translators: Name of the settings category for recording sound.
 #. Translators: Title of the window where recording is set up and started.
 #. Translators: Title of the messages shown about recording.
-#: Application/ActionHandlers/RecordingActions.cs:213 UI/MenuBuilder.cs:342
-#: UI/PreferencesDialog.cs:54 UI/Recording/RecordingDialog.cs:83
+#: Application/ActionHandlers/RecordingActions.cs:213 UI/MenuBuilder.cs:356
+#: UI/PreferencesDialog.cs:55 UI/Recording/RecordingDialog.cs:83
 #: UI/Recording/RecordingDialog.cs:720
 msgid "Recording"
 msgstr "Ghi âm"
@@ -2048,7 +2054,7 @@ msgstr "Không thể áp dụng bộ lọc chuẩn hóa âm thanh."
 #: Application/ActionHandlers/SettingsActions.cs:47
 #: Application/ActionHandlers/SettingsActions.cs:115
 #: Application/ActionHandlers/SettingsActions.cs:122
-#: UI/PreferencesDialog.cs:28 UI/PreferencesDialog.cs:188
+#: UI/PreferencesDialog.cs:37 UI/PreferencesDialog.cs:200
 msgid "Preferences"
 msgstr "Tùy chọn"
 
@@ -2080,7 +2086,7 @@ msgid ""
 msgstr ""
 
 #. Translators: Tools submenu holding the sleep-timer commands.
-#: Application/ActionHandlers/SleepTimerActions.cs:64 UI/MenuBuilder.cs:320
+#: Application/ActionHandlers/SleepTimerActions.cs:64 UI/MenuBuilder.cs:334
 #: UI/SleepTimerDialog.cs:47 UI/SleepTimerDialog.cs:235
 #, fuzzy
 msgid "Sleep timer"
@@ -2097,6 +2103,54 @@ msgstr ""
 #: Application/ActionHandlers/SleepTimerActions.cs:91
 msgid "A timer is set. {time} remaining."
 msgstr ""
+
+#. Translators: Spoken when the subtitle key is pressed but the file carries no subtitles.
+#: Application/ActionHandlers/SubtitleActions.cs:72
+#, fuzzy
+msgid "No subtitles in this file."
+msgstr "Không tìm thấy tệp âm thanh nào trong thư mục đó."
+
+#. Translators: The short wording spoken when the file has no subtitles.
+#: Application/ActionHandlers/SubtitleActions.cs:74
+#, fuzzy
+msgid "No subtitles."
+msgstr "Không có tiêu đề."
+
+#. Translators: Spoken when the player could not start reading the subtitle track the user picked.
+#: Application/ActionHandlers/SubtitleActions.cs:93
+#, fuzzy
+msgid "Could not turn on subtitles."
+msgstr "Không thể đóng các tệp."
+
+#. Translators: The short wording spoken when a subtitle track could not be turned on.
+#: Application/ActionHandlers/SubtitleActions.cs:95
+#, fuzzy
+msgid "Subtitles failed."
+msgstr "Đặt thất bại."
+
+#. Translators: Spoken when subtitle reading starts. {name} is the subtitle's name, such as "English".
+#: Application/ActionHandlers/SubtitleActions.cs:102
+#, fuzzy
+msgid "Reading subtitles: {name}"
+msgstr "Đang đọc: {name}"
+
+#. Translators: Spoken when subtitle reading is turned off.
+#: Application/ActionHandlers/SubtitleActions.cs:113
+#, fuzzy
+msgid "Subtitles off."
+msgstr "Đã tắt phát ngẫu nhiên"
+
+#. Translators: The short wording spoken when subtitle reading is turned off.
+#: Application/ActionHandlers/SubtitleActions.cs:115
+#, fuzzy
+msgid "Subtitles off"
+msgstr "Đã tắt phát ngẫu nhiên"
+
+#. Translators: Stand-in label for a subtitle track with no title or language. {number} is its place in the list.
+#: Application/ActionHandlers/SubtitleActions.cs:147
+#, fuzzy
+msgid "Subtitle {number}"
+msgstr "Đang đọc: {name}"
 
 #. Translators: Names a file the converter could not convert. {path} is its full path, shown on
 #. the line above the reason.
@@ -2221,7 +2275,7 @@ msgstr "Đang tải chi tiết video..."
 #. Translators: Name of the settings category for playing videos from YouTube.
 #. Translators: Title of the messages the player shows about YouTube.
 #: Application/ActionHandlers/YouTubeActions.cs:307
-#: Application/ActionHandlers/YouTubeActions.cs:398 UI/PreferencesDialog.cs:52
+#: Application/ActionHandlers/YouTubeActions.cs:398 UI/PreferencesDialog.cs:53
 #: YouTube/Sessions.cs:737
 msgid "YouTube"
 msgstr "YouTube"
@@ -2262,16 +2316,16 @@ msgid "No YouTube video."
 msgstr "Không có video YouTube."
 
 #. Translators: Window title while playback is paused. {title} is the track, {app} the program name.
-#: Application/ApplicationController.cs:238
+#: Application/ApplicationController.cs:242
 msgid "[Paused]: {title} - {app}"
 msgstr "[Tạm dừng]: {title} - {app}"
 
 #. Translators: Window title while a track is open. {title} is the track, {app} the program name.
-#: Application/ApplicationController.cs:240
+#: Application/ApplicationController.cs:244
 msgid "{title} - {app}"
 msgstr "{title} - {app}"
 
-#: Application/ApplicationHost.cs:61
+#: Application/ApplicationHost.cs:62
 msgid ""
 "The settings file could not be loaded. Default settings will be used, and "
 "the existing file will not be overwritten. Import a valid settings file or "
@@ -2285,7 +2339,7 @@ msgstr ""
 "\n"
 "{error}"
 
-#: Application/ApplicationHost.cs:62
+#: Application/ApplicationHost.cs:63
 msgid "Settings error"
 msgstr "Lỗi cài đặt"
 
@@ -2297,7 +2351,7 @@ msgstr "Không thể thiết lập phím tắt toàn cục và chúng sẽ khôn
 
 #. Translators: Name of the settings category for the key combinations that work while another program is in front.
 #. Translators: Heading above the list of shortcuts that work while another program is in front.
-#: Application/GlobalShortcutBinder.cs:31 UI/PreferencesDialog.cs:58
+#: Application/GlobalShortcutBinder.cs:31 UI/PreferencesDialog.cs:59
 #: UI/Shortcuts.cs:52
 msgid "Global Shortcuts"
 msgstr "Phím tắt toàn cục"
@@ -2831,7 +2885,7 @@ msgstr "Chọn card âm thanh"
 #. Translators: Spoken description of the General settings page, read when the page is opened.
 #. Translators: Spoken description of the Recording settings page, read when the page is opened.
 #. Translators: Spoken description of the YouTube settings page, read when the page is opened.
-#: UI/AudioPreferences.cs:23 UI/GeneralPreferences.cs:22
+#: UI/AudioPreferences.cs:23 UI/GeneralPreferences.cs:23
 #: UI/RecordingPreferences.cs:43 UI/YouTube/Preferences.cs:45
 msgid ""
 "Move through this page with Tab or Shift+Tab. Press F1 while a control is "
@@ -3214,7 +3268,7 @@ msgstr "Tệp JSON (*.json)|*.json|Tất cả các tệp (*.*)|*.*"
 #. Translators: Label of the box holding what a saved link is called.
 #. Translators: Heading of the favourites list column holding what each saved link is called.
 #: UI/BookmarkManagerDialog.cs:19 UI/Equalizer/EditDialog.cs:87
-#: UI/Iptv/ChannelBrowserDialog.cs:80 UI/Iptv/IptvSourceEditDialog.cs:56
+#: UI/Iptv/ChannelBrowserDialog.cs:81 UI/Iptv/IptvSourceEditDialog.cs:56
 #: UI/Iptv/IptvSourcesDialog.cs:29 UI/Recording/SourceDialogs.cs:49
 #: UI/YouTube/FavoriteEditDialog.cs:26 UI/YouTube/FavoritesDialog.cs:29
 msgid "Name"
@@ -3231,14 +3285,14 @@ msgid "Jump"
 msgstr "Nhảy đến"
 
 #. Translators: Name of the Edit menu in the menu bar.
-#: UI/BookmarkManagerDialog.cs:36 UI/MenuBuilder.cs:326
+#: UI/BookmarkManagerDialog.cs:36 UI/MenuBuilder.cs:340
 msgid "Edit"
 msgstr "Chỉnh sửa"
 
 #. Translators: Button that removes the chosen equalizer preset.
 #. Translators: Edit menu item that deletes the current file from the disk.
 #: UI/BookmarkManagerDialog.cs:37 UI/Equalizer/PresetsDialog.cs:53
-#: UI/MenuBuilder.cs:78
+#: UI/MenuBuilder.cs:83
 msgid "Delete"
 msgstr "Xóa"
 
@@ -3249,7 +3303,7 @@ msgstr "Xóa"
 #. Translators: The button that closes a window.
 #: UI/BookmarkManagerDialog.cs:40 UI/ConversionReportDialog.cs:23
 #: UI/CrashDialog.cs:48 UI/Equalizer/PresetsDialog.cs:56
-#: UI/Iptv/ChannelBrowserDialog.cs:120 UI/Iptv/IptvSourcesDialog.cs:62
+#: UI/Iptv/ChannelBrowserDialog.cs:121 UI/Iptv/IptvSourcesDialog.cs:62
 #: UI/MediaConverterDialog.cs:217 UI/Recording/RecordingDialog.cs:171
 #: UI/TextInfoDialog.cs:18 UI/YouTube/DescriptionDialog.cs:53
 #: UI/YouTube/FavoritesDialog.cs:62 UI/YouTube/ResultsDialog.cs:104
@@ -3453,132 +3507,137 @@ msgid "Delete preset"
 msgstr "Xóa cấu hình"
 
 #. Translators: Label of the list for choosing the language the player speaks and shows its windows in.
-#: UI/GeneralPreferences.cs:27
+#: UI/GeneralPreferences.cs:28
 msgid "Language"
 msgstr "Ngôn ngữ"
 
 #. Translators: First entry in the language list: use whatever language Windows itself is set to.
-#: UI/GeneralPreferences.cs:36
+#: UI/GeneralPreferences.cs:35
 msgid "System default"
 msgstr "Mặc định hệ thống"
 
 #. Translators: Tick box on the General settings page: start again where playing stopped last time.
-#: UI/GeneralPreferences.cs:39
+#: UI/GeneralPreferences.cs:38
 msgid "Remember last file position"
 msgstr "Ghi nhớ vị trí tệp lần trước"
 
 #. Translators: Tick box on the General settings page: say the name of each file as the user moves through the list.
-#: UI/GeneralPreferences.cs:41
+#: UI/GeneralPreferences.cs:40
 msgid "Speak file name when navigating (Previous/Next)"
 msgstr "Đọc tên tệp khi điều hướng (Trước/Tiếp theo)"
 
 #. Translators: Tick box on the General settings page: look for a newer version of the player when it starts.
-#: UI/GeneralPreferences.cs:43
+#: UI/GeneralPreferences.cs:42
 msgid "Check for app updates on startup"
 msgstr "Kiểm tra bản cập nhật ứng dụng khi khởi động"
 
 #. Translators: Tick box on the General settings page: keep changes such as volume and speed when the player closes.
-#: UI/GeneralPreferences.cs:45
+#: UI/GeneralPreferences.cs:44
 msgid "Save settings on close"
 msgstr "Lưu cài đặt khi đóng"
 
 #. Translators: Tick box on the General settings page: keep the player out of the system's media controls entirely.
-#: UI/GeneralPreferences.cs:47
+#: UI/GeneralPreferences.cs:46
 msgid "Disable system media controls"
 msgstr "Vô hiệu hóa điều khiển đa phương tiện hệ thống"
 
 #. Translators: Tick box on the General settings page: show the playing track in the window title.
-#: UI/GeneralPreferences.cs:49
+#: UI/GeneralPreferences.cs:48
 msgid "Show the playing track in the window title"
 msgstr "Hiển thị bài đang phát trên tiêu đề cửa sổ"
 
+#. Translators: Tick box on the General settings page: let a new subtitle line cut off the one still being read.
+#: UI/GeneralPreferences.cs:50
+msgid "Interrupt the current line when a new subtitle appears"
+msgstr ""
+
 #. Translators: Label of the list that chooses how much detail the player speaks.
-#: UI/GeneralPreferences.cs:51
+#: UI/GeneralPreferences.cs:52
 msgid "Verbosity"
 msgstr "Mức độ chi tiết"
 
 #. Translators: One of the two amounts of spoken detail: whole, clearly worded messages.
-#: UI/GeneralPreferences.cs:54
+#: UI/GeneralPreferences.cs:55
 msgid "Beginner"
 msgstr "Người mới bắt đầu"
 
 #. Translators: One of the two amounts of spoken detail: short messages for users who know the player well.
-#: UI/GeneralPreferences.cs:56
+#: UI/GeneralPreferences.cs:57
 msgid "Advanced"
 msgstr "Nâng cao"
 
 #. Translators: Label of the list that chooses how much of a folder is loaded when one file is opened.
-#: UI/GeneralPreferences.cs:58
+#: UI/GeneralPreferences.cs:59
 msgid "What would you like to open with files?"
 msgstr "Bạn muốn mở gì cùng với các tệp?"
 
 #. Translators: One way of opening a file: load nothing but that one file.
-#: UI/GeneralPreferences.cs:62
+#: UI/GeneralPreferences.cs:63
 msgid "Open the file only"
 msgstr "Chỉ mở tệp đã chọn"
 
 #. Translators: One way of opening a file: load every media file sitting in the same folder as well.
-#: UI/GeneralPreferences.cs:64
+#: UI/GeneralPreferences.cs:65
 msgid "Open the file and the main folder files"
 msgstr "Mở tệp và các tệp trong thư mục chính"
 
 #. Translators: One way of opening a file: load the media files in its folder and in the folders inside it too.
-#: UI/GeneralPreferences.cs:66
+#: UI/GeneralPreferences.cs:67
 msgid "Open the file with the main and subfolder files"
 msgstr "Mở tệp cùng các tệp trong thư mục chính và thư mục con"
 
 #. Translators: Button on the General settings page that tells Windows this player can open media files.
-#: UI/GeneralPreferences.cs:69
+#: UI/GeneralPreferences.cs:70
 msgid "Register file extensions"
 msgstr "Đăng ký phần mở rộng tệp"
 
 #. Translators: Button on the General settings page that undoes telling Windows this player can open media files.
-#: UI/GeneralPreferences.cs:71
+#: UI/GeneralPreferences.cs:72
 msgid "Unregister file extensions"
 msgstr "Hủy đăng ký phần mở rộng tệp"
 
 #. Translators: Title of the message shown once Windows has been told this player can open media files.
-#: UI/GeneralPreferences.cs:74
+#: UI/GeneralPreferences.cs:75
 msgid "Registration"
 msgstr "Đăng ký"
 
 #. Translators: Message shown once Windows has been told this player can open media files.
-#: UI/GeneralPreferences.cs:76
+#: UI/GeneralPreferences.cs:77
 msgid "File extensions registered successfully."
 msgstr "Đã đăng ký phần mở rộng tệp thành công."
 
 #. Translators: Title of the message shown when Windows could not be told this player can open media files.
-#: UI/GeneralPreferences.cs:78
+#: UI/GeneralPreferences.cs:79
 msgid "Registration Error"
 msgstr "Lỗi đăng ký"
 
 #. Translators: Message shown when Windows could not be told this player can open media files.
-#: UI/GeneralPreferences.cs:80
+#: UI/GeneralPreferences.cs:81
 msgid "Could not register file extensions."
 msgstr "Không thể đăng ký phần mở rộng tệp."
 
 #. Translators: Title of the message shown once this player has stopped being offered for media files.
-#: UI/GeneralPreferences.cs:83
+#: UI/GeneralPreferences.cs:84
 msgid "Unregister"
 msgstr "Hủy đăng ký"
 
 #. Translators: Message shown once this player has stopped being offered for media files.
-#: UI/GeneralPreferences.cs:85
+#: UI/GeneralPreferences.cs:86
 msgid "File extensions unregistered successfully."
 msgstr "Đã hủy đăng ký phần mở rộng tệp thành công."
 
 #. Translators: Title of the message shown when this player could not stop being offered for media files.
-#: UI/GeneralPreferences.cs:87
+#: UI/GeneralPreferences.cs:88
 msgid "Unregister Error"
 msgstr "Lỗi hủy đăng ký"
 
 #. Translators: Message shown when this player could not stop being offered for media files.
-#: UI/GeneralPreferences.cs:89
+#: UI/GeneralPreferences.cs:90
 msgid "Could not unregister file extensions."
 msgstr "Không thể hủy đăng ký phần mở rộng tệp."
 
 #. Translators: Help text for the language list, spoken when the user asks for help on it.
-#: UI/GeneralPreferences.cs:110
+#: UI/GeneralPreferences.cs:112
 msgid ""
 "Choose System default to follow the Windows display language, or select a "
 "language included with Luna. A different choice takes effect after Luna "
@@ -3589,7 +3648,7 @@ msgstr ""
 "lại Luna."
 
 #. Translators: Help text for the tick box that starts again where playing stopped last time.
-#: UI/GeneralPreferences.cs:114
+#: UI/GeneralPreferences.cs:116
 msgid ""
 "Saves the active item and its playback time when Luna exits, then resumes "
 "there on the next launch. Clear this option to start without restoring the "
@@ -3600,7 +3659,7 @@ msgstr ""
 "không khôi phục phiên trước."
 
 #. Translators: Help text for the tick box that says the name of each file as the user moves through the list.
-#: UI/GeneralPreferences.cs:118
+#: UI/GeneralPreferences.cs:120
 msgid ""
 "Announces each newly selected item when you use Previous or Next, so you do "
 "not need to request its name separately."
@@ -3609,7 +3668,7 @@ msgstr ""
 "theo, nhờ đó bạn không cần phải yêu cầu đọc tên mục một cách riêng biệt."
 
 #. Translators: Help text for the tick box that looks for a newer version of the player when it starts.
-#: UI/GeneralPreferences.cs:121
+#: UI/GeneralPreferences.cs:123
 msgid ""
 "Checks for a newer Luna release in the background after startup. A prompt "
 "appears only when a newer package is ready to download."
@@ -3618,7 +3677,7 @@ msgstr ""
 "chỉ xuất hiện khi gói mới hơn đã sẵn sàng để tải xuống."
 
 #. Translators: Help text for the tick box that keeps changes such as volume and speed when the player closes.
-#: UI/GeneralPreferences.cs:124
+#: UI/GeneralPreferences.cs:126
 msgid ""
 "Writes changes made during the session when Luna exits, including volume and "
 "speed. Clear this option if those changes should last only until the window "
@@ -3629,7 +3688,7 @@ msgstr ""
 "đến khi đóng cửa sổ."
 
 #. Translators: Help text for the tick box that keeps the player out of the system's media controls.
-#: UI/GeneralPreferences.cs:128
+#: UI/GeneralPreferences.cs:130
 msgid ""
 "Keeps Luna out of the system media controls and the play, pause and track "
 "keys on a keyboard or headset. Enable this if those keys misbehave with your "
@@ -3640,15 +3699,23 @@ msgstr ""
 "này nếu các phím đó hoạt động không đúng với tai nghe của bạn."
 
 #. Translators: Help text for the tick box that shows the playing track in the window title.
-#: UI/GeneralPreferences.cs:132
+#: UI/GeneralPreferences.cs:134
 msgid ""
 "Shows the playing track in the window title, marked as paused when it is."
 msgstr ""
 "Hiển thị tên bài đang phát trên tiêu đề cửa sổ, kèm trạng thái tạm dừng khi "
 "đang tạm dừng."
 
+#. Translators: Help text for the tick box that lets a new subtitle line cut off the one still being read.
+#: UI/GeneralPreferences.cs:137
+msgid ""
+"When reading subtitles aloud, lets a new line stop the one still being "
+"spoken so the speech keeps pace with the picture. Leave it off, the default, "
+"to hear each line to the end before the next begins."
+msgstr ""
+
 #. Translators: Help text for the list that chooses how much detail the player speaks.
-#: UI/GeneralPreferences.cs:135
+#: UI/GeneralPreferences.cs:141
 msgid ""
 "Beginner uses complete, explanatory announcements. Advanced keeps "
 "confirmations brief for experienced users."
@@ -3657,7 +3724,7 @@ msgstr ""
 "cao giữ cho các xác nhận ngắn gọn dành cho người dùng đã quen thuộc."
 
 #. Translators: Help text for the list that chooses how much of a folder is loaded when one file is opened.
-#: UI/GeneralPreferences.cs:138
+#: UI/GeneralPreferences.cs:144
 msgid ""
 "Chooses the playlist Luna builds when Windows opens one media file: only the "
 "selected file, all supported media in its folder, or supported media in that "
@@ -3668,7 +3735,7 @@ msgstr ""
 "tiện được hỗ trợ trong thư mục đó và tất cả các thư mục con bên dưới."
 
 #. Translators: Help text for the button that tells Windows this player can open media files.
-#: UI/GeneralPreferences.cs:142
+#: UI/GeneralPreferences.cs:148
 msgid ""
 "Adds Luna to the Windows list of applications that can open supported media "
 "files. Windows may still ask you to choose Luna in Default apps before it "
@@ -3679,7 +3746,7 @@ msgstr ""
 "định trước khi nó trở thành trình phát mặc định."
 
 #. Translators: Help text for the button that undoes telling Windows this player can open media files.
-#: UI/GeneralPreferences.cs:146
+#: UI/GeneralPreferences.cs:152
 msgid ""
 "Removes the media-file associations registered by Luna. It does not delete "
 "any media or change default-app choices managed separately by Windows."
@@ -3743,7 +3810,7 @@ msgstr ""
 
 #. Translators: Label of the list that filters channels by the category they belong to.
 #. Translators: Heading of the channel list column holding each channel's category.
-#: UI/Iptv/ChannelBrowserDialog.cs:64 UI/Iptv/ChannelBrowserDialog.cs:82
+#: UI/Iptv/ChannelBrowserDialog.cs:64 UI/Iptv/ChannelBrowserDialog.cs:83
 msgid "Category"
 msgstr ""
 
@@ -3755,61 +3822,61 @@ msgstr "Tất cả các tệp"
 
 #. Translators: Label of the box that filters channels by part of their name as the user types.
 #. Translators: Button that runs the YouTube search with the text and filter chosen.
-#: UI/Iptv/ChannelBrowserDialog.cs:73 UI/YouTube/SearchDialog.cs:80
+#: UI/Iptv/ChannelBrowserDialog.cs:74 UI/YouTube/SearchDialog.cs:80
 #, fuzzy
 msgid "Search"
 msgstr "Tìm kiếm trên YouTube"
 
 #. Translators: Heading of the channel list column holding each channel's number.
-#: UI/Iptv/ChannelBrowserDialog.cs:78
+#: UI/Iptv/ChannelBrowserDialog.cs:79
 msgid "Number"
 msgstr ""
 
 #. Translators: Heading of the channel list column holding what is showing now (from the guide).
-#: UI/Iptv/ChannelBrowserDialog.cs:85
+#: UI/Iptv/ChannelBrowserDialog.cs:86
 #, fuzzy
 msgid "Now"
 msgstr "Không"
 
 #. Translators: Channel-browser status line. {count} is how many channels pass the current filters.
-#: UI/Iptv/ChannelBrowserDialog.cs:184
+#: UI/Iptv/ChannelBrowserDialog.cs:185
 msgid "{count} channel"
 msgid_plural "{count} channels"
 msgstr[0] ""
 
 #. Translators: Spoken when the user asks what is on a channel but no programme guide was loaded.
-#: UI/Iptv/ChannelBrowserDialog.cs:255
+#: UI/Iptv/ChannelBrowserDialog.cs:256
 #, fuzzy
 msgid "No programme guide is available for this source."
 msgstr "Không có trợ giúp chi tiết nào cho điều khiển này."
 
 #. Translators: Spoken when the guide holds nothing for the selected channel right now.
-#: UI/Iptv/ChannelBrowserDialog.cs:263
+#: UI/Iptv/ChannelBrowserDialog.cs:264
 msgid "No programme information for this channel."
 msgstr ""
 
 #. Translators: Spoken now-playing line. {title} is the programme showing on the channel now.
-#: UI/Iptv/ChannelBrowserDialog.cs:269
+#: UI/Iptv/ChannelBrowserDialog.cs:270
 msgid "Now: {title}"
 msgstr ""
 
 #. Translators: Spoken when nothing is scheduled on the channel at the moment.
-#: UI/Iptv/ChannelBrowserDialog.cs:271
+#: UI/Iptv/ChannelBrowserDialog.cs:272
 msgid "Now: nothing scheduled"
 msgstr ""
 
 #. Translators: Spoken next-up line. {title} is the programme showing on the channel next.
-#: UI/Iptv/ChannelBrowserDialog.cs:274
+#: UI/Iptv/ChannelBrowserDialog.cs:275
 msgid "Next: {title}"
 msgstr ""
 
 #. Translators: Spoken when the guide lists nothing after the current programme.
-#: UI/Iptv/ChannelBrowserDialog.cs:276
+#: UI/Iptv/ChannelBrowserDialog.cs:277
 msgid "Next: nothing scheduled"
 msgstr ""
 
 #. Translators: Spoken help for the channel browser, read aloud when the user presses F1.
-#: UI/Iptv/ChannelBrowserDialog.cs:282
+#: UI/Iptv/ChannelBrowserDialog.cs:283
 msgid ""
 "Choose what to show and a category from the lists, or type part of a name in "
 "the search box to narrow the channels. Press Enter on a channel to play it. "
@@ -3921,29 +3988,29 @@ msgstr "Xóa..."
 
 #. Translators: Player menu item that plays the file before the current one.
 #. Translators: Item in the Audio track submenu that switches to the previous audio track in the file.
-#: UI/MainFrame.cs:106 UI/MenuBuilder.cs:167 UI/MenuBuilder.cs:240
+#: UI/MainFrame.cs:117 UI/MenuBuilder.cs:172 UI/MenuBuilder.cs:245
 msgid "Previous"
 msgstr "Trước đó"
 
 #. Translators: Player menu item that moves back in the file by one seek step.
-#: UI/MainFrame.cs:107 UI/MenuBuilder.cs:208
+#: UI/MainFrame.cs:118 UI/MenuBuilder.cs:213
 msgid "Rewind"
 msgstr "Tua lại"
 
 #. Translators: Player menu item that moves forward in the file by one seek step.
-#: UI/MainFrame.cs:109 UI/MenuBuilder.cs:210
+#: UI/MainFrame.cs:120 UI/MenuBuilder.cs:215
 msgid "Forward"
 msgstr "Tua tới"
 
 #. Translators: Player menu item that plays the file after the current one.
 #. Translators: Item in the Audio track submenu that switches to the next audio track in the file.
-#: UI/MainFrame.cs:110 UI/MenuBuilder.cs:169 UI/MenuBuilder.cs:238
+#: UI/MainFrame.cs:121 UI/MenuBuilder.cs:174 UI/MenuBuilder.cs:243
 msgid "Next"
 msgstr "Tiếp theo"
 
 #. Translators: Recording menu item that starts a paused recording again.
 #. Translators: Button that starts a paused recording again.
-#: UI/MainFrame.cs:295 UI/Recording/RecordingDialog.cs:623
+#: UI/MainFrame.cs:326 UI/Recording/RecordingDialog.cs:623
 msgid "Resume"
 msgstr "Tiếp tục"
 
@@ -4136,409 +4203,415 @@ msgid "The destination folder could not be created."
 msgstr "Không thể tạo thư mục đích."
 
 #. Translators: File menu item that opens one or more media files. The three dots mean it opens a window to choose them.
-#: UI/MenuBuilder.cs:44
+#: UI/MenuBuilder.cs:49
 msgid "Open File..."
 msgstr "Mở tệp..."
 
 #. Translators: File menu item that asks for a link to a network stream and plays it.
-#: UI/MenuBuilder.cs:46
+#: UI/MenuBuilder.cs:51
 msgid "Open Link..."
 msgstr "Mở liên kết..."
 
 #. Translators: File menu item that opens every media file in a folder.
-#: UI/MenuBuilder.cs:48
+#: UI/MenuBuilder.cs:53
 msgid "Open Folder..."
 msgstr "Mở thư mục..."
 
 #. Translators: File menu item that asks for a YouTube address and plays the video or playlist it names.
-#: UI/MenuBuilder.cs:50
+#: UI/MenuBuilder.cs:55
 msgid "Open YouTube Link..."
 msgstr "Mở liên kết YouTube..."
 
 #. Translators: File menu item that asks what to look for on YouTube and lists what it finds.
-#: UI/MenuBuilder.cs:52
+#: UI/MenuBuilder.cs:57
 msgid "Search YouTube..."
 msgstr "Tìm kiếm trên YouTube..."
 
 #. Translators: File menu item that lists the YouTube links and streams the user has saved.
-#: UI/MenuBuilder.cs:54
+#: UI/MenuBuilder.cs:59
 msgid "Favorite videos..."
 msgstr "Video yêu thích..."
 
 #. Translators: File menu item that shows the folder holding the current file in Windows Explorer.
-#: UI/MenuBuilder.cs:58
+#: UI/MenuBuilder.cs:63
 msgid "Open Containing Folder"
 msgstr "Mở thư mục chứa"
 
 #. Translators: File menu item that shows the Windows properties window for the current file.
-#: UI/MenuBuilder.cs:60
+#: UI/MenuBuilder.cs:65
 msgid "File properties..."
 msgstr "Thuộc tính tệp..."
 
 #. Translators: File menu item that lists the files currently loaded in the player.
-#: UI/MenuBuilder.cs:62
+#: UI/MenuBuilder.cs:67
 msgid "Opened Files..."
 msgstr "Các tệp đang mở..."
 
 #. Translators: File menu item that removes the current file from the player.
-#: UI/MenuBuilder.cs:64
+#: UI/MenuBuilder.cs:69
 msgid "Close File"
 msgstr "Đóng tệp"
 
 #. Translators: File menu item that opens the player's settings window.
-#: UI/MenuBuilder.cs:68
+#: UI/MenuBuilder.cs:73
 msgid "Preferences..."
 msgstr "Tùy chọn..."
 
 #. Translators: File menu item that quits the player.
-#: UI/MenuBuilder.cs:71
+#: UI/MenuBuilder.cs:76
 msgid "Exit"
 msgstr "Thoát"
 
 #. Translators: Edit menu item that gives the current file a new name.
-#: UI/MenuBuilder.cs:76
+#: UI/MenuBuilder.cs:81
 msgid "Rename..."
 msgstr "Đổi tên..."
 
 #. Translators: Edit menu item that copies the current file to the clipboard.
 #. Translators: Button that copies the whole description to the clipboard.
-#: UI/MenuBuilder.cs:80 UI/YouTube/DescriptionDialog.cs:47
+#: UI/MenuBuilder.cs:85 UI/YouTube/DescriptionDialog.cs:47
 msgid "Copy"
 msgstr "Sao chép"
 
 #. Translators: Edit menu item that pastes files copied from Windows Explorer into the player.
-#: UI/MenuBuilder.cs:82
+#: UI/MenuBuilder.cs:87
 msgid "Paste"
 msgstr "Dán"
 
 #. Translators: Edit menu item that marks or unmarks the current file. It is ticked while the file is marked.
-#: UI/MenuBuilder.cs:85
+#: UI/MenuBuilder.cs:90
 msgid "Mark Current File"
 msgstr "Đánh dấu tệp hiện tại"
 
 #. Translators: Edit menu item that marks every loaded file. It is ticked while they all are.
-#: UI/MenuBuilder.cs:87
+#: UI/MenuBuilder.cs:92
 msgid "Mark All Files"
 msgstr "Đánh dấu tất cả các tệp"
 
 #. Translators: Edit menu item that unmarks all marked files.
-#: UI/MenuBuilder.cs:89
+#: UI/MenuBuilder.cs:94
 msgid "Clear Marked Files"
 msgstr "Bỏ đánh dấu các tệp"
 
 #. Translators: Item in the "Jump to bookmark" submenu, one for each of the ten bookmark slots.
 #. {slot} is the slot number, 1 to 10.
-#: UI/MenuBuilder.cs:102
+#: UI/MenuBuilder.cs:107
 msgid "Bookmark {slot}"
 msgstr "Dấu trang {slot}"
 
 #. Translators: Bookmarks submenu holding one item per numbered bookmark slot.
-#: UI/MenuBuilder.cs:104
+#: UI/MenuBuilder.cs:109
 msgid "Jump to bookmark"
 msgstr "Nhảy đến dấu trang"
 
 #. Translators: Item in the marked files menu: copy the marked files into a folder the user chooses.
 #. The ampersand marks the letter used to reach the item from the keyboard; put it before a letter that suits your language.
-#: UI/MenuBuilder.cs:110
+#: UI/MenuBuilder.cs:115
 msgid "&Copy to folder..."
 msgstr "&Sao chép vào thư mục..."
 
 #. Translators: Item in the marked files menu: move the marked files into a folder the user chooses.
 #. The ampersand marks the letter used to reach the item from the keyboard; put it before a letter that suits your language.
-#: UI/MenuBuilder.cs:113
+#: UI/MenuBuilder.cs:118
 msgid "&Move to folder..."
 msgstr "&Di chuyển vào thư mục..."
 
 #. Translators: Item in the marked files menu: copy the marked files to the clipboard.
 #. The ampersand marks the letter used to reach the item from the keyboard; put it before a letter that suits your language.
-#: UI/MenuBuilder.cs:116
+#: UI/MenuBuilder.cs:121
 msgid "Copy to &clipboard"
 msgstr "Sao chép vào &bảng nhớ tạm"
 
 #. Translators: Item in the marked files menu: delete the marked files from the disk.
 #. The ampersand marks the letter used to reach the item from the keyboard; put it before a letter that suits your language.
-#: UI/MenuBuilder.cs:119
+#: UI/MenuBuilder.cs:124
 msgid "&Delete"
 msgstr "&Xóa"
 
 #. Translators: Player menu item that starts playing, or pauses playing.
-#: UI/MenuBuilder.cs:124
+#: UI/MenuBuilder.cs:129
 msgid "Play/Pause"
 msgstr "Phát/Tạm dừng"
 
 #. Translators: Item in the Speed submenu: play the file faster.
-#: UI/MenuBuilder.cs:128
+#: UI/MenuBuilder.cs:133
 msgid "Increase Speed"
 msgstr "Tăng tốc độ"
 
 #. Translators: Item in the Speed submenu: play the file slower.
-#: UI/MenuBuilder.cs:130
+#: UI/MenuBuilder.cs:135
 msgid "Decrease Speed"
 msgstr "Giảm tốc độ"
 
 #. Translators: Item in the Speed submenu: return the playing speed to normal.
-#: UI/MenuBuilder.cs:132
+#: UI/MenuBuilder.cs:137
 msgid "Reset Speed"
 msgstr "Đặt lại tốc độ"
 
 #. Translators: Player submenu holding the items that change how fast the file plays.
-#: UI/MenuBuilder.cs:134
+#: UI/MenuBuilder.cs:139
 msgid "Speed"
 msgstr "Tốc độ"
 
 #. Translators: Item in the Pitch submenu: raise audio pitch without changing playback speed.
-#: UI/MenuBuilder.cs:138
+#: UI/MenuBuilder.cs:143
 msgid "Raise Pitch"
 msgstr "Tăng cao độ"
 
 #. Translators: Item in the Pitch submenu: lower audio pitch without changing playback speed.
-#: UI/MenuBuilder.cs:140
+#: UI/MenuBuilder.cs:145
 msgid "Lower Pitch"
 msgstr "Giảm cao độ"
 
 #. Translators: Item in the Pitch submenu: restore the audio's original pitch.
-#: UI/MenuBuilder.cs:142
+#: UI/MenuBuilder.cs:147
 msgid "Reset Pitch"
 msgstr "Đặt lại cao độ"
 
 #. Translators: Item in the Pitch submenu: speak the current pitch adjustment.
-#: UI/MenuBuilder.cs:144
+#: UI/MenuBuilder.cs:149
 msgid "Speak Pitch"
 msgstr "Đọc cao độ"
 
 #. Translators: Player submenu holding the controls that raise or lower audio pitch.
-#: UI/MenuBuilder.cs:146
+#: UI/MenuBuilder.cs:151
 msgid "Pitch"
 msgstr "Cao độ"
 
 #. Translators: Item in the Pan submenu: move the sound toward the left speaker.
-#: UI/MenuBuilder.cs:150
+#: UI/MenuBuilder.cs:155
 msgid "Pan Left"
 msgstr "Chuyển sang trái"
 
 #. Translators: Item in the Pan submenu: move the sound toward the right speaker.
-#: UI/MenuBuilder.cs:152
+#: UI/MenuBuilder.cs:157
 msgid "Pan Right"
 msgstr "Chuyển sang phải"
 
 #. Translators: Item in the Pan submenu: speak the current left/right audio balance.
-#: UI/MenuBuilder.cs:154
+#: UI/MenuBuilder.cs:159
 msgid "Speak Pan"
 msgstr "Đọc cân bằng âm thanh"
 
 #. Translators: Player submenu holding the left/right audio balance controls.
-#: UI/MenuBuilder.cs:156
+#: UI/MenuBuilder.cs:161
 msgid "Pan"
 msgstr "Cân bằng âm thanh"
 
 #. Translators: Player menu item that plays the first file in the list.
-#: UI/MenuBuilder.cs:171
+#: UI/MenuBuilder.cs:176
 msgid "First File"
 msgstr "Tệp đầu tiên"
 
 #. Translators: Player menu item that asks for a file number and jumps to it.
-#: UI/MenuBuilder.cs:173
+#: UI/MenuBuilder.cs:178
 msgid "Go to file..."
 msgstr "Chuyển đến tệp..."
 
 #. Translators: Player menu item that plays the last file in the list.
-#: UI/MenuBuilder.cs:175
+#: UI/MenuBuilder.cs:180
 msgid "Last File"
 msgstr "Tệp cuối cùng"
 
 #. Translators: Player menu item that turns playing files in random order on or off. It is ticked while it is on.
-#: UI/MenuBuilder.cs:179
+#: UI/MenuBuilder.cs:184
 msgid "Shuffle"
 msgstr "Phát ngẫu nhiên"
 
 #. Translators: Player menu item that turns repeating the current file on or off. It is ticked while it is on.
-#: UI/MenuBuilder.cs:184
+#: UI/MenuBuilder.cs:189
 msgid "Repeat File"
 msgstr "Lặp lại tệp"
 
 #. Translators: Player menu item that turns skipping silent parts of the file on or off. It is ticked while it is on.
-#: UI/MenuBuilder.cs:189
+#: UI/MenuBuilder.cs:194
 msgid "Enable silence removal filter"
 msgstr "Bật bộ lọc loại bỏ khoảng lặng"
 
 #. Translators: Item in the A-B loop submenu: mark the start of the part to repeat.
 #. A and B name the two ends of the loop and are usually left as they are.
-#: UI/MenuBuilder.cs:195
+#: UI/MenuBuilder.cs:200
 msgid "Set A (loop start)"
 msgstr "Đặt điểm A (bắt đầu lặp)"
 
 #. Translators: Item in the A-B loop submenu: mark the end of the part to repeat.
 #. A and B name the two ends of the loop and are usually left as they are.
-#: UI/MenuBuilder.cs:198
+#: UI/MenuBuilder.cs:203
 msgid "Set B (loop end)"
 msgstr "Đặt điểm B (kết thúc lặp)"
 
 #. Translators: Item in the A-B loop submenu: forget the marked part and play the whole file again.
 #. A and B name the two ends of the loop and are usually left as they are.
-#: UI/MenuBuilder.cs:201
+#: UI/MenuBuilder.cs:206
 msgid "Clear A-B loop"
 msgstr "Xóa lặp A-B"
 
 #. Translators: Player submenu holding the items that repeat one part of the file.
 #. A and B name the two ends of the loop and are usually left as they are.
-#: UI/MenuBuilder.cs:204
+#: UI/MenuBuilder.cs:209
 msgid "A-B loop"
 msgstr "Lặp A-B"
 
 #. Translators: Player menu item that jumps to the beginning of the file.
-#: UI/MenuBuilder.cs:212
+#: UI/MenuBuilder.cs:217
 msgid "Beginning"
 msgstr "Đầu tệp"
 
 #. Translators: Player menu item that jumps to the end of the file.
-#: UI/MenuBuilder.cs:214
+#: UI/MenuBuilder.cs:219
 msgid "End"
 msgstr "Cuối tệp"
 
 #. Translators: Player menu item that asks for a time and jumps to it.
-#: UI/MenuBuilder.cs:216
+#: UI/MenuBuilder.cs:221
 msgid "Go to time..."
 msgstr "Chuyển đến thời gian..."
 
 #. Translators: Player submenu holding items that jump to a position given as a percentage, from 10% to 100%.
-#: UI/MenuBuilder.cs:223
+#: UI/MenuBuilder.cs:228
 msgid "Jump to Percentage"
 msgstr "Nhảy đến phần trăm"
 
 #. Translators: Player submenu for choosing how far one press of the seek keys moves.
-#: UI/MenuBuilder.cs:229
+#: UI/MenuBuilder.cs:234
 msgid "Seek amount"
 msgstr "Khoảng cách tua"
 
 #. Translators: Player menu item that opens the list of audio output devices to play through.
-#: UI/MenuBuilder.cs:232
+#: UI/MenuBuilder.cs:237
 msgid "Sound Cards..."
 msgstr "Card âm thanh..."
 
 #. Translators: Item in the Audio track submenu that opens the window listing the file's audio tracks to choose from.
-#: UI/MenuBuilder.cs:243
+#: UI/MenuBuilder.cs:248
 msgid "Track list..."
 msgstr ""
 
 #. Translators: Player submenu holding the commands that switch between a file's audio tracks.
-#: UI/MenuBuilder.cs:245
+#: UI/MenuBuilder.cs:250
 #, fuzzy
 msgid "Audio track"
 msgstr "Định dạng âm thanh"
 
+#. Translators: Player submenu listing the file's embedded subtitles to read aloud, with Off at the top.
+#: UI/MenuBuilder.cs:259
+msgid "Subtitles"
+msgstr ""
+
 #. Translators: Item in the Video options menu that saves the video being played to a folder on this computer.
-#: UI/MenuBuilder.cs:255
+#: UI/MenuBuilder.cs:269
 msgid "Download..."
 msgstr "Tải xuống..."
 
 #. Translators: Item in the Video options menu that shows the text the uploader wrote under the video.
-#: UI/MenuBuilder.cs:257
+#: UI/MenuBuilder.cs:271
 msgid "Video description..."
 msgstr "Mô tả video..."
 
 #. Translators: Item in the Video options menu that copies the address of the video being played.
-#: UI/MenuBuilder.cs:259
+#: UI/MenuBuilder.cs:273
 msgid "Copy video link"
 msgstr "Sao chép liên kết video"
 
 #. Translators: Recording menu item that opens the window where recording is set up and run.
-#: UI/MenuBuilder.cs:266
+#: UI/MenuBuilder.cs:280
 msgid "Open the recording interface..."
 msgstr "Mở giao diện ghi âm..."
 
 #. Translators: Recording menu item that ends a recording and closes the file.
 #. Translators: Button that ends a recording and closes the file.
 #. Translators: The timer action that stops playback.
-#: UI/MenuBuilder.cs:273 UI/Recording/RecordingDialog.cs:619
+#: UI/MenuBuilder.cs:287 UI/Recording/RecordingDialog.cs:619
 #: UI/SleepTimerDialog.cs:85
 msgid "Stop"
 msgstr "Dừng"
 
 #. Translators: Recording menu item that opens the folder recordings are saved into.
-#: UI/MenuBuilder.cs:276
+#: UI/MenuBuilder.cs:290
 msgid "Open recordings folder"
 msgstr "Mở thư mục bản ghi âm"
 
 #. Translators: Help submenu containing the commands that update Luna Player and its YouTube tools.
-#: UI/MenuBuilder.cs:292
+#: UI/MenuBuilder.cs:306
 msgid "Updates"
 msgstr "Cập nhật"
 
 #. Translators: Tools menu item that opens the window for converting files to another audio format.
-#: UI/MenuBuilder.cs:298
+#: UI/MenuBuilder.cs:312
 msgid "Media converter..."
 msgstr "Chuyển đổi phương tiện..."
 
 #. Translators: IPTV menu item that opens the window where IPTV sources are added and edited.
-#: UI/MenuBuilder.cs:304
+#: UI/MenuBuilder.cs:318
 #, fuzzy
 msgid "Manage IPTV sources..."
 msgstr "Quản lý các cấu hình..."
 
 #. Translators: IPTV menu item that opens the list of channels the chosen IPTV source holds.
-#: UI/MenuBuilder.cs:306
+#: UI/MenuBuilder.cs:320
 #, fuzzy
 msgid "Browse channels..."
 msgstr "Duyệt..."
 
 #. Translators: Sleep-timer menu item that opens the window where a timer is set.
-#: UI/MenuBuilder.cs:314
+#: UI/MenuBuilder.cs:328
 #, fuzzy
 msgid "Set timer..."
 msgstr "Chuyển đến thời gian..."
 
 #. Translators: Sleep-timer menu item that turns off a timer that is counting down.
-#: UI/MenuBuilder.cs:316
+#: UI/MenuBuilder.cs:330
 #, fuzzy
 msgid "Cancel timer"
 msgstr "Hủy"
 
 #. Translators: Sleep-timer menu item that speaks how long is left before the timer fires.
-#: UI/MenuBuilder.cs:318
+#: UI/MenuBuilder.cs:332
 #, fuzzy
 msgid "Time remaining"
 msgstr "Đọc thời gian còn lại"
 
 #. Translators: Name of the File menu in the menu bar.
-#: UI/MenuBuilder.cs:324
+#: UI/MenuBuilder.cs:338
 msgid "File"
 msgstr "Tệp"
 
 #. Translators: Name of the menu bar menu holding the things that can be done to the marked files at once.
-#: UI/MenuBuilder.cs:331
+#: UI/MenuBuilder.cs:345
 msgid "Actions for marked files"
 msgstr "Thao tác cho các tệp đã đánh dấu"
 
 #. Translators: Name of the Player menu in the menu bar, holding the playing, seeking and volume items.
-#: UI/MenuBuilder.cs:333
+#: UI/MenuBuilder.cs:347
 msgid "Player"
 msgstr "Trình phát"
 
 #. Translators: Name of the menu bar menu holding what can be done with the YouTube video being played.
-#: UI/MenuBuilder.cs:338
+#: UI/MenuBuilder.cs:352
 msgid "Video options"
 msgstr "Tùy chọn video"
 
 #. Translators: Name of the Tools menu in the menu bar, holding the media converter.
-#: UI/MenuBuilder.cs:345
+#: UI/MenuBuilder.cs:359
 msgid "Tools"
 msgstr "Công cụ"
 
 #. Translators: Name of the Help menu in the menu bar.
-#: UI/MenuBuilder.cs:347
+#: UI/MenuBuilder.cs:361
 msgid "Help"
 msgstr "Trợ giúp"
 
+#. Translators: Item at the top of the Subtitles menu that reads no subtitles. Ticked by default.
 #. Translators: Item in the Equalizer submenu that leaves the sound unequalized. It is ticked while no preset is in use.
-#: UI/MenuBuilder.cs:378
+#: UI/MenuBuilder.cs:389 UI/MenuBuilder.cs:432
 msgid "Off"
 msgstr "Tắt"
 
-#: UI/MenuBuilder.cs:384
+#: UI/MenuBuilder.cs:438
 msgid "Edit current preset..."
 msgstr "Chỉnh sửa cấu hình hiện tại..."
 
-#: UI/MenuBuilder.cs:387
+#: UI/MenuBuilder.cs:441
 msgid "Manage presets..."
 msgstr "Quản lý các cấu hình..."
 
@@ -4563,32 +4636,32 @@ msgid "Select file to jump to."
 msgstr "Chọn tệp để chuyển đến."
 
 #. Translators: Name of the settings category holding the language, speech and file-opening settings.
-#: UI/PreferencesDialog.cs:44
+#: UI/PreferencesDialog.cs:45
 msgid "General"
 msgstr "Chung"
 
 #. Translators: Name of the settings category for saving a copy of the settings and bookmarks and putting them back.
-#: UI/PreferencesDialog.cs:46
+#: UI/PreferencesDialog.cs:47
 msgid "Backup and restore"
 msgstr "Sao lưu và khôi phục"
 
 #. Translators: Name of the settings category holding the loudness, speed and seeking settings.
-#: UI/PreferencesDialog.cs:48
+#: UI/PreferencesDialog.cs:49
 msgid "Audio"
 msgstr "Âm thanh"
 
 #. Translators: Name of the settings category for trimming the silent parts out of what is played.
-#: UI/PreferencesDialog.cs:50
+#: UI/PreferencesDialog.cs:51
 msgid "Silence removal"
 msgstr "Loại bỏ khoảng lặng"
 
 #. Translators: Name of the settings category for the key combinations that work while the player is the program in front.
-#: UI/PreferencesDialog.cs:56
+#: UI/PreferencesDialog.cs:57
 msgid "Keyboard Shortcuts"
 msgstr "Phím tắt bàn phím"
 
 #. Translators: Help text for the list of settings categories down the left of the Preferences window.
-#: UI/PreferencesDialog.cs:171
+#: UI/PreferencesDialog.cs:180
 msgid ""
 "Use the Up and Down Arrow keys to select a category. Its controls appear on "
 "the right side of the window."
@@ -4597,7 +4670,7 @@ msgstr ""
 "ứng sẽ xuất hiện ở phía bên phải cửa sổ."
 
 #. Translators: Spoken when the user asks for help on a control that has none.
-#: UI/PreferencesDialog.cs:178
+#: UI/PreferencesDialog.cs:187
 msgid "No detailed help is available for this control."
 msgstr "Không có trợ giúp chi tiết nào cho điều khiển này."
 
