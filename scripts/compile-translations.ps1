@@ -48,10 +48,16 @@ function Get-CatalogEntry {
     $entries = [System.Collections.Generic.List[hashtable]]::new()
     $current = $null
     $keyword = $null
+    # A "#, fuzzy" flag sits in the comment block just above an entry's msgid, so remember it until the
+    # msgid line creates the entry it belongs to, then clear it for the next one.
+    $pendingFuzzy = $false
     foreach ($line in [System.IO.File]::ReadAllLines($Path)) {
         $text = $line.Trim()
-        if ($text.Length -eq 0) { $keyword = $null; continue }
-        if ($text.StartsWith('#')) { continue }
+        if ($text.Length -eq 0) { $keyword = $null; $pendingFuzzy = $false; continue }
+        if ($text.StartsWith('#')) {
+            if ($text.StartsWith('#,') -and $text.Contains('fuzzy')) { $pendingFuzzy = $true }
+            continue
+        }
         if ($text.StartsWith('"')) {
             if ($current -and $keyword) { $current[$keyword] += Get-QuotedText $text }
             continue
@@ -61,8 +67,9 @@ function Get-CatalogEntry {
         $keyword = $text.Substring(0, $space)
         $value = Get-QuotedText $text.Substring($space + 1)
         if ($keyword -eq 'msgid') {
-            $current = @{}
+            $current = @{ fuzzy = $pendingFuzzy }
             $entries.Add($current)
+            $pendingFuzzy = $false
         }
         if (-not $current) { continue }
         if (-not $current.ContainsKey($keyword)) { $current[$keyword] = '' }
@@ -96,6 +103,9 @@ function Test-CatalogPlaceholders {
     foreach ($entry in Get-CatalogEntry $Path) {
         $source = $entry['msgid']
         if ([string]::IsNullOrEmpty($source)) { continue }
+        # Fuzzy entries are msgmerge's guesses; msgfmt leaves them out of the compiled catalogue, so a
+        # placeholder mismatch in one is harmless and flagging it only raises false alarms.
+        if ($entry['fuzzy']) { continue }
         $expected = Get-PlaceholderNames $source
         foreach ($key in @($entry.Keys)) {
             if (-not $key.StartsWith('msgstr')) { continue }
