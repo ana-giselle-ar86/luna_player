@@ -28,6 +28,8 @@ internal sealed class MediaPlayer : IDisposable
         _engine.Ended += OnEnded;
         _engine.VideoAvailabilityChanged += OnVideoAvailabilityChanged;
         _engine.AudioTracksChanged += OnAudioTracksChanged;
+        _engine.SubtitleTracksChanged += OnSubtitleTracksChanged;
+        _engine.SubtitleTextChanged += OnSubtitleTextChanged;
     }
 
     /// <summary>Whether a list of videos is playing in front of the playlist the user opened.</summary>
@@ -132,6 +134,13 @@ internal sealed class MediaPlayer : IDisposable
     /// <summary>Raised when the audio tracks the current file offers may have changed, a moment after a file
     /// loads.</summary>
     internal event Action? AudioTracksChanged;
+
+    /// <summary>Raised when the subtitle tracks the current file offers may have changed, a moment after a
+    /// file loads.</summary>
+    internal event Action? SubtitleTracksChanged;
+
+    /// <summary>Raised with each subtitle line as it appears, while a subtitle track is being read.</summary>
+    internal event Action<string>? SubtitleTextChanged;
 
     internal string? CurrentPath => _playlist.CurrentPath;
     internal int Count => _playlist.Count;
@@ -349,6 +358,9 @@ internal sealed class MediaPlayer : IDisposable
     internal bool SetAudioDevice(string name) => _engine.SetAudioDevice(name);
     internal IReadOnlyList<AudioTrack> GetAudioTracks() => _running ? _engine.GetAudioTracks() : [];
     internal bool SetAudioTrack(int id) => _running && _engine.SetAudioTrack(id);
+    internal IReadOnlyList<SubtitleTrack> GetSubtitleTracks() => _running ? _engine.GetSubtitleTracks() : [];
+    internal bool SetSubtitleTrack(int id) => _running && _engine.SetSubtitleTrack(id);
+    internal bool DisableSubtitles() => _running && _engine.DisableSubtitles();
     internal void TrackPositions(bool enabled) => _trackPositions = enabled;
 
     internal void SavePosition()
@@ -507,6 +519,8 @@ internal sealed class MediaPlayer : IDisposable
         _engine.Ended -= OnEnded;
         _engine.VideoAvailabilityChanged -= OnVideoAvailabilityChanged;
         _engine.AudioTracksChanged -= OnAudioTracksChanged;
+        _engine.SubtitleTracksChanged -= OnSubtitleTracksChanged;
+        _engine.SubtitleTextChanged -= OnSubtitleTextChanged;
         _engine.Dispose();
     }
 
@@ -601,6 +615,18 @@ internal sealed class MediaPlayer : IDisposable
     {
         if (!_disposed)
             AudioTracksChanged?.Invoke();
+    }
+
+    private void OnSubtitleTracksChanged()
+    {
+        if (!_disposed)
+            SubtitleTracksChanged?.Invoke();
+    }
+
+    private void OnSubtitleTextChanged(string text)
+    {
+        if (!_disposed)
+            SubtitleTextChanged?.Invoke(text);
     }
 
     private void StopEngine()

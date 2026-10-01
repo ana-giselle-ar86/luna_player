@@ -18,6 +18,10 @@ internal readonly record struct OpenedFilesRequest(OpenedFilesAction Action, int
 internal readonly record struct UiOperation(bool Success, string Error = "");
 internal readonly record struct AppUpdatePrompt(string CurrentVersion, string AvailableVersion, string Changes);
 
+/// <summary>One subtitle track as the Subtitles menu shows it: the mpv track id and the label already worded
+/// for the user. The "Off" entry is not one of these - the menu always carries it itself.</summary>
+internal readonly record struct SubtitleMenuEntry(int Id, string Label);
+
 /// <summary>Which half of a link naming a video and a playlist at once the user meant.</summary>
 internal enum YouTubeLinkKind { Video, Playlist }
 
@@ -200,6 +204,11 @@ internal interface IMainView : IDisposable
     /// can describe and no key is bound to any of them.
     /// </remarks>
     event Action<string?>? EqualizerPresetRequested;
+
+    /// <summary>The user has chosen a subtitle track from the menu, or null for Off. Not an
+    /// <see cref="ActionId"/>, for the same reason as <see cref="EqualizerPresetRequested"/>: which subtitle
+    /// tracks exist changes per file.</summary>
+    event Action<int?>? SubtitleTrackRequested;
     event Action? CloseRequested;
 
     /// <summary>Asked when Escape is pressed on the main window with no modifier. Returning true means it
@@ -253,6 +262,14 @@ internal interface IMainView : IDisposable
     /// <summary>Enables or greys out the audio-track commands; on only while the file has more than one
     /// audio track to switch between.</summary>
     void SetAudioTrackControlsEnabled(bool enabled);
+
+    /// <summary>Builds the Subtitles submenu again from the file's tracks, ticking the active one (or Off when
+    /// <paramref name="activeId"/> is null). Called a moment after each file loads.</summary>
+    void RebuildSubtitleMenu(IReadOnlyList<SubtitleMenuEntry> entries, int? activeId);
+
+    /// <summary>Ticks the subtitle track being read, or the Off item when <paramref name="activeId"/> is null,
+    /// without rebuilding the submenu - for when the choice changes but the track list has not.</summary>
+    void SetSubtitleSelection(int? activeId);
 
     /// <summary>Puts the recording menu into the state the recorder is in.</summary>
     void SetRecordingState(LunaPlayer.Recording.RecordingState state);
