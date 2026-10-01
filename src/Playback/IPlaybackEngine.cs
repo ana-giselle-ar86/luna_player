@@ -19,6 +19,13 @@ internal readonly record struct AudioDevice(string Name, string Description);
 /// <param name="Selected">Whether this is the track currently playing.</param>
 internal readonly record struct AudioTrack(int Id, string? Title, string? Language, int Channels, bool Selected);
 
+/// <param name="Id">mpv's own track id, the value written to <c>sid</c> to select it.</param>
+/// <param name="Title">The track's own title from the file, or null when it carries none.</param>
+/// <param name="Language">The raw language code (such as "eng"), or null when the track names none.
+/// Turned into a readable name for the user at the point it is shown.</param>
+/// <param name="Selected">Whether this is the subtitle track currently being read.</param>
+internal readonly record struct SubtitleTrack(int Id, string? Title, string? Language, bool Selected);
+
 internal interface IPlaybackEngine : IDisposable
 {
     event Action<PlaybackEndReason>? Ended;
@@ -30,6 +37,14 @@ internal interface IPlaybackEngine : IDisposable
     /// <summary>Raised when the set of tracks may have changed - a file's tracks are learned after the load
     /// returns, so <see cref="GetAudioTracks"/> is not settled the moment a file opens.</summary>
     event Action? AudioTracksChanged;
+
+    /// <summary>Raised when the file's subtitle tracks may have changed, a moment after a load - the companion
+    /// of <see cref="AudioTracksChanged"/> for <see cref="GetSubtitleTracks"/>.</summary>
+    event Action? SubtitleTracksChanged;
+
+    /// <summary>Raised with each subtitle line as it appears on screen, so it can be spoken. Only fires while a
+    /// subtitle track is selected; the payload is the line's text, never empty.</summary>
+    event Action<string>? SubtitleTextChanged;
 
     /// <param name="audioFile">A separate stream carrying the sound, played alongside
     /// <paramref name="path"/>. Null for anything that carries its own sound, which is everything but a
@@ -66,6 +81,16 @@ internal interface IPlaybackEngine : IDisposable
 
     /// <summary>Switches the playing audio track to the one with this mpv track id.</summary>
     bool SetAudioTrack(int id);
+
+    /// <summary>The subtitle tracks the current file carries, empty when nothing is open. Not settled the
+    /// moment a file opens - see <see cref="SubtitleTracksChanged"/>.</summary>
+    IReadOnlyList<SubtitleTrack> GetSubtitleTracks();
+
+    /// <summary>Selects the subtitle track with this mpv track id, so its lines are announced as they come.</summary>
+    bool SetSubtitleTrack(int id);
+
+    /// <summary>Turns subtitle reading off, selecting no subtitle track.</summary>
+    bool DisableSubtitles();
     bool SetNormalization(bool enabled);
     bool SetMono(bool enabled);
     bool SetSilenceRemoval(bool enabled, string graph);

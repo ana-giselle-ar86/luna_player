@@ -270,6 +270,13 @@ internal sealed class GeneralSettings
     /// so it is offered as a choice rather than left out.
     /// </remarks>
     public bool SpeakWindowTitle { get; set; }
+
+    /// <summary>Whether a subtitle line being read aloud is cut off when the next line appears, so the speech
+    /// keeps pace with the picture. Off reads each line to the end before the next, so none is lost.</summary>
+    /// <remarks>Off by default: a cut-off line is a line the listener never heard in full, and subtitle cues
+    /// often sit close enough together to clip one another. Turning it on trades completeness for staying in
+    /// step with the picture, which suits dense dialogue.</remarks>
+    public bool SubtitleInterrupt { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter<SpeechVerbosity>))]
     public SpeechVerbosity Verbosity { get; set; } = SpeechVerbosity.Beginner;
     [JsonConverter(typeof(JsonStringEnumConverter<OpenFilesMode>))]
@@ -285,6 +292,7 @@ internal sealed class GeneralSettings
         SaveOnClose = source.SaveOnClose;
         DisableMediaControls = source.DisableMediaControls;
         SpeakWindowTitle = source.SpeakWindowTitle;
+        SubtitleInterrupt = source.SubtitleInterrupt;
         Verbosity = source.Verbosity;
         OpenFilesMode = source.OpenFilesMode;
         LastDirectory = source.LastDirectory;

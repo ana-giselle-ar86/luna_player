@@ -14,6 +14,7 @@ internal sealed class GeneralPreferences : Preferences
     private readonly CheckBox _saveOnClose;
     private readonly CheckBox _disableMediaControls;
     private readonly CheckBox _speakWindowTitle;
+    private readonly CheckBox _subtitleInterrupt;
     private readonly Choice _verbosity;
     private readonly Choice _openMode;
 
@@ -47,6 +48,8 @@ internal sealed class GeneralPreferences : Preferences
         _disableMediaControls = new CheckBox(panel, label: Tr("Disable system media controls")) { Checked = settings.DisableMediaControls };
         // Translators: Tick box on the General settings page: show the playing track in the window title.
         _speakWindowTitle = new CheckBox(panel, label: Tr("Show the playing track in the window title")) { Checked = settings.SpeakWindowTitle };
+        // Translators: Tick box on the General settings page: let a new subtitle line cut off the one still being read.
+        _subtitleInterrupt = new CheckBox(panel, label: Tr("Interrupt the current line when a new subtitle appears")) { Checked = settings.SubtitleInterrupt };
         // Translators: Label of the list that chooses how much detail the player speaks.
         var verbosityLabel = new StaticText(panel, label: Tr("Verbosity"));
         _verbosity = Choice(panel, [
@@ -97,6 +100,7 @@ internal sealed class GeneralPreferences : Preferences
         sizer.Add(_saveOnClose, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
         sizer.Add(_disableMediaControls, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
         sizer.Add(_speakWindowTitle, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
+        sizer.Add(_subtitleInterrupt, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
         AddChoice(sizer, verbosityLabel, _verbosity);
         AddChoice(sizer, openModeLabel, _openMode);
         var buttons = new BoxSizer(Orientation.Horizontal);
@@ -130,6 +134,10 @@ internal sealed class GeneralPreferences : Preferences
         Help(_speakWindowTitle,
             // Translators: Help text for the tick box that shows the playing track in the window title.
             Tr("Shows the playing track in the window title, marked as paused when it is."));
+        Help(_subtitleInterrupt,
+            // Translators: Help text for the tick box that lets a new subtitle line cut off the one still being read.
+            Tr("When reading subtitles aloud, lets a new line stop the one still being spoken so the speech keeps pace with the picture. " +
+            "Leave it off, the default, to hear each line to the end before the next begins."));
         Help(_verbosity,
             // Translators: Help text for the list that chooses how much detail the player speaks.
             Tr("Beginner uses complete, explanatory announcements. Advanced keeps confirmations brief for experienced users."));
@@ -157,6 +165,7 @@ internal sealed class GeneralPreferences : Preferences
         _settings.SaveOnClose = _saveOnClose.Checked;
         _settings.DisableMediaControls = _disableMediaControls.Checked;
         _settings.SpeakWindowTitle = _speakWindowTitle.Checked;
+        _settings.SubtitleInterrupt = _subtitleInterrupt.Checked;
         _settings.Verbosity = (SpeechVerbosity)Math.Max(0, _verbosity.SelectedIndex);
         _settings.OpenFilesMode = (OpenFilesMode)Math.Max(0, _openMode.SelectedIndex);
     }
@@ -170,6 +179,7 @@ internal sealed class GeneralPreferences : Preferences
         _saveOnClose.Checked = _settings.SaveOnClose;
         _disableMediaControls.Checked = _settings.DisableMediaControls;
         _speakWindowTitle.Checked = _settings.SpeakWindowTitle;
+        _subtitleInterrupt.Checked = _settings.SubtitleInterrupt;
         _verbosity.SelectedIndex = (int)_settings.Verbosity;
         _openMode.SelectedIndex = (int)_settings.OpenFilesMode;
     }

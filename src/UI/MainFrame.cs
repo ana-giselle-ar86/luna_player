@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Runtime.InteropServices;
 using LunaPlayer.Actions;
 using LunaPlayer.Application;
@@ -28,6 +29,9 @@ internal sealed partial class MainFrame : IMainView
     private readonly Dictionary<int, string> _equalizerCommands = [];
     private readonly Dictionary<string, MenuItem> _equalizerItems = new(StringComparer.Ordinal);
     private readonly Menu _equalizerMenu;
+    private readonly Dictionary<int, string> _subtitleCommands = [];
+    private readonly Dictionary<string, MenuItem> _subtitleItems = new(StringComparer.Ordinal);
+    private readonly Menu _subtitleMenu;
     private ShortcutManager _shortcuts;
     private readonly MenuBar _menuBar;
     private readonly int _bookmarksMenuIndex;
@@ -92,6 +96,11 @@ internal sealed partial class MainFrame : IMainView
         foreach (var item in menu.EqualizerItems)
             _equalizerItems[item.Key] = item.Value;
         _equalizerMenu = menu.EqualizerMenu;
+        foreach (var command in menu.SubtitleCommands)
+            _subtitleCommands[command.Key] = command.Value;
+        foreach (var item in menu.SubtitleItems)
+            _subtitleItems[item.Key] = item.Value;
+        _subtitleMenu = menu.SubtitleMenu;
         _markCurrentItem = menu.MarkCurrentItem;
         _markAllItem = menu.MarkAllItem;
         _shuffleItem = menu.ShuffleItem;
@@ -136,6 +145,7 @@ internal sealed partial class MainFrame : IMainView
 
     public event Action<ActionId>? ActionRequested;
     public event Action<string?>? EqualizerPresetRequested;
+    public event Action<int?>? SubtitleTrackRequested;
     public event Action? CloseRequested;
     public event Func<bool>? EscapePressed;
 
@@ -215,6 +225,23 @@ internal sealed partial class MainFrame : IMainView
         MainMenuBuilder.FillEqualizerMenu(
             _equalizerMenu, presets, _commandIds, _shortcuts, _equalizerCommands, _equalizerItems);
         SetEqualizerPreset(selected);
+    }
+
+    public void RebuildSubtitleMenu(IReadOnlyList<SubtitleMenuEntry> entries, int? activeId)
+    {
+        // Emptied and refilled in place, exactly like the equalizer menu above - never swapped out.
+        while (_subtitleMenu.Count > 0)
+            _subtitleMenu.Delete(_subtitleMenu[0]);
+        _subtitleCommands.Clear();
+        _subtitleItems.Clear();
+        MainMenuBuilder.FillSubtitleMenu(_subtitleMenu, entries, activeId, _subtitleCommands, _subtitleItems);
+    }
+
+    public void SetSubtitleSelection(int? activeId)
+    {
+        var key = activeId?.ToString(CultureInfo.InvariantCulture) ?? MainMenuBuilder.SubtitleOffKey;
+        if (_subtitleItems.TryGetValue(key, out var item))
+            item.Checked = true;
     }
 
     public EqualizerEditResult? EditEqualizerPreset(EqualizerEditContext context)
@@ -374,13 +401,20 @@ internal sealed partial class MainFrame : IMainView
             Request(action);
             return;
         }
-        if (!_equalizerCommands.TryGetValue(args.Id, out var presetId))
-            return;
         // Guarded here rather than further along. Menu commands bound to an action are guarded where they
-        // are dispatched, but this one is not one of those, and it is still wxWidgets calling in: an
-        // exception let past would unwind into C++ frames.
-        var wanted = presetId.Length == 0 ? null : presetId;
-        LunaPlayer.Application.CrashReport.Guard(() => EqualizerPresetRequested?.Invoke(wanted));
+        // are dispatched, but these are not, and it is still wxWidgets calling in: an exception let past
+        // would unwind into C++ frames.
+        if (_equalizerCommands.TryGetValue(args.Id, out var presetId))
+        {
+            var wanted = presetId.Length == 0 ? null : presetId;
+            LunaPlayer.Application.CrashReport.Guard(() => EqualizerPresetRequested?.Invoke(wanted));
+            return;
+        }
+        if (_subtitleCommands.TryGetValue(args.Id, out var trackKey))
+        {
+            int? wanted = trackKey.Length == 0 ? null : int.Parse(trackKey, CultureInfo.InvariantCulture);
+            LunaPlayer.Application.CrashReport.Guard(() => SubtitleTrackRequested?.Invoke(wanted));
+        }
     }
 
     private void OnClosing(object? sender, CloseEventArgs args)
