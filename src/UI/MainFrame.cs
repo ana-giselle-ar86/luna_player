@@ -33,6 +33,7 @@ internal sealed partial class MainFrame : IMainView
     private readonly Dictionary<string, MenuItem> _subtitleItems = new(StringComparer.Ordinal);
     private readonly Menu _subtitleMenu;
     private readonly MenuItem _subtitleMenuItem;
+    private readonly MenuItem _subtitleRememberItem;
     private ShortcutManager _shortcuts;
     private readonly MenuBar _menuBar;
     private readonly int _bookmarksMenuIndex;
@@ -103,6 +104,7 @@ internal sealed partial class MainFrame : IMainView
             _subtitleItems[item.Key] = item.Value;
         _subtitleMenu = menu.SubtitleMenu;
         _subtitleMenuItem = menu.SubtitleMenuItem;
+        _subtitleRememberItem = menu.SubtitleRememberItem;
         _markCurrentItem = menu.MarkCurrentItem;
         _markAllItem = menu.MarkAllItem;
         _shuffleItem = menu.ShuffleItem;
@@ -231,13 +233,17 @@ internal sealed partial class MainFrame : IMainView
 
     public void RebuildSubtitleMenu(IReadOnlyList<SubtitleMenuEntry> entries, int? activeId)
     {
-        // Emptied and refilled in place, exactly like the equalizer menu above - never swapped out.
-        while (_subtitleMenu.Count > 0)
+        // Only the dynamic radio region is rebuilt - the items above the first separator. The fixed commands
+        // below it (load from file/URL, remember) keep their permanent action ids; deleting them would free
+        // those ids, and the next rebuild re-adding the same id trips a wxWidgets auto-id assert.
+        while (_subtitleMenu.Count > 0 && _subtitleMenu[0].Kind != MenuItemKind.Separator)
             _subtitleMenu.Delete(_subtitleMenu[0]);
         _subtitleCommands.Clear();
         _subtitleItems.Clear();
-        MainMenuBuilder.FillSubtitleMenu(_subtitleMenu, entries, activeId, _subtitleCommands, _subtitleItems);
+        MainMenuBuilder.FillSubtitleTracks(_subtitleMenu, entries, activeId, _subtitleCommands, _subtitleItems);
     }
+
+    public void SetSubtitleRemember(bool on) => _subtitleRememberItem.Checked = on;
 
     public void SetSubtitleSelection(int? activeId)
     {

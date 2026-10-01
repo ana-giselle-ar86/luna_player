@@ -21,7 +21,7 @@ internal enum ActionId
     JumpPercent100, PreviousTrack, NextTrack, FirstTrack, GoToFile, LastTrack, ToggleShuffle, ToggleRepeatFile,
     GoToTime, SoundCards, ToggleFullScreen,
     OpenAudioTracks, NextAudioTrack, PreviousAudioTrack,
-    ToggleSubtitles,
+    ToggleSubtitles, LoadSubtitleFile, LoadSubtitleUrl, RememberSubtitle,
     ToggleSilenceRemoval, EditEqualizerPreset, ManageEqualizerPresets,
     OpenYouTubeLink, SearchYouTube, OpenFavorites, VideoDownload, VideoDescription, VideoCopyLink,
     UserGuide, About, ReleaseNotes, CheckAppUpdates, UpdateYouTubeComponents,

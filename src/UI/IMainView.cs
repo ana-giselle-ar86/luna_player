@@ -263,17 +263,28 @@ internal interface IMainView : IDisposable
     /// audio track to switch between.</summary>
     void SetAudioTrackControlsEnabled(bool enabled);
 
-    /// <summary>Builds the Subtitles submenu again from the file's tracks, ticking the active one (or Off when
-    /// <paramref name="activeId"/> is null). Called a moment after each file loads.</summary>
+    /// <summary>Rebuilds the Subtitles submenu's track list from the file's tracks, ticking the active one
+    /// (or Off when <paramref name="activeId"/> is null). The fixed load/remember commands below are left in
+    /// place. Called a moment after each file loads.</summary>
     void RebuildSubtitleMenu(IReadOnlyList<SubtitleMenuEntry> entries, int? activeId);
+
+    /// <summary>Ticks or clears the "remember subtitle for this session" box.</summary>
+    void SetSubtitleRemember(bool on);
 
     /// <summary>Ticks the subtitle track being read, or the Off item when <paramref name="activeId"/> is null,
     /// without rebuilding the submenu - for when the choice changes but the track list has not.</summary>
     void SetSubtitleSelection(int? activeId);
 
-    /// <summary>Enables or disables the whole Subtitles submenu - off when the file carries no subtitle
-    /// tracks, so there is nothing to turn on.</summary>
+    /// <summary>Enables or disables the whole Subtitles submenu - off when nothing is loaded, since there is
+    /// no file to read or attach a subtitle to; on whenever a file is open, embedded subtitles or not,
+    /// because one can always be loaded from a file or a URL.</summary>
     void SetSubtitleControlsEnabled(bool enabled);
+
+    /// <summary>Asks for a subtitle file to load, or null when the user cancels.</summary>
+    string? ChooseSubtitleFile();
+
+    /// <summary>Asks for a subtitle's web address to load, or null when the user cancels or leaves it blank.</summary>
+    string? PromptSubtitleUrl();
 
     /// <summary>Puts the recording menu into the state the recorder is in.</summary>
     void SetRecordingState(LunaPlayer.Recording.RecordingState state);

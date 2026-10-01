@@ -23,6 +23,7 @@ internal sealed record MainMenuComponents(
     IReadOnlyDictionary<string, MenuItem> SubtitleItems,
     Menu SubtitleMenu,
     MenuItem SubtitleMenuItem,
+    MenuItem SubtitleRememberItem,
     IReadOnlyDictionary<int, string> EqualizerCommands,
     IReadOnlyDictionary<string, MenuItem> EqualizerItems,
     Menu EqualizerMenu,
@@ -248,14 +249,17 @@ internal static class MainMenuBuilder
         Add(audioTrackMenu, audioTrackItems, commandIds, shortcuts, ActionId.OpenAudioTracks, Tr("Track list..."));
         // Translators: Player submenu holding the commands that switch between a file's audio tracks.
         playerMenu.AppendSubMenu(audioTrackMenu, Tr("Audio track"));
-        // The embedded subtitles to read aloud. A radio list rebuilt per file: Off, then one item per track.
-        // Off is the default, and like the equalizer the items carry no ActionId - which tracks exist changes
-        // with the file. The quick on/off key (ActionId.ToggleSubtitles) is a bare accelerator, not shown here.
+        // The subtitles to read aloud. The dynamic region - Off, then one radio item per track - is rebuilt
+        // per file; the fixed tail below it (load from file, load from URL, the remember tick box) is built
+        // once here and never deleted, so its permanent action ids stay reserved. Off and the tracks carry no
+        // ActionId, like the equalizer presets. The quick on/off key (ActionId.ToggleSubtitles) is a bare
+        // accelerator, not shown here.
         var subtitleCommands = new Dictionary<int, string>();
         var subtitleItems = new Dictionary<string, MenuItem>(StringComparer.Ordinal);
         var subtitleMenu = new Menu();
-        FillSubtitleMenu(subtitleMenu, [], null, subtitleCommands, subtitleItems);
-        // Translators: Player submenu listing the file's embedded subtitles to read aloud, with Off at the top.
+        FillSubtitleTracks(subtitleMenu, [], null, subtitleCommands, subtitleItems);
+        var subtitleRememberItem = AppendSubtitleCommands(subtitleMenu, commandIds, shortcuts);
+        // Translators: Player submenu listing the file's subtitles to read aloud, with Off at the top.
         var subtitleMenuItem = playerMenu.AppendSubMenu(subtitleMenu, Tr("Subtitles"));
         // Full screen is gated on a picture playing, not on a file being loaded, so it stays out of playbackItems.
         var fullScreenItem = playerMenu.AppendCheckItem(
@@ -360,7 +364,7 @@ internal static class MainMenuBuilder
         // Translators: Name of the Help menu in the menu bar.
         menuBar.Append(helpMenu, Tr("Help"));
         frame.SetMenuBar(menuBar);
-        return new MainMenuComponents(menuBar, 2, markedMenuIndex, videoMenuIndex, playbackItems, mediaFileItems, localFileItems, markedItems, localEditItems, bookmarkItems, videoItems, audioTrackItems, subtitleCommands, subtitleItems, subtitleMenu, subtitleMenuItem, equalizerCommands, equalizerItems, equalizerMenu, markCurrentItem, markAllItem, shuffleItem, repeatItem, silenceItem, fullScreenItem, startRecordingItem, pauseRecordingItem, stopRecordingItem);
+        return new MainMenuComponents(menuBar, 2, markedMenuIndex, videoMenuIndex, playbackItems, mediaFileItems, localFileItems, markedItems, localEditItems, bookmarkItems, videoItems, audioTrackItems, subtitleCommands, subtitleItems, subtitleMenu, subtitleMenuItem, subtitleRememberItem, equalizerCommands, equalizerItems, equalizerMenu, markCurrentItem, markAllItem, shuffleItem, repeatItem, silenceItem, fullScreenItem, startRecordingItem, pauseRecordingItem, stopRecordingItem);
     }
 
     /// <summary>What <see cref="MainMenuComponents.EqualizerCommands"/> holds for the item that switches
@@ -371,33 +375,60 @@ internal static class MainMenuBuilder
     /// <summary>The key the Subtitles menu holds for the Off item, in place of a track id.</summary>
     internal const string SubtitleOffKey = "";
 
-    /// <summary>Puts Off and one radio item per subtitle track into the submenu, ticking the active one.</summary>
+    /// <summary>Fills the Subtitles submenu's dynamic region: Off and one radio item per track, ticking the
+    /// active one. Items are inserted at the top so they sit above the fixed command tail that
+    /// <see cref="AppendSubtitleCommands"/> added once - see <see cref="MainFrame.RebuildSubtitleMenu"/> for
+    /// why the tail is never part of the rebuild.</summary>
     ///
     /// <remarks>
-    /// Called again whenever a file's subtitle tracks change, so it fills a menu rather than making one: the
-    /// submenu is already on the menu bar and outlives its contents. Off and the tracks are one unbroken run
-    /// of radio items, for the same reason the equalizer's are - see <see cref="FillEqualizerMenu"/>.
+    /// Off and the tracks are one unbroken run of radio items, for the same reason the equalizer's are - see
+    /// <see cref="FillEqualizerMenu"/>. They get a fresh auto id each time, which deletion safely frees; the
+    /// fixed tail keeps its permanent action ids precisely because it is not rebuilt.
     /// </remarks>
-    internal static void FillSubtitleMenu(
+    internal static void FillSubtitleTracks(
         Menu menu,
         IReadOnlyList<SubtitleMenuEntry> entries,
         int? activeId,
         IDictionary<int, string> commands,
         IDictionary<string, MenuItem> items)
     {
+        var position = 0;
         // Translators: Item at the top of the Subtitles menu that reads no subtitles. Ticked by default.
-        AddSubtitleItem(menu, commands, items, SubtitleOffKey, Tr("Off"));
+        InsertSubtitleRadio(menu, position++, commands, items, SubtitleOffKey, Tr("Off"));
         foreach (var entry in entries)
-            AddSubtitleItem(menu, commands, items, entry.Id.ToString(CultureInfo.InvariantCulture), entry.Label);
+            InsertSubtitleRadio(menu, position++, commands, items, entry.Id.ToString(CultureInfo.InvariantCulture), entry.Label);
         var key = activeId?.ToString(CultureInfo.InvariantCulture) ?? SubtitleOffKey;
         if (items.TryGetValue(key, out var item))
             item.Checked = true;
     }
 
+    /// <summary>Adds the fixed tail of the Subtitles submenu once, below a separator: load from a file, load
+    /// from a URL, and the session-only remember tick box. Returns the remember item so its tick can be set
+    /// later. These carry an <see cref="ActionId"/> apiece, so they take a shortcut and go through the
+    /// ordinary action path; they are built once and never deleted, so their permanent ids are not freed and
+    /// re-used - which wxWidgets asserts on.</summary>
+    internal static MenuItem AppendSubtitleCommands(
+        Menu menu,
+        IReadOnlyDictionary<ActionId, int> commandIds,
+        ShortcutManager shortcuts)
+    {
+        menu.AppendSeparator();
+        // Translators: Subtitles submenu item that loads a subtitle file from this computer.
+        menu.Append(commandIds[ActionId.LoadSubtitleFile],
+            Label(Tr("Load from file..."), ActionId.LoadSubtitleFile, shortcuts));
+        // Translators: Subtitles submenu item that loads a subtitle from a web address.
+        menu.Append(commandIds[ActionId.LoadSubtitleUrl],
+            Label(Tr("Load from URL..."), ActionId.LoadSubtitleUrl, shortcuts));
+        // Translators: Subtitles submenu tick box that keeps the chosen subtitle selected across the playlist until the player closes.
+        return menu.AppendCheckItem(commandIds[ActionId.RememberSubtitle],
+            Label(Tr("Remember subtitle for this session"), ActionId.RememberSubtitle, shortcuts));
+    }
+
     /// <remarks>Carries no shortcut and no <see cref="ActionId"/>, like the equalizer presets: which subtitle
     /// tracks exist changes with the file, so there is no fixed action for a key to be bound to.</remarks>
-    private static void AddSubtitleItem(
+    private static void InsertSubtitleRadio(
         Menu menu,
+        int position,
         IDictionary<int, string> commands,
         IDictionary<string, MenuItem> items,
         string trackKey,
@@ -405,7 +436,7 @@ internal static class MainMenuBuilder
     {
         var id = IdManager.NewId();
         commands[id] = trackKey;
-        items[trackKey] = menu.AppendRadioItem(id, label);
+        items[trackKey] = menu.Insert(position, id, label, kind: MenuItemKind.Radio);
     }
 
     /// <summary>Puts Off, every preset and the two editing commands into the equalizer submenu.</summary>
