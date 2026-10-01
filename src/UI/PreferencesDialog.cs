@@ -8,12 +8,21 @@ internal sealed class PreferencesDialog : IDisposable
     private readonly Dialog _dialog;
     private readonly TreeCtrl _tree;
     private readonly Panel _book;
+    private readonly BoxSizer _bookSizer;
+    // A page is built the first time its category is chosen, then kept. The factory map holds how to build
+    // each page; the page map holds the ones built so far. Opening the window builds only the first page,
+    // which is what keeps it quick however many categories there are - the rest cost nothing until opened.
+    private readonly Dictionary<TreeItemId, Func<IPreferences>> _factories = [];
     private readonly Dictionary<TreeItemId, IPreferences> _pages = [];
-    private readonly IReadOnlyList<IPreferences> _allPages;
     private readonly Action<string> _speakHelp;
     private readonly PlayerSettings _settings;
     private readonly PrefsOps _operations;
-    private IPreferences _current;
+    private IPreferences? _current;
+
+    // A generous fixed size, chosen rather than measured: measuring would mean building every page up front,
+    // which is the cost this lazy loading exists to avoid. A page taller or wider than this scrolls - every
+    // page large enough to need it is a ScrolledWindow with a scroll rate set.
+    private static readonly Size InitialSize = new(600, 540);
 
     /// <param name="dispatcher">Needed by the Recording page, which asks Windows what its encoders will
     /// accept and must not do that on the thread drawing this window.</param>
@@ -28,16 +37,8 @@ internal sealed class PreferencesDialog : IDisposable
         _dialog = new Dialog(parent, title: Tr("Preferences"), style: DialogStyle.Default | DialogStyle.ResizeBorder);
         _tree = new TreeCtrl(_dialog, style: TreeCtrlStyle.HideRoot | TreeCtrlStyle.Default | TreeCtrlStyle.HasButtons);
         _book = new Panel(_dialog);
-        var general = new GeneralPreferences(_book, settings.General, operations);
-        var backup = new BackupPreferences(_book, operations, ReplaceSettings);
-        var audio = new AudioPreferences(_book, settings.Audio);
-        var silence = new SilencePreferences(_book, settings.Silence);
-        var youTube = new YouTube.Preferences(_book, settings.YouTube, operations);
-        var recording = new RecordingPreferences(_book, settings.Recording, dispatcher, catalog);
-        var shortcuts = new ShortcutPreferences(_book, settings.Shortcuts, ShortcutScope.Local, globalShortcuts);
-        var globals = new ShortcutPreferences(_book, settings.Shortcuts, ShortcutScope.Global, globalShortcuts);
-        _allPages = [general, backup, audio, silence, youTube, recording, shortcuts, globals];
-        _current = general;
+        _bookSizer = new BoxSizer(Orientation.Vertical);
+        _book.SetSizer(_bookSizer);
 
         string[] categories = [
             // Translators: Name of the settings category holding the language, speech and file-opening settings.
@@ -66,25 +67,24 @@ internal sealed class PreferencesDialog : IDisposable
         var shortcutsItem = _tree.Add(root, categories[6]);
         var globalsItem = _tree.Add(root, categories[7]);
         SizeTreeToLabels(categories);
-        _pages[generalItem] = general;
-        _pages[backupItem] = backup;
-        _pages[audioItem] = audio;
-        _pages[silenceItem] = silence;
-        _pages[youTubeItem] = youTube;
-        _pages[recordingItem] = recording;
-        _pages[shortcutsItem] = shortcuts;
-        _pages[globalsItem] = globals;
-        _tree.Selection = generalItem;
 
-        var bookSizer = new BoxSizer(Orientation.Vertical);
-        foreach (var page in _allPages)
-        {
-            bookSizer.Add(page.Window, proportion: 1, flags: SizerFlags.Expand);
-            page.Window.Show(page == _current);
-        }
-        _book.SetSizer(bookSizer);
+        // How to build each page, not the page itself. The parent is _book; a page adds itself to its sizer
+        // when GetOrBuildPage first makes it.
+        _factories[generalItem] = () => new GeneralPreferences(_book, settings.General, operations);
+        _factories[backupItem] = () => new BackupPreferences(_book, operations, ReplaceSettings);
+        _factories[audioItem] = () => new AudioPreferences(_book, settings.Audio);
+        _factories[silenceItem] = () => new SilencePreferences(_book, settings.Silence);
+        _factories[youTubeItem] = () => new YouTube.Preferences(_book, settings.YouTube, operations);
+        _factories[recordingItem] = () => new RecordingPreferences(_book, settings.Recording, dispatcher, catalog);
+        _factories[shortcutsItem] = () => new ShortcutPreferences(_book, settings.Shortcuts, ShortcutScope.Local, globalShortcuts);
+        _factories[globalsItem] = () => new ShortcutPreferences(_book, settings.Shortcuts, ShortcutScope.Global, globalShortcuts);
+
         _tree.SelectionChanged += OnTreeChanged;
         _dialog.Bind(WxEvents.CharHook, OnCharHook);
+
+        // Only the first page is built now; the rest build the first time their category is chosen.
+        DoCategoryChange(generalItem);
+        _tree.Selection = generalItem;
 
         var body = new BoxSizer(Orientation.Horizontal);
         body.Add(_tree, flags: SizerFlags.All | SizerFlags.Expand, border: 8);
@@ -94,10 +94,11 @@ internal sealed class PreferencesDialog : IDisposable
         var buttons = _dialog.CreateButtonSizer(ButtonSizerFlags.OkCancel);
         if (buttons is not null)
             main.Add(buttons, flags: SizerFlags.All | SizerFlags.Expand, border: 8);
-        SizeBookToLargestPage();
         _dialog.SetSizer(main);
-        _dialog.Fit();
-        _dialog.MinSize = new Size(420, 260);
+        // A fixed, generous size rather than one fitted to a page: with only one page built there is nothing
+        // to fit the others to, and the taller pages scroll inside this instead of forcing the dialog to grow.
+        _dialog.MinSize = new Size(460, 360);
+        _dialog.Size = InitialSize;
         _dialog.Center(onParent: true);
         _dialog.Bind(WxEvents.ButtonClicked, OnAccept, StandardId.Ok);
 
@@ -125,34 +126,42 @@ internal sealed class PreferencesDialog : IDisposable
     // Room for the tree's expand button, item indent and a vertical scrollbar.
     private const int Indent = 48;
 
-    // Every page shares one stacked sizer with all but the current one hidden, and a hidden item adds
-    // nothing to that sizer's minimum. A ScrolledWindow also reports almost no best size of its own, so
-    // Fit() would size the dialog to whatever page happens to be showing and leave the taller pages
-    // clipped behind scrollbars - which cuts the silence group box in half. Reserve the largest page's
-    // requirement up front so every page gets the room it asked for.
-    private void SizeBookToLargestPage()
+    /// <summary>Returns the page for a category, building it the first time and keeping it thereafter. A new
+    /// page is added to the book hidden; the switch in <see cref="DoCategoryChange"/> shows it.</summary>
+    private IPreferences GetOrBuildPage(TreeItemId item)
     {
-        var required = new Size(0, 0);
-        foreach (var page in _allPages)
+        if (_pages.TryGetValue(item, out var existing))
+            return existing;
+        var page = _factories[item]();
+        page.Window.Show(false);
+        _bookSizer.Add(page.Window, proportion: 1, flags: SizerFlags.Expand);
+        _pages[item] = page;
+        return page;
+    }
+
+    /// <summary>Shows the chosen category's page, building it on first visit. Hidden behind Freeze/Thaw so a
+    /// page being built for the first time is not seen half-assembled.</summary>
+    private void DoCategoryChange(TreeItemId item)
+    {
+        if (!_factories.ContainsKey(item))
+            return;
+        _book.Freeze();
+        try
         {
-            var size = page.Window.GetSizer()?.MinSize ?? page.Window.BestSize;
-            // A page that starts with part of itself collapsed publishes its full requirement as MinSize.
-            var declared = page.Window.MinSize;
-            required = new Size(
-                Math.Max(required.Width, Math.Max(size.Width, declared.Width)),
-                Math.Max(required.Height, Math.Max(size.Height, declared.Height)));
+            var page = GetOrBuildPage(item);
+            if (ReferenceEquals(page, _current))
+                return;
+            _current?.Window.Show(false);
+            page.Window.Show();
+            _current = page;
+            _book.Layout();
         }
-        if (required.Width > 0 && required.Height > 0)
-            _book.MinSize = required;
+        finally { _book.Thaw(); }
     }
 
     private void OnTreeChanged(object? sender, TreeEventArgs args)
     {
-        if (!_pages.TryGetValue(args.Item, out var page) || page == _current) return;
-        _current.Window.Show(false);
-        page.Window.Show();
-        _current = page;
-        _book.Layout();
+        DoCategoryChange(args.Item);
         args.Skip();
     }
 
@@ -172,7 +181,7 @@ internal sealed class PreferencesDialog : IDisposable
             return;
         }
 
-        var message = _current.GetContextHelp(focused);
+        var message = _current?.GetContextHelp(focused);
         _speakHelp(string.IsNullOrWhiteSpace(message)
             // Translators: Spoken when the user asks for help on a control that has none.
             ? Tr("No detailed help is available for this control.")
@@ -181,21 +190,25 @@ internal sealed class PreferencesDialog : IDisposable
 
     private void OnAccept(object? sender, CommandEventArgs args)
     {
-        foreach (var page in _allPages)
+        // Only the pages the user actually opened exist, and only they can carry an unsaved change or an
+        // invalid value - a page never opened leaves its settings exactly as they were. Validate them all
+        // before applying any, so a bad value stops the save with nothing half-written.
+        foreach (var page in _pages.Values)
         {
             var error = page.Validate();
             if (string.IsNullOrEmpty(error)) continue;
             Wx.MessageBox(error, Tr("Preferences"), MessageBoxStyle.Ok | MessageBoxStyle.IconError, _dialog);
             return;
         }
-        foreach (var page in _allPages) page.Apply();
+        foreach (var page in _pages.Values) page.Apply();
         _dialog.EndModal(StandardId.Ok);
     }
 
     private void ReplaceSettings(PlayerSettings replacement)
     {
         _settings.Apply(replacement);
-        foreach (var page in _allPages) page.Refresh();
+        // Only built pages need refreshing; one built later reads the replaced settings when it is made.
+        foreach (var page in _pages.Values) page.Refresh();
         _operations.ApplyImmediate(_settings.Copy());
     }
 }

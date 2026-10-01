@@ -71,26 +71,101 @@ internal static partial class Localization
         return [.. languages.Where(language => !string.IsNullOrWhiteSpace(language))];
     }
 
+    private static IReadOnlyList<(string Code, string Name)>? _displayLanguages;
+
+    /// <summary>The shippable languages as (code, display name) pairs, ready to show and sorted by name.
+    /// Computed once and cached: the set of catalogues, and so this list, cannot change while the player
+    /// runs, and resolving each name through wx is not free - so the Preferences window need not pay for it
+    /// every time it opens.</summary>
+    internal static IReadOnlyList<(string Code, string Name)> DisplayLanguages()
+    {
+        if (_displayLanguages is { Count: > 0 }) return _displayLanguages;
+        var computed = AvailableLanguages()
+            .Select(code => (Code: code, Name: LanguageName(code)))
+            .OrderBy(language => language.Name, StringComparer.CurrentCultureIgnoreCase)
+            .ToArray();
+        // Only cache a real answer; an empty one means this was reached before Initialize, so let a later
+        // call compute it for real.
+        if (computed.Length > 0) _displayLanguages = computed;
+        return computed;
+    }
+
     /// <summary>A language code as a name to show the user, in English and then in the language itself -
     /// "Arabic (العربية)" rather than "ar". Both names are given because either one alone fails somebody: a
     /// speaker of the language may not read English, and a user who picked the wrong one by mistake cannot
-    /// read their way back out of a list written entirely in scripts they do not know. Falls back to the
-    /// code itself when wx does not recognise it.</summary>
+    /// read their way back out of a list written entirely in scripts they do not know. Accepts the two-letter,
+    /// canonical, and three-letter ISO 639-2 forms (media files hand out the last, such as "eng"), and returns
+    /// empty - not the raw code - when none name a real language, so a caller shows nothing unreadable.</summary>
     internal static string LanguageName(string? code)
     {
         var text = (code ?? string.Empty).Trim();
         if (text.Length == 0) return string.Empty;
-        var info = Locale.FindLanguage(text) ?? Locale.FindLanguage(text.Replace('-', '_'))
-            ?? Locale.FindLanguage(text.Replace('_', '-'));
+        // wx and .NET match two-letter and canonical codes, not the three-letter ISO 639-2 ones mpv hands
+        // out, so a three-letter code is turned into its two-letter equivalent first.
+        var normalized = NormalizeLanguageCode(text);
+        var info = Locale.FindLanguage(normalized) ?? Locale.FindLanguage(normalized.Replace('-', '_'))
+            ?? Locale.FindLanguage(normalized.Replace('_', '-'));
         var description = info?.Description?.Trim() ?? string.Empty;
         var native = info?.DescriptionNative?.Trim() ?? string.Empty;
-        if (description.Length == 0) return native.Length == 0 ? text : native;
+        // wx did not know it; .NET's culture data might, and also covers codes wx carries no native name for.
+        if (description.Length == 0) return CultureName(normalized);
         // wx leaves the native name empty for some languages and equal to the English one for English
         // itself, and neither is worth showing twice.
         return native.Length == 0 || native.Equals(description, StringComparison.CurrentCultureIgnoreCase)
             ? description
             : $"{description} ({native})";
     }
+
+    /// <summary>Turns a three-letter ISO 639-2 code into its two-letter ISO 639-1 equivalent, which is what
+    /// wx and .NET match on; two-letter and canonical codes pass straight through. The map covers the
+    /// bibliographic (639-2/B) spellings media often use - "ger", "fre" - which differ from the
+    /// terminological ones .NET's own tables report, and keeps the common languages off the culture scan.</summary>
+    private static string NormalizeLanguageCode(string code)
+    {
+        var baseCode = code.Split('-', '_')[0];
+        if (baseCode.Length != 3) return code;
+        var lower = baseCode.ToLowerInvariant();
+        if (Iso6392ToIso6391.TryGetValue(lower, out var mapped)) return mapped;
+        foreach (var culture in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
+            if (string.Equals(culture.ThreeLetterISOLanguageName, lower, StringComparison.OrdinalIgnoreCase))
+                return culture.TwoLetterISOLanguageName;
+        return code;
+    }
+
+    /// <summary>A readable name for a code wx did not resolve, from .NET's culture data; empty when .NET does
+    /// not know it either, so an unreadable code is shown as nothing rather than as itself.</summary>
+    private static string CultureName(string code)
+    {
+        try
+        {
+            var culture = CultureInfo.GetCultureInfo(code);
+            var english = culture.EnglishName.Trim();
+            if (english.Length == 0 || english.Contains("Unknown", StringComparison.OrdinalIgnoreCase)
+                || english.Contains("Invariant", StringComparison.OrdinalIgnoreCase))
+                return string.Empty;
+            var native = culture.NativeName.Trim();
+            return native.Length == 0 || native.Equals(english, StringComparison.CurrentCultureIgnoreCase)
+                ? english
+                : $"{english} ({native})";
+        }
+        catch (CultureNotFoundException) { return string.Empty; }
+    }
+
+    // The ISO 639-2 three-letter codes worth a direct answer: the bibliographic (639-2/B) spellings, which
+    // .NET's ThreeLetterISOLanguageName (terminological) would miss, plus the common languages so they skip
+    // the culture scan. Anything not here falls to that scan, then to .NET's own lookup.
+    private static readonly Dictionary<string, string> Iso6392ToIso6391 = new(StringComparer.Ordinal)
+    {
+        ["eng"] = "en", ["spa"] = "es", ["fra"] = "fr", ["fre"] = "fr", ["deu"] = "de", ["ger"] = "de",
+        ["ita"] = "it", ["por"] = "pt", ["rus"] = "ru", ["jpn"] = "ja", ["kor"] = "ko", ["zho"] = "zh",
+        ["chi"] = "zh", ["ara"] = "ar", ["hin"] = "hi", ["nld"] = "nl", ["dut"] = "nl", ["swe"] = "sv",
+        ["nor"] = "no", ["dan"] = "da", ["fin"] = "fi", ["pol"] = "pl", ["tur"] = "tr", ["ces"] = "cs",
+        ["cze"] = "cs", ["ell"] = "el", ["gre"] = "el", ["heb"] = "he", ["tha"] = "th", ["vie"] = "vi",
+        ["ind"] = "id", ["ukr"] = "uk", ["ron"] = "ro", ["rum"] = "ro", ["hun"] = "hu", ["bul"] = "bg",
+        ["hrv"] = "hr", ["srp"] = "sr", ["slk"] = "sk", ["slo"] = "sk", ["slv"] = "sl", ["cat"] = "ca",
+        ["isl"] = "is", ["ice"] = "is", ["est"] = "et", ["lav"] = "lv", ["lit"] = "lt", ["fas"] = "fa",
+        ["per"] = "fa", ["msa"] = "ms", ["may"] = "ms",
+    };
 
     private static string Normalize(string? language)
     {

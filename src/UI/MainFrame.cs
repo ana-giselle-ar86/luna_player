@@ -32,6 +32,7 @@ internal sealed partial class MainFrame : IMainView
     private readonly Dictionary<int, string> _subtitleCommands = [];
     private readonly Dictionary<string, MenuItem> _subtitleItems = new(StringComparer.Ordinal);
     private readonly Menu _subtitleMenu;
+    private readonly MenuItem _subtitleMenuItem;
     private ShortcutManager _shortcuts;
     private readonly MenuBar _menuBar;
     private readonly int _bookmarksMenuIndex;
@@ -101,6 +102,7 @@ internal sealed partial class MainFrame : IMainView
         foreach (var item in menu.SubtitleItems)
             _subtitleItems[item.Key] = item.Value;
         _subtitleMenu = menu.SubtitleMenu;
+        _subtitleMenuItem = menu.SubtitleMenuItem;
         _markCurrentItem = menu.MarkCurrentItem;
         _markAllItem = menu.MarkAllItem;
         _shuffleItem = menu.ShuffleItem;
@@ -243,6 +245,8 @@ internal sealed partial class MainFrame : IMainView
         if (_subtitleItems.TryGetValue(key, out var item))
             item.Checked = true;
     }
+
+    public void SetSubtitleControlsEnabled(bool enabled) => _subtitleMenuItem.Enabled = enabled;
 
     public EqualizerEditResult? EditEqualizerPreset(EqualizerEditContext context)
     {

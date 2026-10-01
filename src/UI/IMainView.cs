@@ -271,6 +271,10 @@ internal interface IMainView : IDisposable
     /// without rebuilding the submenu - for when the choice changes but the track list has not.</summary>
     void SetSubtitleSelection(int? activeId);
 
+    /// <summary>Enables or disables the whole Subtitles submenu - off when the file carries no subtitle
+    /// tracks, so there is nothing to turn on.</summary>
+    void SetSubtitleControlsEnabled(bool enabled);
+
     /// <summary>Puts the recording menu into the state the recorder is in.</summary>
     void SetRecordingState(LunaPlayer.Recording.RecordingState state);
     FileSelection? ChooseFile(string initialDirectory);
