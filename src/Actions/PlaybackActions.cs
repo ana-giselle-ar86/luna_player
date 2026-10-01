@@ -92,6 +92,12 @@ internal static class PlaybackActionDefinitions
             new(ActionId.PreviousAudioTrack, Tr("Previous audio track"), new("page_up", ShortcutModifiers.Shift)),
             // Translators: Name of the command that starts or stops reading the file's subtitles aloud.
             new(ActionId.ToggleSubtitles, Tr("Turn subtitle reading on or off"), new("u", ShortcutModifiers.Control)),
+            // Translators: Name of the command that loads a subtitle file from this computer.
+            new(ActionId.LoadSubtitleFile, Tr("Load subtitle from file"), new("j", ShortcutModifiers.Control)),
+            // Translators: Name of the command that loads a subtitle from a web address.
+            new(ActionId.LoadSubtitleUrl, Tr("Load subtitle from a web address"), new("j", ShortcutModifiers.Control | ShortcutModifiers.Shift)),
+            // Translators: Name of the command that keeps the chosen subtitle selected across the playlist for this session.
+            new(ActionId.RememberSubtitle, Tr("Remember subtitle for this session"), new("u", ShortcutModifiers.Control | ShortcutModifiers.Shift)),
             // Translators: Name of the command that makes the sound louder.
             new(ActionId.VolumeUp, Tr("Increase volume"), new("up")),
             // Translators: Name of the command that makes the sound quieter.

@@ -184,9 +184,9 @@ internal sealed class ApplicationController : IDisposable
         // More than one audio track to switch between, or the commands stay greyed out. Like HasVideo, the
         // count settles a moment after a load, when AudioTracksChanged brings us back through here.
         _view.SetAudioTrackControlsEnabled(_player.GetAudioTracks().Count > 1);
-        // Any subtitle track at all enables the Subtitles menu; with none there is nothing to turn on. The
-        // count settles with the audio tracks, so the same AudioTracksChanged hop brings us back through here.
-        _view.SetSubtitleControlsEnabled(_player.GetSubtitleTracks().Count > 0);
+        // The Subtitles menu is open whenever a file is - embedded subtitles or not - because one can always
+        // be loaded from a file or a URL; it is only shut when nothing is loaded to attach one to.
+        _view.SetSubtitleControlsEnabled(loaded);
         // Leave full screen when the current item stops being a video; once out, IsFullScreen is false so it
         // will not fire again. Moving between two videos keeps HasVideo true and stays silent.
         if (!_player.HasVideo && _view.IsFullScreen)

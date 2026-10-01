@@ -25,6 +25,11 @@ internal sealed class SubtitleActions : IDisposable
     // The track last read, so the toggle can bring it back after an off. Reset to the first track when the
     // remembered id is not among the current file's tracks, since ids do not carry across files.
     private int? _lastTrackId;
+    // Session-only, off by default, never saved: while on, the chosen subtitle's language is kept and
+    // re-selected on each new file in the playlist, so it carries across episodes. Language, not id, because
+    // track ids do not survive a file change.
+    private bool _rememberOn;
+    private string? _rememberedLanguage;
 
     internal SubtitleActions(
         ActionRouter router,
@@ -40,6 +45,9 @@ internal sealed class SubtitleActions : IDisposable
         _settings = settings;
         _dispatcher = dispatcher;
         router.Register(ActionId.ToggleSubtitles, Toggle);
+        router.Register(ActionId.LoadSubtitleFile, LoadFromFile);
+        router.Register(ActionId.LoadSubtitleUrl, LoadFromUrl);
+        router.Register(ActionId.RememberSubtitle, ToggleRemember);
         _view.SubtitleTrackRequested += Choose;
         // Both fire on mpv's event thread, so each hop back to the UI thread goes through the dispatcher.
         _player.SubtitleTracksChanged += OnTracksChanged;
@@ -96,6 +104,8 @@ internal sealed class SubtitleActions : IDisposable
             return;
         }
         _lastTrackId = track.Id;
+        if (_rememberOn)
+            _rememberedLanguage = track.Language;
         _view.SetSubtitleSelection(track.Id);
         _speech.Speak(
             // Translators: Spoken when subtitle reading starts. {name} is the subtitle's name, such as "English".
@@ -106,6 +116,10 @@ internal sealed class SubtitleActions : IDisposable
     private void TurnOff(bool announce)
     {
         _player.DisableSubtitles();
+        // While remembering, turning subtitles off is itself the choice to remember - so later files stay off
+        // too, rather than the previous language coming back.
+        if (_rememberOn)
+            _rememberedLanguage = null;
         _view.SetSubtitleSelection(null);
         if (announce)
             _speech.Speak(
@@ -115,15 +129,106 @@ internal sealed class SubtitleActions : IDisposable
                 Tr("Subtitles off"));
     }
 
+    // Loads a subtitle from a file on this computer. mpv selects it, so the track-list change below rebuilds
+    // the menu and reading begins on its own.
+    private void LoadFromFile()
+    {
+        if (NoFileOpen())
+            return;
+        if (_view.ChooseSubtitleFile() is string path)
+            Add(path, System.IO.Path.GetFileNameWithoutExtension(path));
+    }
+
+    // Loads a subtitle from a web address. mpv opens http(s) through ffmpeg, the same as a local path.
+    private void LoadFromUrl()
+    {
+        if (NoFileOpen())
+            return;
+        if (_view.PromptSubtitleUrl() is string url)
+            Add(url, title: null);
+    }
+
+    private void Add(string source, string? title)
+    {
+        if (_player.AddSubtitle(source, title, language: null))
+            _speech.Speak(
+                // Translators: Spoken when an external subtitle has been loaded and starts being read.
+                Tr("Subtitle loaded."),
+                // Translators: The short wording spoken when an external subtitle has been loaded.
+                Tr("Loaded."));
+        else
+            _speech.Speak(
+                // Translators: Spoken when a subtitle file or web address could not be loaded.
+                Tr("Could not load that subtitle."),
+                // Translators: The short wording spoken when a subtitle could not be loaded.
+                Tr("Subtitle failed."));
+    }
+
+    // Turns session-remembering on or off. On: pin whatever subtitle is current now; off: forget it. Nothing
+    // is written to disk - a restart begins with it off again.
+    private void ToggleRemember()
+    {
+        _rememberOn = !_rememberOn;
+        if (_rememberOn)
+        {
+            var current = _player.GetSubtitleTracks().FirstOrDefault(track => track.Selected);
+            _rememberedLanguage = current.Language;
+            _speech.Speak(
+                // Translators: Spoken when the player starts keeping the chosen subtitle across the playlist for this session.
+                Tr("Remembering this subtitle for the session."),
+                // Translators: The short wording spoken when subtitle remembering is turned on.
+                Tr("Remembering subtitle."));
+        }
+        else
+        {
+            _rememberedLanguage = null;
+            _speech.Speak(
+                // Translators: Spoken when the player stops keeping the chosen subtitle across the playlist.
+                Tr("No longer remembering a subtitle."),
+                // Translators: The short wording spoken when subtitle remembering is turned off.
+                Tr("Not remembering."));
+        }
+        _view.SetSubtitleRemember(_rememberOn);
+    }
+
+    // True, with a spoken note, when nothing is open to attach a subtitle to - the Ctrl+J/Ctrl+Shift+J
+    // accelerators fire even while the Subtitles menu is disabled.
+    private bool NoFileOpen()
+    {
+        if (_player.CurrentPath is not null)
+            return false;
+        _speech.Speak(
+            // Translators: Spoken when the user tries to load a subtitle but no file is open.
+            Tr("Open a file before loading a subtitle."),
+            // Translators: The short wording spoken when there is no open file to load a subtitle for.
+            Tr("No file open."));
+        return true;
+    }
+
     private void OnTracksChanged() => _dispatcher.Post(RebuildMenu);
 
     private void RebuildMenu()
     {
         var tracks = _player.GetSubtitleTracks();
+        // Carrying a remembered subtitle into a freshly loaded file: once per file, only while nothing is yet
+        // selected, pick the track whose language matches. Selecting it makes a later pass see it chosen, so
+        // this does not fire again.
+        if (_rememberOn && _rememberedLanguage is { Length: > 0 } remembered
+            && !tracks.Any(track => track.Selected))
+        {
+            var match = tracks.ToList().FindIndex(track =>
+                string.Equals(track.Language, remembered, StringComparison.OrdinalIgnoreCase));
+            if (match >= 0 && _player.SetSubtitleTrack(tracks[match].Id))
+                tracks = _player.GetSubtitleTracks();
+        }
         var entries = tracks.Select((track, i) => new SubtitleMenuEntry(track.Id, Describe(track, i + 1))).ToArray();
         int? activeId = null;
         foreach (var track in tracks)
             if (track.Selected) { activeId = track.Id; break; }
+        // Keep the "last read" track in step with whatever is actually selected now - a menu pick, a loaded
+        // file, or a remembered language - so the on/off toggle brings back the right one.
+        if (activeId is int selected)
+            _lastTrackId = selected;
         _view.RebuildSubtitleMenu(entries, activeId);
     }
 

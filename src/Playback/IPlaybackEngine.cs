@@ -91,6 +91,11 @@ internal interface IPlaybackEngine : IDisposable
 
     /// <summary>Turns subtitle reading off, selecting no subtitle track.</summary>
     bool DisableSubtitles();
+
+    /// <summary>Loads a subtitle from a local path or an http(s) URL (mpv reads both through ffmpeg) and
+    /// selects it, so it joins the file's <see cref="GetSubtitleTracks"/> exactly as an embedded one does.
+    /// <paramref name="title"/> and <paramref name="language"/> label the track when given.</summary>
+    bool AddSubtitle(string source, string? title, string? language);
     bool SetNormalization(bool enabled);
     bool SetMono(bool enabled);
     bool SetSilenceRemoval(bool enabled, string graph);

@@ -26,6 +26,23 @@ internal sealed partial class MainFrame
         using var dialog = new FileDialog(DialogParent, message: "", directory: initialDirectory, wildcard: MediaLibrary.DialogWildcard, style: FileDialogStyle.DefaultOpen);
         return dialog.ShowModal() == StandardId.Ok ? new(dialog.Path, dialog.Directory) : null;
     }
+
+    public string? ChooseSubtitleFile()
+    {
+        using var dialog = new FileDialog(DialogParent,
+            // Translators: Title of the window that picks a subtitle file to load, and its file-type filter.
+            message: Tr("Load subtitle"),
+            wildcard: Tr("Subtitle files (*.srt;*.ass;*.ssa;*.vtt;*.sub)|*.srt;*.ass;*.ssa;*.vtt;*.sub|All files (*.*)|*.*"),
+            style: FileDialogStyle.Open | FileDialogStyle.FileMustExist);
+        return dialog.ShowModal() == StandardId.Ok ? dialog.Path : null;
+    }
+
+    public string? PromptSubtitleUrl()
+    {
+        // Translators: Prompt, then title, of the box asking for a subtitle's web address.
+        var url = PromptText(Tr("Enter the web address of a subtitle file:"), Tr("Load subtitle from URL"));
+        return string.IsNullOrWhiteSpace(url) ? null : url.Trim();
+    }
     public string? ChooseFolder(string initialDirectory, string message = "")
     {
         using var dialog = new DirDialog(DialogParent, message: message, defaultPath: initialDirectory, style: DirDialogStyle.DirMustExist);

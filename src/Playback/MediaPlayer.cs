@@ -361,6 +361,8 @@ internal sealed class MediaPlayer : IDisposable
     internal IReadOnlyList<SubtitleTrack> GetSubtitleTracks() => _running ? _engine.GetSubtitleTracks() : [];
     internal bool SetSubtitleTrack(int id) => _running && _engine.SetSubtitleTrack(id);
     internal bool DisableSubtitles() => _running && _engine.DisableSubtitles();
+    internal bool AddSubtitle(string source, string? title = null, string? language = null)
+        => _running && _engine.AddSubtitle(source, title, language);
     internal void TrackPositions(bool enabled) => _trackPositions = enabled;
 
     internal void SavePosition()

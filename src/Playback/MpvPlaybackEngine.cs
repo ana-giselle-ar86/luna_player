@@ -326,6 +326,25 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
 
     public bool DisableSubtitles() => TrySetProperty("sid", "no");
 
+    // sub-add <url> [<flags> [<title> [<lang>]]] - "select" adds and switches to it. The track-list grows,
+    // which the count observer turns into SubtitleTracksChanged, so the menu and reading pick it up with no
+    // extra wiring. mpv opens an http(s) url through ffmpeg just as it opens a local path. Only the arguments
+    // that were given are passed, so an empty title does not overwrite the name mpv derives from the source.
+    public bool AddSubtitle(string source, string? title, string? language)
+    {
+        if (string.IsNullOrWhiteSpace(source))
+            return false;
+        return TryDo(mpv =>
+        {
+            if (!string.IsNullOrWhiteSpace(language))
+                mpv.Command("sub-add", source, "select", string.IsNullOrWhiteSpace(title) ? source : title, language);
+            else if (!string.IsNullOrWhiteSpace(title))
+                mpv.Command("sub-add", source, "select", title);
+            else
+                mpv.Command("sub-add", source, "select");
+        });
+    }
+
     public bool SetNormalization(bool enabled)
     {
         RemoveFilter("@audionormalize");
