@@ -24,6 +24,7 @@ internal sealed class ApplicationHost : IDisposable
     private readonly MediaPlayer _player;
     private readonly ApplicationController _controller;
     private readonly EqualizerActions _equalizer;
+    private readonly SubtitleActions _subtitles;
     private readonly LunaPlayer.Equalizer.Library _equalizerLibrary;
     private readonly PathRequestQueue _pathQueue;
     private readonly LunaPlayer.YouTube.ResolveCache _resolveCache;
@@ -79,6 +80,7 @@ internal sealed class ApplicationHost : IDisposable
         _ = new BookmarkActions(router, _view, _player, _speech, bookmarks);
         _ = new DeviceActions(router, _view, _player, _settings, _settingsStore, _speech);
         _ = new AudioTrackActions(router, _view, _player, _speech);
+        _subtitles = new SubtitleActions(router, _view, _player, _speech, _settings, _dispatcher);
         _equalizer = new EqualizerActions(
             router, _view, _player, _settings, _settingsStore, _speech, _equalizerLibrary);
         var pyYt = new LunaPlayer.YouTube.PyYtClient();
@@ -161,6 +163,8 @@ internal sealed class ApplicationHost : IDisposable
         _singleInstance.Dispose();
         _pathQueue.Dispose();
         _controller.Dispose();
+        // Unsubscribes from the player's subtitle events before the player itself goes below.
+        _subtitles.Dispose();
         // Before the player goes: a recording still running has a file to close, and the engine waits for
         // the encoder to flush its last block rather than leaving a truncated one behind.
         _recorder.Dispose();
