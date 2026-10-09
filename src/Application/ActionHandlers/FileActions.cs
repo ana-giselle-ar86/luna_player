@@ -22,6 +22,7 @@ internal sealed class FileActions
     private int _fileInfoPressCount;
     private long _fileInfoLastPress;
     private readonly PlaylistInfoService _playlistInfo = new();
+    private readonly RecentsStore _recents;
 
     internal FileActions(
         ActionRouter router,
@@ -30,7 +31,8 @@ internal sealed class FileActions
         PlayerSettings settings,
         ISpeechOutput speech,
         IClipboardService clipboard,
-        IApplicationDispatcher dispatcher)
+        IApplicationDispatcher dispatcher,
+        RecentsStore recents)
     {
         _view = view;
         _player = player;
@@ -38,6 +40,7 @@ internal sealed class FileActions
         _speech = speech;
         _clipboard = clipboard;
         _dispatcher = dispatcher;
+        _recents = recents;
         _guard = new MediaGuard(player, speech);
         router.Register(ActionId.OpenFile, OpenFileFromDialog);
         router.Register(ActionId.OpenLink, OpenLink);
@@ -50,6 +53,8 @@ internal sealed class FileActions
         router.Register(ActionId.Exit, _view.Close);
         router.Register(ActionId.AnnounceFileInfo, AnnounceFileInfo);
         router.Register(ActionId.AnnounceTitle, AnnounceTitle);
+        _view.RecentRequested += OnRecentRequested;
+        RefreshRecents();
     }
 
     internal void OpenPaths(IEnumerable<string> rawPaths)
@@ -82,6 +87,8 @@ internal sealed class FileActions
             _settings.General.LastDirectory = Path.GetDirectoryName(files[0]) ?? string.Empty;
         if (_settings.General.OpenFilesMode != OpenFilesMode.FileOnly || files.Count <= 1)
             OpenFileWithConfiguredMode(files[0]);
+        else if (loaded)
+            RecordRecent(RecentKind.File, files[0]);
     }
 
     internal bool OpenLocalPath(string path)
@@ -161,7 +168,10 @@ internal sealed class FileActions
     private bool OpenLocalPlaylist(string path)
     {
         _settings.General.LastDirectory = Path.GetDirectoryName(path) ?? string.Empty;
-        return UsePlaylistResult(path, PlaylistReader.ReadLocal(path), network: false);
+        if (!UsePlaylistResult(path, PlaylistReader.ReadLocal(path), network: false))
+            return false;
+        RecordRecent(RecentKind.Playlist, path);
+        return true;
     }
 
     private void OpenNetworkPlaylist(string address)
@@ -372,6 +382,7 @@ internal sealed class FileActions
     /// </remarks>
     private void OpenFileWithConfiguredMode(string path, double? startPosition = null)
     {
+        RecordRecent(RecentKind.File, path);
         switch (_settings.General.OpenFilesMode)
         {
             case OpenFilesMode.MainFolder:
@@ -403,11 +414,17 @@ internal sealed class FileActions
     /// </remarks>
     private bool OpenFolderWithConfiguredMode(string folder)
     {
+        bool opened;
         if (_settings.General.OpenFilesMode != OpenFilesMode.MainAndSubfolders)
-            return _player.OpenFolder(folder);
-
-        OpenFolderAndSubfolders(folder);
-        return true;
+            opened = _player.OpenFolder(folder);
+        else
+        {
+            OpenFolderAndSubfolders(folder);
+            opened = true;
+        }
+        if (opened)
+            RecordRecent(RecentKind.Folder, folder);
+        return opened;
     }
 
     /// <summary>Loads everything under a folder, scanning off the UI thread.</summary>
@@ -489,6 +506,66 @@ internal sealed class FileActions
                 Tr("The current file has no title."),
                 // Translators: Short announcement when the current media file contains no title metadata.
                 Tr("No title."));
+    }
+
+    private void RecordRecent(RecentKind kind, string path)
+    {
+        _recents.Add(kind, path);
+        RefreshRecents();
+    }
+
+    private void OnRecentRequested(RecentCommand command)
+    {
+        if (command.Action == RecentAction.Clear)
+        {
+            _recents.Clear(command.Kind);
+            RefreshRecents();
+            _speech.Speak(
+                // Translators: Spoken after the user empties one of the Recents lists.
+                Tr("Recent list cleared."),
+                // Translators: The short wording spoken after a Recents list is emptied.
+                Tr("Cleared."));
+            return;
+        }
+        // Opening re-records the item (moving it to the top), exactly as a normal open would.
+        if (OpenLocalPath(command.Path))
+            return;
+        // The path has moved or been deleted since it was recorded; drop it and say so.
+        _recents.Remove(command.Kind, command.Path);
+        RefreshRecents();
+        _speech.Speak(
+            // Translators: Spoken when a chosen recent item can no longer be opened because it is gone.
+            Tr("That item is no longer available."),
+            // Translators: The short wording spoken when a recent item can no longer be opened.
+            Tr("Not available."));
+    }
+
+    private void RefreshRecents()
+        => _view.RebuildRecentsMenu(
+            BuildRecentEntries(RecentKind.File),
+            BuildRecentEntries(RecentKind.Folder),
+            BuildRecentEntries(RecentKind.Playlist));
+
+    private IReadOnlyList<RecentMenuEntry> BuildRecentEntries(RecentKind kind)
+    {
+        var paths = _recents.Get(kind);
+        var entries = new List<RecentMenuEntry>(paths.Count);
+        for (var i = 0; i < paths.Count; i++)
+            entries.Add(new RecentMenuEntry(paths[i], RecentLabel(i + 1, paths[i])));
+        return entries;
+    }
+
+    // "1. song.mp3 — C:\Music\Album". A & in a name is doubled so wxWidgets does not read it as a mnemonic.
+    private static string RecentLabel(int number, string path)
+    {
+        var trimmed = path.TrimEnd('\\', '/');
+        var name = (Path.GetFileName(trimmed) is { Length: > 0 } fileName ? fileName : path).Replace("&", "&&");
+        var parent = (Path.GetDirectoryName(trimmed) ?? string.Empty).Replace("&", "&&");
+        return parent.Length > 0
+            // Translators: A recent-item menu label. {number} is its place in the list, {name} the file or folder, {parent} the folder holding it.
+            ? TrFormat("{number}. {name} — {parent}", number, name, parent)
+            // Translators: A recent-item menu label with no parent folder. {number} is its place in the list, {name} the item.
+            : TrFormat("{number}. {name}", number, name);
     }
 
     private static List<string> NormalizePaths(IEnumerable<string> rawPaths)

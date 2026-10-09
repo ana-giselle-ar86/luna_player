@@ -71,7 +71,7 @@ internal sealed class ApplicationHost : IDisposable
         var router = new ActionRouter();
         _ = new HelpActions(router, _view);
         _appUpdates = new AppUpdateActions(router, _view, _settings, _dispatcher);
-        var fileActions = new FileActions(router, _view, _player, _settings, _speech, clipboard, _dispatcher);
+        var fileActions = new FileActions(router, _view, _player, _settings, _speech, clipboard, _dispatcher, new RecentsStore(Paths.RecentsFile));
         _ = new PlaybackActions(router, _view, _player, _settings, _settingsStore, _speech, selection);
 
         _ = new EditActions(router, _view, _player, _speech, clipboard, fileActions);

@@ -40,6 +40,10 @@ internal static class Paths
     /// builds up rather than configuration, the same way favourites and presets are.</summary>
     internal static string IptvSourcesFile { get; } = Path.Combine(RootDirectory, "iptv-sources.json");
 
+    /// <summary>The recently-opened files, folders and playlists. Apart from the settings, as a list the user
+    /// builds up through use rather than configuration.</summary>
+    internal static string RecentsFile { get; } = Path.Combine(RootDirectory, "recents.json");
+
     /// <summary>What a path is compared and stored under, so that two spellings of one file - a relative
     /// path and an absolute one, or two different cases - are recognised as the same file.</summary>
     ///

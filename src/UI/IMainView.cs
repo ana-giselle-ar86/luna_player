@@ -22,6 +22,17 @@ internal readonly record struct AppUpdatePrompt(string CurrentVersion, string Av
 /// for the user. The "Off" entry is not one of these - the menu always carries it itself.</summary>
 internal readonly record struct SubtitleMenuEntry(int Id, string Label);
 
+/// <summary>One entry in a Recents submenu: the path to reopen and the numbered label already worded for the
+/// user (such as "1. song.mp3 — C:\Music").</summary>
+internal readonly record struct RecentMenuEntry(string Path, string Label);
+
+/// <summary>Whether the user picked a recent item to open, or its kind's Clear command.</summary>
+internal enum RecentAction { Open, Clear }
+
+/// <summary>What the user chose in a Recents submenu: open <see cref="Path"/>, or clear the whole
+/// <see cref="Kind"/> (then <see cref="Path"/> is empty).</summary>
+internal readonly record struct RecentCommand(RecentAction Action, RecentKind Kind, string Path);
+
 /// <summary>Which half of a link naming a video and a playlist at once the user meant.</summary>
 internal enum YouTubeLinkKind { Video, Playlist }
 
@@ -209,6 +220,11 @@ internal interface IMainView : IDisposable
     /// <see cref="ActionId"/>, for the same reason as <see cref="EqualizerPresetRequested"/>: which subtitle
     /// tracks exist changes per file.</summary>
     event Action<int?>? SubtitleTrackRequested;
+
+    /// <summary>The user picked an item in a Recents submenu - to open, or to clear that kind. Not an
+    /// <see cref="ActionId"/>, like the equalizer and subtitle entries: which recents exist changes as files
+    /// are opened.</summary>
+    event Action<RecentCommand>? RecentRequested;
     event Action? CloseRequested;
 
     /// <summary>Asked when Escape is pressed on the main window with no modifier. Returning true means it
@@ -270,6 +286,13 @@ internal interface IMainView : IDisposable
 
     /// <summary>Ticks or clears the "remember subtitle for this session" box.</summary>
     void SetSubtitleRemember(bool on);
+
+    /// <summary>Rebuilds the three Recents submenus (files, folders, playlists) from newest-first entries
+    /// whose labels are already numbered and worded. An empty kind shows a disabled placeholder.</summary>
+    void RebuildRecentsMenu(
+        IReadOnlyList<RecentMenuEntry> files,
+        IReadOnlyList<RecentMenuEntry> folders,
+        IReadOnlyList<RecentMenuEntry> playlists);
 
     /// <summary>Ticks the subtitle track being read, or the Off item when <paramref name="activeId"/> is null,
     /// without rebuilding the submenu - for when the choice changes but the track list has not.</summary>

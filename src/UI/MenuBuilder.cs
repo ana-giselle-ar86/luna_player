@@ -1,5 +1,6 @@
 using System.Globalization;
 using LunaPlayer.Actions;
+using LunaPlayer.Configuration;
 using LunaPlayer.Equalizer;
 using LunaPlayer.Playback;
 using WxSharp;
@@ -24,6 +25,10 @@ internal sealed record MainMenuComponents(
     Menu SubtitleMenu,
     MenuItem SubtitleMenuItem,
     MenuItem SubtitleRememberItem,
+    IReadOnlyDictionary<int, RecentCommand> RecentCommands,
+    Menu RecentFilesMenu,
+    Menu RecentFoldersMenu,
+    Menu RecentPlaylistsMenu,
     IReadOnlyDictionary<int, string> EqualizerCommands,
     IReadOnlyDictionary<string, MenuItem> EqualizerItems,
     Menu EqualizerMenu,
@@ -58,6 +63,24 @@ internal static class MainMenuBuilder
         fileMenu.Append(commandIds[ActionId.SearchYouTube], Label(Tr("Search YouTube..."), ActionId.SearchYouTube, shortcuts));
         // Translators: File menu item that lists the YouTube links and streams the user has saved.
         fileMenu.Append(commandIds[ActionId.OpenFavorites], Label(Tr("Favorite videos..."), ActionId.OpenFavorites, shortcuts));
+        fileMenu.AppendSeparator();
+        // The recently opened files, folders and playlists, each kind its own submenu. Filled from
+        // recents.json and rebuilt as things open; entries carry no fixed ActionId (which recents exist
+        // changes), so they are routed by command id like the equalizer and subtitle entries, and rebuilt
+        // with fresh ids so no reserved id is ever deleted and reused.
+        var recentCommands = new Dictionary<int, RecentCommand>();
+        var recentMenu = new Menu();
+        var recentFilesMenu = new Menu();
+        var recentFoldersMenu = new Menu();
+        var recentPlaylistsMenu = new Menu();
+        // Translators: Submenu of the File menu's Recents submenu listing the files opened recently.
+        recentMenu.AppendSubMenu(recentFilesMenu, Tr("Recent files"));
+        // Translators: Submenu of the File menu's Recents submenu listing the folders opened recently.
+        recentMenu.AppendSubMenu(recentFoldersMenu, Tr("Recent folders"));
+        // Translators: Submenu of the File menu's Recents submenu listing the playlists opened recently.
+        recentMenu.AppendSubMenu(recentPlaylistsMenu, Tr("Recent playlists"));
+        // Translators: File menu submenu holding the recently opened files, folders and playlists.
+        fileMenu.AppendSubMenu(recentMenu, Tr("Recents"));
         var localFileItems = new List<MenuItem>();
         var mediaFileItems = new List<MenuItem>();
         // Translators: File menu item that shows the folder holding the current file in Windows Explorer.
@@ -364,7 +387,7 @@ internal static class MainMenuBuilder
         // Translators: Name of the Help menu in the menu bar.
         menuBar.Append(helpMenu, Tr("Help"));
         frame.SetMenuBar(menuBar);
-        return new MainMenuComponents(menuBar, 2, markedMenuIndex, videoMenuIndex, playbackItems, mediaFileItems, localFileItems, markedItems, localEditItems, bookmarkItems, videoItems, audioTrackItems, subtitleCommands, subtitleItems, subtitleMenu, subtitleMenuItem, subtitleRememberItem, equalizerCommands, equalizerItems, equalizerMenu, markCurrentItem, markAllItem, shuffleItem, repeatItem, silenceItem, fullScreenItem, startRecordingItem, pauseRecordingItem, stopRecordingItem);
+        return new MainMenuComponents(menuBar, 2, markedMenuIndex, videoMenuIndex, playbackItems, mediaFileItems, localFileItems, markedItems, localEditItems, bookmarkItems, videoItems, audioTrackItems, subtitleCommands, subtitleItems, subtitleMenu, subtitleMenuItem, subtitleRememberItem, recentCommands, recentFilesMenu, recentFoldersMenu, recentPlaylistsMenu, equalizerCommands, equalizerItems, equalizerMenu, markCurrentItem, markAllItem, shuffleItem, repeatItem, silenceItem, fullScreenItem, startRecordingItem, pauseRecordingItem, stopRecordingItem);
     }
 
     /// <summary>What <see cref="MainMenuComponents.EqualizerCommands"/> holds for the item that switches
@@ -437,6 +460,34 @@ internal static class MainMenuBuilder
         var id = IdManager.NewId();
         commands[id] = trackKey;
         items[trackKey] = menu.Insert(position, id, label, kind: MenuItemKind.Radio);
+    }
+
+    /// <summary>Fills one Recents submenu: a numbered item per entry (routed by command id), then a
+    /// separator and the kind's Clear command - or a single disabled placeholder when the kind is empty.
+    /// Everything uses a fresh id each rebuild, so no reserved action id is deleted and reused.</summary>
+    internal static void FillRecentsSubmenu(
+        Menu menu,
+        RecentKind kind,
+        IReadOnlyList<RecentMenuEntry> entries,
+        string emptyLabel,
+        string clearLabel,
+        IDictionary<int, RecentCommand> commands)
+    {
+        if (entries.Count == 0)
+        {
+            menu.Append(IdManager.NewId(), emptyLabel).Enabled = false;
+            return;
+        }
+        foreach (var entry in entries)
+        {
+            var id = IdManager.NewId();
+            commands[id] = new RecentCommand(RecentAction.Open, kind, entry.Path);
+            menu.Append(id, entry.Label);
+        }
+        menu.AppendSeparator();
+        var clearId = IdManager.NewId();
+        commands[clearId] = new RecentCommand(RecentAction.Clear, kind, string.Empty);
+        menu.Append(clearId, clearLabel);
     }
 
     /// <summary>Puts Off, every preset and the two editing commands into the equalizer submenu.</summary>
