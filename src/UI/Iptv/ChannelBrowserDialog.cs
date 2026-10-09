@@ -75,12 +75,12 @@ internal sealed class ChannelBrowserDialog : IDisposable
         _search = new TextCtrl(_dialog);
 
         _list = new ChannelList(_dialog, CellText);
-        // Translators: Heading of the channel list column holding each channel's number.
-        _list.InsertColumn(0, Tr("Number"), 80);
         // Translators: Heading of the channel list column holding each channel's name.
-        _list.InsertColumn(1, Tr("Name"), 320);
+        _list.InsertColumn(0, Tr("Name"), 320);
         // Translators: Heading of the channel list column holding each channel's category.
-        _list.InsertColumn(2, Tr("Category"), 200);
+        _list.InsertColumn(1, Tr("Category"), 200);
+        // Translators: Heading of the channel list column holding each channel's number.
+        _list.InsertColumn(2, Tr("Number"), 80);
         if (_guide is not null)
             // Translators: Heading of the channel list column holding what is showing now (from the guide).
             _list.InsertColumn(3, Tr("Now"), 260);
@@ -193,9 +193,9 @@ internal sealed class ChannelBrowserDialog : IDisposable
         var channel = _channels[_filtered[(int)row]];
         return column switch
         {
-            0 => channel.Number ?? string.Empty,
-            1 => channel.Name,
-            2 => _categoryNames.TryGetValue(channel.CategoryId, out var name) ? name : string.Empty,
+            0 => channel.Name,
+            1 => _categoryNames.TryGetValue(channel.CategoryId, out var name) ? name : string.Empty,
+            2 => channel.Number ?? string.Empty,
             3 => _guide?.NowNext(channel.EpgId, DateTimeOffset.Now).Now?.Title ?? string.Empty,
             _ => string.Empty,
         };
