@@ -169,7 +169,9 @@ internal sealed partial class GlobalShortcuts : IDisposable
         if (threadId != 0)
             PostThreadMessageW(threadId, StopMessage, 0, 0);
         if (listener != Thread.CurrentThread)
-            listener.Join();
+            // Bounded: the listener is a background thread, so even if the stop message is somehow missed it
+            // cannot keep the process alive. The timeout stops a missed wake from hanging shutdown.
+            listener.Join(TimeSpan.FromSeconds(1));
     }
 
     private void Listen(ManualResetEventSlim ready)

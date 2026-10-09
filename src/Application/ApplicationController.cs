@@ -131,7 +131,12 @@ internal sealed class ApplicationController : IDisposable
             _settings.Playback.LastPosition = Math.Max(0, _player.Elapsed ?? 0);
         }
         _settingsStore.SaveSession(_settings);
-        _player.Stop();
+        // Tear the player down here, while the frame still exists, rather than leaving it for the host's
+        // disposal after the window is gone. mpv renders into the frame's window handle; if that handle is
+        // destroyed first, terminating mpv afterwards can block on its dead video output and hang the whole
+        // exit - which is what left the process alive and blocked a quick relaunch. Closing it first, like
+        // the reference player does before destroying its window, lets mpv detach cleanly.
+        _player.Dispose();
     }
 
     public void Dispose()

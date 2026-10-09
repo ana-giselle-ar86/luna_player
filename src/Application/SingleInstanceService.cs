@@ -80,12 +80,9 @@ internal sealed class SingleInstanceService : IDisposable
             return;
         _disposed = true;
         _stopping = true;
-        if (_listenerThread is not null)
-        {
-            TryWakeListener();
-            _listenerThread.Join();
-            _listenerThread = null;
-        }
+        // Release the single-instance lock first, before tearing anything else down. A relaunch is gated on
+        // this mutex: freeing it up front lets the user reopen the player immediately, even while the rest of
+        // this process is still shutting down (the media backend in particular takes a moment to close).
         if (_ownsMutex)
         {
             try
@@ -97,6 +94,14 @@ internal sealed class SingleInstanceService : IDisposable
             }
         }
         _mutex?.Dispose();
+        if (_listenerThread is not null)
+        {
+            TryWakeListener();
+            // Bounded: the listener is a background thread that cannot keep the process alive, so a wake that
+            // loses the race with it must not block shutdown for longer than a moment.
+            _listenerThread.Join(TimeSpan.FromMilliseconds(500));
+            _listenerThread = null;
+        }
     }
 
     private void Listen()

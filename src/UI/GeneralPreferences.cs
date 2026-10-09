@@ -8,6 +8,7 @@ internal sealed class GeneralPreferences : Preferences
     private readonly GeneralSettings _settings;
     private readonly Choice _language;
     private readonly string[] _languages;
+    private readonly Choice _theme;
     private readonly CheckBox _speakNavigation;
     private readonly CheckBox _checkUpdates;
     private readonly CheckBox _rememberPosition;
@@ -34,6 +35,15 @@ internal sealed class GeneralPreferences : Preferences
         // Translators: First entry in the language list: use whatever language Windows itself is set to.
         _language = Choice(panel, [Tr("System default"), .. available.Select(language => language.Name)],
             LanguageIndex(settings.Language));
+        // Translators: Label of the list for choosing the player's light or dark appearance.
+        var themeLabel = new StaticText(panel, label: Tr("Theme"));
+        _theme = Choice(panel, [
+            // Translators: Theme choice: follow whatever light or dark appearance Windows itself is set to.
+            Tr("System default"),
+            // Translators: Theme choice: always use a light appearance.
+            Tr("Light"),
+            // Translators: Theme choice: always use a dark appearance.
+            Tr("Dark")], (int)settings.Theme);
         // Translators: Tick box on the General settings page: start again where playing stopped last time.
         _rememberPosition = new CheckBox(panel, label: Tr("Remember last file position")) { Checked = settings.RememberLastPosition };
         // Translators: Tick box on the General settings page: say the name of each file as the user moves through the list.
@@ -91,6 +101,7 @@ internal sealed class GeneralPreferences : Preferences
 
         var sizer = new BoxSizer(Orientation.Vertical);
         AddChoice(sizer, languageLabel, _language);
+        AddChoice(sizer, themeLabel, _theme);
         sizer.Add(_rememberPosition,
             flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
         sizer.Add(_speakNavigation, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
@@ -110,6 +121,11 @@ internal sealed class GeneralPreferences : Preferences
         Help(_language,
             // Translators: Help text for the language list, spoken when the user asks for help on it.
             Tr("Choose System default to follow the Windows display language, or select a language included with Luna. " +
+            "A different choice takes effect after Luna restarts."));
+        Help(_theme,
+            // Translators: Help text for the theme list, spoken when the user asks for help on it.
+            Tr("Chooses whether Luna uses a light or dark appearance. System default follows the light or dark setting " +
+            "in Windows. A Windows high-contrast theme is always followed whatever is chosen here. " +
             "A different choice takes effect after Luna restarts."));
         Help(_rememberPosition,
             // Translators: Help text for the tick box that starts again where playing stopped last time.
@@ -166,6 +182,9 @@ internal sealed class GeneralPreferences : Preferences
         _settings.SubtitleInterrupt = _subtitleInterrupt.Checked;
         _settings.Verbosity = (SpeechVerbosity)Math.Max(0, _verbosity.SelectedIndex);
         _settings.OpenFilesMode = (OpenFilesMode)Math.Max(0, _openMode.SelectedIndex);
+        // Read only at startup, like the language above: the appearance is asked of Windows before any
+        // window is built, so a change here is picked up the next time Luna starts.
+        _settings.Theme = (AppTheme)Math.Max(0, _theme.SelectedIndex);
     }
 
     public override void Refresh()
@@ -180,6 +199,7 @@ internal sealed class GeneralPreferences : Preferences
         _subtitleInterrupt.Checked = _settings.SubtitleInterrupt;
         _verbosity.SelectedIndex = (int)_settings.Verbosity;
         _openMode.SelectedIndex = (int)_settings.OpenFilesMode;
+        _theme.SelectedIndex = (int)_settings.Theme;
     }
 
     private int LanguageIndex(string? code)
