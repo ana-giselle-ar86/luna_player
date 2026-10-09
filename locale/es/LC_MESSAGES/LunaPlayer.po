@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: Luna Player\n"
 "Report-Msgid-Bugs-To: https://github.com/diamondStar35/luna_player/issues\n"
 "POT-Creation-Date: 2026-10-01 17:44+0300\n"
-"PO-Revision-Date: 2026-09-26 15:01-0300\n"
+"PO-Revision-Date: 2026-10-06 04:19-0300\n"
 "Last-Translator: anagisellear86\n"
 "Language-Team: Spanish\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.9\n"
 
@@ -103,12 +103,12 @@ msgstr "Notas de la versión"
 #. Translators: Name of the command that opens the window where IPTV sources are added and edited.
 #: Actions/IptvActions.cs:17
 msgid "Manage IPTV sources"
-msgstr ""
+msgstr "Gestionar fuentes IPTV"
 
 #. Translators: Name of the command that opens the list of channels the chosen IPTV source holds.
 #: Actions/IptvActions.cs:20
 msgid "Browse IPTV channels"
-msgstr ""
+msgstr "Explorar canales de IPTV"
 
 #. Translators: Name of the command that opens one or more media files, in the shortcuts list.
 #: Actions/MediaActions.cs:22
@@ -371,29 +371,27 @@ msgstr "Diálogo de tarjetas de sonido"
 #. Translators: Player menu item that fills the whole screen with the video, or leaves that mode. It is ticked while full screen.
 #: Actions/PlaybackActions.cs:86 UI/MenuBuilder.cs:264
 msgid "Full screen"
-msgstr ""
+msgstr "Pantalla completa"
 
 #. Translators: Name of the command that opens the window listing the file's audio tracks to switch between.
 #: Actions/PlaybackActions.cs:88
-#, fuzzy
 msgid "Audio tracks dialog"
-msgstr "Diálogo de tarjetas de sonido"
+msgstr "Diálogo de pistas de audioDiálogo de tarjetas de sonido"
 
 #. Translators: Name of the command that switches to the next audio track in the file.
 #: Actions/PlaybackActions.cs:90
 msgid "Next audio track"
-msgstr ""
+msgstr "Pista de audio siguiente"
 
 #. Translators: Name of the command that switches to the previous audio track in the file.
 #: Actions/PlaybackActions.cs:92
 msgid "Previous audio track"
-msgstr ""
+msgstr "Pista de audio anterior"
 
 #. Translators: Name of the command that starts or stops reading the file's subtitles aloud.
 #: Actions/PlaybackActions.cs:94
-#, fuzzy
 msgid "Turn subtitle reading on or off"
-msgstr "Activar o desactivar la eliminación de silencios"
+msgstr "Activar o desactivar la lectura de subtítulos"
 
 #. Translators: Name of the command that sets the volume to the loudest setting in one step.
 #: Actions/PlaybackActions.cs:100
@@ -546,18 +544,17 @@ msgstr "Abrir la carpeta de grabaciones"
 #. Translators: Name of the command that opens the window where a sleep timer is set.
 #: Actions/SleepTimerActions.cs:16
 msgid "Set sleep timer..."
-msgstr ""
+msgstr "Ajustar temporizador de apagado..."
 
 #. Translators: Name of the command that cancels a sleep timer that is counting down.
 #: Actions/SleepTimerActions.cs:19
 msgid "Cancel sleep timer"
-msgstr ""
+msgstr "Cancelar temporizador de apagado"
 
 #. Translators: Name of the command that speaks how long is left before the sleep timer fires.
 #: Actions/SleepTimerActions.cs:21
-#, fuzzy
 msgid "Sleep timer remaining"
-msgstr "Anunciar tiempo restante"
+msgstr "Tiempo restante del temporizador de apagado"
 
 #. Translators: Name of the command that opens the window for converting files to another audio format.
 #: Actions/ToolsActions.cs:16
@@ -628,7 +625,7 @@ msgid ""
 "{reason}"
 msgstr ""
 "No se pudieron buscar actualizaciones.\n"
-"\n"
+"\v\n"
 "{reason}"
 
 #: Application/ActionHandlers/AppUpdateActions.cs:105
@@ -698,79 +695,70 @@ msgstr ""
 
 #. Translators: Stands in for a file size the download server did not state.
 #. Translators: Stands in for a file size the download did not state.
-#: Application/ActionHandlers/AppUpdateActions.cs:218
-#: YouTube/Components.cs:307
+#: Application/ActionHandlers/AppUpdateActions.cs:218 YouTube/Components.cs:307
 msgid "Unknown"
 msgstr "Desconocido"
 
 #. Translators: Spoken when the user asks to choose an audio track but the file has none.
 #: Application/ActionHandlers/AudioTrackActions.cs:32
-#, fuzzy
 msgid "No audio tracks found."
-msgstr "No se encontraron tarjetas de sonido."
+msgstr "No se encontraron pistas de audio."
 
 #. Translators: The short wording spoken when the file has no audio tracks to choose from.
 #: Application/ActionHandlers/AudioTrackActions.cs:34
-#, fuzzy
 msgid "No tracks."
-msgstr "Sin marcas."
+msgstr "Sin pistas."
 
 #. Translators: Spoken when the player could not switch to the audio track the user picked.
 #: Application/ActionHandlers/AudioTrackActions.cs:68
-#, fuzzy
 msgid "Could not change audio track."
-msgstr "No se pudo cambiar el ecualizador."
+msgstr "No se pudo cambiar la pista de audio."
 
 #. Translators: The short wording spoken when the audio track could not be changed.
 #: Application/ActionHandlers/AudioTrackActions.cs:70
-#, fuzzy
 msgid "Track failed."
-msgstr "Fallo del filtro."
+msgstr "Error en la pista."
 
 #. Translators: The place of an audio track in the file's list, as in "2 of 2". {current} is the
 #. track's number and {total} is how many there are. Spoken after the track only in beginner verbosity.
 #: Application/ActionHandlers/AudioTrackActions.cs:77
 msgid "{current} of {total}"
-msgstr ""
+msgstr "{current} de {total}"
 
 #. Translators: Stand-in name for an audio track that has no title of its own, in beginner verbosity.
 #: Application/ActionHandlers/AudioTrackActions.cs:89
-#, fuzzy
 msgid "Audio Track"
-msgstr "Formato de audio"
+msgstr "Pista de audio"
 
 #. Translators: The short stand-in name for an audio track with no title, in advanced verbosity.
 #: Application/ActionHandlers/AudioTrackActions.cs:91
 msgid "Track"
-msgstr ""
+msgstr "Pista"
 
 #. Translators: Name of a single-channel (mono) audio track's channel layout.
 #: Application/ActionHandlers/AudioTrackActions.cs:104
-#, fuzzy
 msgid "mono"
-msgstr "Mono"
+msgstr "mono"
 
 #. Translators: Name of a two-channel (stereo) audio track's channel layout.
 #: Application/ActionHandlers/AudioTrackActions.cs:106
-#, fuzzy
 msgid "stereo"
-msgstr "Estéreo"
+msgstr "estéreo"
 
 #. Translators: Name of a six-channel surround audio track's layout. Usually left as "5.1".
 #: Application/ActionHandlers/AudioTrackActions.cs:108
 msgid "5.1"
-msgstr ""
+msgstr "5.1"
 
 #. Translators: Name of an eight-channel surround audio track's layout. Usually left as "7.1".
 #: Application/ActionHandlers/AudioTrackActions.cs:110
 msgid "7.1"
-msgstr ""
+msgstr "7.1"
 
 #. Translators: Channel layout of an audio track with an unusual channel count. {count} is that number.
 #: Application/ActionHandlers/AudioTrackActions.cs:112
-#, fuzzy
 msgid "{count} channels"
-msgstr "Cargando..."
+msgstr "{count} canales"
 
 #. Translators: The name a new bookmark is given unless the user types another one. {time} is the point in the
 #. file the bookmark was made at, such as 00:01:20.
@@ -1430,26 +1418,24 @@ msgstr "Windows no inició una aplicación para este elemento."
 
 #: Application/ActionHandlers/IptvActions.cs:113
 msgid "Uncategorized"
-msgstr ""
+msgstr "Sin categoría"
 
 #. Translators: Title of the progress window shown while an IPTV source's channels are loaded.
 #: Application/ActionHandlers/IptvActions.cs:116
-#, fuzzy
 msgid "Opening IPTV source"
-msgstr "Fuente de grabación"
+msgstr "Abriendo fuente IPTV"
 
 #. Translators: Message shown while an IPTV source's channels are loaded.
 #: Application/ActionHandlers/IptvActions.cs:118
 #: Application/ActionHandlers/IptvActions.cs:119
-#, fuzzy
 msgid "Loading channels..."
-msgstr "Cargando..."
+msgstr "Cargando canales..."
 
 #. Translators: Shown when an IPTV source is of a kind Luna Player cannot open yet (Xtream or
 #. Stalker, before those are supported).
 #: Application/ActionHandlers/IptvActions.cs:139
 msgid "This kind of IPTV source is not supported yet."
-msgstr ""
+msgstr "Este tipo de fuente IPTV aún no es compatible."
 
 #. Translators: Title of the messages shown about IPTV.
 #. Translators: Tools submenu holding the IPTV source manager and channel browser.
@@ -1460,61 +1446,58 @@ msgstr ""
 #: Application/ActionHandlers/IptvActions.cs:215
 #: Application/ActionHandlers/IptvActions.cs:272 UI/MenuBuilder.cs:322
 msgid "IPTV"
-msgstr ""
+msgstr "IPTV"
 
 #. Translators: Shown when an IPTV source loaded but holds no channels to play.
 #: Application/ActionHandlers/IptvActions.cs:148
 msgid "This source holds no channels."
-msgstr ""
+msgstr "Esta fuente no contiene canales."
 
 #. Translators: Title of the channel browser window. {name} is the source being browsed.
 #: Application/ActionHandlers/IptvActions.cs:153
 msgid "Channels - {name}"
-msgstr ""
+msgstr "Canales - {name}"
 
 #. Translators: Shown when a chosen channel carries no address and none could be worked out.
 #: Application/ActionHandlers/IptvActions.cs:182
-#, fuzzy
 msgid "This channel cannot be played."
-msgstr "El nombre del archivo no puede estar vacío."
+msgstr "No se puede reproducir este canal."
 
 #. Translators: Title of the brief progress window shown while a channel's address is worked out.
 #: Application/ActionHandlers/IptvActions.cs:190
-#, fuzzy
 msgid "Opening channel"
-msgstr "Abriendo lista de reproducción"
+msgstr "Abriendo canal"
 
 #. Translators: Message shown while a Stalker channel's short-lived play address is worked out.
 #: Application/ActionHandlers/IptvActions.cs:192
 #: Application/ActionHandlers/IptvActions.cs:193
-#, fuzzy
 msgid "Preparing the channel..."
-msgstr "Preparando..."
+msgstr "Preparando el canal..."
 
 #. Translators: Shown when a Stalker channel's play address could not be worked out.
 #. Translators: Shown when a chosen IPTV channel could not be played.
 #: Application/ActionHandlers/IptvActions.cs:206
 #: Application/ActionHandlers/IptvActions.cs:215
-#, fuzzy
 msgid "Could not open the channel."
-msgstr "No se pudo abrir el enlace."
+msgstr "No se pudo abrir el canal."
 
 #. Translators: Title of the window for saving a new IPTV source.
 #: Application/ActionHandlers/IptvActions.cs:223
 msgid "Add IPTV source"
-msgstr ""
+msgstr "Añadir fuente IPTV"
 
 #. Translators: Title of the window for changing an IPTV source already saved.
 #: Application/ActionHandlers/IptvActions.cs:240
 msgid "Edit IPTV source"
-msgstr ""
+msgstr "Editar fuente IPTV"
 
 #. Translators: Asks the user to confirm removing one saved IPTV source. {name} is what it is
 #. called and {kind} is what sort of source it is.
 #: Application/ActionHandlers/IptvActions.cs:255
-#, fuzzy
 msgid "Remove IPTV source '{name}' ({kind})?"
-msgstr "¿Eliminar favorito '{name}' ({kind})?"
+msgstr ""
+"¿Eliminar la fuente IPTV '{name}' ({kind})?¿Eliminar favorito '{name}' "
+"({kind})?"
 
 #. Translators: Title of the progress window shown while the marked files are being moved into another folder.
 #: Application/ActionHandlers/MarkedFileActions.cs:41
@@ -1731,23 +1714,24 @@ msgstr "Ir a tiempo"
 #: Application/ActionHandlers/PlaybackActions.cs:175
 #: Application/ApplicationController.cs:197
 msgid "Full-screen mode off."
-msgstr ""
+msgstr "Modo de pantalla completa desactivado."
 
 #. Translators: Spoken when full-screen mode is turned on. The beginner form names the F11 key so the
 #. user knows how to leave it again.
 #: Application/ActionHandlers/PlaybackActions.cs:175
 msgid "Full-screen mode on. Press F11 again to turn it off."
 msgstr ""
+"Modo de pantalla completa activado. Presiona F11 de nuevo para desactivarlo."
 
 #: Application/ActionHandlers/PlaybackActions.cs:177
 #: Application/ApplicationController.cs:197
 msgid "Full-screen off"
-msgstr ""
+msgstr "Pantalla completa desactivada"
 
 #. Translators: The short advanced-verbosity wording spoken when full-screen mode is turned on or off.
 #: Application/ActionHandlers/PlaybackActions.cs:177
 msgid "Full-screen on"
-msgstr ""
+msgstr "Pantalla completa activada"
 
 #. Translators: Spoken after the loudness has been changed. {volume} is the new loudness as a number out of a hundred.
 #: Application/ActionHandlers/PlaybackActions.cs:189
@@ -2059,8 +2043,8 @@ msgstr "No se pudo aplicar el filtro de normalización de audio."
 #: Application/ActionHandlers/SettingsActions.cs:41
 #: Application/ActionHandlers/SettingsActions.cs:47
 #: Application/ActionHandlers/SettingsActions.cs:115
-#: Application/ActionHandlers/SettingsActions.cs:122
-#: UI/PreferencesDialog.cs:37 UI/PreferencesDialog.cs:200
+#: Application/ActionHandlers/SettingsActions.cs:122 UI/PreferencesDialog.cs:37
+#: UI/PreferencesDialog.cs:200
 msgid "Preferences"
 msgstr "Preferencias"
 
@@ -2092,73 +2076,67 @@ msgstr ""
 msgid ""
 "Open a file before setting the timer to stop at the end of the current track."
 msgstr ""
+"Abre un archivo antes de configurar el temporizador para detener al "
+"finalizar la pista actual."
 
 #. Translators: Tools submenu holding the sleep-timer commands.
 #: Application/ActionHandlers/SleepTimerActions.cs:64 UI/MenuBuilder.cs:334
 #: UI/SleepTimerDialog.cs:47 UI/SleepTimerDialog.cs:235
-#, fuzzy
 msgid "Sleep timer"
-msgstr "Anunciar tiempo transcurrido"
+msgstr "Temporizador de apagado"
 
 #. Translators: Status line in the sleep-timer window when a timer is already set to stop at the end
 #. of the current track.
 #: Application/ActionHandlers/SleepTimerActions.cs:87
 msgid "A timer is set to stop at the end of the current track."
 msgstr ""
+"Se ha configurado un temporizador para detener al finalizar la pista actual."
 
 #. Translators: Status line in the sleep-timer window when a timed timer is already running. {time} is a
 #. clock reading like 00:12:30.
 #: Application/ActionHandlers/SleepTimerActions.cs:91
 msgid "A timer is set. {time} remaining."
-msgstr ""
+msgstr "Temporizador configurado. Tiempo restante: {time}."
 
 #. Translators: Spoken when the subtitle key is pressed but the file carries no subtitles.
 #: Application/ActionHandlers/SubtitleActions.cs:72
-#, fuzzy
 msgid "No subtitles in this file."
-msgstr "No se encontraron archivos de audio en esa carpeta."
+msgstr "No hay subtítulos en este archivo."
 
 #. Translators: The short wording spoken when the file has no subtitles.
 #: Application/ActionHandlers/SubtitleActions.cs:74
-#, fuzzy
 msgid "No subtitles."
-msgstr "Sin título."
+msgstr "Sin subtítulos."
 
 #. Translators: Spoken when the player could not start reading the subtitle track the user picked.
 #: Application/ActionHandlers/SubtitleActions.cs:93
-#, fuzzy
 msgid "Could not turn on subtitles."
-msgstr "No se pudieron cerrar los archivos."
+msgstr "No se pudieron activar los subtítulos."
 
 #. Translators: The short wording spoken when a subtitle track could not be turned on.
 #: Application/ActionHandlers/SubtitleActions.cs:95
-#, fuzzy
 msgid "Subtitles failed."
-msgstr "Fallo al establecer."
+msgstr "Error en los subtítulos."
 
 #. Translators: Spoken when subtitle reading starts. {name} is the subtitle's name, such as "English".
 #: Application/ActionHandlers/SubtitleActions.cs:102
-#, fuzzy
 msgid "Reading subtitles: {name}"
-msgstr "Leyendo: {name}"
+msgstr "Leyendo subtítulos: {name}"
 
 #. Translators: Spoken when subtitle reading is turned off.
 #: Application/ActionHandlers/SubtitleActions.cs:113
-#, fuzzy
 msgid "Subtitles off."
-msgstr "Reproducción aleatoria desactivada"
+msgstr "Subtítulos desactivados."
 
 #. Translators: The short wording spoken when subtitle reading is turned off.
 #: Application/ActionHandlers/SubtitleActions.cs:115
-#, fuzzy
 msgid "Subtitles off"
-msgstr "Reproducción aleatoria desactivada"
+msgstr "Subtítulos desactivados"
 
 #. Translators: Stand-in label for a subtitle track with no title or language. {number} is its place in the list.
 #: Application/ActionHandlers/SubtitleActions.cs:147
-#, fuzzy
 msgid "Subtitle {number}"
-msgstr "Leyendo: {name}"
+msgstr "Subtítulo {number}"
 
 #. Translators: Names a file the converter could not convert. {path} is its full path, shown on
 #. the line above the reason.
@@ -2217,12 +2195,12 @@ msgstr "Los enlaces de canales no son compatibles aquí."
 #. Translators: Spoken when the list of search suggestions appears under the YouTube search box.
 #: Application/ActionHandlers/YouTubeActions.cs:167
 msgid "Search suggestions shown"
-msgstr ""
+msgstr "Sugerencias de búsqueda mostradas"
 
 #. Translators: The short wording spoken when search suggestions appear.
 #: Application/ActionHandlers/YouTubeActions.cs:169
 msgid "Suggestions shown"
-msgstr ""
+msgstr "Sugerencias mostradas"
 
 #. Translators: Title of the window that asks where a video should be saved.
 #: Application/ActionHandlers/YouTubeActions.cs:194
@@ -2231,22 +2209,19 @@ msgstr "Seleccionar carpeta de descargas"
 
 #. Translators: Title of the short window shown while a video's available qualities are read.
 #: Application/ActionHandlers/YouTubeActions.cs:208
-#, fuzzy
 msgid "Reading qualities"
-msgstr "Leyendo: {name}"
+msgstr "Leyendo calidades"
 
 #. Translators: Message shown while a video's available download qualities are being read.
 #: Application/ActionHandlers/YouTubeActions.cs:210
 #: Application/ActionHandlers/YouTubeActions.cs:211
-#, fuzzy
 msgid "Reading available qualities..."
-msgstr "Cargando elementos de la lista de reproducción..."
+msgstr "Leyendo calidades disponibles..."
 
 #. Translators: Title of the window shown while a video is being saved to this computer.
 #: Application/ActionHandlers/YouTubeActions.cs:236
-#, fuzzy
 msgid "Downloading video"
-msgstr "Descargando audio"
+msgstr "Descargando vídeo"
 
 #. Translators: First message in the download window, before anything has arrived.
 #: Application/ActionHandlers/YouTubeActions.cs:238
@@ -2370,76 +2345,71 @@ msgstr "Atajos globales"
 #. that number.
 #: Application/SleepTimer.cs:76
 msgid "Sleep timer set for {minutes} minutes."
-msgstr ""
+msgstr "Temporizador de apagado configurado para {minutes} minutos."
 
 #: Application/SleepTimer.cs:77
-#, fuzzy
 msgid "Sleep {minutes}m"
-msgstr "2 minutos"
+msgstr "Apagar en {minutes}m"
 
 #: Application/SleepTimer.cs:101
-#, fuzzy
 msgid "Sleep off"
-msgstr "Reproducción aleatoria desactivada"
+msgstr "Apagado desactivado"
 
 #. Translators: Spoken when a running sleep timer is turned off.
 #: Application/SleepTimer.cs:101
-#, fuzzy
 msgid "Sleep timer cancelled."
-msgstr "Operación cancelada."
+msgstr "Temporizador de apagado cancelado."
 
 #. Translators: Spoken when the user asks how long is left on the sleep timer. {time} is a clock
 #. reading like 00:12:30.
 #: Application/SleepTimer.cs:122
 msgid "Sleep timer: {time} remaining."
-msgstr ""
+msgstr "Temporizador de apagado: tiempo restante {time}."
 
 #: Application/SleepTimer.cs:169
 msgid "Sleep 1:00"
-msgstr ""
+msgstr "Apagar en 1:00"
 
 #. Translators: Spoken once, a minute before a sleep timer fires.
 #: Application/SleepTimer.cs:169
 msgid "Sleep timer: one minute remaining."
-msgstr ""
+msgstr "Temporizador de apagado: un minuto restante."
 
 #. Translators: Spoken when the sleep timer is set to fire at the end of the current track.
 #: Application/SleepTimer.cs:221
 msgid "Sleep timer set for the end of the current track."
-msgstr ""
+msgstr "Temporizador de apagado configurado para el final de la pista actual."
 
 #: Application/SleepTimer.cs:221
 msgid "Sleep: end of track"
-msgstr ""
+msgstr "Apagado: fin de la pista"
 
 #. Translators: Spoken when the sleep timer fires and stops playback.
 #: Application/SleepTimer.cs:227
-#, fuzzy
 msgid "Sleep timer: playback stopped."
-msgstr "Anunciar velocidad de reproducción"
+msgstr "Temporizador de apagado: reproducción detenida."
 
 #. Translators: Spoken when the sleep timer fires and pauses playback.
 #: Application/SleepTimer.cs:229
-#, fuzzy
 msgid "Sleep timer: playback paused."
-msgstr "Anunciar velocidad de reproducción"
+msgstr "Temporizador de apagado: reproducción pausada."
 
 #: Application/SleepTimer.cs:230
 msgid "Sleep: paused"
-msgstr ""
+msgstr "Apagado: en pausa"
 
 #: Application/SleepTimer.cs:230
 msgid "Sleep: stopped"
-msgstr ""
+msgstr "Apagado: detenido"
 
 #: Application/SleepTimer.cs:235
 msgid "No sleep timer"
-msgstr ""
+msgstr "Sin temporizador de apagado"
 
 #. Translators: Spoken when a sleep-timer command is used but no timer is currently set.
 #: Application/SleepTimer.cs:235
 msgid "No sleep timer is set."
-msgstr ""
+msgstr "No hay ningún temporizador de apagado configurado."
 
 #. Translators: Name of an equalizer preset that lifts the low frequencies.
 #: Equalizer/Presets.cs:93
@@ -2607,52 +2577,48 @@ msgstr "Ese favorito ya no está guardado."
 #. Translators: Shown when an IPTV source's address is not a web address. "http" and
 #. "https" are protocol names and are not translated.
 #: Iptv/IptvSourceStore.cs:116
-#, fuzzy
 msgid "The address must start with http or https."
-msgstr "El enlace debe comenzar con http o https."
+msgstr "La dirección debe comenzar con http o https."
 
 #. Translators: Shown when the user saves a file-based IPTV source without choosing a file.
 #: Iptv/IptvSourceStore.cs:124
-#, fuzzy
 msgid "A playlist file is required."
-msgstr "El archivo de lista de reproducción es demasiado grande."
+msgstr "Se requiere un archivo de lista de reproducción."
 
 #. Translators: Shown when an Xtream IPTV source is saved without a username and password.
 #: Iptv/IptvSourceStore.cs:133
 msgid "Xtream sources need a username and password."
-msgstr ""
+msgstr "Las fuentes Xtream necesitan un nombre de usuario y una contraseña."
 
 #. Translators: Shown when a Stalker portal IPTV source is saved without a MAC address.
 #: Iptv/IptvSourceStore.cs:139
 msgid "Stalker sources need a MAC address."
-msgstr ""
+msgstr "Las fuentes Stalker necesitan una dirección MAC."
 
 #. Translators: The kind of an IPTV source: an extended M3U playlist at a web address.
 #: Iptv/IptvSourceStore.cs:150
 msgid "M3U web address"
-msgstr ""
+msgstr "Dirección web M3U"
 
 #. Translators: The kind of an IPTV source: an extended M3U playlist file on this computer.
 #: Iptv/IptvSourceStore.cs:152
-#, fuzzy
 msgid "M3U file"
-msgstr "Sin archivo."
+msgstr "Archivo M3U"
 
 #. Translators: The kind of an IPTV source: a provider portal using the Xtream Codes API.
 #: Iptv/IptvSourceStore.cs:154
 msgid "Xtream Codes"
-msgstr ""
+msgstr "Xtream Codes"
 
 #. Translators: The kind of an IPTV source: a set-top-box portal using the Stalker protocol.
 #: Iptv/IptvSourceStore.cs:156
 msgid "Stalker portal"
-msgstr ""
+msgstr "Portal Stalker"
 
 #. Translators: Shown when the user edits or removes an IPTV source that is no longer saved.
 #: Iptv/IptvSourceStore.cs:167
-#, fuzzy
 msgid "That IPTV source is no longer saved."
-msgstr "Ese favorito ya no está guardado."
+msgstr "Esa fuente IPTV ya no está guardada."
 
 #: Iptv/PlaylistReader.cs:34 Media/M3uPlaylist.cs:36
 msgid "The playlist file is too large."
@@ -2671,39 +2637,37 @@ msgstr ""
 #. Translators: Shown when a Stalker portal's address cannot be understood.
 #: Iptv/Stalker/StalkerClient.cs:38
 msgid "The Stalker portal address is not valid."
-msgstr ""
+msgstr "La dirección del portal Stalker no es válida."
 
 #. Translators: Shown when a Stalker portal does not return a token, so it cannot be used.
 #: Iptv/Stalker/StalkerClient.cs:46
 msgid "The Stalker portal did not accept this MAC address."
-msgstr ""
+msgstr "El portal Stalker no aceptó esta dirección MAC."
 
 #. Translators: Shown when talking to a Stalker portal took too long and was given up on.
 #: Iptv/Stalker/StalkerClient.cs:75
 msgid "The Stalker portal did not respond in time."
-msgstr ""
+msgstr "El portal Stalker no respondió a tiempo."
 
 #. Translators: Shown when an Xtream IPTV source's server address cannot be understood.
 #: Iptv/Xtream/XtreamClient.cs:29
-#, fuzzy
 msgid "The Xtream server address is not valid."
-msgstr "La guía del usuario no está instalada."
+msgstr "La dirección del servidor Xtream no es válida."
 
 #. Translators: Shown when an Xtream panel rejects the saved username or password.
 #: Iptv/Xtream/XtreamClient.cs:40
 msgid "The Xtream server rejected the username or password."
-msgstr ""
+msgstr "El servidor Xtream rechazó el nombre de usuario o la contraseña."
 
 #. Translators: Shown when an Xtream account is no longer active (expired, disabled or banned).
 #: Iptv/Xtream/XtreamClient.cs:44
-#, fuzzy
 msgid "This Xtream account is not active."
-msgstr "Este video no está disponible."
+msgstr "Esta cuenta de Xtream no está activa."
 
 #. Translators: Shown when talking to an Xtream server took too long and was given up on.
 #: Iptv/Xtream/XtreamClient.cs:68
 msgid "The Xtream server did not respond in time."
-msgstr ""
+msgstr "El servidor Xtream no respondió a tiempo."
 
 #. Translators: Shown when the user asks the player to open its file types but the system is not Windows.
 #: Media/Associations.cs:24 Media/Associations.cs:52
@@ -2821,19 +2785,20 @@ msgstr "Luna Player es software libre y de código abierto."
 #: UI/AboutDialog.cs:30
 msgid ""
 "Luna includes mpv, copyright © the mpv developers and contributors to "
-"MPlayer and mplayer2, and a C# translation of python-mpv, copyright © 2017-"
-"2024 Sebastian Götte. These components are licensed under the GNU Lesser "
-"General Public License, version 2.1 or later. FFmpeg is licensed under the "
-"GNU Lesser General Public License, version 3 or later. See NOTICE.txt and "
-"the licenses folder for complete third-party notices and terms."
+"MPlayer and mplayer2, and a C# translation of python-mpv, copyright © "
+"2017-2024 Sebastian Götte. These components are licensed under the GNU "
+"Lesser General Public License, version 2.1 or later. FFmpeg is licensed "
+"under the GNU Lesser General Public License, version 3 or later. See "
+"NOTICE.txt and the licenses folder for complete third-party notices and "
+"terms."
 msgstr ""
 "Luna incluye mpv, copyright © los desarrolladores de mpv y colaboradores de "
-"MPlayer y mplayer2, y una traducción a C# de python-mpv, copyright © 2017-"
-"2024Sebastian Götte. Estos componentes están licenciados bajo la Licencia "
-"Pública General Reducida de GNU, versión 2.1 o posterior. FFmpeg está "
-"licenciado bajo la Licencia Pública General Reducida de GNU, versión 3 o "
-"posterior. Consulta NOTICE.txt y la carpeta de licencias para ver los avisos "
-"y términos completos de terceros."
+"MPlayer y mplayer2, y una traducción a C# de python-mpv, copyright © "
+"2017-2024Sebastian Götte. Estos componentes están licenciados bajo la "
+"Licencia Pública General Reducida de GNU, versión 2.1 o posterior. FFmpeg "
+"está licenciado bajo la Licencia Pública General Reducida de GNU, versión 3 "
+"o posterior. Consulta NOTICE.txt y la carpeta de licencias para ver los "
+"avisos y términos completos de terceros."
 
 #. Translators: Final two lines in the About window. {publisher} is the developer's name and
 #. {version} is the installed application version.
@@ -3084,15 +3049,13 @@ msgstr "El paso de tono debe ser un número entre 0.001 y 12."
 
 #. Translators: Title of the window listing the audio tracks in the file to switch between.
 #: UI/AudioTrackDialog.cs:15
-#, fuzzy
 msgid "Audio Tracks"
-msgstr "Formato de audio"
+msgstr "Pistas de audio"
 
 #. Translators: Label above the list of audio tracks in the file to switch between.
 #: UI/AudioTrackDialog.cs:19
-#, fuzzy
 msgid "Select audio track"
-msgstr "Seleccionar tarjeta de sonido"
+msgstr "Seleccionar pista de audio"
 
 #. Translators: Spoken description of the backup and restore settings page, read when the page is opened.
 #: UI/Backup.cs:14
@@ -3568,7 +3531,7 @@ msgstr "Mostrar la pista en reproducción en el título de la ventana"
 #. Translators: Tick box on the General settings page: let a new subtitle line cut off the one still being read.
 #: UI/GeneralPreferences.cs:50
 msgid "Interrupt the current line when a new subtitle appears"
-msgstr ""
+msgstr "Interrumpir la línea actual cuando aparezca un nuevo subtítulo"
 
 #. Translators: Label of the list that chooses how much detail the player speaks.
 #: UI/GeneralPreferences.cs:52
@@ -3733,6 +3696,10 @@ msgid ""
 "spoken so the speech keeps pace with the picture. Leave it off, the default, "
 "to hear each line to the end before the next begins."
 msgstr ""
+"Al leer subtítulos en voz alta, permite que una nueva línea detenga la que "
+"aún se está pronunciando para que la lectura siga el ritmo de la imagen. "
+"Déjalo desactivado (por defecto) para escuchar cada línea hasta el final "
+"antes de que comience la siguiente."
 
 #. Translators: Help text for the list that chooses how much detail the player speaks.
 #: UI/GeneralPreferences.cs:141
@@ -3806,95 +3773,91 @@ msgstr "El tiempo seleccionado supera la duración del archivo."
 #. Translators: Label of the list that filters channels by whether they are live TV, films or series.
 #: UI/Iptv/ChannelBrowserDialog.cs:51
 msgid "Show"
-msgstr ""
+msgstr "Mostrar"
 
 #. Translators: Channel-browser filter choice: show channels of every kind.
 #: UI/Iptv/ChannelBrowserDialog.cs:54
 msgid "All"
-msgstr ""
+msgstr "Todos"
 
 #. Translators: Channel-browser filter choice: show only live TV channels.
 #: UI/Iptv/ChannelBrowserDialog.cs:56
-#, fuzzy
 msgid "Live TV"
-msgstr "En vivo"
+msgstr "TV en vivo"
 
 #. Translators: Channel-browser filter choice: show only films (video on demand).
 #: UI/Iptv/ChannelBrowserDialog.cs:58
 msgid "Movies"
-msgstr ""
+msgstr "Películas"
 
 #. Translators: Channel-browser filter choice: show only series.
 #: UI/Iptv/ChannelBrowserDialog.cs:60
 msgid "Series"
-msgstr ""
+msgstr "Series"
 
 #. Translators: Label of the list that filters channels by the category they belong to.
 #. Translators: Heading of the channel list column holding each channel's category.
 #: UI/Iptv/ChannelBrowserDialog.cs:64 UI/Iptv/ChannelBrowserDialog.cs:83
 msgid "Category"
-msgstr ""
+msgstr "Categoría"
 
 #. Translators: Channel-browser filter choice: show channels from every category.
 #: UI/Iptv/ChannelBrowserDialog.cs:67
 msgid "All categories"
-msgstr ""
+msgstr "Todas las categorías"
 
 #. Translators: Label of the box that filters channels by part of their name as the user types.
 #. Translators: Button that runs the YouTube search with the text and filter chosen.
 #: UI/Iptv/ChannelBrowserDialog.cs:74 UI/YouTube/SearchDialog.cs:80
-#, fuzzy
 msgid "Search"
-msgstr "Buscar en YouTube"
+msgstr "Buscar"
 
 #. Translators: Heading of the channel list column holding each channel's number.
 #: UI/Iptv/ChannelBrowserDialog.cs:79
 msgid "Number"
-msgstr ""
+msgstr "Número"
 
 #. Translators: Heading of the channel list column holding what is showing now (from the guide).
 #: UI/Iptv/ChannelBrowserDialog.cs:86
-#, fuzzy
 msgid "Now"
-msgstr "No"
+msgstr "Ahora"
 
 #. Translators: Channel-browser status line. {count} is how many channels pass the current filters.
 #: UI/Iptv/ChannelBrowserDialog.cs:185
 msgid "{count} channel"
 msgid_plural "{count} channels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{count} canal"
+msgstr[1] "{count} canales"
 
 #. Translators: Spoken when the user asks what is on a channel but no programme guide was loaded.
 #: UI/Iptv/ChannelBrowserDialog.cs:256
-#, fuzzy
 msgid "No programme guide is available for this source."
-msgstr "No hay ayuda detallada disponible para este control."
+msgstr "No hay guía de programación disponible para esta fuente."
 
 #. Translators: Spoken when the guide holds nothing for the selected channel right now.
 #: UI/Iptv/ChannelBrowserDialog.cs:264
 msgid "No programme information for this channel."
-msgstr ""
+msgstr "Sin información de programación para este canal."
 
 #. Translators: Spoken now-playing line. {title} is the programme showing on the channel now.
 #: UI/Iptv/ChannelBrowserDialog.cs:270
 msgid "Now: {title}"
-msgstr ""
+msgstr "Ahora: {title}"
 
 #. Translators: Spoken when nothing is scheduled on the channel at the moment.
 #: UI/Iptv/ChannelBrowserDialog.cs:272
 msgid "Now: nothing scheduled"
-msgstr ""
+msgstr "Ahora: nada programado"
 
 #. Translators: Spoken next-up line. {title} is the programme showing on the channel next.
 #: UI/Iptv/ChannelBrowserDialog.cs:275
 msgid "Next: {title}"
-msgstr ""
+msgstr "A continuación: {title}"
 
 #. Translators: Spoken when the guide lists nothing after the current programme.
 #: UI/Iptv/ChannelBrowserDialog.cs:277
 msgid "Next: nothing scheduled"
-msgstr ""
+msgstr "A continuación: nada programado"
 
 #. Translators: Spoken help for the channel browser, read aloud when the user presses F1.
 #: UI/Iptv/ChannelBrowserDialog.cs:283
@@ -3903,6 +3866,10 @@ msgid ""
 "the search box to narrow the channels. Press Enter on a channel to play it. "
 "Press Control plus I to hear what is on now and next. Press Escape to close."
 msgstr ""
+"Elige qué mostrar y una categoría de las listas, o escribe parte de un "
+"nombre en el cuadro de búsqueda para filtrar los canales. Presiona Enter en "
+"un canal para reproducirlo. Presiona Control + I para escuchar lo que se "
+"emite ahora y a continuación. Presiona Escape para cerrar."
 
 #. Translators: Label of the list saying what kind of IPTV source is being saved.
 #. Translators: Heading of the IPTV sources list column saying what kind of source each one is.
@@ -3916,7 +3883,7 @@ msgstr "Tipo"
 #. Translators: Label of the address box when the source is an M3U playlist at a web address.
 #: UI/Iptv/IptvSourceEditDialog.cs:67 UI/Iptv/IptvSourceEditDialog.cs:158
 msgid "Web address"
-msgstr ""
+msgstr "Dirección web"
 
 #. Translators: Button beside the file box that opens a dialog to choose a playlist file.
 #. Translators: Button on the converter that opens a folder picker for the destination folder.
@@ -3926,66 +3893,63 @@ msgstr ""
 #: UI/Recording/RecordingDialog.cs:148 UI/RecordingPreferences.cs:71
 #: UI/YouTube/Preferences.cs:87
 msgid "Browse..."
-msgstr "Examinar..."
+msgstr "Explorar..."
 
 #. Translators: Label of the box holding the username of an Xtream IPTV account.
 #: UI/Iptv/IptvSourceEditDialog.cs:75
-#, fuzzy
 msgid "Username"
-msgstr "Renombrado."
+msgstr "Nombre de usuario"
 
 #. Translators: Label of the box holding the password of an Xtream IPTV account.
 #: UI/Iptv/IptvSourceEditDialog.cs:78
 msgid "Password"
-msgstr ""
+msgstr "Contraseña"
 
 #. Translators: Label of the box holding the MAC address a Stalker portal is bound to.
 #: UI/Iptv/IptvSourceEditDialog.cs:82
 msgid "MAC address"
-msgstr ""
+msgstr "Dirección MAC"
 
 #. Translators: Label of the box holding the optional device serial some Stalker portals check.
 #: UI/Iptv/IptvSourceEditDialog.cs:85
 msgid "Serial (optional)"
-msgstr ""
+msgstr "Número de serie (opcional)"
 
 #. Translators: Label of the box holding an optional programme-guide address. "XMLTV" is a format name.
 #: UI/Iptv/IptvSourceEditDialog.cs:89
 msgid "EPG address (optional)"
-msgstr ""
+msgstr "Dirección EPG (opcional)"
 
 #. Translators: Tick box that opens live channels as HLS rather than as a transport stream.
 #: UI/Iptv/IptvSourceEditDialog.cs:94
 msgid "Open live channels as HLS"
-msgstr ""
+msgstr "Abrir canales en vivo como HLS"
 
 #. Translators: Label of the address box when the source is an M3U playlist file on this computer.
 #: UI/Iptv/IptvSourceEditDialog.cs:160
-#, fuzzy
 msgid "Playlist file"
-msgstr "Videos de la lista de reproducción"
+msgstr "Archivo de lista de reproducción"
 
 #. Translators: Label of the address box when the source is an Xtream Codes account (its server).
 #: UI/Iptv/IptvSourceEditDialog.cs:162
 msgid "Server address"
-msgstr ""
+msgstr "Dirección del servidor"
 
 #. Translators: Label of the address box when the source is a Stalker portal (its portal address).
 #: UI/Iptv/IptvSourceEditDialog.cs:164
 msgid "Portal address"
-msgstr ""
+msgstr "Dirección del portal"
 
 #. Translators: Title of the message shown when an IPTV source cannot be saved as it was typed.
 #. Translators: Title of the window listing the IPTV sources the user has saved.
 #: UI/Iptv/IptvSourceEditDialog.cs:198 UI/Iptv/IptvSourcesDialog.cs:25
-#, fuzzy
 msgid "IPTV sources"
-msgstr "Fuentes"
+msgstr "Fuentes IPTV"
 
 #. Translators: Heading of the IPTV sources list column holding the server or file each source points at.
 #: UI/Iptv/IptvSourcesDialog.cs:33
 msgid "Address"
-msgstr ""
+msgstr "Dirección"
 
 #. Translators: Button that opens the source chosen in the list and browses its channels.
 #. Translators: Button that plays the saved link chosen in the list.
@@ -4506,18 +4470,17 @@ msgstr "Tarjetas de sonido..."
 #. Translators: Item in the Audio track submenu that opens the window listing the file's audio tracks to choose from.
 #: UI/MenuBuilder.cs:248
 msgid "Track list..."
-msgstr ""
+msgstr "Lista de pistas..."
 
 #. Translators: Player submenu holding the commands that switch between a file's audio tracks.
 #: UI/MenuBuilder.cs:250
-#, fuzzy
 msgid "Audio track"
-msgstr "Formato de audio"
+msgstr "Pista de audio"
 
 #. Translators: Player submenu listing the file's embedded subtitles to read aloud, with Off at the top.
 #: UI/MenuBuilder.cs:259
 msgid "Subtitles"
-msgstr ""
+msgstr "Subtítulos"
 
 #. Translators: Item in the Video options menu that saves the video being played to a folder on this computer.
 #: UI/MenuBuilder.cs:269
@@ -4564,33 +4527,28 @@ msgstr "Conversor de medios..."
 
 #. Translators: IPTV menu item that opens the window where IPTV sources are added and edited.
 #: UI/MenuBuilder.cs:318
-#, fuzzy
 msgid "Manage IPTV sources..."
-msgstr "Administrar ajustes preestablecidos..."
+msgstr "Administrar fuentes IPTV..."
 
 #. Translators: IPTV menu item that opens the list of channels the chosen IPTV source holds.
 #: UI/MenuBuilder.cs:320
-#, fuzzy
 msgid "Browse channels..."
-msgstr "Examinar..."
+msgstr "Explorar canales..."
 
 #. Translators: Sleep-timer menu item that opens the window where a timer is set.
 #: UI/MenuBuilder.cs:328
-#, fuzzy
 msgid "Set timer..."
-msgstr "Ir a tiempo..."
+msgstr "Configurar temporizador..."
 
 #. Translators: Sleep-timer menu item that turns off a timer that is counting down.
 #: UI/MenuBuilder.cs:330
-#, fuzzy
 msgid "Cancel timer"
-msgstr "Cancelar"
+msgstr "Cancelar temporizador"
 
 #. Translators: Sleep-timer menu item that speaks how long is left before the timer fires.
 #: UI/MenuBuilder.cs:332
-#, fuzzy
 msgid "Time remaining"
-msgstr "Anunciar tiempo restante"
+msgstr "Tiempo restante"
 
 #. Translators: Name of the File menu in the menu bar.
 #: UI/MenuBuilder.cs:338
@@ -5360,56 +5318,53 @@ msgstr "Introduce un valor numérico y presiona Aceptar para aplicarlo."
 #. Translators: Label of the list choosing whether the sleep timer ends after a length of time or when
 #. the current track finishes.
 #: UI/SleepTimerDialog.cs:55
-#, fuzzy
 msgid "End the timer"
-msgstr "Final del archivo"
+msgstr "Finalizar el temporizador"
 
 #. Translators: The sleep-timer option that fires after a chosen length of time.
 #: UI/SleepTimerDialog.cs:58
 msgid "After a length of time"
-msgstr ""
+msgstr "Después de un intervalo de tiempo"
 
 #. Translators: The sleep-timer option that fires when the current track finishes.
 #: UI/SleepTimerDialog.cs:60
 msgid "At the end of the current track"
-msgstr ""
+msgstr "Al final de la pista actual"
 
 #. Translators: Label of the list of ready-made timer lengths.
 #: UI/SleepTimerDialog.cs:64
 msgid "Length"
-msgstr ""
+msgstr "Duración"
 
 #. Translators: One ready-made timer length. {minutes} is a number of minutes.
 #: UI/SleepTimerDialog.cs:68
-#, fuzzy
 msgid "{minutes} minutes"
-msgstr "2 minutos"
+msgstr "{minutes} minutos"
 
 #. Translators: Label of the list choosing what happens when the timer fires.
 #: UI/SleepTimerDialog.cs:80
 msgid "When the timer fires"
-msgstr ""
+msgstr "Cuando el temporizador se active"
 
 #. Translators: Tick box that fades the volume down over the last seconds before the timer fires.
 #: UI/SleepTimerDialog.cs:90
 msgid "Fade the volume out before firing"
-msgstr ""
+msgstr "Atenuar el volumen antes de activar"
 
 #. Translators: Label of the box holding how many seconds the fade lasts.
 #: UI/SleepTimerDialog.cs:92
-#, fuzzy
 msgid "Fade length (seconds)"
-msgstr "Duración mínima del silencio interno (segundos)"
+msgstr "Duración de la atenuación (segundos)"
 
 #. Translators: Button in the sleep-timer window that turns off a timer already running.
 #: UI/SleepTimerDialog.cs:158
 msgid "Turn off timer"
-msgstr ""
+msgstr "Desactivar temporizador"
 
 #. Translators: Shown when a timed sleep timer is set to a length of zero.
 #: UI/SleepTimerDialog.cs:235
 msgid "Choose a length of at least one minute."
-msgstr ""
+msgstr "Elige una duración de al menos un minuto."
 
 #. Translators: Title used for a window of read-only text when the caller supplies none.
 #: UI/TextInfoDialog.cs:13
@@ -5428,6 +5383,8 @@ msgid ""
 "Playing and downloading YouTube videos needs some extra programs that are "
 "not installed yet. Would you like to download them now?"
 msgstr ""
+"Reproducir y descargar vídeos de YouTube requiere algunos programas "
+"adicionales que aún no están instalados. ¿Deseas descargarlos ahora?"
 
 #. Translators: Button that agrees to fetch the extra programs YouTube needs.
 #: UI/YouTube/ComponentsDialog.cs:30
@@ -5446,33 +5403,31 @@ msgstr "Descripción del video"
 
 #. Translators: Label before the box that shows the text written under a video.
 #: UI/YouTube/DescriptionDialog.cs:40
-#, fuzzy
 msgid "Description"
-msgstr "Descripción del video"
+msgstr "Descripción"
 
 #. Translators: Button that saves the description as a plain-text (.txt) file.
 #: UI/YouTube/DescriptionDialog.cs:49
 msgid "Export to text (.txt)..."
-msgstr ""
+msgstr "Exportar a texto (.txt)..."
 
 #. Translators: Button that saves the description as a web page (.html) file.
 #: UI/YouTube/DescriptionDialog.cs:51
 msgid "Export to web page (.html)..."
-msgstr ""
+msgstr "Exportar como página web (.html)..."
 
 #: UI/YouTube/DescriptionDialog.cs:125
 msgid "Text files (*.txt)|*.txt"
-msgstr ""
+msgstr "Archivos de texto (*.txt)|*.txt"
 
 #: UI/YouTube/DescriptionDialog.cs:132
 msgid "Web pages (*.html)|*.html"
-msgstr ""
+msgstr "Páginas web (*.html)|*.html"
 
 #. Translators: Title of the window that asks where to save a video's description.
 #: UI/YouTube/DescriptionDialog.cs:158
-#, fuzzy
 msgid "Save description"
-msgstr "Descripción del video"
+msgstr "Guardar descripción"
 
 #. Translators: Label of the box holding the address a saved link points at.
 #. Translators: Heading of the favourites list column holding the address of each saved link.
@@ -5516,7 +5471,7 @@ msgstr "Número de resultados de búsqueda"
 #. Translators: Tick box on the YouTube settings page: offer search suggestions as the user types.
 #: UI/YouTube/Preferences.cs:67
 msgid "Show search suggestions while typing"
-msgstr ""
+msgstr "Mostrar sugerencias de búsqueda al escribir"
 
 #. Translators: Label of the list that chooses what to do with a link naming a video and a playlist at once.
 #: UI/YouTube/Preferences.cs:69
@@ -5531,25 +5486,23 @@ msgstr "Preguntar siempre"
 #. Translators: Heading of the group of settings that give YouTube the browser cookies it may need.
 #: UI/YouTube/Preferences.cs:82
 msgid "Cookies"
-msgstr ""
+msgstr "Cookies"
 
 #. Translators: Label of the box showing the cookie file yt-dlp will use, if one was chosen.
 #: UI/YouTube/Preferences.cs:84
-#, fuzzy
 msgid "Cookie file"
-msgstr "Cerrar archivo"
+msgstr "Archivo de cookies"
 
 #. Translators: Button that switches Luna to reading cookies straight from Firefox each time, with no file.
 #. "Firefox" is a program name and is not translated.
 #: UI/YouTube/Preferences.cs:91
-#, fuzzy
 msgid "Import from Firefox"
-msgstr "Error de importación"
+msgstr "Importar desde Firefox"
 
 #. Translators: Label of the read-only box that says which cookie source is in use.
 #: UI/YouTube/Preferences.cs:96
 msgid "Cookie status"
-msgstr ""
+msgstr "Estado de las cookies"
 
 #. Translators: Label of the list that chooses which line of yt-dlp releases to follow. "yt-dlp" is a
 #. program name and is not translated.
@@ -5590,13 +5543,19 @@ msgid ""
 "lower height starts sooner and uses less network; Luna falls back to the "
 "closest the video offers."
 msgstr ""
+"Define la altura de la imagen que Luna solicita cuando reproduces un vídeo "
+"con Enter. Una altura menor inicia antes y usa menos red; Luna recurrirá a "
+"la opción disponible más cercana en el vídeo."
 
 #. Translators: Help text for the list that chooses the sound quality a video's audio is played at.
 #: UI/YouTube/Preferences.cs:149
 msgid ""
-"Sets the bitrate Luna asks for when you play a video's sound alone with Ctrl"
-"+Enter. Luna falls back to the closest the video offers."
+"Sets the bitrate Luna asks for when you play a video's sound alone with "
+"Ctrl+Enter. Luna falls back to the closest the video offers."
 msgstr ""
+"Define la tasa de bits que Luna solicita cuando reproduces solo el sonido de "
+"un vídeo con Ctrl+Enter. Luna recurrirá a la opción disponible más cercana "
+"en el vídeo."
 
 #. Translators: Help text for the box holding how many videos a search should look for. The two numbers are
 #. the smallest and largest it accepts.
@@ -5615,6 +5574,9 @@ msgid ""
 "Offers a list of completions as you type in the search box, fetched from "
 "YouTube. Clear this option to type without those background network requests."
 msgstr ""
+"Ofrece una lista de sugerencias a medida que escribes en el cuadro de "
+"búsqueda, obtenidas de YouTube. Desactiva esta opción para escribir sin "
+"realizar esas solicitudes de red en segundo plano."
 
 #. Translators: Help text for the list that chooses what to do with a link naming a video and a playlist at once.
 #: UI/YouTube/Preferences.cs:159
@@ -5654,6 +5616,8 @@ msgid ""
 "Fetches yt-dlp and the JavaScript runtime it needs. YouTube playback and "
 "downloads do not work until these are installed."
 msgstr ""
+"Descarga yt-dlp y el entorno de ejecución de JavaScript necesario. La "
+"reproducción y descarga de YouTube no funcionarán hasta que estén instalados."
 
 #. Translators: Help text for the box holding the cookie file yt-dlp will use.
 #: UI/YouTube/Preferences.cs:173
@@ -5662,6 +5626,10 @@ msgid ""
 "Use it for age-restricted or members-only videos. Choosing a file turns off "
 "reading cookies from Firefox."
 msgstr ""
+"El archivo de cookies, en formato Netscape, con el que se envían las "
+"solicitudes de YouTube. Úsalo para vídeos con restricción de edad o "
+"exclusivos para miembros. Seleccionar un archivo desactiva la lectura de "
+"cookies desde Firefox."
 
 #. Translators: Help text for the button that picks a cookie file by hand.
 #: UI/YouTube/Preferences.cs:176
@@ -5669,6 +5637,8 @@ msgid ""
 "Opens a file picker to choose a cookie file saved from your browser. This "
 "turns off reading cookies from Firefox."
 msgstr ""
+"Abre un explorador de archivos para elegir un archivo de cookies guardado "
+"desde tu navegador. Esto desactiva la lectura de cookies desde Firefox."
 
 #. Translators: Help text for the button that switches to reading cookies from Firefox. "Firefox" is a
 #. program name and is not translated.
@@ -5678,6 +5648,10 @@ msgid ""
 "file to keep. This clears any cookie file you chose. Firefox must be "
 "installed and signed in to YouTube."
 msgstr ""
+"Lee las cookies directamente desde Firefox cada vez, siempre actualizadas y "
+"sin necesidad de conservar un archivo. Esto borra cualquier archivo de "
+"cookies que hayas elegido. Firefox debe estar instalado y con la sesión "
+"iniciada en YouTube."
 
 #. Translators: Help text for the read-only box that reports which cookie source is in use.
 #: UI/YouTube/Preferences.cs:183
@@ -5685,77 +5659,79 @@ msgid ""
 "Reports whether YouTube requests currently use Firefox cookies, a cookie "
 "file, or no cookies at all."
 msgstr ""
+"Informa si las solicitudes de YouTube utilizan actualmente cookies de "
+"Firefox, un archivo de cookies o ninguna cookie."
 
 #. Translators: Cookie status: Luna is reading cookies straight from Firefox. "Firefox" is a program
 #. name and is not translated.
 #: UI/YouTube/Preferences.cs:222
 msgid "Using Firefox cookies"
-msgstr ""
+msgstr "Usando cookies de Firefox"
 
 #. Translators: Cookie status naming the file in use. {path} is a file path.
 #: UI/YouTube/Preferences.cs:225
 msgid "Using cookie file: {path}"
-msgstr ""
+msgstr "Usando archivo de cookies: {path}"
 
 #. Translators: Cookie status: no cookies are sent with YouTube requests.
 #: UI/YouTube/Preferences.cs:227
 msgid "No cookies"
-msgstr ""
+msgstr "Sin cookies"
 
 #. Translators: Prompt above the list of audio bitrates to choose from when downloading.
 #: UI/YouTube/QualitySelectionDialog.cs:35
 msgid "Choose the audio quality to download:"
-msgstr ""
+msgstr "Selecciona la calidad de audio a descargar:"
 
 #. Translators: Prompt above the list of video qualities to choose from when downloading.
 #: UI/YouTube/QualitySelectionDialog.cs:37
 msgid "Choose the video quality to download:"
-msgstr ""
+msgstr "Selecciona la calidad de vídeo a descargar:"
 
 #. Translators: Description of the 144p video quality.
 #: UI/YouTube/QualitySelectionDialog.cs:96
 msgid "144p (very low quality)"
-msgstr ""
+msgstr "144p (calidad muy baja)"
 
 #. Translators: Description of the 240p video quality.
 #: UI/YouTube/QualitySelectionDialog.cs:98
 msgid "240p (low quality)"
-msgstr ""
+msgstr "240p (calidad baja)"
 
 #. Translators: Description of the 360p video quality.
 #: UI/YouTube/QualitySelectionDialog.cs:100
 msgid "360p (medium quality)"
-msgstr ""
+msgstr "360p (calidad media)"
 
 #. Translators: Description of the 480p video quality.
 #: UI/YouTube/QualitySelectionDialog.cs:102
 msgid "480p (medium quality)"
-msgstr ""
+msgstr "480p (calidad media)"
 
 #. Translators: Description of the 720p video quality (high definition).
 #: UI/YouTube/QualitySelectionDialog.cs:104
 msgid "720p (HD)"
-msgstr ""
+msgstr "720p (HD)"
 
 #. Translators: Description of the 1080p video quality (full high definition).
 #: UI/YouTube/QualitySelectionDialog.cs:106
 msgid "1080p (Full HD)"
-msgstr ""
+msgstr "1080p (Full HD)"
 
 #. Translators: Description of the 1440p video quality (2K).
 #: UI/YouTube/QualitySelectionDialog.cs:108
 msgid "1440p (2K)"
-msgstr ""
+msgstr "1440p (2K)"
 
 #. Translators: Description of the 2160p video quality (4K).
 #: UI/YouTube/QualitySelectionDialog.cs:110
 msgid "2160p (4K)"
-msgstr ""
+msgstr "2160p (4K)"
 
 #. Translators: A video quality with no set description. {height} is a number of pixels.
 #: UI/YouTube/QualitySelectionDialog.cs:112
 msgid "{height}p"
-msgstr ""
+msgstr "{height}p"
 
 #. Translators: Button that saves the video chosen in the list of results to a folder on this computer.
 #. Translators: Context menu item in the results list that saves the chosen video to this computer.
@@ -5766,53 +5742,48 @@ msgstr "Descargar"
 #. Translators: Names who published a result. {author} is a channel name.
 #: UI/YouTube/ResultsDialog.cs:302 UI/YouTube/ResultsDialog.cs:319
 msgid "by {author}"
-msgstr ""
+msgstr "de {author}"
 
 #. Translators: How many videos a playlist holds. {count} is a number.
 #: UI/YouTube/ResultsDialog.cs:305 UI/YouTube/ResultsDialog.cs:313
 msgid "contains {count} videos"
-msgstr ""
+msgstr "contiene {count} vídeos"
 
 #. Translators: Marks a row in the results list as a channel rather than a single video.
 #. Translators: Heading above a YouTube channel's browser when the channel's name is not known.
 #: UI/YouTube/ResultsDialog.cs:309 YouTube/Session.cs:104
-#, fuzzy
 msgid "Channel"
-msgstr "Canales"
+msgstr "Canal"
 
 #. Translators: Label of the box where the user types what to search YouTube for.
 #: UI/YouTube/SearchDialog.cs:53
-#, fuzzy
 msgid "Search for"
-msgstr "Buscar en YouTube"
+msgstr "Buscar"
 
 #. Translators: Label of the list of search suggestions that appears as the user types.
 #: UI/YouTube/SearchDialog.cs:57
 msgid "Suggestions"
-msgstr ""
+msgstr "Sugerencias"
 
 #. Translators: Label of the list that narrows a YouTube search to one kind of result.
 #: UI/YouTube/SearchDialog.cs:63
-#, fuzzy
 msgid "Filter"
-msgstr "Archivo"
+msgstr "Filtro"
 
 #. Translators: Search filter: return results of every kind, unfiltered.
 #: UI/YouTube/SearchDialog.cs:66
-#, fuzzy
 msgid "No filter"
-msgstr "Sin archivo."
+msgstr "Sin filtro"
 
 #. Translators: Search filter: order results by when they were uploaded, newest first.
 #: UI/YouTube/SearchDialog.cs:70
-#, fuzzy
 msgid "Upload date"
-msgstr "Actualizar"
+msgstr "Fecha de subida"
 
 #. Translators: Search filter: order results by how many times they have been viewed.
 #: UI/YouTube/SearchDialog.cs:72
 msgid "View count"
-msgstr ""
+msgstr "Número de visualizaciones"
 
 #. Translators: Shown when something needs the extra programs for yt-dlp and they are not installed.
 #: YouTube/Backend.cs:179
@@ -5821,9 +5792,8 @@ msgstr "Faltan componentes de YouTube."
 
 #. Translators: A channel browser tab: the channel's front page.
 #: YouTube/ChannelTabs.cs:26
-#, fuzzy
 msgid "Home"
-msgstr "Volumen"
+msgstr "Inicio"
 
 #. Translators: A channel browser tab: the channel's ordinary videos.
 #. Translators: Title of the window listing the videos a search or a playlist turned up.
@@ -5833,26 +5803,23 @@ msgstr "Videos"
 
 #. Translators: A channel browser tab: the channel's short vertical videos.
 #: YouTube/ChannelTabs.cs:30
-#, fuzzy
 msgid "Shorts"
-msgstr "Atajo"
+msgstr "Shorts"
 
 #. Translators: A channel browser tab: the channel's live streams and their recordings.
 #: YouTube/ChannelTabs.cs:32
-#, fuzzy
 msgid "Streams"
-msgstr "Estéreo"
+msgstr "Transmisiones en directo"
 
 #. Translators: A channel browser tab: the playlists the channel publishes.
 #: YouTube/ChannelTabs.cs:34
-#, fuzzy
 msgid "Playlists"
-msgstr "Lista de reproducción"
+msgstr "Listas de reproducción"
 
 #. Translators: A channel browser tab: the channel's community posts.
 #: YouTube/ChannelTabs.cs:36
 msgid "Community"
-msgstr ""
+msgstr "Comunidad"
 
 #. Translators: Shown when the extra programs YouTube's yt-dlp support needs are already there.
 #: YouTube/Components.cs:90
@@ -6024,34 +5991,29 @@ msgstr "No se encontraron videos en esta lista de reproducción."
 
 #. Translators: Title of the window shown while a YouTube channel is being opened.
 #: YouTube/Sessions.cs:222
-#, fuzzy
 msgid "Loading channel"
-msgstr "Cargando..."
+msgstr "Cargando canal"
 
 #. Translators: First message shown while a YouTube channel is being opened.
 #: YouTube/Sessions.cs:224
-#, fuzzy
 msgid "Loading channel videos..."
-msgstr "Cargando..."
+msgstr "Cargando vídeos del canal..."
 
 #. Translators: Shown when a YouTube channel could not be read.
 #: YouTube/Sessions.cs:236
-#, fuzzy
 msgid "Could not read this YouTube channel."
-msgstr "No se pudo abrir el enlace."
+msgstr "No se pudo leer este canal de YouTube."
 
 #. Translators: Spoken once a video has been added to the favourites from the results list.
 #. Translators: The short wording spoken once a video has been added to the favourites.
 #: YouTube/Sessions.cs:261 YouTube/Sessions.cs:263
-#, fuzzy
 msgid "Added to favorites."
-msgstr "Añadir a favoritos"
+msgstr "Añadido a favoritos."
 
 #. Translators: Spoken when a video could not be added to the favourites.
 #: YouTube/Sessions.cs:269
-#, fuzzy
 msgid "Could not add to favorites."
-msgstr "No se pudo leer este video."
+msgstr "No se pudo añadir a favoritos."
 
 #. Translators: Shown when an address looked like a YouTube link but names no video.
 #: YouTube/Sessions.cs:284
@@ -6108,13 +6070,12 @@ msgstr "No se pudo obtener una transmisión para reproducir."
 #. Translators: Shown when the programs YouTube playback needs are not installed. "yt-dlp" is a
 #. program name and is not translated.
 #: YouTube/Sessions.cs:703
-#, fuzzy
 msgid ""
 "YouTube components are missing. Download them from the YouTube settings to "
 "play or download videos."
 msgstr ""
-"Faltan componentes de YouTube. Descárgalos en la configuración de YouTube o "
-"desactiva el resolvedor yt-dlp allí."
+"Faltan componentes de YouTube. Descárgalos desde los ajustes de YouTube para "
+"reproducir o descargar vídeos."
 
 #. Translators: Shown when YouTube is refusing requests from this computer for the time being.
 #. "HTTP 429" is the numbered error it answers with and is not translated.
@@ -6169,14 +6130,6 @@ msgstr "Cargando más videos..."
 
 #~ msgid "Enter search text."
 #~ msgstr "Introduce el texto de búsqueda."
-
-#, fuzzy
-#~ msgid "All Files"
-#~ msgstr "Marcar todos los archivos"
-
-#, fuzzy
-#~ msgid "Media Files"
-#~ msgstr "Archivos abiertos"
 
 #~ msgid ""
 #~ "The app detected that some components for YouTube are missing. Would you "
@@ -6238,7 +6191,3 @@ msgstr "Cargando más videos..."
 #~ "Obtiene yt-dlp para la descarga de videos y la resolución opcional de "
 #~ "transmisiones. Las demás funciones de YouTube no requieren este "
 #~ "componente."
-
-#, fuzzy
-#~ msgid "Copy link"
-#~ msgstr "Copiar enlace del video"
