@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Luna Player\n"
 "Report-Msgid-Bugs-To: https://github.com/diamondStar35/luna_player/issues\n"
-"POT-Creation-Date: 2026-10-02 10:45+0300\n"
+"POT-Creation-Date: 2026-10-09 15:06+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -63,7 +63,7 @@ msgstr ""
 #. Translators: Name of the command that begins recording.
 #. Translators: Recording menu item that begins recording.
 #: Actions/GlobalActions.cs:30 Actions/RecordingActions.cs:20
-#: UI/MenuBuilder.cs:287
+#: UI/MenuBuilder.cs:310
 msgid "Start recording"
 msgstr ""
 
@@ -82,20 +82,20 @@ msgstr ""
 #. Translators: Name of the command that opens the Luna Player user guide.
 #. Translators: Help menu item that opens the user guide matching the application language.
 #: Actions/HelpActions.cs:9 Application/ActionHandlers/HelpActions.cs:33
-#: Application/ActionHandlers/HelpActions.cs:40 UI/MenuBuilder.cs:303
+#: Application/ActionHandlers/HelpActions.cs:40 UI/MenuBuilder.cs:326
 msgid "User guide"
 msgstr ""
 
 #. Translators: Name of the command that shows information about Luna Player.
 #. Translators: Help menu item that shows information about Luna Player.
-#: Actions/HelpActions.cs:11 UI/MenuBuilder.cs:305
+#: Actions/HelpActions.cs:11 UI/MenuBuilder.cs:328
 msgid "About"
 msgstr ""
 
 #. Translators: Name of the command that opens the notes for the installed Luna Player release.
 #. Translators: Help menu item that opens the GitHub page for the installed release.
 #: Actions/HelpActions.cs:13 Application/ActionHandlers/HelpActions.cs:50
-#: UI/MenuBuilder.cs:307
+#: UI/MenuBuilder.cs:330
 msgid "Release notes"
 msgstr ""
 
@@ -146,7 +146,7 @@ msgstr ""
 
 #. Translators: Name of the command that removes every loaded file from the player.
 #. Translators: File menu item that removes every loaded file from the player.
-#: Actions/MediaActions.cs:36 UI/MenuBuilder.cs:72
+#: Actions/MediaActions.cs:36 UI/MenuBuilder.cs:95
 msgid "Close all files"
 msgstr ""
 
@@ -368,7 +368,7 @@ msgstr ""
 
 #. Translators: Name of the command that fills the whole screen with the video, or leaves that mode, shown in the shortcut list and the Player menu.
 #. Translators: Player menu item that fills the whole screen with the video, or leaves that mode. It is ticked while full screen.
-#: Actions/PlaybackActions.cs:86 UI/MenuBuilder.cs:268
+#: Actions/PlaybackActions.cs:86 UI/MenuBuilder.cs:291
 msgid "Full screen"
 msgstr ""
 
@@ -403,7 +403,7 @@ msgid "Load subtitle from a web address"
 msgstr ""
 
 #. Translators: Name of the command that keeps the chosen subtitle selected across the playlist for this session.
-#: Actions/PlaybackActions.cs:100 UI/MenuBuilder.cs:424
+#: Actions/PlaybackActions.cs:100 UI/MenuBuilder.cs:447
 msgid "Remember subtitle for this session"
 msgstr ""
 
@@ -577,7 +577,7 @@ msgstr ""
 
 #. Translators: Name of the command that checks whether a newer Luna Player release is available.
 #. Translators: Help menu item that checks whether a newer Luna Player release is available.
-#: Actions/UpdateActions.cs:9 UI/MenuBuilder.cs:298
+#: Actions/UpdateActions.cs:9 UI/MenuBuilder.cs:321
 msgid "Check for app updates"
 msgstr ""
 
@@ -615,7 +615,7 @@ msgstr ""
 #. Translators: Name of the command that fetches a newer yt-dlp. "yt-dlp" is a program name and is
 #. not translated.
 #. Translators: Help menu item that fetches a newer yt-dlp. "YouTube" is a service name.
-#: Actions/YouTubeActions.cs:30 UI/MenuBuilder.cs:300
+#: Actions/YouTubeActions.cs:30 UI/MenuBuilder.cs:323
 msgid "Update YouTube components"
 msgstr ""
 
@@ -768,7 +768,7 @@ msgid "Bookmark {time}"
 msgstr ""
 
 #. Translators: Bookmarks menu item that saves the current position in the file as a bookmark.
-#: Application/ActionHandlers/BookmarkActions.cs:37 UI/MenuBuilder.cs:101
+#: Application/ActionHandlers/BookmarkActions.cs:37 UI/MenuBuilder.cs:124
 msgid "Add a new bookmark"
 msgstr ""
 
@@ -788,7 +788,7 @@ msgstr ""
 #: Application/ActionHandlers/BookmarkActions.cs:45
 #: Application/ActionHandlers/BookmarkActions.cs:75
 #: Application/ActionHandlers/BookmarkActions.cs:112
-#: Application/ActionHandlers/BookmarkActions.cs:196 UI/MenuBuilder.cs:346
+#: Application/ActionHandlers/BookmarkActions.cs:196 UI/MenuBuilder.cs:369
 msgid "Bookmarks"
 msgstr ""
 
@@ -832,16 +832,16 @@ msgstr ""
 
 #. Translators: Bookmarks menu item that opens the window for renaming and deleting bookmarks.
 #: Application/ActionHandlers/BookmarkActions.cs:125
-#: UI/BookmarkManagerDialog.cs:16 UI/MenuBuilder.cs:103
+#: UI/BookmarkManagerDialog.cs:16 UI/MenuBuilder.cs:126
 msgid "Manage bookmarks"
 msgstr ""
 
 #. Translators: Title of a message telling the user that something went wrong.
 #: Application/ActionHandlers/BookmarkActions.cs:133
-#: Application/ActionHandlers/FileActions.cs:158
-#: Application/ActionHandlers/FileActions.cs:189
-#: Application/ActionHandlers/FileActions.cs:200
-#: Application/ActionHandlers/FileActions.cs:207
+#: Application/ActionHandlers/FileActions.cs:165
+#: Application/ActionHandlers/FileActions.cs:199
+#: Application/ActionHandlers/FileActions.cs:210
+#: Application/ActionHandlers/FileActions.cs:217
 msgid "Error"
 msgstr ""
 
@@ -1006,7 +1006,7 @@ msgstr ""
 #. Translators: The short wording spoken once the current file has been copied to the clipboard.
 #. Translators: The short wording spoken once the address of a video has been copied.
 #: Application/ActionHandlers/EditActions.cs:119
-#: Application/ActionHandlers/FileActions.cs:474
+#: Application/ActionHandlers/FileActions.cs:491
 #: Application/ActionHandlers/MarkedFileActions.cs:70
 #: Application/ActionHandlers/MarkedFileActions.cs:149
 #: Application/ActionHandlers/YouTubeActions.cs:331
@@ -1016,7 +1016,7 @@ msgstr ""
 #. Translators: The short wording spoken when the current file could not be copied to the clipboard.
 #. Translators: The short wording spoken when the address of a video could not be copied.
 #: Application/ActionHandlers/EditActions.cs:121
-#: Application/ActionHandlers/FileActions.cs:474
+#: Application/ActionHandlers/FileActions.cs:491
 #: Application/ActionHandlers/MarkedFileActions.cs:70
 #: Application/ActionHandlers/YouTubeActions.cs:337
 msgid "Copy failed."
@@ -1146,7 +1146,7 @@ msgstr ""
 #. Translators: Title of the window shown when an equalizer preset could not be saved.
 #. Translators: Player submenu holding the equalizer presets and the commands for editing them.
 #: Application/ActionHandlers/EqualizerActions.cs:165
-#: UI/Equalizer/PresetsDialog.cs:193 UI/MenuBuilder.cs:169
+#: UI/Equalizer/PresetsDialog.cs:193 UI/MenuBuilder.cs:192
 msgid "Equalizer"
 msgstr ""
 
@@ -1190,12 +1190,12 @@ msgid "Confirm remove"
 msgstr ""
 
 #. Translators: Asks the user for the web address of the stream they want to play.
-#: Application/ActionHandlers/FileActions.cs:133
+#: Application/ActionHandlers/FileActions.cs:140
 msgid "Enter link to play."
 msgstr ""
 
 #. Translators: Title of the window that asks for the web address of a stream to play.
-#: Application/ActionHandlers/FileActions.cs:135
+#: Application/ActionHandlers/FileActions.cs:142
 msgid "Open Link"
 msgstr ""
 
@@ -1203,196 +1203,226 @@ msgstr ""
 #. "http" and "https" are the names of the two web protocols and are not translated.
 #. Translators: Title of the message shown when what was typed is not a YouTube address.
 #. Translators: Shown when a favourite is saved with something that is not a web address.
-#: Application/ActionHandlers/FileActions.cs:145
+#: Application/ActionHandlers/FileActions.cs:152
 #: Application/ActionHandlers/YouTubeActions.cs:80
 #: Favorites/FavoriteStore.cs:128
 msgid "The link must start with http or https."
 msgstr ""
 
 #. Translators: Title of the message shown when the address typed into Open Link is not a web address.
-#: Application/ActionHandlers/FileActions.cs:147
+#: Application/ActionHandlers/FileActions.cs:154
 #: Application/ActionHandlers/YouTubeActions.cs:80
 msgid "Invalid link"
 msgstr ""
 
 #. Translators: Shown when the stream at the address typed into Open Link could not be played.
-#: Application/ActionHandlers/FileActions.cs:158
+#: Application/ActionHandlers/FileActions.cs:165
 msgid "Could not open the link."
 msgstr ""
 
 #. Translators: Title of the progress window shown while a playlist is downloaded.
-#: Application/ActionHandlers/FileActions.cs:171
+#: Application/ActionHandlers/FileActions.cs:181
 msgid "Opening playlist"
 msgstr ""
 
 #. Translators: Message shown while a playlist is downloaded.
-#: Application/ActionHandlers/FileActions.cs:173
-#: Application/ActionHandlers/FileActions.cs:174
+#: Application/ActionHandlers/FileActions.cs:183
+#: Application/ActionHandlers/FileActions.cs:184
 msgid "Downloading playlist..."
 msgstr ""
 
 #. Translators: Shown when an M3U or M3U8 playlist could not be read. {error} is the reason.
-#: Application/ActionHandlers/FileActions.cs:189
+#: Application/ActionHandlers/FileActions.cs:199
 msgid "Could not open the playlist: {error}"
 msgstr ""
 
 #. Translators: Shown when an M3U or M3U8 file contains no usable local files or web links.
-#: Application/ActionHandlers/FileActions.cs:200
+#: Application/ActionHandlers/FileActions.cs:210
 msgid "The playlist contains no playable entries."
 msgstr ""
 
 #. Translators: Shown when the entries in an M3U or M3U8 playlist could not be loaded.
-#: Application/ActionHandlers/FileActions.cs:207
+#: Application/ActionHandlers/FileActions.cs:217
 msgid "Could not load the playlist entries."
 msgstr ""
 
 #. Translators: Spoken when the chosen folder holds nothing this player can play.
 #. Translators: Spoken when the folder and the folders inside it hold nothing this player can play.
-#: Application/ActionHandlers/FileActions.cs:220
-#: Application/ActionHandlers/FileActions.cs:440
+#: Application/ActionHandlers/FileActions.cs:230
+#: Application/ActionHandlers/FileActions.cs:457
 msgid "No audio files found in that folder."
 msgstr ""
 
 #. Translators: The short wording spoken when the chosen folder holds nothing this player can play.
 #. Translators: The short wording spoken when a folder holds nothing this player can play.
-#: Application/ActionHandlers/FileActions.cs:222
-#: Application/ActionHandlers/FileActions.cs:442
+#: Application/ActionHandlers/FileActions.cs:232
+#: Application/ActionHandlers/FileActions.cs:459
 msgid "No audio files."
 msgstr ""
 
 #. Translators: Spoken when the user asks to show the folder of what is playing but it is a stream rather than a file on this computer.
-#: Application/ActionHandlers/FileActions.cs:228
+#: Application/ActionHandlers/FileActions.cs:238
 msgid "Open containing folder is available only for local files."
 msgstr ""
 
 #. Translators: Spoken when the folder holding the current file could not be shown.
-#: Application/ActionHandlers/FileActions.cs:232
+#: Application/ActionHandlers/FileActions.cs:242
 msgid "Could not open containing folder."
 msgstr ""
 
 #. Translators: Spoken when the user asks for the Windows properties of what is playing but it is a stream rather than a file on this computer.
-#: Application/ActionHandlers/FileActions.cs:238
+#: Application/ActionHandlers/FileActions.cs:248
 msgid "File properties are available only for local files."
 msgstr ""
 
 #. Translators: Spoken when the Windows properties window for the current file could not be shown.
-#: Application/ActionHandlers/FileActions.cs:243
+#: Application/ActionHandlers/FileActions.cs:253
 msgid "Could not open file properties."
 msgstr ""
 
 #. Translators: The short wording spoken when Windows could not show a file's properties.
 #. Translators: The short wording spoken when Windows could not be asked to open a folder.
-#: Application/ActionHandlers/FileActions.cs:245
-#: Application/ActionHandlers/FileActions.cs:363
+#: Application/ActionHandlers/FileActions.cs:255
+#: Application/ActionHandlers/FileActions.cs:373
 msgid "Open failed."
 msgstr ""
 
 #. Translators: Title of the progress window shown while details of every file in the playlist are being read.
-#: Application/ActionHandlers/FileActions.cs:281
+#: Application/ActionHandlers/FileActions.cs:291
 msgid "Loading playlist info"
 msgstr ""
 
 #. Translators: First message in the progress window, shown before the first file has been read.
-#: Application/ActionHandlers/FileActions.cs:283
+#: Application/ActionHandlers/FileActions.cs:293
 msgid "Preparing..."
 msgstr ""
 
 #. Translators: Progress message naming the file being read right now. {name} is the file name.
-#: Application/ActionHandlers/FileActions.cs:285
+#: Application/ActionHandlers/FileActions.cs:295
 msgid "Reading: {name}"
 msgstr ""
 
 #. Translators: Title of the window listing details of every file in the playlist.
-#: Application/ActionHandlers/FileActions.cs:300
+#: Application/ActionHandlers/FileActions.cs:310
 msgid "Playlist Info"
 msgstr ""
 
 #. Translators: The playlist summary. {count} is how many files are loaded.
-#: Application/ActionHandlers/FileActions.cs:309
+#: Application/ActionHandlers/FileActions.cs:319
 msgid "Number of files: {count}"
 msgstr ""
 
 #. Translators: The playlist summary. {value} is a size such as "12.5 MB".
-#: Application/ActionHandlers/FileActions.cs:311
+#: Application/ActionHandlers/FileActions.cs:321
 msgid "Total size: {value}"
 msgstr ""
 
 #. Translators: The playlist summary. {value} is a duration as hours:minutes:seconds.
-#: Application/ActionHandlers/FileActions.cs:313
+#: Application/ActionHandlers/FileActions.cs:323
 msgid "Total duration: {value}"
 msgstr ""
 
 #. Translators: The playlist summary: how much of the whole playlist has already played.
-#: Application/ActionHandlers/FileActions.cs:315
+#: Application/ActionHandlers/FileActions.cs:325
 msgid "Elapsed: {value}"
 msgstr ""
 
 #. Translators: The playlist summary: how much of the whole playlist is left to play.
-#: Application/ActionHandlers/FileActions.cs:317
+#: Application/ActionHandlers/FileActions.cs:327
 msgid "Remaining: {value}"
 msgstr ""
 
 #. Translators: Spoken when the current file could not be taken out of the playlist.
-#: Application/ActionHandlers/FileActions.cs:335
+#: Application/ActionHandlers/FileActions.cs:345
 msgid "Could not close the file."
 msgstr ""
 
 #. Translators: The short wording spoken when a file could not be closed.
 #. Translators: The short wording spoken when the files could not be closed.
-#: Application/ActionHandlers/FileActions.cs:337
-#: Application/ActionHandlers/FileActions.cs:352
+#: Application/ActionHandlers/FileActions.cs:347
+#: Application/ActionHandlers/FileActions.cs:362
 msgid "Close failed."
 msgstr ""
 
 #. Translators: Spoken once the current file has been taken out of the playlist.
-#: Application/ActionHandlers/FileActions.cs:340
+#: Application/ActionHandlers/FileActions.cs:350
 msgid "File closed."
 msgstr ""
 
 #. Translators: Spoken when the loaded files could not be taken out of the playlist.
-#: Application/ActionHandlers/FileActions.cs:350
+#: Application/ActionHandlers/FileActions.cs:360
 msgid "Could not close files."
 msgstr ""
 
 #. Translators: Spoken once every file has been taken out of the playlist.
-#: Application/ActionHandlers/FileActions.cs:355
+#: Application/ActionHandlers/FileActions.cs:365
 msgid "All files closed."
 msgstr ""
 
 #. Translators: Title of the progress window shown while a folder and the folders inside it are being searched for media.
-#: Application/ActionHandlers/FileActions.cs:420
+#: Application/ActionHandlers/FileActions.cs:437
 msgid "Opening files"
 msgstr ""
 
 #. Translators: First message in the progress window, before any file has been found.
-#: Application/ActionHandlers/FileActions.cs:422
+#: Application/ActionHandlers/FileActions.cs:439
 msgid "Loading files from folder and subfolders..."
 msgstr ""
 
 #. Translators: Progress message while a folder is being searched. {found} is how many media files
 #. have been found so far.
-#: Application/ActionHandlers/FileActions.cs:425
+#: Application/ActionHandlers/FileActions.cs:442
 msgid "Opening files... {found} media files found"
 msgstr ""
 
 #. Translators: Spoken once the full location of the current file has been copied to the clipboard.
-#: Application/ActionHandlers/FileActions.cs:471
+#: Application/ActionHandlers/FileActions.cs:488
 msgid "File path copied to clipboard."
 msgstr ""
 
 #. Translators: Spoken when the full location of the current file could not be copied to the clipboard.
-#: Application/ActionHandlers/FileActions.cs:473
+#: Application/ActionHandlers/FileActions.cs:490
 msgid "Unable to copy to clipboard."
 msgstr ""
 
 #. Translators: Spoken when the current media file contains no title metadata.
-#: Application/ActionHandlers/FileActions.cs:489
+#: Application/ActionHandlers/FileActions.cs:506
 msgid "The current file has no title."
 msgstr ""
 
 #. Translators: Short announcement when the current media file contains no title metadata.
-#: Application/ActionHandlers/FileActions.cs:491
+#: Application/ActionHandlers/FileActions.cs:508
 msgid "No title."
+msgstr ""
+
+#. Translators: Spoken after the user empties one of the Recents lists.
+#: Application/ActionHandlers/FileActions.cs:525
+msgid "Recent list cleared."
+msgstr ""
+
+#. Translators: The short wording spoken after a Recents list is emptied.
+#: Application/ActionHandlers/FileActions.cs:527
+msgid "Cleared."
+msgstr ""
+
+#. Translators: Spoken when a chosen recent item can no longer be opened because it is gone.
+#: Application/ActionHandlers/FileActions.cs:538
+msgid "That item is no longer available."
+msgstr ""
+
+#. Translators: The short wording spoken when a recent item can no longer be opened.
+#: Application/ActionHandlers/FileActions.cs:540
+msgid "Not available."
+msgstr ""
+
+#. Translators: A recent-item menu label. {number} is its place in the list, {name} the file or folder, {parent} the folder holding it.
+#: Application/ActionHandlers/FileActions.cs:566
+msgid "{number}. {name} — {parent}"
+msgstr ""
+
+#. Translators: A recent-item menu label with no parent folder. {number} is its place in the list, {name} the item.
+#: Application/ActionHandlers/FileActions.cs:568
+msgid "{number}. {name}"
 msgstr ""
 
 #. Translators: Shown when Windows cannot open the installed HTML user guide.
@@ -1443,7 +1473,7 @@ msgstr ""
 #: Application/ActionHandlers/IptvActions.cs:182
 #: Application/ActionHandlers/IptvActions.cs:206
 #: Application/ActionHandlers/IptvActions.cs:215
-#: Application/ActionHandlers/IptvActions.cs:272 UI/MenuBuilder.cs:326
+#: Application/ActionHandlers/IptvActions.cs:272 UI/MenuBuilder.cs:349
 msgid "IPTV"
 msgstr ""
 
@@ -1682,7 +1712,7 @@ msgstr ""
 #. Translators: Button that plays the video chosen in the list of results.
 #: Application/ActionHandlers/PlaybackActions.cs:104
 #: Application/ActionHandlers/PlaybackActions.cs:112
-#: UI/Iptv/ChannelBrowserDialog.cs:118 UI/MainFrame.cs:121 UI/MainFrame.cs:187
+#: UI/Iptv/ChannelBrowserDialog.cs:118 UI/MainFrame.cs:128 UI/MainFrame.cs:195
 #: UI/YouTube/ResultsDialog.cs:166
 msgid "Play"
 msgstr ""
@@ -1693,8 +1723,8 @@ msgstr ""
 #. Translators: Button that holds a recording where it is, and starts it again when pressed a second time.
 #. Translators: Button that holds a recording where it is.
 #. Translators: The timer action that pauses playback.
-#: Application/ActionHandlers/PlaybackActions.cs:114 UI/MainFrame.cs:187
-#: UI/MainFrame.cs:334 UI/MenuBuilder.cs:289
+#: Application/ActionHandlers/PlaybackActions.cs:114 UI/MainFrame.cs:195
+#: UI/MainFrame.cs:374 UI/MenuBuilder.cs:312
 #: UI/Recording/RecordingDialog.cs:169 UI/Recording/RecordingDialog.cs:625
 #: UI/SleepTimerDialog.cs:83
 msgid "Pause"
@@ -1961,7 +1991,7 @@ msgstr ""
 #. Translators: Name of the settings category for recording sound.
 #. Translators: Title of the window where recording is set up and started.
 #. Translators: Title of the messages shown about recording.
-#: Application/ActionHandlers/RecordingActions.cs:213 UI/MenuBuilder.cs:360
+#: Application/ActionHandlers/RecordingActions.cs:213 UI/MenuBuilder.cs:383
 #: UI/PreferencesDialog.cs:55 UI/Recording/RecordingDialog.cs:83
 #: UI/Recording/RecordingDialog.cs:720
 msgid "Recording"
@@ -2070,7 +2100,7 @@ msgid ""
 msgstr ""
 
 #. Translators: Tools submenu holding the sleep-timer commands.
-#: Application/ActionHandlers/SleepTimerActions.cs:64 UI/MenuBuilder.cs:338
+#: Application/ActionHandlers/SleepTimerActions.cs:64 UI/MenuBuilder.cs:361
 #: UI/SleepTimerDialog.cs:47 UI/SleepTimerDialog.cs:235
 msgid "Sleep timer"
 msgstr ""
@@ -3213,7 +3243,7 @@ msgstr ""
 #. Translators: Label of the box holding what a saved link is called.
 #. Translators: Heading of the favourites list column holding what each saved link is called.
 #: UI/BookmarkManagerDialog.cs:19 UI/Equalizer/EditDialog.cs:87
-#: UI/Iptv/ChannelBrowserDialog.cs:81 UI/Iptv/IptvSourceEditDialog.cs:56
+#: UI/Iptv/ChannelBrowserDialog.cs:79 UI/Iptv/IptvSourceEditDialog.cs:56
 #: UI/Iptv/IptvSourcesDialog.cs:29 UI/Recording/SourceDialogs.cs:49
 #: UI/YouTube/FavoriteEditDialog.cs:26 UI/YouTube/FavoritesDialog.cs:29
 msgid "Name"
@@ -3230,14 +3260,14 @@ msgid "Jump"
 msgstr ""
 
 #. Translators: Name of the Edit menu in the menu bar.
-#: UI/BookmarkManagerDialog.cs:36 UI/MenuBuilder.cs:344
+#: UI/BookmarkManagerDialog.cs:36 UI/MenuBuilder.cs:367
 msgid "Edit"
 msgstr ""
 
 #. Translators: Button that removes the chosen equalizer preset.
 #. Translators: Edit menu item that deletes the current file from the disk.
 #: UI/BookmarkManagerDialog.cs:37 UI/Equalizer/PresetsDialog.cs:53
-#: UI/MenuBuilder.cs:84
+#: UI/MenuBuilder.cs:107
 msgid "Delete"
 msgstr ""
 
@@ -3266,7 +3296,7 @@ msgstr ""
 #. Translators: The button that stops a job that is running behind a progress window.
 #. Translators: The button that closes a window and leaves everything as it was.
 #: UI/ConversionProgressDialog.cs:84 UI/Equalizer/EditDialog.cs:116
-#: UI/GoToTimeDialog.cs:71 UI/OpenedFilesDialog.cs:36 UI/ProgressView.cs:66
+#: UI/GoToTimeDialog.cs:71 UI/OpenedFilesDialog.cs:50 UI/ProgressView.cs:66
 #: UI/SleepTimerDialog.cs:169 UI/YouTube/LinkKindDialog.cs:33
 #: UI/YouTube/QualitySelectionDialog.cs:50
 msgid "Cancel"
@@ -3718,7 +3748,7 @@ msgstr ""
 
 #. Translators: Label of the list that filters channels by the category they belong to.
 #. Translators: Heading of the channel list column holding each channel's category.
-#: UI/Iptv/ChannelBrowserDialog.cs:64 UI/Iptv/ChannelBrowserDialog.cs:83
+#: UI/Iptv/ChannelBrowserDialog.cs:64 UI/Iptv/ChannelBrowserDialog.cs:81
 msgid "Category"
 msgstr ""
 
@@ -3728,13 +3758,15 @@ msgid "All categories"
 msgstr ""
 
 #. Translators: Label of the box that filters channels by part of their name as the user types.
+#. Translators: Label of the box that filters the loaded files by part of their name as the user types.
 #. Translators: Button that runs the YouTube search with the text and filter chosen.
-#: UI/Iptv/ChannelBrowserDialog.cs:74 UI/YouTube/SearchDialog.cs:80
+#: UI/Iptv/ChannelBrowserDialog.cs:74 UI/OpenedFilesDialog.cs:30
+#: UI/YouTube/SearchDialog.cs:80
 msgid "Search"
 msgstr ""
 
 #. Translators: Heading of the channel list column holding each channel's number.
-#: UI/Iptv/ChannelBrowserDialog.cs:79
+#: UI/Iptv/ChannelBrowserDialog.cs:83
 msgid "Number"
 msgstr ""
 
@@ -3910,29 +3942,59 @@ msgstr ""
 
 #. Translators: Player menu item that plays the file before the current one.
 #. Translators: Item in the Audio track submenu that switches to the previous audio track in the file.
-#: UI/MainFrame.cs:119 UI/MenuBuilder.cs:173 UI/MenuBuilder.cs:246
+#: UI/MainFrame.cs:126 UI/MenuBuilder.cs:196 UI/MenuBuilder.cs:269
 msgid "Previous"
 msgstr ""
 
 #. Translators: Player menu item that moves back in the file by one seek step.
-#: UI/MainFrame.cs:120 UI/MenuBuilder.cs:214
+#: UI/MainFrame.cs:127 UI/MenuBuilder.cs:237
 msgid "Rewind"
 msgstr ""
 
 #. Translators: Player menu item that moves forward in the file by one seek step.
-#: UI/MainFrame.cs:122 UI/MenuBuilder.cs:216
+#: UI/MainFrame.cs:129 UI/MenuBuilder.cs:239
 msgid "Forward"
 msgstr ""
 
 #. Translators: Player menu item that plays the file after the current one.
 #. Translators: Item in the Audio track submenu that switches to the next audio track in the file.
-#: UI/MainFrame.cs:123 UI/MenuBuilder.cs:175 UI/MenuBuilder.cs:244
+#: UI/MainFrame.cs:130 UI/MenuBuilder.cs:198 UI/MenuBuilder.cs:267
 msgid "Next"
+msgstr ""
+
+#. Translators: Shown in the Recent files submenu when no files have been opened yet.
+#: UI/MainFrame.cs:265
+msgid "No recent files"
+msgstr ""
+
+#. Translators: Recent files submenu item that empties the list of recently opened files.
+#: UI/MainFrame.cs:267
+msgid "Clear recent files"
+msgstr ""
+
+#. Translators: Shown in the Recent folders submenu when no folders have been opened yet.
+#: UI/MainFrame.cs:270
+msgid "No recent folders"
+msgstr ""
+
+#. Translators: Recent folders submenu item that empties the list of recently opened folders.
+#: UI/MainFrame.cs:272
+msgid "Clear recent folders"
+msgstr ""
+
+#. Translators: Shown in the Recent playlists submenu when no playlists have been opened yet.
+#: UI/MainFrame.cs:275
+msgid "No recent playlists"
+msgstr ""
+
+#. Translators: Recent playlists submenu item that empties the list of recently opened playlists.
+#: UI/MainFrame.cs:277
+msgid "Clear recent playlists"
 msgstr ""
 
 #. Translators: Recording menu item that starts a paused recording again.
 #. Translators: Button that starts a paused recording again.
-#: UI/MainFrame.cs:332 UI/Recording/RecordingDialog.cs:623
+#: UI/MainFrame.cs:372 UI/Recording/RecordingDialog.cs:623
 msgid "Resume"
 msgstr ""
 
@@ -4123,437 +4185,457 @@ msgid "The destination folder could not be created."
 msgstr ""
 
 #. Translators: File menu item that opens one or more media files. The three dots mean it opens a window to choose them.
-#: UI/MenuBuilder.cs:50
+#: UI/MenuBuilder.cs:55
 msgid "Open File..."
 msgstr ""
 
 #. Translators: File menu item that asks for a link to a network stream and plays it.
-#: UI/MenuBuilder.cs:52
+#: UI/MenuBuilder.cs:57
 msgid "Open Link..."
 msgstr ""
 
 #. Translators: File menu item that opens every media file in a folder.
-#: UI/MenuBuilder.cs:54
+#: UI/MenuBuilder.cs:59
 msgid "Open Folder..."
 msgstr ""
 
 #. Translators: File menu item that asks for a YouTube address and plays the video or playlist it names.
-#: UI/MenuBuilder.cs:56
+#: UI/MenuBuilder.cs:61
 msgid "Open YouTube Link..."
 msgstr ""
 
 #. Translators: File menu item that asks what to look for on YouTube and lists what it finds.
-#: UI/MenuBuilder.cs:58
+#: UI/MenuBuilder.cs:63
 msgid "Search YouTube..."
 msgstr ""
 
 #. Translators: File menu item that lists the YouTube links and streams the user has saved.
-#: UI/MenuBuilder.cs:60
+#: UI/MenuBuilder.cs:65
 msgid "Favorite videos..."
 msgstr ""
 
+#. Translators: Submenu of the File menu's Recents submenu listing the files opened recently.
+#: UI/MenuBuilder.cs:77
+msgid "Recent files"
+msgstr ""
+
+#. Translators: Submenu of the File menu's Recents submenu listing the folders opened recently.
+#: UI/MenuBuilder.cs:79
+msgid "Recent folders"
+msgstr ""
+
+#. Translators: Submenu of the File menu's Recents submenu listing the playlists opened recently.
+#: UI/MenuBuilder.cs:81
+msgid "Recent playlists"
+msgstr ""
+
+#. Translators: File menu submenu holding the recently opened files, folders and playlists.
+#: UI/MenuBuilder.cs:83
+msgid "Recents"
+msgstr ""
+
 #. Translators: File menu item that shows the folder holding the current file in Windows Explorer.
-#: UI/MenuBuilder.cs:64
+#: UI/MenuBuilder.cs:87
 msgid "Open Containing Folder"
 msgstr ""
 
 #. Translators: File menu item that shows the Windows properties window for the current file.
-#: UI/MenuBuilder.cs:66
+#: UI/MenuBuilder.cs:89
 msgid "File properties..."
 msgstr ""
 
 #. Translators: File menu item that lists the files currently loaded in the player.
-#: UI/MenuBuilder.cs:68
+#: UI/MenuBuilder.cs:91
 msgid "Opened Files..."
 msgstr ""
 
 #. Translators: File menu item that removes the current file from the player.
-#: UI/MenuBuilder.cs:70
+#: UI/MenuBuilder.cs:93
 msgid "Close File"
 msgstr ""
 
 #. Translators: File menu item that opens the player's settings window.
-#: UI/MenuBuilder.cs:74
+#: UI/MenuBuilder.cs:97
 msgid "Preferences..."
 msgstr ""
 
 #. Translators: File menu item that quits the player.
-#: UI/MenuBuilder.cs:77
+#: UI/MenuBuilder.cs:100
 msgid "Exit"
 msgstr ""
 
 #. Translators: Edit menu item that gives the current file a new name.
-#: UI/MenuBuilder.cs:82
+#: UI/MenuBuilder.cs:105
 msgid "Rename..."
 msgstr ""
 
 #. Translators: Edit menu item that copies the current file to the clipboard.
 #. Translators: Button that copies the whole description to the clipboard.
-#: UI/MenuBuilder.cs:86 UI/YouTube/DescriptionDialog.cs:47
+#: UI/MenuBuilder.cs:109 UI/YouTube/DescriptionDialog.cs:47
 msgid "Copy"
 msgstr ""
 
 #. Translators: Edit menu item that pastes files copied from Windows Explorer into the player.
-#: UI/MenuBuilder.cs:88
+#: UI/MenuBuilder.cs:111
 msgid "Paste"
 msgstr ""
 
 #. Translators: Edit menu item that marks or unmarks the current file. It is ticked while the file is marked.
-#: UI/MenuBuilder.cs:91
+#: UI/MenuBuilder.cs:114
 msgid "Mark Current File"
 msgstr ""
 
 #. Translators: Edit menu item that marks every loaded file. It is ticked while they all are.
-#: UI/MenuBuilder.cs:93
+#: UI/MenuBuilder.cs:116
 msgid "Mark All Files"
 msgstr ""
 
 #. Translators: Edit menu item that unmarks all marked files.
-#: UI/MenuBuilder.cs:95
+#: UI/MenuBuilder.cs:118
 msgid "Clear Marked Files"
 msgstr ""
 
 #. Translators: Item in the "Jump to bookmark" submenu, one for each of the ten bookmark slots.
 #. {slot} is the slot number, 1 to 10.
-#: UI/MenuBuilder.cs:108
+#: UI/MenuBuilder.cs:131
 msgid "Bookmark {slot}"
 msgstr ""
 
 #. Translators: Bookmarks submenu holding one item per numbered bookmark slot.
-#: UI/MenuBuilder.cs:110
+#: UI/MenuBuilder.cs:133
 msgid "Jump to bookmark"
 msgstr ""
 
 #. Translators: Item in the marked files menu: copy the marked files into a folder the user chooses.
 #. The ampersand marks the letter used to reach the item from the keyboard; put it before a letter that suits your language.
-#: UI/MenuBuilder.cs:116
+#: UI/MenuBuilder.cs:139
 msgid "&Copy to folder..."
 msgstr ""
 
 #. Translators: Item in the marked files menu: move the marked files into a folder the user chooses.
 #. The ampersand marks the letter used to reach the item from the keyboard; put it before a letter that suits your language.
-#: UI/MenuBuilder.cs:119
+#: UI/MenuBuilder.cs:142
 msgid "&Move to folder..."
 msgstr ""
 
 #. Translators: Item in the marked files menu: copy the marked files to the clipboard.
 #. The ampersand marks the letter used to reach the item from the keyboard; put it before a letter that suits your language.
-#: UI/MenuBuilder.cs:122
+#: UI/MenuBuilder.cs:145
 msgid "Copy to &clipboard"
 msgstr ""
 
 #. Translators: Item in the marked files menu: delete the marked files from the disk.
 #. The ampersand marks the letter used to reach the item from the keyboard; put it before a letter that suits your language.
-#: UI/MenuBuilder.cs:125
+#: UI/MenuBuilder.cs:148
 msgid "&Delete"
 msgstr ""
 
 #. Translators: Player menu item that starts playing, or pauses playing.
-#: UI/MenuBuilder.cs:130
+#: UI/MenuBuilder.cs:153
 msgid "Play/Pause"
 msgstr ""
 
 #. Translators: Item in the Speed submenu: play the file faster.
-#: UI/MenuBuilder.cs:134
+#: UI/MenuBuilder.cs:157
 msgid "Increase Speed"
 msgstr ""
 
 #. Translators: Item in the Speed submenu: play the file slower.
-#: UI/MenuBuilder.cs:136
+#: UI/MenuBuilder.cs:159
 msgid "Decrease Speed"
 msgstr ""
 
 #. Translators: Item in the Speed submenu: return the playing speed to normal.
-#: UI/MenuBuilder.cs:138
+#: UI/MenuBuilder.cs:161
 msgid "Reset Speed"
 msgstr ""
 
 #. Translators: Player submenu holding the items that change how fast the file plays.
-#: UI/MenuBuilder.cs:140
+#: UI/MenuBuilder.cs:163
 msgid "Speed"
 msgstr ""
 
 #. Translators: Item in the Pitch submenu: raise audio pitch without changing playback speed.
-#: UI/MenuBuilder.cs:144
+#: UI/MenuBuilder.cs:167
 msgid "Raise Pitch"
 msgstr ""
 
 #. Translators: Item in the Pitch submenu: lower audio pitch without changing playback speed.
-#: UI/MenuBuilder.cs:146
+#: UI/MenuBuilder.cs:169
 msgid "Lower Pitch"
 msgstr ""
 
 #. Translators: Item in the Pitch submenu: restore the audio's original pitch.
-#: UI/MenuBuilder.cs:148
+#: UI/MenuBuilder.cs:171
 msgid "Reset Pitch"
 msgstr ""
 
 #. Translators: Item in the Pitch submenu: speak the current pitch adjustment.
-#: UI/MenuBuilder.cs:150
+#: UI/MenuBuilder.cs:173
 msgid "Speak Pitch"
 msgstr ""
 
 #. Translators: Player submenu holding the controls that raise or lower audio pitch.
-#: UI/MenuBuilder.cs:152
+#: UI/MenuBuilder.cs:175
 msgid "Pitch"
 msgstr ""
 
 #. Translators: Item in the Pan submenu: move the sound toward the left speaker.
-#: UI/MenuBuilder.cs:156
+#: UI/MenuBuilder.cs:179
 msgid "Pan Left"
 msgstr ""
 
 #. Translators: Item in the Pan submenu: move the sound toward the right speaker.
-#: UI/MenuBuilder.cs:158
+#: UI/MenuBuilder.cs:181
 msgid "Pan Right"
 msgstr ""
 
 #. Translators: Item in the Pan submenu: speak the current left/right audio balance.
-#: UI/MenuBuilder.cs:160
+#: UI/MenuBuilder.cs:183
 msgid "Speak Pan"
 msgstr ""
 
 #. Translators: Player submenu holding the left/right audio balance controls.
-#: UI/MenuBuilder.cs:162
+#: UI/MenuBuilder.cs:185
 msgid "Pan"
 msgstr ""
 
 #. Translators: Player menu item that plays the first file in the list.
-#: UI/MenuBuilder.cs:177
+#: UI/MenuBuilder.cs:200
 msgid "First File"
 msgstr ""
 
 #. Translators: Player menu item that asks for a file number and jumps to it.
-#: UI/MenuBuilder.cs:179
+#: UI/MenuBuilder.cs:202
 msgid "Go to file..."
 msgstr ""
 
 #. Translators: Player menu item that plays the last file in the list.
-#: UI/MenuBuilder.cs:181
+#: UI/MenuBuilder.cs:204
 msgid "Last File"
 msgstr ""
 
 #. Translators: Player menu item that turns playing files in random order on or off. It is ticked while it is on.
-#: UI/MenuBuilder.cs:185
+#: UI/MenuBuilder.cs:208
 msgid "Shuffle"
 msgstr ""
 
 #. Translators: Player menu item that turns repeating the current file on or off. It is ticked while it is on.
-#: UI/MenuBuilder.cs:190
+#: UI/MenuBuilder.cs:213
 msgid "Repeat File"
 msgstr ""
 
 #. Translators: Player menu item that turns skipping silent parts of the file on or off. It is ticked while it is on.
-#: UI/MenuBuilder.cs:195
+#: UI/MenuBuilder.cs:218
 msgid "Enable silence removal filter"
 msgstr ""
 
 #. Translators: Item in the A-B loop submenu: mark the start of the part to repeat.
 #. A and B name the two ends of the loop and are usually left as they are.
-#: UI/MenuBuilder.cs:201
+#: UI/MenuBuilder.cs:224
 msgid "Set A (loop start)"
 msgstr ""
 
 #. Translators: Item in the A-B loop submenu: mark the end of the part to repeat.
 #. A and B name the two ends of the loop and are usually left as they are.
-#: UI/MenuBuilder.cs:204
+#: UI/MenuBuilder.cs:227
 msgid "Set B (loop end)"
 msgstr ""
 
 #. Translators: Item in the A-B loop submenu: forget the marked part and play the whole file again.
 #. A and B name the two ends of the loop and are usually left as they are.
-#: UI/MenuBuilder.cs:207
+#: UI/MenuBuilder.cs:230
 msgid "Clear A-B loop"
 msgstr ""
 
 #. Translators: Player submenu holding the items that repeat one part of the file.
 #. A and B name the two ends of the loop and are usually left as they are.
-#: UI/MenuBuilder.cs:210
+#: UI/MenuBuilder.cs:233
 msgid "A-B loop"
 msgstr ""
 
 #. Translators: Player menu item that jumps to the beginning of the file.
-#: UI/MenuBuilder.cs:218
+#: UI/MenuBuilder.cs:241
 msgid "Beginning"
 msgstr ""
 
 #. Translators: Player menu item that jumps to the end of the file.
-#: UI/MenuBuilder.cs:220
+#: UI/MenuBuilder.cs:243
 msgid "End"
 msgstr ""
 
 #. Translators: Player menu item that asks for a time and jumps to it.
-#: UI/MenuBuilder.cs:222
+#: UI/MenuBuilder.cs:245
 msgid "Go to time..."
 msgstr ""
 
 #. Translators: Player submenu holding items that jump to a position given as a percentage, from 10% to 100%.
-#: UI/MenuBuilder.cs:229
+#: UI/MenuBuilder.cs:252
 msgid "Jump to Percentage"
 msgstr ""
 
 #. Translators: Player submenu for choosing how far one press of the seek keys moves.
-#: UI/MenuBuilder.cs:235
+#: UI/MenuBuilder.cs:258
 msgid "Seek amount"
 msgstr ""
 
 #. Translators: Player menu item that opens the list of audio output devices to play through.
-#: UI/MenuBuilder.cs:238
+#: UI/MenuBuilder.cs:261
 msgid "Sound Cards..."
 msgstr ""
 
 #. Translators: Item in the Audio track submenu that opens the window listing the file's audio tracks to choose from.
-#: UI/MenuBuilder.cs:249
+#: UI/MenuBuilder.cs:272
 msgid "Track list..."
 msgstr ""
 
 #. Translators: Player submenu holding the commands that switch between a file's audio tracks.
-#: UI/MenuBuilder.cs:251
+#: UI/MenuBuilder.cs:274
 msgid "Audio track"
 msgstr ""
 
 #. Translators: Player submenu listing the file's subtitles to read aloud, with Off at the top.
-#: UI/MenuBuilder.cs:263
+#: UI/MenuBuilder.cs:286
 msgid "Subtitles"
 msgstr ""
 
 #. Translators: Item in the Video options menu that saves the video being played to a folder on this computer.
-#: UI/MenuBuilder.cs:273
+#: UI/MenuBuilder.cs:296
 msgid "Download..."
 msgstr ""
 
 #. Translators: Item in the Video options menu that shows the text the uploader wrote under the video.
-#: UI/MenuBuilder.cs:275
+#: UI/MenuBuilder.cs:298
 msgid "Video description..."
 msgstr ""
 
 #. Translators: Item in the Video options menu that copies the address of the video being played.
-#: UI/MenuBuilder.cs:277
+#: UI/MenuBuilder.cs:300
 msgid "Copy video link"
 msgstr ""
 
 #. Translators: Recording menu item that opens the window where recording is set up and run.
-#: UI/MenuBuilder.cs:284
+#: UI/MenuBuilder.cs:307
 msgid "Open the recording interface..."
 msgstr ""
 
 #. Translators: Recording menu item that ends a recording and closes the file.
 #. Translators: Button that ends a recording and closes the file.
 #. Translators: The timer action that stops playback.
-#: UI/MenuBuilder.cs:291 UI/Recording/RecordingDialog.cs:619
+#: UI/MenuBuilder.cs:314 UI/Recording/RecordingDialog.cs:619
 #: UI/SleepTimerDialog.cs:85
 msgid "Stop"
 msgstr ""
 
 #. Translators: Recording menu item that opens the folder recordings are saved into.
-#: UI/MenuBuilder.cs:294
+#: UI/MenuBuilder.cs:317
 msgid "Open recordings folder"
 msgstr ""
 
 #. Translators: Help submenu containing the commands that update Luna Player and its YouTube tools.
-#: UI/MenuBuilder.cs:310
+#: UI/MenuBuilder.cs:333
 msgid "Updates"
 msgstr ""
 
 #. Translators: Tools menu item that opens the window for converting files to another audio format.
-#: UI/MenuBuilder.cs:316
+#: UI/MenuBuilder.cs:339
 msgid "Media converter..."
 msgstr ""
 
 #. Translators: IPTV menu item that opens the window where IPTV sources are added and edited.
-#: UI/MenuBuilder.cs:322
+#: UI/MenuBuilder.cs:345
 msgid "Manage IPTV sources..."
 msgstr ""
 
 #. Translators: IPTV menu item that opens the list of channels the chosen IPTV source holds.
-#: UI/MenuBuilder.cs:324
+#: UI/MenuBuilder.cs:347
 msgid "Browse channels..."
 msgstr ""
 
 #. Translators: Sleep-timer menu item that opens the window where a timer is set.
-#: UI/MenuBuilder.cs:332
+#: UI/MenuBuilder.cs:355
 msgid "Set timer..."
 msgstr ""
 
 #. Translators: Sleep-timer menu item that turns off a timer that is counting down.
-#: UI/MenuBuilder.cs:334
+#: UI/MenuBuilder.cs:357
 msgid "Cancel timer"
 msgstr ""
 
 #. Translators: Sleep-timer menu item that speaks how long is left before the timer fires.
-#: UI/MenuBuilder.cs:336
+#: UI/MenuBuilder.cs:359
 msgid "Time remaining"
 msgstr ""
 
 #. Translators: Name of the File menu in the menu bar.
-#: UI/MenuBuilder.cs:342
+#: UI/MenuBuilder.cs:365
 msgid "File"
 msgstr ""
 
 #. Translators: Name of the menu bar menu holding the things that can be done to the marked files at once.
-#: UI/MenuBuilder.cs:349
+#: UI/MenuBuilder.cs:372
 msgid "Actions for marked files"
 msgstr ""
 
 #. Translators: Name of the Player menu in the menu bar, holding the playing, seeking and volume items.
-#: UI/MenuBuilder.cs:351
+#: UI/MenuBuilder.cs:374
 msgid "Player"
 msgstr ""
 
 #. Translators: Name of the menu bar menu holding what can be done with the YouTube video being played.
-#: UI/MenuBuilder.cs:356
+#: UI/MenuBuilder.cs:379
 msgid "Video options"
 msgstr ""
 
 #. Translators: Name of the Tools menu in the menu bar, holding the media converter.
-#: UI/MenuBuilder.cs:363
+#: UI/MenuBuilder.cs:386
 msgid "Tools"
 msgstr ""
 
 #. Translators: Name of the Help menu in the menu bar.
-#: UI/MenuBuilder.cs:365
+#: UI/MenuBuilder.cs:388
 msgid "Help"
 msgstr ""
 
 #. Translators: Item at the top of the Subtitles menu that reads no subtitles. Ticked by default.
 #. Translators: Item in the Equalizer submenu that leaves the sound unequalized. It is ticked while no preset is in use.
-#: UI/MenuBuilder.cs:397 UI/MenuBuilder.cs:463
+#: UI/MenuBuilder.cs:420 UI/MenuBuilder.cs:514
 msgid "Off"
 msgstr ""
 
-#: UI/MenuBuilder.cs:418
+#: UI/MenuBuilder.cs:441
 msgid "Load from file..."
 msgstr ""
 
-#: UI/MenuBuilder.cs:421
+#: UI/MenuBuilder.cs:444
 msgid "Load from URL..."
 msgstr ""
 
-#: UI/MenuBuilder.cs:469
+#: UI/MenuBuilder.cs:520
 msgid "Edit current preset..."
 msgstr ""
 
-#: UI/MenuBuilder.cs:472
+#: UI/MenuBuilder.cs:523
 msgid "Manage presets..."
 msgstr ""
 
 #. Translators: Title of the window listing the files currently loaded in the player.
-#: UI/OpenedFilesDialog.cs:19
+#: UI/OpenedFilesDialog.cs:27
 msgid "Opened Files"
 msgstr ""
 
 #. Translators: Button that shows details of every file in the playlist.
-#: UI/OpenedFilesDialog.cs:33
+#: UI/OpenedFilesDialog.cs:47
 msgid "Playlist info"
 msgstr ""
 
 #. Translators: Button that starts playing the file chosen in the list.
-#: UI/OpenedFilesDialog.cs:35
+#: UI/OpenedFilesDialog.cs:49
 msgid "Jump to selected"
 msgstr ""
 
 #. Translators: Label above the list of loaded files, telling the user to pick the one to play.
-#: UI/OpenedFilesDialog.cs:49
+#: UI/OpenedFilesDialog.cs:67
 msgid "Select file to jump to."
 msgstr ""
 

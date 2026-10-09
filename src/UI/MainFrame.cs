@@ -34,6 +34,10 @@ internal sealed partial class MainFrame : IMainView
     private readonly Menu _subtitleMenu;
     private readonly MenuItem _subtitleMenuItem;
     private readonly MenuItem _subtitleRememberItem;
+    private readonly Dictionary<int, RecentCommand> _recentCommands = [];
+    private readonly Menu _recentFilesMenu;
+    private readonly Menu _recentFoldersMenu;
+    private readonly Menu _recentPlaylistsMenu;
     private ShortcutManager _shortcuts;
     private readonly MenuBar _menuBar;
     private readonly int _bookmarksMenuIndex;
@@ -105,6 +109,9 @@ internal sealed partial class MainFrame : IMainView
         _subtitleMenu = menu.SubtitleMenu;
         _subtitleMenuItem = menu.SubtitleMenuItem;
         _subtitleRememberItem = menu.SubtitleRememberItem;
+        _recentFilesMenu = menu.RecentFilesMenu;
+        _recentFoldersMenu = menu.RecentFoldersMenu;
+        _recentPlaylistsMenu = menu.RecentPlaylistsMenu;
         _markCurrentItem = menu.MarkCurrentItem;
         _markAllItem = menu.MarkAllItem;
         _shuffleItem = menu.ShuffleItem;
@@ -150,6 +157,7 @@ internal sealed partial class MainFrame : IMainView
     public event Action<ActionId>? ActionRequested;
     public event Action<string?>? EqualizerPresetRequested;
     public event Action<int?>? SubtitleTrackRequested;
+    public event Action<RecentCommand>? RecentRequested;
     public event Action? CloseRequested;
     public event Func<bool>? EscapePressed;
 
@@ -244,6 +252,38 @@ internal sealed partial class MainFrame : IMainView
     }
 
     public void SetSubtitleRemember(bool on) => _subtitleRememberItem.Checked = on;
+
+    public void RebuildRecentsMenu(
+        IReadOnlyList<RecentMenuEntry> files,
+        IReadOnlyList<RecentMenuEntry> folders,
+        IReadOnlyList<RecentMenuEntry> playlists)
+    {
+        // One shared command map for all three submenus, cleared once and refilled with fresh ids.
+        _recentCommands.Clear();
+        FillRecents(_recentFilesMenu, RecentKind.File, files,
+            // Translators: Shown in the Recent files submenu when no files have been opened yet.
+            Tr("No recent files"),
+            // Translators: Recent files submenu item that empties the list of recently opened files.
+            Tr("Clear recent files"));
+        FillRecents(_recentFoldersMenu, RecentKind.Folder, folders,
+            // Translators: Shown in the Recent folders submenu when no folders have been opened yet.
+            Tr("No recent folders"),
+            // Translators: Recent folders submenu item that empties the list of recently opened folders.
+            Tr("Clear recent folders"));
+        FillRecents(_recentPlaylistsMenu, RecentKind.Playlist, playlists,
+            // Translators: Shown in the Recent playlists submenu when no playlists have been opened yet.
+            Tr("No recent playlists"),
+            // Translators: Recent playlists submenu item that empties the list of recently opened playlists.
+            Tr("Clear recent playlists"));
+    }
+
+    private void FillRecents(Menu menu, RecentKind kind, IReadOnlyList<RecentMenuEntry> entries,
+        string emptyLabel, string clearLabel)
+    {
+        while (menu.Count > 0)
+            menu.Delete(menu[0]);
+        MainMenuBuilder.FillRecentsSubmenu(menu, kind, entries, emptyLabel, clearLabel, _recentCommands);
+    }
 
     public void SetSubtitleSelection(int? activeId)
     {
@@ -424,7 +464,10 @@ internal sealed partial class MainFrame : IMainView
         {
             int? wanted = trackKey.Length == 0 ? null : int.Parse(trackKey, CultureInfo.InvariantCulture);
             LunaPlayer.Application.CrashReport.Guard(() => SubtitleTrackRequested?.Invoke(wanted));
+            return;
         }
+        if (_recentCommands.TryGetValue(args.Id, out var recent))
+            LunaPlayer.Application.CrashReport.Guard(() => RecentRequested?.Invoke(recent));
     }
 
     private void OnClosing(object? sender, CloseEventArgs args)
