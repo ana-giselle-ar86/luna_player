@@ -16,6 +16,32 @@ internal sealed class SettingsStore
 
     internal string Path => _jsonPath;
 
+    /// <summary>Reads only the saved theme from the settings file, without the full <see cref="Load"/>. The
+    /// complete load validates the settings, which builds the translated action tables and so needs a
+    /// running <c>App</c>; the theme is needed earlier than that, because it is applied as a wxWidgets system
+    /// option before the App is created. Falls back to <see cref="AppTheme.SystemDefault"/> when the file is
+    /// absent, unreadable, or has no valid theme.</summary>
+    internal static AppTheme PeekTheme(string jsonPath)
+    {
+        try
+        {
+            if (!File.Exists(jsonPath))
+                return AppTheme.SystemDefault;
+            using var stream = File.OpenRead(jsonPath);
+            using var document = JsonDocument.Parse(stream);
+            if (document.RootElement.TryGetProperty("general", out var general)
+                && general.TryGetProperty("theme", out var theme)
+                && theme.ValueKind == JsonValueKind.String
+                && Enum.TryParse<AppTheme>(theme.GetString(), ignoreCase: true, out var parsed)
+                && Enum.IsDefined(parsed))
+                return parsed;
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or JsonException)
+        {
+        }
+        return AppTheme.SystemDefault;
+    }
+
     internal PlayerSettings Load()
     {
         if (!File.Exists(_jsonPath))

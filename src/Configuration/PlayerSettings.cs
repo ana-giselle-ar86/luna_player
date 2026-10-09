@@ -11,6 +11,10 @@ namespace LunaPlayer.Configuration;
 
 internal enum SpeechVerbosity { Beginner, Advanced }
 internal enum OpenFilesMode { FileOnly, MainFolder, MainAndSubfolders }
+/// <summary>Which interface appearance the player asks Windows for. <see cref="SystemDefault"/> follows the
+/// Windows setting; the other two force light or dark regardless. A high-contrast scheme always wins over
+/// this choice. Applied once at startup, so a change takes effect after the player restarts.</summary>
+internal enum AppTheme { SystemDefault, Light, Dark }
 internal enum EndBehavior { Advance, Loop, None }
 internal enum SilenceDetection { Peak, Rms }
 /// <summary>The picture heights the player offers, matching Hex Player's list. The backing number is the
@@ -84,6 +88,7 @@ internal sealed class PlayerSettings
         Require(General.LastDirectory is not null, "general.lastDirectory");
         Require(Enum.IsDefined(General.Verbosity), "general.verbosity");
         Require(Enum.IsDefined(General.OpenFilesMode), "general.openFilesMode");
+        Require(Enum.IsDefined(General.Theme), "general.theme");
 
         Require(FiniteBetween(Audio.Volume, 0, AudioSettings.MaximumVolume), "audio.volume");
         Require(FiniteBetween(Audio.Speed, AudioSettings.MinimumSpeed, AudioSettings.MaximumSpeed), "audio.speed");
@@ -281,6 +286,8 @@ internal sealed class GeneralSettings
     public SpeechVerbosity Verbosity { get; set; } = SpeechVerbosity.Beginner;
     [JsonConverter(typeof(JsonStringEnumConverter<OpenFilesMode>))]
     public OpenFilesMode OpenFilesMode { get; set; } = OpenFilesMode.FileOnly;
+    [JsonConverter(typeof(JsonStringEnumConverter<AppTheme>))]
+    public AppTheme Theme { get; set; } = AppTheme.SystemDefault;
     public string LastDirectory { get; set; } = string.Empty;
     internal GeneralSettings Copy() => (GeneralSettings)MemberwiseClone();
     internal void Apply(GeneralSettings source)
@@ -295,6 +302,7 @@ internal sealed class GeneralSettings
         SubtitleInterrupt = source.SubtitleInterrupt;
         Verbosity = source.Verbosity;
         OpenFilesMode = source.OpenFilesMode;
+        Theme = source.Theme;
         LastDirectory = source.LastDirectory;
     }
 }

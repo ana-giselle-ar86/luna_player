@@ -2203,7 +2203,10 @@ namespace MpvNet
             }
             Native.mpv_terminate_destroy(h);
             if (disposing && eventThread != null && eventThread.IsAlive)
-                eventThread.Join();
+                // Bounded: the event thread is a background thread and must never hold the process open. It
+                // exits as soon as mpv_terminate_destroy delivers MPV_EVENT_SHUTDOWN; the timeout is only a
+                // guard so a wedged teardown can never block the whole application from exiting.
+                eventThread.Join(TimeSpan.FromSeconds(2));
             foreach (var stream in openStreams.Values)
                 stream.Dispose();
             openStreams.Clear();

@@ -20,6 +20,10 @@ internal static class Paths
     internal static string RootDirectory { get; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppInfo.Name);
 
+    /// <summary>The folder beside the executable that holds the shipped artwork (window icon, button
+    /// bitmaps), copied there by the build.</summary>
+    internal static string IconsDirectory { get; } = Path.Combine(AppContext.BaseDirectory, "icons");
+
     /// <summary>The settings file.</summary>
     internal static string SettingsFile { get; } = Path.Combine(RootDirectory, "settings.json");
 

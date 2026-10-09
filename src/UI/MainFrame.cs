@@ -15,7 +15,10 @@ internal sealed partial class MainFrame : IMainView
 {
 
     private readonly Frame _frame;
-    private readonly CustomButton _playButton;
+    private readonly CustomBitmapButton _playButton;
+    private readonly Bitmap _playBitmap;
+    private readonly Bitmap _pauseBitmap;
+    private readonly Bitmap[] _transportBitmaps;
     private readonly Dictionary<ActionId, int> _commandIds = [];
     private readonly Dictionary<int, ActionId> _commands = [];
     private readonly List<MenuItem> _playbackItems = [];
@@ -83,6 +86,19 @@ internal sealed partial class MainFrame : IMainView
         _dispatcher = dispatcher;
         _catalog = catalog;
         _frame = new Frame(title: AppInfo.Name, size: new Size(420, 160));
+        // The themed window background rather than the grey a frame paints by default, so the main window
+        // follows the chosen light/dark/high-contrast appearance. Asked of the system (not hard-coded), so
+        // it is already the dark colour when dark mode is on.
+        _frame.BackgroundColour = SystemSettings.GetColour(SystemColour.Window);
+        // The window and taskbar icon, the same V2 moon-and-play mark embedded in the executable. Guarded so
+        // a missing or unreadable asset file can never stop the window from opening.
+        try
+        {
+            _frame.SetIcon(new Icon(Path.Combine(Paths.IconsDirectory, "LunaPlayer.ico")));
+        }
+        catch (Exception)
+        {
+        }
         BuildCommandIds(actions);
         var menu = MainMenuBuilder.Build(_frame, _commandIds, shortcuts, presets);
         _menuBar = menu.MenuBar;
@@ -123,11 +139,28 @@ internal sealed partial class MainFrame : IMainView
         _stopRecordingItem = menu.StopRecordingItem;
         BuildAccelerators(shortcuts);
 
-        var previousButton = new CustomButton(_frame, Tr("Previous"));
-        var rewindButton = new CustomButton(_frame, Tr("Rewind"));
-        _playButton = new CustomButton(_frame, Tr("Play"));
-        var forwardButton = new CustomButton(_frame, Tr("Forward"));
-        var nextButton = new CustomButton(_frame, Tr("Next"));
+        // The transport buttons show the control icons rather than text. They sit directly on the frame, not
+        // on a wxPanel: a panel with no keyboard-focusable children (these buttons decline focus) becomes the
+        // focus target when the window opens, and a screen reader announces "panel" on every launch. Each
+        // button keeps a spoken name through its label, which wxBitmapButton uses for accessibility without
+        // drawing any text. The grey a bare frame would paint is handled by the themed background set above.
+        var controls = Paths.IconsDirectory;
+        Bitmap LoadControl(string name) => new(Path.Combine(controls, name + ".png"));
+        var previousBitmap = LoadControl("previous");
+        var rewindBitmap = LoadControl("rewind");
+        _playBitmap = LoadControl("play");
+        _pauseBitmap = LoadControl("pause");
+        var forwardBitmap = LoadControl("forward");
+        var nextBitmap = LoadControl("next");
+        // Held for the button lifetime: the Play button swaps between play and pause, and keeping every
+        // bitmap alive until the frame goes avoids disposing one a button still draws.
+        _transportBitmaps = [previousBitmap, rewindBitmap, _playBitmap, _pauseBitmap, forwardBitmap, nextBitmap];
+
+        var previousButton = new CustomBitmapButton(_frame, previousBitmap, Tr("Previous"));
+        var rewindButton = new CustomBitmapButton(_frame, rewindBitmap, Tr("Rewind"));
+        _playButton = new CustomBitmapButton(_frame, _playBitmap, Tr("Play"));
+        var forwardButton = new CustomBitmapButton(_frame, forwardBitmap, Tr("Forward"));
+        var nextButton = new CustomBitmapButton(_frame, nextBitmap, Tr("Next"));
 
         var buttonSizer = new BoxSizer(Orientation.Horizontal);
         buttonSizer.Insert(0, previousButton, flags: SizerFlags.All, border: 5);
@@ -192,7 +225,11 @@ internal sealed partial class MainFrame : IMainView
         _frame.Raise();
     }
 
-    public void SetPlaying(bool isPlaying) => _playButton.Label = isPlaying ? Tr("Pause") : Tr("Play");
+    public void SetPlaying(bool isPlaying)
+    {
+        _playButton.SetBitmap(isPlaying ? _pauseBitmap : _playBitmap);
+        _playButton.Label = isPlaying ? Tr("Pause") : Tr("Play");
+    }
 
     public void SetWindowTitle(string title)
     {
@@ -401,6 +438,9 @@ internal sealed partial class MainFrame : IMainView
         // shutting down.
         _globalShortcuts.Dispose();
         _frame.Dispose();
+        // After the frame, so the buttons that drew them are gone first.
+        foreach (var bitmap in _transportBitmaps)
+            bitmap.Dispose();
     }
 
     private void BuildCommandIds(IEnumerable<ActionDefinition> actions)
