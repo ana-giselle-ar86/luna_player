@@ -184,9 +184,18 @@ internal static partial class Localization
 /// using in <c>GlobalUsings.cs</c>, so a string the user can see reads <c>Tr("Open File")</c>.</summary>
 internal static class Text
 {
+    // Every Tr call otherwise makes two native round-trips (one to size the result, one to fill it) plus an
+    // allocation and a UTF-8 decode. A dialog does dozens of these, and a results row does one per video
+    // through TrFormat, so building a list of 50 rows alone was hundreds of crossings - a real part of the
+    // "dialogs feel slow" lag. The chosen language is fixed until the app restarts, so each translation is
+    // cached by its source text the first time it is asked for and returned from memory afterwards.
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> Cache =
+        new(StringComparer.Ordinal);
+
     /// <summary>The translation of <paramref name="text"/>, or <paramref name="text"/> itself when no
     /// catalogue has it. Safe to wrap a string in before any translation of it exists.</summary>
-    internal static string Tr(string text) => Translations.Get(text, Localization.Domain);
+    internal static string Tr(string text)
+        => text is null ? string.Empty : Cache.GetOrAdd(text, static t => Translations.Get(t, Localization.Domain));
 
     /// <summary>The translation of a string that has a plural, choosing the form for <paramref name="count"/>
     /// by the rule the catalogue declares. This cannot be replaced by testing <c>count == 1</c> at the call
@@ -200,7 +209,7 @@ internal static class Text
     /// a placeholder to a value, not its position. A value may carry a .NET format specification after a
     /// colon, as in <c>{seconds:0.0}</c>. Doubled braces stand for a literal brace.</summary>
     internal static string TrFormat(string text, params object?[] values)
-        => Substitute(Translations.Get(text, Localization.Domain), text, values);
+        => Substitute(Tr(text), text, values);
 
     /// <summary><see cref="TrPlural"/> and <see cref="TrFormat"/> together, for a counted message that also
     /// shows the count: <c>TrPluralFormat("{count} file marked", "{count} files marked", count, count)</c>.
