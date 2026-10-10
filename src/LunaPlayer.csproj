@@ -80,16 +80,13 @@
     <ProjectReference Include="..\third-party\WxSharp\src\WxSharp\WxSharp.csproj">
       <AdditionalProperties>Configuration=$(Configuration)</AdditionalProperties>
     </ProjectReference>
-    <!-- Built from source rather than taken from NuGet. The published 3.0.1 packages marshal their
-         WAVEFORMATEX and WAVEHDR structures through [StructLayout] classes, which NativeAOT lays out
-         differently from the runtime - so every WASAPI capture is refused as an unsupported format and
-         WaveOut plays nothing at all. See docs\issues\ for both. -->
-    <ProjectReference Include="..\third-party\NAudio\src\NAudio.Wasapi\NAudio.Wasapi.csproj">
-      <AdditionalProperties>Configuration=$(Configuration)</AdditionalProperties>
-    </ProjectReference>
-    <ProjectReference Include="..\third-party\NAudio\src\NAudio.Extras\NAudio.Extras.csproj">
-      <AdditionalProperties>Configuration=$(Configuration)</AdditionalProperties>
-    </ProjectReference>
+    <!-- NAudio 3.0.1 marshalled its WAVEFORMATEX/WAVEHDR structures through [StructLayout] classes that
+         NativeAOT laid out differently from the runtime, so WASAPI capture was refused as an unsupported
+         format and WaveOut was silent. That is fixed upstream as of the official 3.1.0 "Native AOT"
+         release, so the player takes NAudio from NuGet rather than a source fork. NAudio.Core arrives
+         transitively through these two. -->
+    <PackageReference Include="NAudio.Wasapi" Version="3.1.0" />
+    <PackageReference Include="NAudio.Extras" Version="3.1.0" />
     <ProjectReference Include="Speech\PrismSharp.csproj">
       <AdditionalProperties>Configuration=$(Configuration)</AdditionalProperties>
     </ProjectReference>
