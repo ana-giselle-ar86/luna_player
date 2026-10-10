@@ -21,6 +21,13 @@ internal sealed partial class MainFrame
     /// </remarks>
     private Window DialogParent => Wx.GetActiveWindow() ?? _frame;
 
+    /// <summary>The single-list YouTube results window, built once and reused. A search, a playlist and the
+    /// return from the player all show the same plain list, so the window is kept and its contents refreshed
+    /// rather than the whole thing - list, buttons, menu and all - being reconstructed on every open, which
+    /// was the lag felt whenever one opened. A channel's tabbed browser has a different structure and is
+    /// still built per open.</summary>
+    private YouTube.ResultsDialog? _youTubeResults;
+
     public FileSelection? ChooseFile(string initialDirectory)
     {
         using var dialog = new FileDialog(DialogParent, message: "", directory: initialDirectory, wildcard: MediaLibrary.DialogWildcard, style: FileDialogStyle.DefaultOpen);
@@ -70,7 +77,22 @@ internal sealed partial class MainFrame
     public IptvSourceRequest? ManageIptvSources(IReadOnlyList<IptvSourceListItem> sources, string selectedId) { using var dialog = new Iptv.IptvSourcesDialog(DialogParent, sources, selectedId); return dialog.Show(); }
     public LunaPlayer.Iptv.IptvSourceDraft? EditIptvSource(string caption, LunaPlayer.Iptv.IptvSourceDraft value) { using var dialog = new Iptv.IptvSourceEditDialog(DialogParent, caption, value); return dialog.Show(); }
     public int? BrowseChannels(ChannelBrowserPrompt prompt) { using var dialog = new Iptv.ChannelBrowserDialog(DialogParent, prompt); return dialog.Show(); }
-    public ResultChoice? ShowYouTubeResults(YouTubeResultsPrompt prompt) { using var dialog = new YouTube.ResultsDialog(DialogParent, prompt); return dialog.Show(); }
+    public ResultChoice? ShowYouTubeResults(YouTubeResultsPrompt prompt)
+    {
+        // A channel's tabbed browser has a different control structure, so it is still built per open.
+        if (prompt.Tabs is { Count: > 0 })
+        {
+            using var channel = new YouTube.ResultsDialog(DialogParent, prompt);
+            return channel.Show();
+        }
+        // The plain single-list window is built once and reused: reopening refreshes the list instead of
+        // reconstructing the window. Parented to the main frame, which outlives every such open.
+        if (_youTubeResults is null || !_youTubeResults.IsSingleList)
+            _youTubeResults = new YouTube.ResultsDialog(_frame, prompt);
+        else
+            _youTubeResults.Refresh(prompt);
+        return _youTubeResults.Show();
+    }
     public int? ChooseYouTubeQuality(IReadOnlyList<int> options, bool audioOnly) { using var dialog = new YouTube.QualitySelectionDialog(DialogParent, options, audioOnly); return dialog.Show(); }
     public bool OfferYouTubeComponents() { using var dialog = new YouTube.ComponentsDialog(DialogParent); return dialog.Show(); }
     public void ShowTextInfo(string title, string text) { using var dialog = new TextInfoDialog(DialogParent, title, text); dialog.Show(); }

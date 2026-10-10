@@ -6,7 +6,7 @@ namespace LunaPlayer.Favorites;
 
 /// <summary>The links the user has saved to come back to.</summary>
 ///
-/// <remarks>The JSON shape remains compatible with favorites exported by the Python player.</remarks>
+/// <remarks>The JSON shape is kept stable, so an existing favorites file is read without conversion.</remarks>
 internal sealed class FavoriteStore
 {
     private readonly string _path;
@@ -35,6 +35,17 @@ internal sealed class FavoriteStore
         return target.Length == 0
             ? null
             : ListAll().FirstOrDefault(favorite => favorite.Id == target);
+    }
+
+    /// <summary>The saved favourite whose link matches, or null when none does. Used to decide whether a row
+    /// in a results list is already a favourite, so the same key can add it or take it back out.</summary>
+    internal Favorite? FindByLink(string link)
+    {
+        var target = (link ?? string.Empty).Trim();
+        return target.Length == 0
+            ? null
+            : ListAll().FirstOrDefault(favorite =>
+                string.Equals(favorite.Link.Trim(), target, StringComparison.OrdinalIgnoreCase));
     }
 
     /// <summary>Saves a new link. Returns null, with <see cref="LastError"/> set, if the link is not one this

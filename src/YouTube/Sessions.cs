@@ -11,10 +11,9 @@ namespace LunaPlayer.YouTube;
 /// <summary>What came of asking for the video after this one.</summary>
 ///
 /// <remarks>
-/// Four states rather than the Python player's true/false/None, which cannot tell "the next video is on
-/// its way, do not stop" from "there is nothing after this one, please stop". Its end-of-playback handler
-/// answers both with false and stops in either case, so a video whose successor is still resolving ends
-/// the session a moment before the successor arrives.
+/// Four states rather than three. A plain true/false/None cannot tell "the next video is on its way, do
+/// not stop" from "there is nothing after this one, please stop"; answering both with false and stopping
+/// in either case would end the session a moment before a still-resolving successor arrives.
 /// </remarks>
 internal enum NextOutcome
 {
@@ -32,7 +31,7 @@ internal enum NextOutcome
 /// again.</summary>
 ///
 /// <remarks>
-/// This is the part of the Python player's <c>youtube/flow.py</c> that could not live on
+/// This is the part of the YouTube flow that could not live on
 /// <see cref="Backend"/>: opening a video needs the player and the results window needs the session, and
 /// <see cref="Backend"/> knows about neither. Everything here runs on the UI thread except the work handed
 /// to <see cref="ResolveCache"/>, which is the only thing that touches the network.
@@ -101,11 +100,17 @@ internal sealed class YouTubeSessions : IDisposable
     /// <summary>The address of the video playing now, or null when what is playing is not one.</summary>
     internal string? CurrentWatchUrl => _player.CurrentSource;
 
+    private string _activeChannelUrl = string.Empty;
+
+    /// <summary>The channel address of the YouTube video playing now, or empty when it is not known - a
+    /// video opened from a bare link carries no channel. Used by the video commands that open the channel.</summary>
+    internal string ActiveChannelUrl => _activeChannelUrl;
+
     /// <summary>Searches YouTube and shows what it finds.</summary>
     ///
     /// <remarks>
-    /// The first video is resolved before the window opens, which is what the Python player does and worth
-    /// keeping: it means the row the list opens on plays the instant it is chosen, and it puts the first
+    /// The first video is resolved before the window opens, which is worth doing: it means the row the list
+    /// opens on plays the instant it is chosen, and it puts the first
     /// sign of a rate limit or a broken network in the progress window the user is already looking at
     /// rather than in a message box after they have picked something.
     /// </remarks>
@@ -198,7 +203,7 @@ internal sealed class YouTubeSessions : IDisposable
     }
 
     /// <summary>Opens a channel in the tabbed browser: its videos, shorts, streams, playlists and the rest,
-    /// each paged as the user scrolls, exactly as Hex Player browses a channel.</summary>
+    /// each paged as the user scrolls.</summary>
     /// <remarks>
     /// The browser is backed by yt-dlp, not PyYt, so it is gated on the programs being installed the same
     /// way a download is: when they are missing the offer is made and the channel opened again once they
@@ -244,15 +249,35 @@ internal sealed class YouTubeSessions : IDisposable
             });
     }
 
-    /// <summary>Adds one results row to the favourites, under its own title and address.</summary>
+    /// <summary>Adds a results row to the favourites, or removes it when it is already saved, saying which
+    /// way it went.</summary>
     /// <remarks>
     /// The shared store, so it turns up in the favourites manager and survives a restart. A playlist row is
     /// saved as a playlist; everything else as a video, which is what a channel row's contents would be
-    /// played as anyway. Success and failure are spoken rather than shown, because the results window is
+    /// played as anyway. A row already saved - matched by its address - is taken back out, so the same key
+    /// adds and removes. Success and failure are spoken rather than shown, because the results window is
     /// still up and a message box over it would take the caret off the row.
     /// </remarks>
-    internal void AddFavorite(YouTubeResult item)
+    internal void ToggleFavorite(YouTubeResult item)
     {
+        if (_favorites.FindByLink(item.Url) is Favorite existing)
+        {
+            if (_favorites.Delete(existing.Id))
+            {
+                _speech.Speak(
+                    // Translators: Spoken once a video has been taken back out of the favourites from the results list.
+                    Tr("Removed from favorites."),
+                    // Translators: The short wording spoken once a video has been removed from the favourites.
+                    Tr("Removed from favorites."));
+                return;
+            }
+            var removeError = _favorites.LastError.Length > 0
+                ? _favorites.LastError
+                // Translators: Spoken when a video could not be removed from the favourites.
+                : Tr("Could not remove from favorites.");
+            _speech.Speak(removeError, removeError);
+            return;
+        }
         var kind = item.ItemType is YouTubeItemType.Playlist ? FavoriteKind.Playlist : FavoriteKind.Video;
         if (_favorites.Add(item.Title, kind, item.Url) is not null)
         {
@@ -270,9 +295,14 @@ internal sealed class YouTubeSessions : IDisposable
         _speech.Speak(message, message);
     }
 
+    /// <summary>Opens a video's channel in the player's own channel browser, from the channel address a row
+    /// carried. The in-player counterpart of opening the channel in the web browser.</summary>
+    internal void GoToChannel(string channelUrl, string title)
+        => OpenChannel(new YouTubeResult(string.Empty, title, title, null, channelUrl, channelUrl));
+
     /// <summary>Plays one video, named by a link rather than chosen from a list.</summary>
     /// <remarks>There is no session: nothing follows a single video, so there is no next and Escape has
-    /// nothing to go back to. Any session already open is closed, as the Python player closes it.</remarks>
+    /// nothing to go back to. Any session already open is closed.</remarks>
     internal void PlayLink(string link)
     {
         Clear();
@@ -329,7 +359,7 @@ internal sealed class YouTubeSessions : IDisposable
     /// Moving through the playlist by the ordinary means can land on a session video without going through
     /// <see cref="TryNext"/> - pressing Previous does exactly that. Nothing about playback goes wrong when
     /// it does, but the row Escape returns to and the video counted as "the one after this" are both taken
-    /// from here, so both would be a step behind. The Python player syncs at the same two points.
+    /// from here, so both would be a step behind.
     /// </remarks>
     internal void SyncSelection()
     {
@@ -362,6 +392,7 @@ internal sealed class YouTubeSessions : IDisposable
     internal void Clear()
     {
         _pending = null;
+        _activeChannelUrl = string.Empty;
         var session = _session;
         _session = null;
         session?.Dispose();
@@ -375,8 +406,8 @@ internal sealed class YouTubeSessions : IDisposable
     // ---- showing the list ----
 
     /// <remarks>
-    /// The session is installed before the window opens, not when something is first played. The Python
-    /// player installs it on first play, which leaves a first search with no session - so the page of
+    /// The session is installed before the window opens, not when something is first played. Installing it
+    /// on first play would leave a first search with no session - so the page of
     /// results its "load more" fetches is dropped by the guard that checks the session is still the current
     /// one, after the continuation has already been consumed. Paging a fresh search therefore does nothing
     /// there and cannot be made to by trying again.
@@ -421,9 +452,25 @@ internal sealed class YouTubeSessions : IDisposable
             session.Mode = choice.Mode;
             session.Selected = index;
             var item = session.Items[index];
+            // The user asked to browse into this row's channel rather than play it. Handled like choosing a
+            // channel row: the window has already closed, so opening the channel replaces this list cleanly.
+            if (choice.Channel)
+            {
+                if (item.ChannelUrl.Length > 0)
+                {
+                    GoToChannel(item.ChannelUrl, item.Author);
+                    return;
+                }
+                _speech.Speak(
+                    // Translators: Spoken when the chosen video does not say which channel published it.
+                    Tr("Channel link is not available."),
+                    // Translators: The short wording spoken when the chosen video does not name its channel.
+                    Tr("No channel link."));
+                continue;
+            }
             // A playlist or channel row is not played; choosing it browses one level in, replacing this
-            // list with the videos of the playlist or the playlists of the channel. The Python player does
-            // the same, opening a fresh dialog rather than trying to play the thing itself.
+            // list with the videos of the playlist or the playlists of the channel, opening a fresh dialog
+            // rather than trying to play the thing itself.
             if (item.ItemType is YouTubeItemType.Playlist)
             {
                 OpenPlaylist(item.Url);
@@ -509,17 +556,23 @@ internal sealed class YouTubeSessions : IDisposable
     /// belongs to.
     /// </remarks>
     private bool Open(Resolved ready)
-        => Report(_player.PlaySessionStream(
+    {
+        _activeChannelUrl = ready.Item.ChannelUrl;
+        return Report(_player.PlaySessionStream(
             ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl));
+    }
 
     /// <summary>Starts a video that came from a link rather than from a list.</summary>
     /// <remarks>
-    /// Into the playlist the user is working in, which is where the Python player puts it and where a
-    /// single video belongs: there is no list behind it to move through, nothing for Escape to go back to,
+    /// Into the playlist the user is working in, which is where a single video belongs: there is no list
+    /// behind it to move through, nothing for Escape to go back to,
     /// and nothing a stage of its own would keep separate. A plain network stream is opened the same way.
     /// </remarks>
     private bool OpenAlone(Resolved ready)
-        => Report(_player.OpenStream(ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl));
+    {
+        _activeChannelUrl = ready.Item.ChannelUrl;
+        return Report(_player.OpenStream(ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl));
+    }
 
     private bool Report(bool opened)
     {
@@ -547,6 +600,7 @@ internal sealed class YouTubeSessions : IDisposable
             return false;
         if (!_player.Next(wrap: false))
             return false;
+        _activeChannelUrl = ready.Item.ChannelUrl;
         session.Selected = to;
         Prefetch(session, to + 1, 1);
         return true;
@@ -574,9 +628,9 @@ internal sealed class YouTubeSessions : IDisposable
     }
 
     /// <remarks>
-    /// Announcing the new title is not in the Python player, which advances silently and leaves the user to
-    /// work out what is playing. Nor is saying anything when the video could not be fetched, which there
-    /// leaves "Loading next video..." as the last thing said and nothing following it.
+    /// The new title is announced, so the user is not left to work out what is playing. Something is also
+    /// said when the video could not be fetched, so "Loading next video..." is not left as the last thing
+    /// said with nothing following it.
     /// </remarks>
     private void NextReady(PendingNext pending, ResolveOutcome outcome)
     {
@@ -605,7 +659,7 @@ internal sealed class YouTubeSessions : IDisposable
     /// <summary>Starts resolving <paramref name="count"/> videos from <paramref name="start"/>, so they
     /// play without a wait when they are reached.</summary>
     /// <remarks>
-    /// Both streams of each, as Hex Player prefetches both: the user chooses picture or sound only when they
+    /// Both streams of each: the user chooses picture or sound only when they
     /// press the key, so both must be ready by then rather than one guessed at. The four-wide gate in
     /// <see cref="ResolveCache"/> keeps asking for two per row from flooding YouTube - the second simply
     /// queues behind the first - and a mode nobody plays costs one resolve that the bound soon evicts.
@@ -681,8 +735,7 @@ internal sealed class YouTubeSessions : IDisposable
     /// <summary>Turns a failure a worker reported into the sentence the user reads.</summary>
     /// <remarks>
     /// Here rather than at the point of failure because <c>Tr</c> may only be called on the UI thread, and
-    /// the workers are not on it. The raw detail follows the sentence, as the Python player's yt-dlp
-    /// diagnostics follow its own wording.
+    /// the workers are not on it. The raw detail follows the sentence.
     /// </remarks>
     /// <param name="fallback">What to say when nothing more precise is known. Each job has its own
     /// wording for it - a search that failed and a video that failed are not the same news - which is why
@@ -773,11 +826,15 @@ internal sealed class YouTubeSessions : IDisposable
 
         public void OpenInBrowser(int index) => On(index, item => _owner._browse(item.Url));
 
-        public void OpenChannel(int index) => On(index, item =>
+        public void OpenChannelInBrowser(int index) => On(index, item => WithChannel(item, _owner._browse));
+
+        /// <summary>Runs <paramref name="action"/> on the row's channel address, or says so when the listing
+        /// named no channel. Shared by the browser and in-player ways of opening a channel.</summary>
+        private void WithChannel(YouTubeResult item, Action<string> action)
         {
             if (item.ChannelUrl.Length > 0)
             {
-                _owner._browse(item.ChannelUrl);
+                action(item.ChannelUrl);
                 return;
             }
             _owner._speech.Speak(
@@ -785,11 +842,19 @@ internal sealed class YouTubeSessions : IDisposable
                 Tr("Channel link is not available."),
                 // Translators: The short wording spoken when the chosen video does not name its channel.
                 Tr("No channel link."));
-        });
+        }
 
         public void Download(int index) => On(index, item => _owner._download(item.Url));
 
-        public void AddFavorite(int index) => On(index, item => _owner.AddFavorite(item));
+        public bool IsFavorite(int index) =>
+            Peek(index) is YouTubeResult item && _owner._favorites.FindByLink(item.Url) is not null;
+
+        public void ToggleFavorite(int index) => On(index, item => _owner.ToggleFavorite(item));
+
+        /// <summary>Reads one row without making it the current selection - a query the context menu runs
+        /// before it opens, which must not move the caret the way acting on a row does.</summary>
+        private YouTubeResult? Peek(int index)
+            => _closed || index < 0 || index >= _session.Items.Count ? null : _session.Items[index];
 
         /// <summary>Runs something on one row, so long as the row is still there.</summary>
         /// <remarks>

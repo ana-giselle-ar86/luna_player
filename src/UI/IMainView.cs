@@ -118,14 +118,20 @@ internal interface IYouTubeResultsFeed
     /// <summary>Shows a row in the web browser.</summary>
     void OpenInBrowser(int index);
 
-    /// <summary>Shows the channel that published a row, refusing aloud when it named none.</summary>
-    void OpenChannel(int index);
+    /// <summary>Opens the channel that published a row in the web browser, refusing aloud when it named
+    /// none.</summary>
+    void OpenChannelInBrowser(int index);
 
     /// <summary>Saves a row to a folder on this computer, asking which folder first.</summary>
     void Download(int index);
 
-    /// <summary>Adds a row to the favourites, under its own title and address.</summary>
-    void AddFavorite(int index);
+    /// <summary>Whether the row is already in the favourites, so the window can offer to remove rather than
+    /// add it.</summary>
+    bool IsFavorite(int index);
+
+    /// <summary>Adds the row to the favourites, or removes it when it is already there, saying which way it
+    /// went.</summary>
+    void ToggleFavorite(int index);
 
     /// <summary>Switches a channel browser to another tab. Returns at once; <paramref name="replaced"/>
     /// runs later on the UI thread with the new tab's rows, or with null when the switch failed or was
@@ -142,12 +148,18 @@ internal interface IYouTubeResultsFeed
 }
 
 /// <summary>What the user chose from the results list: which row, and whether to play its picture or its
-/// sound alone.</summary>
+/// sound alone - or, when <see cref="Channel"/> is set, to browse into that row's channel instead of
+/// playing it.</summary>
 /// <remarks>
 /// The mode is the whole point of returning a record rather than a bare index: Enter asks for the video and
 /// Ctrl+Enter for the audio, and the session needs to know which before it resolves the row.
 /// </remarks>
-internal readonly record struct ResultChoice(int Index, PlayMode Mode);
+internal readonly record struct ResultChoice(int Index, PlayMode Mode)
+{
+    /// <summary>Set when the user asked to go to the row's channel rather than play the row. The window
+    /// closes the same way, and the session opens the channel instead of resolving a stream.</summary>
+    internal bool Channel { get; init; }
+}
 
 internal sealed record YouTubeResultsPrompt(
     string Title,
