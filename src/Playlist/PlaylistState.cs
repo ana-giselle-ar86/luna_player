@@ -15,9 +15,12 @@ namespace LunaPlayer.Playlist;
 /// at. For a YouTube video this is its watch page, which outlives the stream URL in the path.</param>
 /// <param name="AudioFile">A second stream carrying the sound, played alongside the path. YouTube serves
 /// picture and sound separately above 360p, so a video entry has both.</param>
-internal readonly record struct EntryInfo(string? Title, string? Source, string? AudioFile)
+/// <param name="AudioOnly">Whether this entry is to be played as sound only, with any video track ignored.
+/// A YouTube video opened "as audio" can still resolve to a stream that carries a picture; this says to
+/// leave that picture undecoded so the play is truly audio.</param>
+internal readonly record struct EntryInfo(string? Title, string? Source, string? AudioFile, bool AudioOnly = false)
 {
-    internal bool IsEmpty => Title is null && Source is null && AudioFile is null;
+    internal bool IsEmpty => Title is null && Source is null && AudioFile is null && !AudioOnly;
 }
 
 internal sealed class PlaylistState
@@ -101,11 +104,12 @@ internal sealed class PlaylistState
 
     /// <summary>Records where an entry came from and, for a video, the second stream carrying its sound.
     /// </summary>
-    internal void SetSource(string path, string? source, string? audioFile = null)
+    internal void SetSource(string path, string? source, string? audioFile = null, bool audioOnly = false)
         => Update(path, info => info with
         {
             Source = string.IsNullOrWhiteSpace(source) ? null : source,
             AudioFile = string.IsNullOrWhiteSpace(audioFile) ? null : audioFile,
+            AudioOnly = audioOnly,
         });
 
     /// <summary>The address an entry came from, or null when its path is the address.</summary>
@@ -113,6 +117,9 @@ internal sealed class PlaylistState
 
     /// <summary>The stream carrying the sound of a video whose path carries only the picture.</summary>
     internal string? GetAudioFile(string? path) => Info(path).AudioFile;
+
+    /// <summary>Whether an entry should be played as sound only, with any video track left undecoded.</summary>
+    internal bool GetAudioOnly(string? path) => Info(path).AudioOnly;
 
     internal string? CurrentSource => GetSource(CurrentPath);
 

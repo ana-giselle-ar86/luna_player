@@ -23,7 +23,7 @@ internal sealed class SettingsActions
         ShortcutManager globalShortcuts,
         ISpeechOutput speech,
         Backend youTube,
-        Components youTubeComponents)
+        YouTube.Components.Service youTubeComponents)
     {
         void ApplyRuntime(PlayerSettings source)
         {

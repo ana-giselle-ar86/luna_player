@@ -1,15 +1,4 @@
-namespace LunaPlayer.YouTube;
-
-/// <summary>Whether a play resolves the video stream or the audio stream alone. Chosen per play - Enter for
-/// the video, Ctrl+Enter for the sound - rather than fixed for the session, so one list serves both.
-/// </summary>
-internal enum PlayMode
-{
-    /// <summary>The picture, at the video quality.</summary>
-    Video,
-    /// <summary>The sound alone, at the audio quality.</summary>
-    Audio,
-}
+namespace LunaPlayer.YouTube.Playback;
 
 /// <summary>Where a list of rows came from.</summary>
 internal enum SessionKind
@@ -40,7 +29,7 @@ internal enum SessionKind
 /// two a play uses - picture or sound - is not frozen: it is chosen at the moment of playing, and both are
 /// prefetched, so either is ready at once.
 /// </remarks>
-internal sealed class YouTubeSession : IDisposable
+internal sealed class Session : IDisposable
 {
     /// <summary>One tab's rows and the source they are paged from. A search or a playlist has exactly one;
     /// a channel has one per section it has opened.</summary>
@@ -64,7 +53,7 @@ internal sealed class YouTubeSession : IDisposable
     /// </remarks>
     private readonly CancellationToken _token;
 
-    internal YouTubeSession(
+    internal Session(
         SessionKind kind,
         IEnumerable<YouTubeResult> items,
         int videoQuality,
@@ -141,7 +130,7 @@ internal sealed class YouTubeSession : IDisposable
     /// </summary>
     internal string ChannelBase { get; }
 
-    /// <summary>Which channel tab is showing, as an index into <see cref="ChannelTabs.Keys"/>.</summary>
+    /// <summary>Which channel tab is showing, as an index into <see cref="Client.Tabs.Keys"/>.</summary>
     internal int CurrentTab { get; private set; }
 
     /// <summary>The channel's name, shown as the heading of a channel session. Empty otherwise.</summary>

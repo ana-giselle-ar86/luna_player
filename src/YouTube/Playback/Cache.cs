@@ -1,4 +1,4 @@
-namespace LunaPlayer.YouTube;
+namespace LunaPlayer.YouTube.Playback;
 
 /// <summary>Resolves videos ahead of when they are wanted, and hands out what it has already resolved.
 /// </summary>
@@ -29,20 +29,20 @@ internal sealed class ResolveCache : IDisposable
     private readonly Lock _sync = new();
     private readonly Dictionary<string, Entry> _entries = new(StringComparer.Ordinal);
     private readonly SemaphoreSlim _gate = new(Workers, Workers);
-    private readonly YtDlpClient _ytDlp;
+    private readonly Client.Resolver _resolver;
     private long _clock;
     private bool _disposed;
 
-    internal ResolveCache(YtDlpClient ytDlp)
+    internal ResolveCache(Client.Resolver resolver)
     {
-        _ytDlp = ytDlp;
+        _resolver = resolver;
     }
 
     /// <summary>Resolves one video through yt-dlp, the only thing that can turn it into a playable
     /// address.</summary>
     private ResolveOutcome Resolve(
         string watchUrl, YouTubeResult item, bool audioOnly, int quality, CancellationToken token)
-        => _ytDlp.Resolve(watchUrl, item, audioOnly, quality, token);
+        => _resolver.Resolve(watchUrl, item, audioOnly, quality, token);
 
     /// <summary>The name one set of options gives a video.</summary>
     /// <remarks>
@@ -157,7 +157,7 @@ internal sealed class ResolveCache : IDisposable
             // Task.Wait rethrows a faulted task wrapped in an AggregateException. Letting that out would
             // fault the job it runs inside, and a faulted job is rethrown on the UI thread as a crash -
             // the wrong end for something as ordinary as a request that went wrong.
-            return PyYtClient.Explain(failure.InnerException ?? failure, waitToken);
+            return FailureMapping.Explain(failure.InnerException ?? failure, waitToken);
         }
         return task.IsCompletedSuccessfully ? task.Result : ResolveOutcome.Cancelled;
     }

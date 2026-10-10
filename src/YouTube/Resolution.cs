@@ -1,4 +1,4 @@
-using System.Globalization;
+using PyYt;
 
 namespace LunaPlayer.YouTube;
 
@@ -55,54 +55,26 @@ internal readonly record struct ResolveOutcome(Resolved? Value, ResolveFailure F
     internal static ResolveOutcome Cancelled { get; } = new(null, ResolveFailure.Cancelled);
 }
 
-/// <summary>Works out how long a resolved address will last.</summary>
-///
+/// <summary>Turns whatever the metadata library threw into the neutral outcome the player reports.</summary>
 /// <remarks>
-/// Choosing which stream to play is yt-dlp's job now - it is handed the preferences on the command line and
-/// returns the addresses already chosen - so all that is left here is
-/// reading the deadline YouTube signs into those addresses.
+/// PyYt draws a coarser set of distinctions than yt-dlp does. A cancellation the user asked for is told
+/// apart from every other failure by the token, not the exception type, because a cancellation can arrive
+/// carrying somebody else's token. Everything network-shaped - a refused request, a socket that dropped, a
+/// rate-limit surfacing as an HTTP error - reads as Network; a page PyYt could not make sense of reads as
+/// Unknown. Note there is no RateLimited here: that verdict now comes only from yt-dlp, which sees the
+/// "429" text; a rate limit reaching PyYt looks like any other network failure.
 /// </remarks>
-internal static class StreamPicker
+internal static class FailureMapping
 {
-    /// <summary>How long a resolved address is good for.</summary>
-    ///
-    /// <remarks>
-    /// YouTube signs these addresses and states the deadline in the address itself, so it is read rather
-    /// than guessed. A margin comes off it because playback starts some time after the resolve and the
-    /// deadline applies to the request, not to the video; half an hour stands in when there is no
-    /// <c>expire</c> to read, which is well inside the shortest lifetime YouTube is known to issue.
-    /// </remarks>
-    internal static DateTimeOffset ExpiryOf(string url)
+    internal static ResolveOutcome Explain(Exception failure, CancellationToken token) => failure switch
     {
-        var margin = TimeSpan.FromMinutes(2);
-        var stated = StatedExpiry(url);
-        if (stated is not DateTimeOffset expiry)
-            return DateTimeOffset.UtcNow + TimeSpan.FromMinutes(30) - margin;
-        return expiry - margin;
-    }
-
-    /// <summary>The earlier of the deadlines two addresses state, so a pair is treated as one.</summary>
-    internal static DateTimeOffset ExpiryOf(string url, string? audioUrl)
-    {
-        var first = ExpiryOf(url);
-        return audioUrl is null ? first : first < ExpiryOf(audioUrl) ? first : ExpiryOf(audioUrl);
-    }
-
-    private static DateTimeOffset? StatedExpiry(string url)
-    {
-        if (!LunaPlayer.Media.LinkValidator.TryGetHttpUrl(url, out var uri))
-            return null;
-        var query = uri.Query;
-        if (query.Length <= 1)
-            return null;
-        foreach (var pair in query[1..].Split('&'))
-        {
-            if (!pair.StartsWith("expire=", StringComparison.Ordinal))
-                continue;
-            if (long.TryParse(pair.AsSpan("expire=".Length), NumberStyles.None, CultureInfo.InvariantCulture, out var seconds))
-                return DateTimeOffset.FromUnixTimeSeconds(seconds);
-            return null;
-        }
-        return null;
-    }
+        OperationCanceledException when token.IsCancellationRequested => ResolveOutcome.Cancelled,
+        OperationCanceledException => ResolveOutcome.Failed(ResolveFailure.Network, failure.Message),
+        VideoNotFoundError => ResolveOutcome.Failed(ResolveFailure.Unavailable, failure.Message),
+        RequestError => ResolveOutcome.Failed(ResolveFailure.Network, failure.Message),
+        HttpRequestException or IOException => ResolveOutcome.Failed(ResolveFailure.Network, failure.Message),
+        ParsingError => ResolveOutcome.Failed(ResolveFailure.Unknown, failure.Message),
+        PyYtException => ResolveOutcome.Failed(ResolveFailure.Unknown, failure.Message),
+        _ => ResolveOutcome.Failed(ResolveFailure.Unknown, failure.Message),
+    };
 }

@@ -8,6 +8,17 @@ internal enum YouTubeItemType
     Channel,
 }
 
+/// <summary>Whether a play resolves the video stream or the audio stream alone. Chosen per play - Enter for
+/// the video, Ctrl+Enter for the sound - rather than fixed for the session, so one list serves both.
+/// </summary>
+internal enum PlayMode
+{
+    /// <summary>The picture, at the video quality.</summary>
+    Video,
+    /// <summary>The sound alone, at the audio quality.</summary>
+    Audio,
+}
+
 /// <summary>One video, as a search or a playlist reports it.</summary>
 /// <remarks>
 /// Everything here comes from the listing itself; nothing in it requires the video to have been opened,
@@ -44,16 +55,4 @@ internal readonly record struct YouTubeResult(
 
     internal static YouTubeResult None { get; } =
         new(string.Empty, string.Empty, string.Empty, null, string.Empty, string.Empty);
-}
-
-/// <summary>Whether an operation worked, and what to tell the user when it did not.</summary>
-/// <remarks>
-/// The same shape as <see cref="LunaPlayer.UI.UiOperation"/>, and for the same reason: a caller that
-/// only wants to report a failure should not have to catch anything to find out there was one.
-/// </remarks>
-/// <param name="Error">Empty when <paramref name="Success"/> is true; otherwise a message already in
-/// the user's language, ready to show.</param>
-internal readonly record struct YouTubeOutcome(bool Success, string Error = "")
-{
-    internal static YouTubeOutcome Ok { get; } = new(true);
 }

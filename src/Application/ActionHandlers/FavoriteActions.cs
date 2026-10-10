@@ -5,6 +5,7 @@ using LunaPlayer.Media;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
 using LunaPlayer.YouTube;
+using LunaPlayer.YouTube.Playback;
 
 namespace LunaPlayer.Application.ActionHandlers;
 
@@ -17,7 +18,7 @@ internal sealed class FavoriteActions
     private readonly MediaPlayer _player;
     private readonly ISpeechOutput _speech;
     private readonly FavoriteStore _store;
-    private readonly YouTubeSessions _sessions;
+    private readonly Sessions _sessions;
 
     internal FavoriteActions(
         ActionRouter router,
@@ -25,7 +26,7 @@ internal sealed class FavoriteActions
         MediaPlayer player,
         ISpeechOutput speech,
         FavoriteStore store,
-        YouTubeSessions sessions)
+        Sessions sessions)
     {
         _view = view;
         _player = player;

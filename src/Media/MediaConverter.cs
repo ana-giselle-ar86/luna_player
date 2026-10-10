@@ -80,7 +80,7 @@ internal readonly record struct ConversionProgress(
 internal sealed class MediaConverter
 {
     /// <summary>The FFmpeg beside the player, in the same native-library folder yt-dlp is pointed at.</summary>
-    private static readonly string FfmpegPath = Path.Combine(Tools.NativeDirectory, "ffmpeg.exe");
+    private static readonly string FfmpegPath = Path.Combine(Utils.NativeDirectory, "ffmpeg.exe");
 
     /// <summary>How long to wait for a pipe-draining thread to notice its process has gone. It has almost
     /// always finished the instant the process exits; this only bounds the wait if it has not.</summary>
@@ -223,7 +223,7 @@ internal sealed class MediaConverter
         Paths.EnsureDirectoryFor(destination);
         try
         {
-            using var process = Tools.Start(FfmpegPath, BuildArguments(source, destination, settings));
+            using var process = Utils.Start(FfmpegPath, BuildArguments(source, destination, settings));
             // Killed the moment the token is set, not at FFmpeg's next line of output: a stalled or very
             // long conversion must answer the Cancel button at once.
             using var abort = token.Register(() => Stop(process));
