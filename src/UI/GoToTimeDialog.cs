@@ -52,7 +52,7 @@ internal sealed class GoToTimeDialog : IDisposable
         total %= 3600;
         _minutes.Value = total / 60;
         _seconds.Value = total % 60;
-        // The Python player binds EVT_SPINCTRL and EVT_TEXT on each spinner; wxEVT_SPINCTRL covers the
+        // Both wxEVT_SPINCTRL and wxEVT_TEXT are bound on each spinner: wxEVT_SPINCTRL covers the
         // arrows and wxEVT_TEXT covers typing, so both are needed for a typed value to be re-clamped.
         foreach (var spin in new[] { _hours, _minutes, _seconds })
         {

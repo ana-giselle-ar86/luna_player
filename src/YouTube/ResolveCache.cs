@@ -4,10 +4,10 @@ namespace LunaPlayer.YouTube;
 /// </summary>
 ///
 /// <remarks>
-/// The Python player keeps two dictionaries for this - one of futures and one of finished results - and
-/// moves entries between them, which leaves a window where a video is in neither and a second request for
-/// it starts a second download. One <see cref="Task"/> per video closes that window: the task is the
-/// entry whether it has finished or not, so "already done", "already running" and "not started" are one
+/// Keeping two dictionaries for this - one of futures and one of finished results - and moving entries
+/// between them would leave a window where a video is in neither and a second request for it starts a
+/// second download. One <see cref="Task"/> per video closes that window: the task is the entry whether it
+/// has finished or not, so "already done", "already running" and "not started" are one
 /// lookup rather than two.
 ///
 /// A plain dictionary behind a lock rather than a <c>ConcurrentDictionary</c>, deliberately.
@@ -17,11 +17,11 @@ namespace LunaPlayer.YouTube;
 /// </remarks>
 internal sealed class ResolveCache : IDisposable
 {
-    /// <summary>How many videos may be resolved at once. The Python player's pool is four wide, and going
-    /// wider mostly buys a faster route to being rate-limited.</summary>
+    /// <summary>How many videos may be resolved at once. Four, because going wider mostly buys a faster
+    /// route to being rate-limited.</summary>
     private const int Workers = 4;
 
-    /// <summary>How many entries to keep, as the Python player keeps. Enough that working up and down a
+    /// <summary>How many entries to keep. Enough that working up and down a
     /// long playlist never throws away a video that was already resolved, and small enough that a session
     /// left open all day does not accumulate addresses that expired hours ago.</summary>
     private const int Bound = 200;

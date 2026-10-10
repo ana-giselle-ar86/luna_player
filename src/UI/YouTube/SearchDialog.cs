@@ -7,7 +7,7 @@ namespace LunaPlayer.UI.YouTube;
 /// typed.</summary>
 ///
 /// <remarks>
-/// A port of the Python player's <c>gui/search_dialog.py</c>. Above the plain query box and the filter
+/// Above the plain query box and the filter
 /// sits a list of suggestions that is hidden until there are any: as the user types, a debounce waits for
 /// them to pause, then a background thread asks YouTube what it would finish the words with, and the answer
 /// is shown and announced. The list is reached with Down from the box and left with Up from its first row;
@@ -18,7 +18,7 @@ namespace LunaPlayer.UI.YouTube;
 /// </remarks>
 internal sealed class SearchDialog : IDisposable
 {
-    /// <summary>How long after the last keystroke the suggestions are fetched. The Python player's value.
+    /// <summary>How long after the last keystroke the suggestions are fetched.
     /// </summary>
     private const int SuggestionsDelayMs = 750;
 
@@ -205,8 +205,8 @@ internal sealed class SearchDialog : IDisposable
 
     /// <remarks>
     /// The suggestions list is reached and left with the arrows, so those are routed by which control holds
-    /// the focus. Escape puts the list away when it is open rather than closing the window, matching the
-    /// Python player; when it is not, it falls through to the dialog's own cancel.
+    /// the focus. Escape puts the list away when it is open rather than closing the window; when it is not,
+    /// it falls through to the dialog's own cancel.
     /// </remarks>
     private void OnCharHook(object? sender, KeyEventArgs args)
     {

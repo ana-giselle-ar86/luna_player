@@ -123,7 +123,7 @@ internal sealed class RecordingEngine : IDisposable
 
         // Played and allowed to finish before a single source is opened. A loopback source records
         // whatever the speakers play, so a tone that overlapped the capture would be the first thing in
-        // the file. The Python player orders it the same way, and for the same reason.
+        // the file.
         RecordingTone.Play(RecordingTone.Started);
 
         var capture = CaptureFormat(options);
@@ -397,7 +397,7 @@ internal sealed class RecordingEngine : IDisposable
         return source => new VolumeSampleProvider(source) { Volume = scale };
     }
 
-    /// <summary>What a recording is called: the moment it started, as the Python player names them.
+    /// <summary>What a recording is called: the moment it started.
     /// </summary>
     private static string Name(RecordingFormat format)
         => $"recording_{DateTime.Now:yyyyMMdd_HHmmss}.{AudioCatalog.Extension(format)}";

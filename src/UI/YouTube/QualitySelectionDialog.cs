@@ -85,7 +85,7 @@ internal sealed class QualitySelectionDialog : IDisposable
         // Translators: One audio-bitrate choice. {rate} is a number of kilobits per second.
         => TrFormat("{rate} kbps", kbps.ToString(CultureInfo.InvariantCulture));
 
-    /// <summary>The words shown beside a picture height, matching the Python player's wording, with a plain
+    /// <summary>The words shown beside a picture height, with a plain
     /// "{height}p" for any height not in the table. Shared with the preferences page.</summary>
     internal static string VideoLabel(int height)
     {

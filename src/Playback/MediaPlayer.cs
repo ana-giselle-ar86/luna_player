@@ -40,7 +40,7 @@ internal sealed class MediaPlayer : IDisposable
     ///
     /// <remarks>
     /// This is what keeps a list of videos from YouTube out of the playlist the user opened. Appending them
-    /// to it, which is what the Python player does, merges them with the local files, throws away the
+    /// to it merges them with the local files, throws away the
     /// shuffle order, and leaves the current entry somewhere else entirely once they are taken out again -
     /// so coming back from YouTube starts the last file in the folder rather than carrying on where it left
     /// off.
@@ -205,7 +205,7 @@ internal sealed class MediaPlayer : IDisposable
     }
 
     /// <summary>Opens a network stream. Unlike a file it is appended to the playlist rather than replacing
-    /// it, matching the Python player's open_stream.</summary>
+    /// it.</summary>
     /// <param name="title">What to call the entry. A resolved stream address says nothing a user would
     /// recognise, so the name comes from whoever resolved it.</param>
     /// <param name="source">The address the stream was resolved from, which outlives the stream itself.
@@ -216,7 +216,7 @@ internal sealed class MediaPlayer : IDisposable
         string url, string? title = null, string? source = null, string? audioFile = null)
     {
         // A plain stream, or a single video named by a link, belongs to the playlist the user is working
-        // in - as it does in the Python player. Only a list of videos from YouTube gets a stage of its own.
+        // in. Only a list of videos from YouTube gets a stage of its own.
         LeaveSession();
         SavePosition();
         if (!_playlist.Append(url, jump: true))
@@ -548,8 +548,8 @@ internal sealed class MediaPlayer : IDisposable
         return true;
     }
 
-    /// <summary>The name to show for a file: its media title when it declares one, otherwise the file name.
-    /// Mirrors the Python player, which shows a title where it knows one and the file name otherwise.</summary>
+    /// <summary>The name to show for a file: its media title when it declares one, otherwise the file
+    /// name.</summary>
     internal string DisplayName(string path)
     {
         // mpv loads asynchronously, so the title is not there yet when the file is opened. Re-read it for

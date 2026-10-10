@@ -7,7 +7,7 @@ namespace LunaPlayer.UI.YouTube;
 /// it.</summary>
 ///
 /// <remarks>
-/// A port of the Python player's <c>gui/description.py</c>. The box shows a <em>processed</em> copy of the
+/// The box shows a <em>processed</em> copy of the
 /// text - each link put on its own line and the blank lines that follow it closed up - so a link can be
 /// reached and opened on a line of its own; Enter on a link's line opens it. Copy and the two exports keep
 /// the <em>raw</em> text the uploader wrote, save for the HTML export, which wraps the links it shows in
@@ -15,7 +15,7 @@ namespace LunaPlayer.UI.YouTube;
 /// </remarks>
 internal sealed partial class DescriptionDialog : IDisposable
 {
-    // Gruber's "liberal, accurate" URL pattern, the one Hex uses: it finds the links in a description so each
+    // Gruber's "liberal, accurate" URL pattern: it finds the links in a description so each
     // can be put on its own line, opened from its line, and wrapped in an anchor when the text is exported.
     // A verbatim string rather than a raw one so the old xgettext that builds the translation template can
     // still lex this file; the two hold the same pattern, the verbatim form only doubling its one quote.
@@ -86,7 +86,7 @@ internal sealed partial class DescriptionDialog : IDisposable
     internal void Show() => _dialog.ShowModal();
     public void Dispose() => _dialog.Dispose();
 
-    /// <summary>Puts each link on its own line and closes up the blank lines around it, as Hex does: a link
+    /// <summary>Puts each link on its own line and closes up the blank lines around it: a link
     /// on a line by itself can be reached and opened, where one buried in a paragraph cannot.</summary>
     private static string Process(string content)
     {
@@ -134,7 +134,7 @@ internal sealed partial class DescriptionDialog : IDisposable
         _text.Focus();
     }
 
-    /// <summary>The HTML export, as Hex builds it: the shown text, its link lines turned into anchors, under
+    /// <summary>The HTML export: the shown text, its link lines turned into anchors, under
     /// a heading of the video's title.</summary>
     private string BuildHtml()
     {
@@ -173,7 +173,7 @@ internal sealed partial class DescriptionDialog : IDisposable
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException
             or System.Security.SecurityException)
         {
-            // A best-effort export: a write that fails is left silent, as Hex leaves it, rather than raising
+            // A best-effort export: a write that fails is left silent, rather than raising
             // a modal error over a window the user opened only to read.
         }
     }

@@ -6,8 +6,8 @@ namespace LunaPlayer.YouTube;
 /// <summary>The two programs the optional yt-dlp path needs, and where they live.</summary>
 ///
 /// <remarks>
-/// Beside the player rather than in its settings folder, which is where the Python player keeps them and
-/// where an installed copy can find them without a search. Neither is shipped: both are fetched on request
+/// Beside the player rather than in its settings folder, where an installed copy can find them without a
+/// search. Neither is shipped: both are fetched on request
 /// and the player works without either, so everything here answers "is it there" before it answers
 /// anything else.
 ///
@@ -50,7 +50,7 @@ internal static class Tools
 
     /// <summary>What to pass yt-dlp so it uses the Deno beside it, or null when there is none.</summary>
     /// <remarks>
-    /// The path is spelled with forward slashes, as the Python player spells it: yt-dlp splits this
+    /// The path is spelled with forward slashes: yt-dlp splits this
     /// argument on the colon after <c>deno</c>, and a Windows drive letter carries a colon of its own.
     /// </remarks>
     internal static string? DenoRuntime
@@ -62,8 +62,8 @@ internal static class Tools
     /// <remarks>
     /// The folders are prepended rather than the environment left alone, because yt-dlp looks for its helper
     /// programs on PATH. This makes it use Luna's FFmpeg from <c>lib</c>, while still finding yt-dlp and Deno
-    /// beside LunaPlayer.exe. The Python player changes its own process's PATH; changing only the child's
-    /// leaves Luna itself alone.
+    /// beside LunaPlayer.exe. Changing only the child's PATH rather than Luna's own leaves Luna itself
+    /// alone.
     /// </remarks>
     internal static Process Start(string executable, IEnumerable<string> arguments)
     {

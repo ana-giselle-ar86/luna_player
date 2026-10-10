@@ -11,8 +11,8 @@ namespace LunaPlayer.YouTube;
 /// fetching them, and keeping them current.</summary>
 ///
 /// <remarks>
-/// The offer is made at the point of use rather than at startup, which is where the Python player makes
-/// it. Nothing the player does by default needs either program - searching, playing and saving are its own
+/// The offer is made at the point of use rather than at startup. Nothing the player does by default needs
+/// either program - searching, playing and saving are its own
 /// work - so somebody who never touches YouTube is never asked about it, and somebody who is asked has just
 /// tried to search, which is the one thing that cannot go anywhere without them. There is no "do not ask
 /// again": the programs are the only route to YouTube, so declining is answered next time by asking again
@@ -59,9 +59,9 @@ internal sealed class Components
     /// <summary>Makes sure the programs are there, offering to fetch them if they are not.</summary>
     ///
     /// <remarks>
-    /// Three answers rather than two, because a fetch that has just started is neither. The Python player
-    /// waits for the download here, holding the whole interface inside a nested event loop for as long as
-    /// GitHub takes; this returns at once and calls <paramref name="installed"/> when it is over, so the
+    /// Three answers rather than two, because a fetch that has just started is neither. Rather than wait for
+    /// the download here, holding the whole interface inside a nested event loop for as long as GitHub
+    /// takes, this returns at once and calls <paramref name="installed"/> when it is over, so the
     /// player stays usable and the caller can pick up where it left off.
     /// </remarks>
     internal ComponentsState Ensure(YtDlpChannel channel, Action? installed = null)
@@ -130,8 +130,7 @@ internal sealed class Components
     ///
     /// <remarks>
     /// Its own updater rather than a fresh download. yt-dlp knows how to replace itself while it is
-    /// running, which on Windows a plain overwrite cannot do, and it is the route the Python player takes
-    /// for the same reason.
+    /// running, which on Windows a plain overwrite cannot do.
     /// </remarks>
     internal void Update()
     {
@@ -283,8 +282,7 @@ internal sealed class Components
 
     // ---- wording ----
 
-    /// <summary>The three lines a download window shows under its heading, as the Python player shows
-    /// them.</summary>
+    /// <summary>The three lines a download window shows under its heading.</summary>
     /// <remarks>Called from a progress window's own tick, which is on the UI thread, so it may
     /// translate.</remarks>
     internal static string Sizes(ProgressUpdate update)

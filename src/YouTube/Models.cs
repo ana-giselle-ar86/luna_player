@@ -10,8 +10,8 @@ internal enum YouTubeItemType
 
 /// <summary>One video, as a search or a playlist reports it.</summary>
 /// <remarks>
-/// A port of the Python player's <c>YtItem</c>. Everything here comes from the listing itself; nothing
-/// in it requires the video to have been opened, which is what lets a results window be filled from one
+/// Everything here comes from the listing itself; nothing in it requires the video to have been opened,
+/// which is what lets a results window be filled from one
 /// request rather than one per row.
 /// </remarks>
 /// <param name="Id">The eleven character video id.</param>

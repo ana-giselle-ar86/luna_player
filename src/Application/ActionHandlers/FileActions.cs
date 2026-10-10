@@ -142,7 +142,7 @@ internal sealed class FileActions
             Tr("Open Link"));
         if (link is null)
             return;
-        // An empty entry is rejected the same way as a bad one, as the Python player does.
+        // An empty entry is rejected the same way as a bad one.
         var url = link.Trim();
         if (!LinkValidator.IsHttpUrl(url))
         {

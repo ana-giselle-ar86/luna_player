@@ -9,8 +9,8 @@ namespace LunaPlayer.YouTube;
 /// <summary>Fetches yt-dlp and Deno from the projects that publish them.</summary>
 ///
 /// <remarks>
-/// A port of the Python player's <c>youtube/components.py</c>. Both are taken from their own GitHub
-/// releases, straight from the "latest" address rather than from a version this player decides on, so a
+/// Both yt-dlp and Deno are taken from their own GitHub releases, straight from the "latest" address
+/// rather than from a version this player decides on, so a
 /// build of the player from a year ago still fetches something that works with YouTube today.
 ///
 /// Everything is written to a scratch file beside its destination and moved into place at the end. A

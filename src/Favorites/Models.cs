@@ -4,8 +4,7 @@ namespace LunaPlayer.Favorites;
 
 /// <summary>What a saved link points at, which decides how the player opens it.</summary>
 /// <remarks>
-/// The names written to disk are the ones the Python player used, so a favourites file carried over from it
-/// is read without conversion.
+/// The names written to disk are kept stable, so an existing favourites file is read without conversion.
 /// </remarks>
 [JsonConverter(typeof(JsonStringEnumConverter<FavoriteKind>))]
 internal enum FavoriteKind
@@ -33,7 +32,7 @@ internal sealed class Favorite
     [JsonPropertyName("link")] public string Link { get; set; } = string.Empty;
 
     /// <summary>When it was saved, in seconds since the Unix epoch. Written as a number with a fractional
-    /// part by the Python player, so it is read as one.</summary>
+    /// part, so it is read as one.</summary>
     [JsonPropertyName("created")] public double Created { get; set; }
 }
 

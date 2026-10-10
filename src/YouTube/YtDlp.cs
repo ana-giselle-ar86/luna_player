@@ -130,8 +130,8 @@ internal sealed partial class YtDlpClient
 
     /// <summary>One window of rows from a channel tab, and how many raw entries that window held.</summary>
     /// <remarks>
-    /// <paramref name="start"/> and <paramref name="end"/> are 1-based and inclusive, the way Hex Player's
-    /// <c>playliststart</c>/<c>playlistend</c> are. The raw count is returned alongside the mapped rows
+    /// <paramref name="start"/> and <paramref name="end"/> are 1-based and inclusive. The raw count is
+    /// returned alongside the mapped rows
     /// because the paging decision - whether more windows remain - is about how much the tab held, not how
     /// much of it was playable: a window can be full of community posts that map to nothing and still not be
     /// the last one. A failed run with nothing to say is treated as the end of the tab rather than an error,

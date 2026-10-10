@@ -6,7 +6,7 @@ namespace LunaPlayer.Recording;
 /// <summary>The two short tones that say a recording has begun and ended.</summary>
 ///
 /// <remarks>
-/// A port of the Python player's beeps, and the ordering around them is the point of them. The rising tone
+/// The ordering around these tones is the point of them. The rising tone
 /// is played and allowed to finish <em>before</em> the sources are opened, and the falling one only
 /// <em>after</em> they have been closed - so neither ends up in the recording, even when what is being
 /// recorded is everything the speakers play. Getting that order wrong would put a beep at each end of every

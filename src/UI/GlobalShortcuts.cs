@@ -12,7 +12,7 @@ namespace LunaPlayer.UI;
 /// combinations a media player wants - Win+Alt with the arrow keys is taken by window snapping, and
 /// registration for those simply fails. A hook sees them anyway.
 ///
-/// Matched combinations are passed on rather than swallowed, as the Python player did: the modifiers keep
+/// Matched combinations are passed on rather than swallowed: the modifiers keep
 /// reaching Windows, so a chord it owns still does its own job as well. The trade is that seeking with
 /// Win+Alt+Left also snaps the window; suppressing it instead would hide the Win key press from the shell and
 /// leave the Start menu opening on release.

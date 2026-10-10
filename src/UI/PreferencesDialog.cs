@@ -104,8 +104,7 @@ internal sealed class PreferencesDialog : IDisposable
 
         // CreateButtonSizer makes OK the default button, which sends DM_SETDEFID to the dialog. wx dialogs
         // are real #32770 windows on MSW, so DefDlgProc then hands the initial focus to that default button
-        // and a screen reader announces OK instead of the category tree. Claim the focus back, the same way
-        // NVDA's own settings dialog does in postInit().
+        // and a screen reader announces OK instead of the category tree. Claim the focus back.
         _tree.Focus();
     }
 

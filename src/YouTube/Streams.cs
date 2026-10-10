@@ -58,8 +58,8 @@ internal readonly record struct ResolveOutcome(Resolved? Value, ResolveFailure F
 /// <summary>Works out how long a resolved address will last.</summary>
 ///
 /// <remarks>
-/// Choosing which stream to play is yt-dlp's job now - it is handed the same preferences the Python player
-/// passes on the command line and returns the addresses already chosen - so all that is left here is
+/// Choosing which stream to play is yt-dlp's job now - it is handed the preferences on the command line and
+/// returns the addresses already chosen - so all that is left here is
 /// reading the deadline YouTube signs into those addresses.
 /// </remarks>
 internal static class StreamPicker

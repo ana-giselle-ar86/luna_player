@@ -38,10 +38,8 @@ internal readonly record struct LinkInfo(
 /// <summary>Decides what a link the user typed or pasted actually is, without going near the network.</summary>
 ///
 /// <remarks>
-/// A port of the Python player's <c>youtube/link_validator.py</c>, kept deliberately faithful to it: the
-/// YouTube rules below are the ones the original arrived at against real addresses, and a link the two
-/// players disagree about is a link one of them gets wrong. It also replaces that project's second, looser
-/// classifier in <c>youtube/ui_utils.py</c>, which guessed the same thing from substrings of the address.
+/// The YouTube rules below were arrived at against real addresses. This is the only link classifier here;
+/// it does not fall back on a looser guess from substrings of the address.
 ///
 /// Nothing here confirms that a video exists or is playable. That needs yt-dlp and a request; this only
 /// rules out the links that cannot work, so the player can refuse them without making the user wait.
@@ -89,7 +87,7 @@ internal static class LinkValidator
     }
 
     /// <summary>The host, lower-cased and without the trailing dot a fully qualified name may carry. Uri
-    /// already drops the user information and the port, which the Python original had to strip by hand.
+    /// already drops the user information and the port.
     /// </summary>
     private static string Host(Uri uri) => uri.Host.TrimEnd('.');
 
@@ -101,8 +99,8 @@ internal static class LinkValidator
         => host is "youtu.be" or "www.youtu.be" or "youtube.com"
             || host.EndsWith(".youtube.com", StringComparison.Ordinal);
 
-    /// <summary>Reads a YouTube address. The order of these tests is the order the Python player uses, and it
-    /// matters: a link carrying both a video and a playlist reports <see cref="LinkKind.Video"/>, so a caller
+    /// <summary>Reads a YouTube address. The order of these tests matters: a link carrying both a video and
+    /// a playlist reports <see cref="LinkKind.Video"/>, so a caller
     /// that has not been told which the user wants plays the video rather than opening the whole list.
     /// </summary>
     private static (LinkKind Kind, bool HasVideo, bool HasPlaylist) YouTubeMeta(Uri uri)
@@ -122,28 +120,28 @@ internal static class LinkValidator
             return (LinkKind.Video, true, hasPlaylist);
         if (HasSegmentValue(parts, ChannelSegments) || (parts.Length > 0 && parts[0].StartsWith('@')))
             return (LinkKind.Channel, false, hasPlaylist);
-        // The Python player tests /playlist with a list id before testing a list id on its own. Both answer
-        // the same, so one test does for both.
+        // Testing /playlist with a list id and testing a list id on its own both answer the same, so one
+        // test does for both.
         if (hasPlaylist)
             return (LinkKind.Playlist, false, true);
         // A /watch that carries no v= names nothing to play.
         if (parts.Length > 0 && parts[0] == "watch")
             return (LinkKind.Invalid, false, false);
         // Anything else on a YouTube host - the bare domain among them - is left as a video with nothing to
-        // play, as the Python player leaves it. Callers decide on HasVideo and HasPlaylist rather than on
+        // play. Callers decide on HasVideo and HasPlaylist rather than on
         // Kind alone, so this reports "no video and no playlist" to every one of them.
         return (LinkKind.Video, false, false);
     }
 
     /// <summary>Whether the first path segment is one of <paramref name="segments"/> and is followed by
-    /// something. Matched exactly, as the Python player matches it: YouTube's own addresses are lower case.
+    /// something. Matched exactly: YouTube's own addresses are lower case.
     /// </summary>
     private static bool HasSegmentValue(string[] parts, string[] segments)
         => parts.Length >= 2
             && Array.IndexOf(segments, parts[0]) >= 0
             && parts[1].Trim().Length > 0;
 
-    /// <summary>The non-empty path segments, still percent-encoded, as the Python original leaves them.
+    /// <summary>The non-empty path segments, still percent-encoded.
     /// </summary>
     private static string[] PathSegments(Uri uri)
         => uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);

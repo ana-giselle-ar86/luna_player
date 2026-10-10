@@ -18,8 +18,7 @@ internal sealed record ProgressPrompt(
     /// than one.</summary>
     /// <remarks>
     /// Decides the shape of the window: a block of lines goes in a read-only text area, because a label
-    /// that grew and shrank would move the Cancel button under the user's pointer on every report. The
-    /// Python player draws the same distinction, between its task dialog and its busy dialog.
+    /// that grew and shrank would move the Cancel button under the user's pointer on every report.
     /// </remarks>
     internal bool Detailed { get; init; }
 
@@ -27,7 +26,7 @@ internal sealed record ProgressPrompt(
     /// <remarks>
     /// False for a job that cannot know how much work there is until it has done it - searching a tree of
     /// folders is the case in point, where the only way to learn the total is to walk the whole thing. Its
-    /// bar sweeps rather than sitting at nought, which is what the Python player shows and the only honest
+    /// bar sweeps rather than sitting at nought, which is the only honest
     /// way to say "still going" without claiming a figure; its message carries the running count.
     /// </remarks>
     internal bool Proportional { get; init; } = true;
@@ -124,16 +123,16 @@ internal static class BackgroundProgress
             if (_finished)
                 return;
             // Only the newest report is worth drawing; the ones behind it name files already dealt with.
-            // The value only ever goes forward, as the Python player's pull() does with max().
+            // The value only ever goes forward.
             ProgressUpdate? latest = null;
             while (_updates.TryDequeue(out var update))
                 latest = update;
             if (latest is ProgressUpdate shown)
             {
                 // A job that has not worked out its total yet reports one of nought, which is nought per
-                // cent - there is nothing else it could honestly be. The bar only ever goes forward, as the
-                // Python player's pull() does with max(), and because this is a proportion rather than a
-                // count that holds even when the job changes what it is counting.
+                // cent - there is nothing else it could honestly be. The bar only ever goes forward, and
+                // because this is a proportion rather than a count it holds even when the job changes what
+                // it is counting.
                 var percent = shown.Total > 0
                     ? (int)Math.Clamp(100.0 * shown.Value / shown.Total, 0, 100)
                     : 0;
@@ -161,8 +160,7 @@ internal static class BackgroundProgress
 
         /// <summary>Ends the job. Everything that matters is posted rather than done here: this runs inside
         /// the timer's own callback, and both destroying that timer and opening the windows the result calls
-        /// for are unsafe on a stack that is still inside it. The Python player does the same, finishing
-        /// through CallAfter rather than from the tick.</summary>
+        /// for are unsafe on a stack that is still inside it.</summary>
         private void Finish()
         {
             _finished = true;

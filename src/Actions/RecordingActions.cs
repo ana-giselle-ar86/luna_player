@@ -14,7 +14,7 @@ internal static class RecordingActionDefinitions
         // Translators: Name of the command that opens the window where recording is set up and run.
         new(ActionId.OpenRecordingInterface, Tr("Open the recording interface"),
             new("r", ShortcutModifiers.Alt)),
-        // The three keys the Python player uses. Function keys because recording is started and stopped
+        // Function keys because recording is started and stopped
         // while something else has the keyboard's attention, and F7 to F9 sit together under one hand.
         // Translators: Name of the command that begins recording.
         new(ActionId.StartRecording, Tr("Start recording"), new("f9")),
