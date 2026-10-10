@@ -90,8 +90,8 @@ internal sealed class YouTubeSession : IDisposable
 
     internal SessionKind Kind { get; }
 
-    /// <summary>The heading above the list. It names what kind of list this is and nothing more, as the
-    /// Python player's does: the window is opened straight from the search box, so what was searched for is
+    /// <summary>The heading above the list. It names what kind of list this is and nothing more: the window
+    /// is opened straight from the search box, so what was searched for is
     /// still the last thing the user typed.</summary>
     internal string Label => Kind switch
     {
@@ -153,7 +153,7 @@ internal sealed class YouTubeSession : IDisposable
 
     /// <summary>Cancelled when the session ends, abandoning every resolve started on its behalf.</summary>
     /// <remarks>
-    /// A source rather than the Python player's flag, which cannot be reset once set and so poisons a
+    /// A source rather than a plain flag, which cannot be reset once set and so poisons a
     /// session that outlives its first cancellation. This one is owned by the session and dies with it, so
     /// that state is unreachable.
     /// </remarks>

@@ -21,7 +21,7 @@ internal interface IResultPage
 ///
 /// <remarks>
 /// yt-dlp is asked for a fixed window of the tab at a time (<see cref="Batch"/> rows, addressed 1-based and
-/// inclusive the way Hex Player's <c>playliststart</c>/<c>playlistend</c> are), and the window is advanced
+/// inclusive), and the window is advanced
 /// by that same fixed count each turn. A window that comes back with fewer raw entries than it asked for is
 /// the last one, so <see cref="HasMore"/> falls false and no needless empty fetch follows. A lock keeps two
 /// overlapping <see cref="Take"/> calls from reading the same window twice.

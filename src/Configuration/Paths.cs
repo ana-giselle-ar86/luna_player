@@ -119,8 +119,7 @@ internal static class Paths
     /// <summary>Where recordings go unless the user says otherwise.</summary>
     /// <remarks>
     /// Under Documents rather than beside the settings, because these are the user's files rather than the
-    /// player's: they are meant to be found, played and sent on. The Python player put them in the same
-    /// place, so an existing user's recordings stay together.
+    /// player's: they are meant to be found, played and sent on.
     /// </remarks>
     internal static string DefaultRecordingsDirectory { get; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), AppInfo.Name, "Recordings");

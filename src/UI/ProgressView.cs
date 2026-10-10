@@ -6,7 +6,7 @@ namespace LunaPlayer.UI;
 /// </summary>
 ///
 /// <remarks>
-/// Two shapes, as the Python player has two. A job that reports one line at a time gets a label above the
+/// Two shapes. A job that reports one line at a time gets a label above the
 /// bar; a job that reports a block - the file being written, its size, how much has arrived - gets a
 /// read-only text area instead, because those lines are several and a growing label would move the button
 /// under the user's pointer every time they changed.
@@ -21,14 +21,14 @@ namespace LunaPlayer.UI;
 /// the whole reason it works: nothing here blocks that loop, so the button is answered the moment it is
 /// pressed rather than whenever some worker next decides to look.
 ///
-/// Input is kept out of every other window while it runs, this one excepted, which is what the Python
-/// player gets from showing its task dialog modally. Doing it with a window disabler rather than a nested
+/// Input is kept out of every other window while it runs, this one excepted. Doing it with a window
+/// disabler rather than a nested
 /// modal loop is what keeps the rule above true: nothing here blocks the event loop, so Cancel is still an
 /// ordinary button press answered the moment it is made.
 /// </remarks>
 internal sealed class ProgressView : IProgressView
 {
-    /// <summary>The bar's range, as the Python player sets it: a percentage to one decimal place, so a
+    /// <summary>The bar's range: a percentage to one decimal place, so a
     /// long download does not sit on the same step for several seconds.</summary>
     private const int Range = 1000;
 
@@ -42,7 +42,7 @@ internal sealed class ProgressView : IProgressView
     private bool _disposed;
 
     /// <param name="proportional">Whether the job can say how far through it is. One that cannot gets a
-    /// bar that sweeps rather than one pinned at nought, which is what the Python player shows and is the
+    /// bar that sweeps rather than one pinned at nought, which is the
     /// only honest way to say "still going" without claiming a figure.</param>
     /// <param name="detailed">Whether its reports are several lines rather than one.</param>
     internal ProgressView(Window parent, string title, string message, bool proportional, bool detailed)
@@ -74,7 +74,7 @@ internal sealed class ProgressView : IProgressView
         _dialog.Center(onParent: true);
         // Closing the window means the same as pressing Cancel - and is refused, so the window stays until
         // the job it belongs to has actually stopped. Letting it go would destroy a dialog the timer is
-        // still writing to. The Python player refuses it the same way, by not passing the event on.
+        // still writing to. It is refused by not passing the event on.
         _dialog.Closing += (_, args) =>
         {
             _cancelled = true;
@@ -83,7 +83,7 @@ internal sealed class ProgressView : IProgressView
 
         _dialog.Show();
         // Everything else is held off while the job runs - this window excepted, so its Cancel button still
-        // answers. That is what the Python player's modal task dialog does, and it is not cosmetic: without
+        // answers. This is not cosmetic: without
         // it the window this was opened from can be closed underneath it, taking the parent of a live
         // dialog with it while a timer is still writing to it.
         _elsewhere = Wx.DisableWindows(_dialog);

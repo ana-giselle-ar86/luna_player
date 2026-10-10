@@ -62,8 +62,7 @@ internal static class MediaLibrary
     }
 
     /// <summary>How a path is shown when nothing better is known. A local path shows its file name; a URL
-    /// shows host and last segment, since its file name is often meaningless. Mirrors the Python player's
-    /// show_name.</summary>
+    /// shows host and last segment, since its file name is often meaningless.</summary>
     internal static string DisplayName(string path)
     {
         if (string.IsNullOrWhiteSpace(path)) return string.Empty;

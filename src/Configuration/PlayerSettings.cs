@@ -17,7 +17,7 @@ internal enum OpenFilesMode { FileOnly, MainFolder, MainAndSubfolders }
 internal enum AppTheme { SystemDefault, Light, Dark }
 internal enum EndBehavior { Advance, Loop, None }
 internal enum SilenceDetection { Peak, Rms }
-/// <summary>The picture heights the player offers, matching Hex Player's list. The backing number is the
+/// <summary>The picture heights the player offers. The backing number is the
 /// height in pixels, so it goes straight to yt-dlp's height cap.</summary>
 internal enum VideoQuality
 {
@@ -25,7 +25,7 @@ internal enum VideoQuality
     P720 = 720, P1080 = 1080, P1440 = 1440, P2160 = 2160,
 }
 
-/// <summary>The audio bitrates the player offers, matching Hex Player's list. The backing number is the
+/// <summary>The audio bitrates the player offers. The backing number is the
 /// bitrate in kilobits per second.</summary>
 internal enum AudioQuality { Kbps64 = 64, Kbps128 = 128, Kbps256 = 256 }
 internal enum MixedLinkBehavior { Ask, Video, Playlist }
@@ -437,7 +437,7 @@ internal sealed class YouTubeSettings
 
     /// <summary>Whether the search box offers live suggestions as the user types.</summary>
     /// <remarks>
-    /// On by default, matching the Python player. Each keystroke that settles fetches a short list of
+    /// On by default. Each keystroke that settles fetches a short list of
     /// completions from YouTube, so somebody who would rather type undisturbed - or is on a slow or metered
     /// connection - can turn the network chatter off here.
     /// </remarks>

@@ -3,11 +3,11 @@ namespace LunaPlayer.YouTube;
 /// <summary>The parts of a YouTube channel a person can browse, and the URLs that name them.</summary>
 ///
 /// <remarks>
-/// A port of Hex Player's <c>normalise_channel_url</c>/<c>channel_tab_url</c>. The tab keys are stable and
-/// used off the UI thread to shape the address yt-dlp is pointed at; the display names are translated and so
-/// are handed out only through <see cref="DisplayNames"/>, which must be called on the UI thread. Hex's
-/// "live" tab is spelled "streams" here, which is the path segment YouTube actually serves. The information-
-/// only "about" tab is left out, because its rows are neither played nor browsed into.
+/// The tab keys are stable and used off the UI thread to shape the address yt-dlp is pointed at; the
+/// display names are translated and so are handed out only through <see cref="DisplayNames"/>, which must
+/// be called on the UI thread. The "live" tab is spelled "streams" here, which is the path segment YouTube
+/// actually serves. The information-only "about" tab is left out, because its rows are neither played nor
+/// browsed into.
 /// </remarks>
 internal static class ChannelTabs
 {
@@ -15,7 +15,7 @@ internal static class ChannelTabs
     internal static readonly string[] Keys =
         ["home", "videos", "shorts", "streams", "playlists", "community", "channels"];
 
-    /// <summary>The tab a channel opens on: its videos, which is what Hex opens too.</summary>
+    /// <summary>The tab a channel opens on: its videos.</summary>
     internal static int DefaultIndex => Array.IndexOf(Keys, "videos") is var index && index >= 0 ? index : 0;
 
     /// <summary>The tab keys spelled for the user, in the same order as <see cref="Keys"/>.</summary>

@@ -13,7 +13,7 @@ namespace LunaPlayer.Application.ActionHandlers;
 /// Recording can be run two ways and both have to work. From the window, where sources have been set up
 /// and the settings on it are the ones used; and from a shortcut with nothing set up at all, which is how
 /// somebody who never opens the window records - that case falls back to the saved settings and the
-/// default microphone, which is the whole of what the Python player could do.
+/// default microphone.
 ///
 /// Starting and stopping both talk to devices and both wait for a file to be closed, so both are done on
 /// a worker and answered back on the UI thread.
@@ -78,7 +78,7 @@ internal sealed class RecordingActions
             : [DefaultMicrophone()];
         // Nothing is spoken. The engine plays a rising tone before it opens anything, which is the
         // confirmation - immediate, the same in every language, and it does not talk over a screen reader
-        // that is already saying something. The Python player says nothing here either.
+        // that is already saying something.
         _ = Task.Run(() =>
         {
             try
