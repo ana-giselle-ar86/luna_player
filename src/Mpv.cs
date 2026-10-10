@@ -3239,6 +3239,22 @@ namespace MpvNet
                 Command("loadfile", filename, mode, EncodeOptions(options));
         }
 
+        // The same as LoadFile but issued through mpv_command_async: it returns the instant the request is
+        // queued, without waiting for mpv's core to accept or start it, so the caller's thread - the UI
+        // thread, here - is never blocked by a slow stream opening. Load failures still arrive as the usual
+        // end-file/error events. replyUserData is 0 because nothing waits for the completion reply.
+        public void LoadFileAsync(
+            string filename,
+            string mode = "replace",
+            IDictionary<string, object?>? options = null
+        )
+        {
+            if (CommandTakes("loadfile", "index"))
+                CommandAsync(0, "loadfile", filename, mode, -1, EncodeOptions(options));
+            else
+                CommandAsync(0, "loadfile", filename, mode, EncodeOptions(options));
+        }
+
         public void LoadList(string playlist, string mode = "replace")
         {
             if (CommandTakes("loadlist", "index"))

@@ -80,25 +80,30 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
     public bool HasVideo => _hasVideo;
 
     /// <remarks>
-    /// <paramref name="audioFile"/> is set as a property rather than passed as a loadfile option, and set
-    /// on every load rather than only when there is one. Both matter. The option list is flattened into one
-    /// string with commas and equals signs, which a stream address is made of, so a URL cannot survive it;
-    /// and mpv keeps the property until it is told otherwise, so leaving it alone would play the previous
-    /// video's sound over the next file.
+    /// None of this blocks the UI thread on mpv. <c>mpv_set_property</c> is synchronous - it waits until the
+    /// core has processed the change - and issuing those sets right after a loadfile, while the core is busy
+    /// starting the load, is what intermittently stalled the UI. So subtitles-off and the pause state ride
+    /// with the loadfile as per-file options (applied atomically with the load, in order, no separate call),
+    /// and the audio file is set asynchronously. The audio file cannot be a loadfile option - its value is a
+    /// URL, which the flattened option string would break on commas and equals signs - and it is set on
+    /// every load because mpv keeps the property, so leaving it would play the previous video's sound over
+    /// the next. The async set is submitted before the loadfile, and mpv processes a client's requests in
+    /// order, so it is applied before the file loads.
     /// </remarks>
     public bool Load(string path, double? startPosition = null, bool paused = false, string? audioFile = null)
     {
-        Dictionary<string, object?>? options = startPosition.HasValue
-            ? new Dictionary<string, object?> { ["start"] = Precision.Normalize(startPosition.Value) }
-            : null;
+        var options = new Dictionary<string, object?>
+        {
+            // Track ids do not carry across files, and the user opts subtitles in per file through the menu.
+            ["sid"] = "no",
+            ["pause"] = paused ? "yes" : "no",
+        };
+        if (startPosition.HasValue)
+            options["start"] = Precision.Normalize(startPosition.Value);
         return TryDo(mpv =>
         {
-            mpv.SetProperty("audio-files", audioFile is null ? Array.Empty<string>() : new[] { audioFile });
-            mpv.LoadFile(path, "replace", options);
-            // Subtitles are off by default on every file, whatever a previous file had selected - the user
-            // opts in per file through the Subtitles menu. Track ids do not carry across files anyway.
-            mpv.SetProperty("sid", "no");
-            mpv.SetProperty("pause", paused);
+            mpv.SetPropertyAsync(0, "audio-files", audioFile is null ? Array.Empty<string>() : new[] { audioFile });
+            mpv.LoadFileAsync(path, "replace", options);
         });
     }
 
