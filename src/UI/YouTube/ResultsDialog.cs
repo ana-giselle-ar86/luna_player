@@ -17,13 +17,16 @@ internal sealed class ResultsDialog : IDisposable
     private readonly Dialog _dialog;
     private readonly StaticText _label;
     private readonly Notebook? _notebook;
-    private readonly IYouTubeResultsFeed _feed;
+    private IYouTubeResultsFeed _feed;
     private readonly List<TabPage> _tabs = [];
     private readonly int _copyId = IdManager.NewId();
     private readonly int _browserId = IdManager.NewId();
     private readonly int _channelId = IdManager.NewId();
+    private readonly int _goToChannelId = IdManager.NewId();
+    private readonly int _favoriteId = IdManager.NewId();
     private readonly int _downloadId = IdManager.NewId();
     private readonly Menu _menu;
+    private MenuItem _favoriteItem = null!;
     private TabPage _active;
     private ResultChoice? _chosen;
 
@@ -117,7 +120,9 @@ internal sealed class ResultsDialog : IDisposable
         _menu = BuildMenu();
         _dialog.Bind(WxEvents.MenuCommand, (_, _) => WithSelection(_feed.CopyLink), _copyId);
         _dialog.Bind(WxEvents.MenuCommand, (_, _) => WithSelection(_feed.OpenInBrowser), _browserId);
-        _dialog.Bind(WxEvents.MenuCommand, (_, _) => WithSelection(_feed.OpenChannel), _channelId);
+        _dialog.Bind(WxEvents.MenuCommand, (_, _) => WithSelection(_feed.OpenChannelInBrowser), _channelId);
+        _dialog.Bind(WxEvents.MenuCommand, (_, _) => ChooseChannel(), _goToChannelId);
+        _dialog.Bind(WxEvents.MenuCommand, (_, _) => WithSelection(_feed.ToggleFavorite), _favoriteId);
         _dialog.Bind(WxEvents.MenuCommand, (_, _) => WithSelection(_feed.Download), _downloadId);
         _dialog.Bind(WxEvents.CharHook, OnCharHook);
         // Bound after the opening tab is chosen above, so selecting it fires no switch of its own.
@@ -126,12 +131,32 @@ internal sealed class ResultsDialog : IDisposable
         _active.List.Focus();
     }
 
+    /// <summary>Whether this window is the plain single-list kind (a search or playlist), as opposed to a
+    /// channel's tabbed browser. Only the single-list kind is reused through <see cref="Refresh"/>, because
+    /// the two have different control structures.</summary>
+    internal bool IsSingleList => _notebook is null;
+
     /// <summary>The row the user chose to play and whether they asked for its picture or its sound, or null
     /// when they closed the window instead.</summary>
     internal ResultChoice? Show()
     {
+        _chosen = null;
         _dialog.ShowModal();
         return _chosen;
+    }
+
+    /// <summary>Reopens this single-list window for a new result set instead of building a new window: it
+    /// takes the new feed and rows and clears the previous choice, so reopening a search or returning from
+    /// the player costs a list refresh rather than a full rebuild. The menu and key bindings read the feed
+    /// through the field, so swapping the field is enough to repoint them. Only valid when
+    /// <see cref="IsSingleList"/>.</summary>
+    internal void Refresh(YouTubeResultsPrompt prompt)
+    {
+        _closed = false;
+        _feed = prompt.Feed;
+        _label.Label = prompt.Label;
+        Populate(_active, prompt.Results, prompt.SelectedIndex);
+        _active.List.Focus();
     }
 
     /// <remarks>
@@ -165,11 +190,15 @@ internal sealed class ResultsDialog : IDisposable
         // Translators: Button that plays the video chosen in the list of results.
         var play = new Button(parent, label: Tr("Play"));
         play.Click += (_, _) => Play();
+        // Translators: Button that plays only the sound of the video chosen in the list, with no picture.
+        var playAudio = new Button(parent, label: Tr("Play as audio"));
+        playAudio.Click += (_, _) => PlayAudio();
         // Translators: Button that saves the video chosen in the list of results to a folder on this computer.
         var download = new Button(parent, label: Tr("Download"));
         download.Click += (_, _) => WithSelection(_feed.Download);
         var row = new BoxSizer(Orientation.Horizontal);
         row.Add(play, flags: SizerFlags.BorderRight, border: 6);
+        row.Add(playAudio, flags: SizerFlags.BorderRight, border: 6);
         row.Add(download);
         return row;
     }
@@ -203,9 +232,9 @@ internal sealed class ResultsDialog : IDisposable
         if (tab.Loaded)
         {
             // Its rows are already in hand; only the session need be told which tab is current now. No
-            // fetch - this is the whole point of keeping each visited tab.
+            // fetch - this is the whole point of keeping each visited tab. Focus is left on the tab control
+            // the user is moving through rather than pulled down into the list.
             _feed.SwitchTab(index, _ => { });
-            tab.List.Focus();
             return;
         }
         if (tab.Loading)
@@ -240,6 +269,17 @@ internal sealed class ResultsDialog : IDisposable
         if (_active.List.SelectedIndex < 0)
             return;
         _chosen = new ResultChoice(_active.List.SelectedIndex, mode);
+        _dialog.EndModal(StandardId.Ok);
+    }
+
+    /// <summary>Ends the window to browse into the selected row's channel rather than play the row. It closes
+    /// the same way a play does, so the session replaces this list with the channel cleanly instead of
+    /// opening one over the top of a list that is still modal.</summary>
+    private void ChooseChannel()
+    {
+        if (_active.List.SelectedIndex < 0)
+            return;
+        _chosen = new ResultChoice(_active.List.SelectedIndex, PlayMode.Video) { Channel = true };
         _dialog.EndModal(StandardId.Ok);
     }
 
@@ -286,7 +326,7 @@ internal sealed class ResultsDialog : IDisposable
         tab.List.AppendRange(page.Select(Compose));
     }
 
-    /// <summary>The one line a row shows, built as the Python player builds it: the title, then the few
+    /// <summary>The one line a row shows: the title, then the few
     /// secondary facts the kind of row has, joined with commas and skipping the ones the listing left out.
     /// </summary>
     private static string Compose(YouTubeResult result)
@@ -339,8 +379,15 @@ internal sealed class ResultsDialog : IDisposable
         menu.Append(_copyId, $"{Tr("Copy link")}\tCtrl+C");
         // Translators: Context menu item in the results list that shows the chosen video in the web browser.
         menu.Append(_browserId, $"{Tr("Open in browser")}\tCtrl+B");
-        // Translators: Context menu item in the results list that shows the channel that published the video.
-        menu.Append(_channelId, $"{Tr("Navigate to channel")}\tCtrl+N");
+        // Translators: Context menu item in the results list that opens the channel that published the video in the web browser.
+        menu.Append(_channelId, $"{Tr("Open channel in browser")}\tCtrl+N");
+        // Translators: Context menu item in the results list that opens the channel that published the video inside the player.
+        menu.Append(_goToChannelId, $"{Tr("Go to channel")}\tCtrl+G");
+        // The label switches between adding and removing just before the menu opens, in OnContextMenu, from
+        // whether the chosen row is already a favourite. It starts on the add wording; the keep-the-id note
+        // in Dispose is why it is relabelled rather than the menu rebuilt.
+        // Translators: Context menu item in the results list that saves the chosen video to the favourites.
+        _favoriteItem = menu.Append(_favoriteId, $"{Tr("Add to favorites")}\tCtrl+Space");
         menu.AppendSeparator();
         // Translators: Context menu item in the results list that saves the chosen video to this computer.
         menu.Append(_downloadId, Tr("Download"));
@@ -349,8 +396,16 @@ internal sealed class ResultsDialog : IDisposable
 
     private void OnContextMenu(object? sender, ContextMenuEventArgs args)
     {
-        if (_active.List.SelectedIndex >= 0)
-            _dialog.PopupMenu(_menu);
+        if (_active.List.SelectedIndex < 0)
+            return;
+        // Relabel the favourite entry for this row before the menu opens: an already-saved row offers to be
+        // removed, any other to be added, so the one key does both.
+        _favoriteItem.Label = _feed.IsFavorite(_active.List.SelectedIndex)
+            // Translators: Context menu item in the results list that takes the chosen video back out of the favourites.
+            ? $"{Tr("Remove from favorites")}\tCtrl+Space"
+            // Translators: Context menu item in the results list that saves the chosen video to the favourites.
+            : $"{Tr("Add to favorites")}\tCtrl+Space";
+        _dialog.PopupMenu(_menu);
     }
 
     /// <remarks>
@@ -378,14 +433,15 @@ internal sealed class ResultsDialog : IDisposable
         {
             if (args.Code is Key.Space or Key.NumpadSpace)
             {
-                _feed.AddFavorite(_active.List.SelectedIndex);
+                _feed.ToggleFavorite(_active.List.SelectedIndex);
                 return;
             }
             switch ((char)args.Code)
             {
                 case 'C': _feed.CopyLink(_active.List.SelectedIndex); return;
                 case 'B': _feed.OpenInBrowser(_active.List.SelectedIndex); return;
-                case 'N': _feed.OpenChannel(_active.List.SelectedIndex); return;
+                case 'N': _feed.OpenChannelInBrowser(_active.List.SelectedIndex); return;
+                case 'G': ChooseChannel(); return;
             }
         }
         args.Skip();

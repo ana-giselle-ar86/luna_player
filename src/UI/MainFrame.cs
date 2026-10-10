@@ -140,10 +140,11 @@ internal sealed partial class MainFrame : IMainView
         BuildAccelerators(shortcuts);
 
         // The transport buttons show the control icons rather than text. They sit directly on the frame, not
-        // on a wxPanel: a panel with no keyboard-focusable children (these buttons decline focus) becomes the
-        // focus target when the window opens, and a screen reader announces "panel" on every launch. Each
-        // button keeps a spoken name through its label, which wxBitmapButton uses for accessibility without
-        // drawing any text. The grey a bare frame would paint is handled by the themed background set above.
+        // on a wxPanel: a panel with no keyboard-focusable children becomes the focus target when the window
+        // opens, and a screen reader announces "panel" on every launch. Each is a CustomBitmapButton, which
+        // draws only its icon, keeps a spoken name through its label, and declines focus so the window's
+        // controls are reached through the menus and shortcut keys rather than Tab. The grey a bare frame
+        // would paint is handled by the themed background set above.
         var controls = Paths.IconsDirectory;
         Bitmap LoadControl(string name) => new(Path.Combine(controls, name + ".png"));
         var previousBitmap = LoadControl("previous");
@@ -156,10 +157,15 @@ internal sealed partial class MainFrame : IMainView
         // bitmap alive until the frame goes avoids disposing one a button still draws.
         _transportBitmaps = [previousBitmap, rewindBitmap, _playBitmap, _pauseBitmap, forwardBitmap, nextBitmap];
 
+        // Translators: Spoken name of the main-window button that plays the previous track. The button shows an icon, not this text.
         var previousButton = new CustomBitmapButton(_frame, previousBitmap, Tr("Previous"));
+        // Translators: Spoken name of the main-window button that steps playback backward. The button shows an icon, not this text.
         var rewindButton = new CustomBitmapButton(_frame, rewindBitmap, Tr("Rewind"));
+        // Translators: Spoken name of the main-window button that starts playback. It becomes Pause while playing. The button shows an icon, not this text.
         _playButton = new CustomBitmapButton(_frame, _playBitmap, Tr("Play"));
+        // Translators: Spoken name of the main-window button that steps playback forward. The button shows an icon, not this text.
         var forwardButton = new CustomBitmapButton(_frame, forwardBitmap, Tr("Forward"));
+        // Translators: Spoken name of the main-window button that plays the next track. The button shows an icon, not this text.
         var nextButton = new CustomBitmapButton(_frame, nextBitmap, Tr("Next"));
 
         var buttonSizer = new BoxSizer(Orientation.Horizontal);
@@ -228,7 +234,11 @@ internal sealed partial class MainFrame : IMainView
     public void SetPlaying(bool isPlaying)
     {
         _playButton.SetBitmap(isPlaying ? _pauseBitmap : _playBitmap);
-        _playButton.Label = isPlaying ? Tr("Pause") : Tr("Play");
+        _playButton.Label = isPlaying
+            // Translators: Spoken name of the play/pause button while a track is playing, so the key pauses it.
+            ? Tr("Pause")
+            // Translators: Spoken name of the play/pause button while playback is stopped or paused.
+            : Tr("Play");
     }
 
     public void SetWindowTitle(string title)
@@ -437,6 +447,9 @@ internal sealed partial class MainFrame : IMainView
         // Before the frame goes: a keyboard hook left installed keeps being called into a process that is
         // shutting down.
         _globalShortcuts.Dispose();
+        // Before the frame: the reused results window is a child of it, so it must be torn down before the
+        // frame destroys the native window out from under it.
+        _youTubeResults?.Dispose();
         _frame.Dispose();
         // After the frame, so the buttons that drew them are gone first.
         foreach (var bitmap in _transportBitmaps)
