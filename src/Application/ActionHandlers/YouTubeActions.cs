@@ -60,6 +60,9 @@ internal sealed class YouTubeActions
         router.Register(ActionId.VideoDownload, Download);
         router.Register(ActionId.VideoDescription, ShowDescription);
         router.Register(ActionId.VideoCopyLink, CopyLink);
+        router.Register(ActionId.VideoOpenInBrowser, OpenCurrentInBrowser);
+        router.Register(ActionId.VideoOpenChannelInBrowser, OpenCurrentChannelInBrowser);
+        router.Register(ActionId.VideoGoToChannel, GoToCurrentChannel);
         router.Register(ActionId.UpdateYouTubeComponents, components.Update);
     }
 
@@ -242,7 +245,7 @@ internal sealed class YouTubeActions
             Saved);
     }
 
-    /// <summary>The lines the download window shows, as the Python player shows them.</summary>
+    /// <summary>The lines the download window shows.</summary>
     /// <remarks>
     /// Called from the progress window's own tick, which is on the UI thread, so it may translate. The
     /// name is only known once the first bytes arrive, so the heading stands alone until then rather than
@@ -259,8 +262,8 @@ internal sealed class YouTubeActions
     }
 
     /// <remarks>
-    /// Spoken rather than shown, in both directions, which is what the Python player does: a download runs
-    /// for minutes behind a window the user has probably stopped looking at, and a message box that has to
+    /// Spoken rather than shown, in both directions: a download runs for minutes behind a window the user
+    /// has probably stopped looking at, and a message box that has to
     /// be dismissed before anything else works is the wrong way to say a file arrived.
     /// </remarks>
     private void Saved(YouTubeOutcome outcome)
@@ -282,7 +285,7 @@ internal sealed class YouTubeActions
     }
 
     /// <remarks>
-    /// The title goes above the text, as the Python player puts it there: the window is opened from a
+    /// The title goes above the text: the window is opened from a
     /// keystroke rather than from a list, so without it there is nothing saying which video this is about.
     /// </remarks>
     private void ShowDescription()
@@ -321,6 +324,41 @@ internal sealed class YouTubeActions
             CopyToClipboard(watchUrl);
     }
 
+    private void OpenCurrentInBrowser()
+    {
+        if (RequireVideo(out var watchUrl))
+            OpenInBrowser(watchUrl);
+    }
+
+    private void OpenCurrentChannelInBrowser()
+    {
+        if (RequireVideo(out _))
+            WithActiveChannel(OpenInBrowser);
+    }
+
+    private void GoToCurrentChannel()
+    {
+        if (RequireVideo(out _))
+            WithActiveChannel(url => _sessions.GoToChannel(url, string.Empty));
+    }
+
+    /// <summary>Runs <paramref name="action"/> on the playing video's channel address, or says so when it is
+    /// not known - a video opened from a bare link carries no channel.</summary>
+    private void WithActiveChannel(Action<string> action)
+    {
+        var channel = _sessions.ActiveChannelUrl;
+        if (channel.Length > 0)
+        {
+            action(channel);
+            return;
+        }
+        _speech.Speak(
+            // Translators: Spoken when the playing video does not say which channel published it.
+            Tr("Channel link is not available."),
+            // Translators: The short wording spoken when the playing video does not name its channel.
+            Tr("No channel link."));
+    }
+
     internal void CopyToClipboard(string url)
     {
         if (_clipboard.SetText(url))
@@ -338,7 +376,7 @@ internal sealed class YouTubeActions
     }
 
     /// <remarks>
-    /// Two attempts, as the Python player makes two: wxWidgets asks the system for the browser registered
+    /// Two attempts: wxWidgets asks the system for the browser registered
     /// for http, and where nothing answers to that the shell is asked to open the address as it would from
     /// the Run box. The second catches a machine whose default browser is set but not associated.
     /// </remarks>

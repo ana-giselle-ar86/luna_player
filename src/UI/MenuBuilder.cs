@@ -298,6 +298,12 @@ internal static class MainMenuBuilder
         Add(videoMenu, videoItems, commandIds, shortcuts, ActionId.VideoDescription, Tr("Video description..."));
         // Translators: Item in the Video options menu that copies the address of the video being played.
         Add(videoMenu, videoItems, commandIds, shortcuts, ActionId.VideoCopyLink, Tr("Copy video link"));
+        // Translators: Item in the Video options menu that opens the video being played in the web browser.
+        Add(videoMenu, videoItems, commandIds, shortcuts, ActionId.VideoOpenInBrowser, Tr("Open video in browser"));
+        // Translators: Item in the Video options menu that opens the channel of the video being played in the web browser.
+        Add(videoMenu, videoItems, commandIds, shortcuts, ActionId.VideoOpenChannelInBrowser, Tr("Open channel in browser"));
+        // Translators: Item in the Video options menu that opens the channel of the video being played inside the player.
+        Add(videoMenu, videoItems, commandIds, shortcuts, ActionId.VideoGoToChannel, Tr("Go to channel"));
 
         // Recording needs nothing loaded and nothing playing, so the window and the folder are always
         // available. The three that run a recording are not: they follow the recorder itself, which is why
