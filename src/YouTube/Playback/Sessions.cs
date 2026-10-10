@@ -6,7 +6,7 @@ using LunaPlayer.Media;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
 
-namespace LunaPlayer.YouTube;
+namespace LunaPlayer.YouTube.Playback;
 
 /// <summary>What came of asking for the video after this one.</summary>
 ///
@@ -36,7 +36,7 @@ internal enum NextOutcome
 /// <see cref="Backend"/> knows about neither. Everything here runs on the UI thread except the work handed
 /// to <see cref="ResolveCache"/>, which is the only thing that touches the network.
 /// </remarks>
-internal sealed class YouTubeSessions : IDisposable
+internal sealed class Sessions : IDisposable
 {
     /// <summary>How many videos to resolve ahead when a list of results is first shown.</summary>
     private const int OpeningPrefetch = 5;
@@ -49,15 +49,15 @@ internal sealed class YouTubeSessions : IDisposable
     private readonly PlayerSettings _settings;
     private readonly ISpeechOutput _speech;
     private readonly IApplicationDispatcher _dispatcher;
-    private readonly PyYtClient _client;
+    private readonly Metadata.Client _client;
     private readonly Backend _backend;
     private readonly ResolveCache _cache;
     private readonly Action<string> _download;
     private readonly Action<string> _copy;
     private readonly Action<string> _browse;
     private readonly FavoriteStore _favorites;
-    private readonly Components _components;
-    private YouTubeSession? _session;
+    private readonly Components.Service _components;
+    private Session? _session;
     private PendingNext? _pending;
 
     /// <param name="download">What to do when a row is downloaded. Saving a video is the action handler's
@@ -67,20 +67,20 @@ internal sealed class YouTubeSessions : IDisposable
     /// results list. The same store the favourites manager writes to, so an addition shows up there.</param>
     /// <param name="components">The programs the channel browser needs, offered when a channel is opened and
     /// they are not yet installed.</param>
-    internal YouTubeSessions(
+    internal Sessions(
         IMainView view,
         MediaPlayer player,
         PlayerSettings settings,
         ISpeechOutput speech,
         IApplicationDispatcher dispatcher,
-        PyYtClient client,
+        Metadata.Client client,
         Backend backend,
         ResolveCache cache,
         Action<string> download,
         Action<string> copy,
         Action<string> browse,
         FavoriteStore favorites,
-        Components components)
+        Components.Service components)
     {
         _view = view;
         _player = player;
@@ -139,7 +139,7 @@ internal sealed class YouTubeSessions : IDisposable
                     return;
                 if (found.Failure is not ResolveFailure.None)
                 {
-                    ShowError(Describe(found.Failure, found.Detail,
+                    ShowError(Utils.Describe(found.Failure, found.Detail,
                         // Translators: Shown when a YouTube search failed and nothing said why.
                         Tr("Could not complete YouTube search.")));
                     return;
@@ -151,7 +151,7 @@ internal sealed class YouTubeSessions : IDisposable
                         Tr("No videos were found for this search."));
                     return;
                 }
-                Show(new YouTubeSession(
+                Show(new Session(
                     SessionKind.Search,
                     found.Items,
                     videoQuality,
@@ -186,7 +186,7 @@ internal sealed class YouTubeSessions : IDisposable
                     return;
                 if (found.Failure is not ResolveFailure.None)
                 {
-                    ShowError(Describe(found.Failure, found.Detail,
+                    ShowError(Utils.Describe(found.Failure, found.Detail,
                         // Translators: Shown when a YouTube address could not be read and nothing said why.
                         Tr("Could not read YouTube link data.")));
                     return;
@@ -198,7 +198,7 @@ internal sealed class YouTubeSessions : IDisposable
                         Tr("No videos were found in this playlist."));
                     return;
                 }
-                Show(new YouTubeSession(SessionKind.Playlist, found.Items, videoQuality, audioQuality));
+                Show(new Session(SessionKind.Playlist, found.Items, videoQuality, audioQuality));
             });
     }
 
@@ -214,13 +214,13 @@ internal sealed class YouTubeSessions : IDisposable
     {
         if (!Backend.HasComponents
             && _components.Ensure(_settings.YouTube.Channel, () => OpenChannel(channel))
-                is not Components.ComponentsState.Ready)
+                is not Components.Service.ComponentsState.Ready)
             return;
         var videoQuality = (int)_settings.YouTube.VideoQuality;
         var audioQuality = (int)_settings.YouTube.AudioQuality;
-        var channelBase = ChannelTabs.Normalise(channel.Url.Length > 0 ? channel.Url : channel.ChannelUrl);
-        var tabIndex = ChannelTabs.DefaultIndex;
-        var tabKey = ChannelTabs.Keys[tabIndex];
+        var channelBase = Client.Tabs.Normalise(channel.Url.Length > 0 ? channel.Url : channel.ChannelUrl);
+        var tabIndex = Client.Tabs.DefaultIndex;
+        var tabKey = Client.Tabs.Keys[tabIndex];
         var title = channel.Title;
         var prompt = new ProgressPrompt(
             // Translators: Title of the window shown while a YouTube channel is being opened.
@@ -236,14 +236,14 @@ internal sealed class YouTubeSessions : IDisposable
                     return;
                 if (found.Failure is not ResolveFailure.None)
                 {
-                    ShowError(Describe(found.Failure, found.Detail,
+                    ShowError(Utils.Describe(found.Failure, found.Detail,
                         // Translators: Shown when a YouTube channel could not be read.
                         Tr("Could not read this YouTube channel.")));
                     return;
                 }
                 // A channel whose videos tab is empty is still worth opening: the user can switch to a tab
                 // that has something. Only a real failure stops it.
-                Show(new YouTubeSession(
+                Show(new Session(
                     SessionKind.Channel, found.Items, videoQuality, audioQuality,
                     found.Page, channelBase, tabIndex, title));
             });
@@ -306,7 +306,7 @@ internal sealed class YouTubeSessions : IDisposable
     internal void PlayLink(string link)
     {
         Clear();
-        var watchUrl = PyYtClient.Canonical(link);
+        var watchUrl = Utils.Canonical(link);
         if (watchUrl is null)
         {
             ShowError(
@@ -323,14 +323,14 @@ internal sealed class YouTubeSessions : IDisposable
                 if (outcome.Value is Resolved ready)
                     OpenAlone(ready);
                 else if (outcome.Failure is not ResolveFailure.Cancelled)
-                    ShowError(Describe(outcome.Failure, outcome.Detail, StreamFailed));
+                    ShowError(Utils.Describe(outcome.Failure, outcome.Detail, Utils.StreamFailed));
             });
     }
 
     /// <summary>Moves to the video after the one playing, resolving it first if it is not ready.</summary>
     internal NextOutcome TryNext()
     {
-        if (_session is not YouTubeSession session || CurrentWatchUrl is not string playing)
+        if (_session is not Session session || CurrentWatchUrl is not string playing)
             return NextOutcome.NotOurs;
         var current = session.IndexOf(playing);
         if (current < 0)
@@ -363,7 +363,7 @@ internal sealed class YouTubeSessions : IDisposable
     /// </remarks>
     internal void SyncSelection()
     {
-        if (_session is not YouTubeSession session || CurrentWatchUrl is not string playing)
+        if (_session is not Session session || CurrentWatchUrl is not string playing)
             return;
         var index = session.IndexOf(playing);
         if (index >= 0)
@@ -376,7 +376,7 @@ internal sealed class YouTubeSessions : IDisposable
     /// </returns>
     internal bool HandleEscape()
     {
-        if (_session is not YouTubeSession session || CurrentWatchUrl is not string playing)
+        if (_session is not Session session || CurrentWatchUrl is not string playing)
             return false;
         if (session.IndexOf(playing) < 0)
             return false;
@@ -420,7 +420,7 @@ internal sealed class YouTubeSessions : IDisposable
     /// rather than carrying on with it - a session that has been replaced has already been disposed, and
     /// anything done to it from here would be done to something dead.
     /// </remarks>
-    private void Show(YouTubeSession session)
+    private void Show(Session session)
     {
         if (!ReferenceEquals(_session, session))
         {
@@ -432,7 +432,7 @@ internal sealed class YouTubeSessions : IDisposable
             Prefetch(session, 0, OpeningPrefetch);
             using var feed = new Feed(this, session);
             // A channel session carries a tab bar; a search or playlist does not.
-            var tabs = session.Kind is SessionKind.Channel ? ChannelTabs.DisplayNames() : null;
+            var tabs = session.Kind is SessionKind.Channel ? Client.Tabs.DisplayNames() : null;
             var chosen = _view.ShowYouTubeResults(new YouTubeResultsPrompt(
                 // Translators: Title of the window listing the videos a search or a playlist turned up.
                 Tr("Videos"), session.Label, session.Items, session.Selected, feed, tabs, session.CurrentTab));
@@ -497,11 +497,11 @@ internal sealed class YouTubeSessions : IDisposable
 
     /// <summary>Resolves a video behind a progress window, then plays it. On any failure the results list
     /// comes back, so the user is never left with nothing open.</summary>
-    private void PlayAt(YouTubeSession session, int index, YouTubeResult item)
+    private void PlayAt(Session session, int index, YouTubeResult item)
     {
         if (!ReferenceEquals(_session, session))
             return;
-        Resolve(item.Url, item, YouTubeSession.AudioFor(session.Mode), session.QualityFor(session.Mode),
+        Resolve(item.Url, item, Session.AudioFor(session.Mode), session.QualityFor(session.Mode),
             session.Token, outcome =>
         {
             if (!ReferenceEquals(_session, session))
@@ -509,7 +509,7 @@ internal sealed class YouTubeSessions : IDisposable
             if (outcome.Value is Resolved ready && Start(session, index, ready))
                 return;
             if (outcome.Failure is not (ResolveFailure.None or ResolveFailure.Cancelled))
-                ShowError(Describe(outcome.Failure, outcome.Detail, StreamFailed));
+                ShowError(Utils.Describe(outcome.Failure, outcome.Detail, Utils.StreamFailed));
             Show(session);
         });
     }
@@ -536,13 +536,13 @@ internal sealed class YouTubeSessions : IDisposable
     // ---- playing ----
 
     /// <summary>Starts a video from a session and makes it the session's current one.</summary>
-    private bool Start(YouTubeSession session, int index, Resolved ready)
+    private bool Start(Session session, int index, Resolved ready)
     {
         // Refusing rather than installing it: a session that is no longer the current one has been
         // disposed, and putting it back would leave the player driving a list nothing can add to.
         if (!ReferenceEquals(_session, session))
             return false;
-        if (!Open(ready))
+        if (!Open(ready, Session.AudioFor(session.Mode)))
             return false;
         session.Selected = index;
         Prefetch(session, index + 1, 1);
@@ -555,11 +555,13 @@ internal sealed class YouTubeSessions : IDisposable
     /// either - the session's list starts without it, and the one the user set stays set on the playlist it
     /// belongs to.
     /// </remarks>
-    private bool Open(Resolved ready)
+    /// <param name="audioOnly">Whether this play is sound only - Ctrl+Enter rather than Enter - so the
+    /// player leaves any picture the stream carries undecoded.</param>
+    private bool Open(Resolved ready, bool audioOnly)
     {
         _activeChannelUrl = ready.Item.ChannelUrl;
         return Report(_player.PlaySessionStream(
-            ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl));
+            ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl, audioOnly));
     }
 
     /// <summary>Starts a video that came from a link rather than from a list.</summary>
@@ -586,7 +588,7 @@ internal sealed class YouTubeSessions : IDisposable
 
     /// <summary>Moves playback to a video that is ready, adding it to the playlist if it is not there yet.
     /// </summary>
-    private bool Advance(YouTubeSession session, int from, int to, Resolved ready)
+    private bool Advance(Session session, int from, int to, Resolved ready)
     {
         // Asked before anything is added to the playlist, not after. Between asking for the next video and
         // its arriving the user may have opened something else entirely - and an entry appended on the way
@@ -596,7 +598,8 @@ internal sealed class YouTubeSessions : IDisposable
             || CurrentWatchUrl is not string playing || session.IndexOf(playing) != from)
             return false;
         if (_player.IndexOfSource(ready.Item.Url) < 0
-            && !_player.QueueSessionStream(ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl))
+            && !_player.QueueSessionStream(
+                ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl, Session.AudioFor(session.Mode)))
             return false;
         if (!_player.Next(wrap: false))
             return false;
@@ -607,7 +610,7 @@ internal sealed class YouTubeSessions : IDisposable
     }
 
     /// <summary>Resolves the next video in the background and moves to it when it arrives.</summary>
-    private void LoadNext(YouTubeSession session, int from, int to, YouTubeResult item)
+    private void LoadNext(Session session, int from, int to, YouTubeResult item)
     {
         var pending = new PendingNext(session, from, to, item.Url);
         _pending = pending;
@@ -617,8 +620,8 @@ internal sealed class YouTubeSessions : IDisposable
             // Translators: The short wording spoken while the video after this one is being fetched.
             Tr("Loading next video..."));
         var task = _cache.Start(
-            _cache.Key(item.Url, YouTubeSession.AudioFor(session.Mode), session.QualityFor(session.Mode)),
-            item.Url, item, YouTubeSession.AudioFor(session.Mode), session.QualityFor(session.Mode),
+            _cache.Key(item.Url, Session.AudioFor(session.Mode), session.QualityFor(session.Mode)),
+            item.Url, item, Session.AudioFor(session.Mode), session.QualityFor(session.Mode),
             session.Token);
         _ = task.ContinueWith(
             finished => _dispatcher.Post(() => NextReady(pending, finished.Result)),
@@ -664,7 +667,7 @@ internal sealed class YouTubeSessions : IDisposable
     /// <see cref="ResolveCache"/> keeps asking for two per row from flooding YouTube - the second simply
     /// queues behind the first - and a mode nobody plays costs one resolve that the bound soon evicts.
     /// </remarks>
-    private void Prefetch(YouTubeSession session, int start, int count)
+    private void Prefetch(Session session, int start, int count)
     {
         if (session.IsCancelled)
             return;
@@ -681,9 +684,9 @@ internal sealed class YouTubeSessions : IDisposable
         }
     }
 
-    private Resolved? Ready(YouTubeSession session, YouTubeResult item)
+    private Resolved? Ready(Session session, YouTubeResult item)
         => _cache.TryTake(
-            _cache.Key(item.Url, YouTubeSession.AudioFor(session.Mode), session.QualityFor(session.Mode)));
+            _cache.Key(item.Url, Session.AudioFor(session.Mode), session.QualityFor(session.Mode)));
 
     // ---- the background jobs ----
 
@@ -719,7 +722,7 @@ internal sealed class YouTubeSessions : IDisposable
         }
         catch (Exception failure)
         {
-            var explained = PyYtClient.Explain(failure, token);
+            var explained = FailureMapping.Explain(failure, token);
             return new SearchResults([], null, explained.Failure, explained.Detail);
         }
     }
@@ -730,73 +733,18 @@ internal sealed class YouTubeSessions : IDisposable
         return new PlaylistResults(title, items, failure, detail);
     }
 
-    // ---- wording ----
-
-    /// <summary>Turns a failure a worker reported into the sentence the user reads.</summary>
-    /// <remarks>
-    /// Here rather than at the point of failure because <c>Tr</c> may only be called on the UI thread, and
-    /// the workers are not on it. The raw detail follows the sentence.
-    /// </remarks>
-    /// <param name="fallback">What to say when nothing more precise is known. Each job has its own
-    /// wording for it - a search that failed and a video that failed are not the same news - which is why
-    /// it is passed in rather than fixed here.</param>
-    internal static string Describe(ResolveFailure failure, string detail, string fallback = "")
-    {
-        var message = failure switch
-        {
-            // Translators: Shown when a video is private, deleted, or never existed.
-            ResolveFailure.Unavailable => Tr("This video is not available."),
-            // Translators: Shown when YouTube has the video but will not serve it - age restricted, blocked
-            // in this country, or paid for.
-            ResolveFailure.Unplayable => Tr("YouTube will not play this video here."),
-            // Translators: Shown when a video exists but offers nothing the player can play.
-            ResolveFailure.NoStream => Tr("Could not resolve a playable stream."),
-            // Translators: Shown when the programs YouTube playback needs are not installed. "yt-dlp" is a
-            // program name and is not translated.
-            ResolveFailure.MissingComponents => Tr("YouTube components are missing. Download them from the YouTube settings to play or download videos."),
-            // Translators: Shown when YouTube is refusing requests from this computer for the time being.
-            // "HTTP 429" is the numbered error it answers with and is not translated.
-            ResolveFailure.RateLimited => Tr("YouTube returned HTTP 429 (Too Many Requests). Your IP may be temporarily rate-limited."),
-            // Translators: Shown when the request never reached YouTube or its answer never arrived.
-            ResolveFailure.Network => Tr("Could not reach YouTube. Check the network connection."),
-            _ => fallback.Length > 0
-                ? fallback
-                // Translators: Shown when something went wrong that the player cannot explain more precisely.
-                : Tr("Could not read this video."),
-        };
-        return detail.Length == 0
-            ? message
-            // Translators: Adds the technical reason under a message about YouTube. {message} is that
-            // message and {details} is the reason, which is not translated.
-            : TrFormat("{message}\nDetails: {details}", message, Short(detail));
-    }
-
-    /// <summary>The first line of a diagnostic, cut short. A stack trace in a message box helps nobody.
-    /// </summary>
-    private static string Short(string detail)
-    {
-        var line = detail.Split('\n')[0].Trim();
-        return line.Length <= 220 ? line : string.Concat(line.AsSpan(0, 220).TrimEnd(), "...");
-    }
-
-    /// <summary>What a video that would not resolve is called, when nothing more precise is known.
-    /// </summary>
-    private static string StreamFailed =>
-        // Translators: Shown when a video could not be turned into something playable and nothing said why.
-        Tr("Could not resolve YouTube stream.");
-
     private void ShowError(string message) =>
         // Translators: Title of the messages the player shows about YouTube.
         _view.ShowError(message, Tr("YouTube"));
 
     private readonly record struct SearchResults(
-        IReadOnlyList<YouTubeResult> Items, SearchPage? Page, ResolveFailure Failure, string Detail);
+        IReadOnlyList<YouTubeResult> Items, Metadata.Page? Page, ResolveFailure Failure, string Detail);
 
     private readonly record struct PlaylistResults(
         string Title, IReadOnlyList<YouTubeResult> Items, ResolveFailure Failure, string Detail);
 
     /// <summary>The move to the next video that is waiting on a resolve.</summary>
-    private sealed record PendingNext(YouTubeSession Session, int From, int To, string WatchUrl);
+    private sealed record PendingNext(Session Session, int From, int To, string WatchUrl);
 
     /// <summary>The results window's way of talking back: it reports where the user is, asks for more rows
     /// and says when it has gone.</summary>
@@ -809,12 +757,12 @@ internal sealed class YouTubeSessions : IDisposable
     /// </remarks>
     private sealed class Feed : IYouTubeResultsFeed, IDisposable
     {
-        private readonly YouTubeSessions _owner;
-        private readonly YouTubeSession _session;
+        private readonly Sessions _owner;
+        private readonly Session _session;
         private bool _closed;
         private bool _loading;
 
-        internal Feed(YouTubeSessions owner, YouTubeSession session)
+        internal Feed(Sessions owner, Session session)
         {
             _owner = owner;
             _session = session;
@@ -913,7 +861,7 @@ internal sealed class YouTubeSessions : IDisposable
         {
             if (_closed || _session.IsCancelled
                 || _session.Kind is not SessionKind.Channel
-                || tabIndex < 0 || tabIndex >= ChannelTabs.Keys.Length)
+                || tabIndex < 0 || tabIndex >= Client.Tabs.Keys.Length)
             {
                 replaced(null);
                 return;
@@ -938,7 +886,7 @@ internal sealed class YouTubeSessions : IDisposable
                 // Translators: The short wording spoken while a channel tab is being loaded.
                 Tr("Loading..."));
             var channelBase = _session.ChannelBase;
-            var tabKey = ChannelTabs.Keys[tabIndex];
+            var tabKey = Client.Tabs.Keys[tabIndex];
             var token = _session.Token;
             _ = Task.Run(() => _owner._backend.OpenChannelTab(channelBase, tabKey, token), token).ContinueWith(
                 finished => _owner._dispatcher.Post(() => Switched(tabIndex, finished, replaced)),

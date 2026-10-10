@@ -27,7 +27,7 @@ internal sealed class ApplicationController : IDisposable
     /// <see cref="TagsFor"/>.</summary>
     private string? _tagsPath;
     private MediaTags _tags = MediaTags.None;
-    private readonly YouTube.YouTubeSessions _sessions;
+    private readonly YouTube.Playback.Sessions _sessions;
     private readonly SleepTimer _sleepTimer;
     private bool _shutDown;
 
@@ -40,7 +40,7 @@ internal sealed class ApplicationController : IDisposable
         ActionRouter router,
         FileActions fileActions,
         PlaybackSelection selection,
-        YouTube.YouTubeSessions sessions,
+        YouTube.Playback.Sessions sessions,
         SleepTimer sleepTimer,
         ISpeechOutput speech)
     {
@@ -365,9 +365,9 @@ internal sealed class ApplicationController : IDisposable
                 // Stopping on that would end the session a moment before its successor arrived.
                 switch (_sessions.TryNext())
                 {
-                    case YouTube.NextOutcome.Advanced or YouTube.NextOutcome.Pending:
+                    case YouTube.Playback.NextOutcome.Advanced or YouTube.Playback.NextOutcome.Pending:
                         return;
-                    case YouTube.NextOutcome.Exhausted:
+                    case YouTube.Playback.NextOutcome.Exhausted:
                         _player.Stop();
                         return;
                 }

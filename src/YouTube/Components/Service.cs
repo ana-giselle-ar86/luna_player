@@ -5,7 +5,7 @@ using LunaPlayer.Configuration;
 using LunaPlayer.Media;
 using LunaPlayer.UI;
 
-namespace LunaPlayer.YouTube;
+namespace LunaPlayer.YouTube.Components;
 
 /// <summary>Everything about the two programs the optional yt-dlp path needs: whether they are there,
 /// fetching them, and keeping them current.</summary>
@@ -18,7 +18,7 @@ namespace LunaPlayer.YouTube;
 /// again": the programs are the only route to YouTube, so declining is answered next time by asking again
 /// rather than by giving up on the feature for good.
 /// </remarks>
-internal sealed class Components
+internal sealed class Service
 {
     /// <summary>What came of asking for the programs.</summary>
     internal enum ComponentsState
@@ -36,25 +36,25 @@ internal sealed class Components
     private readonly PlayerSettings _settings;
     private readonly ISpeechOutput _speech;
     private readonly IApplicationDispatcher _dispatcher;
-    private readonly ComponentInstaller _installer = new();
-    private readonly YtDlpClient _ytDlp;
+    private readonly Installer _installer = new();
+    private readonly Client.Updater _updater;
 
-    internal Components(
+    internal Service(
         IMainView view,
         PlayerSettings settings,
         ISpeechOutput speech,
         IApplicationDispatcher dispatcher,
-        YtDlpClient ytDlp)
+        Client.Updater updater)
     {
         _view = view;
         _settings = settings;
         _speech = speech;
         _dispatcher = dispatcher;
-        _ytDlp = ytDlp;
+        _updater = updater;
     }
 
     /// <summary>Whether both programs are installed.</summary>
-    internal static bool Ready => Tools.HasAll;
+    internal static bool Ready => Utils.HasAll;
 
     /// <summary>Makes sure the programs are there, offering to fetch them if they are not.</summary>
     ///
@@ -92,7 +92,7 @@ internal sealed class Components
             finished?.Invoke(true);
             return;
         }
-        var steps = ComponentInstaller.MissingCount;
+        var steps = Installer.MissingCount;
         var prompt = new ProgressPrompt(
             // Translators: Title of the window shown while the extra programs for yt-dlp are being fetched.
             Tr("Downloading YouTube components"),
@@ -134,7 +134,7 @@ internal sealed class Components
     /// </remarks>
     internal void Update()
     {
-        if (!Tools.HasYtDlp)
+        if (!Utils.HasYtDlp)
         {
             _view.ShowError(
                 // Translators: Shown when the user asks to update yt-dlp and it has not been installed.
@@ -168,7 +168,7 @@ internal sealed class Components
     /// </remarks>
     internal void CheckForUpdateInBackground()
     {
-        if (!_settings.YouTube.CheckComponentUpdates || !Tools.HasYtDlp)
+        if (!_settings.YouTube.CheckComponentUpdates || !Utils.HasYtDlp)
             return;
         var channel = _settings.YouTube.Channel;
         _ = Task.Run(() =>
@@ -177,11 +177,11 @@ internal sealed class Components
             string remote;
             try
             {
-                local = _ytDlp.Version(CancellationToken.None);
+                local = _updater.Version(CancellationToken.None);
                 if (local.Length == 0)
                     return;
                 remote = Clean(_installer.LatestTag(
-                    YtDlpClient.ChannelRepository(channel), CancellationToken.None));
+                    Client.Updater.ChannelRepository(channel), CancellationToken.None));
             }
             catch (Exception)
             {
@@ -201,7 +201,7 @@ internal sealed class Components
             // {current} the version installed and {latest} the one available.
             TrFormat(
                 "A newer yt-dlp version is available on the '{channel}' channel.\nCurrent version: {current}\nLatest version: {latest}\n\nDo you want to update now?",
-                YtDlpClient.ChannelName(channel), local, remote),
+                Client.Updater.ChannelName(channel), local, remote),
             UpdateTitle))
         {
             Update();
@@ -215,11 +215,11 @@ internal sealed class Components
         try
         {
             _installer.Install(channel,
-                (name, step, got, size) => report(ComponentInstaller.Step(name, step, got, size)), token);
+                (name, step, got, size) => report(Installer.Step(name, step, got, size)), token);
             // No detail when one simply is not there afterwards: there is nothing to add that the
             // message the user reads does not already say, and an English sentence invented here would be
             // the one line of the window that stayed in English.
-            return Tools.HasAll ? YouTubeOutcome.Ok : new YouTubeOutcome(false);
+            return Utils.HasAll ? YouTubeOutcome.Ok : new YouTubeOutcome(false);
         }
         catch (OperationCanceledException)
         {
@@ -236,7 +236,7 @@ internal sealed class Components
     {
         try
         {
-            var (before, after, updated) = _ytDlp.SelfUpdate(
+            var (before, after, updated) = _updater.SelfUpdate(
                 channel, line => report(new ProgressUpdate(0, 0, line)), token);
             return new UpdateOutcome(true, before, after, updated, string.Empty);
         }
@@ -264,7 +264,7 @@ internal sealed class Components
         }
         // Translators: Stands in for a version number that could not be read.
         var unknown = Tr("unknown");
-        var name = YtDlpClient.ChannelName(channel);
+        var name = Client.Updater.ChannelName(channel);
         var message = outcome.Updated
             // Translators: Shown once yt-dlp has updated itself. {old} and {new} are version numbers and
             // {channel} is the release line being followed.

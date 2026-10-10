@@ -49,7 +49,7 @@ internal interface IPlaybackEngine : IDisposable
     /// <param name="audioFile">A separate stream carrying the sound, played alongside
     /// <paramref name="path"/>. Null for anything that carries its own sound, which is everything but a
     /// YouTube video above 360p.</param>
-    bool Load(string path, double? startPosition = null, bool paused = false, string? audioFile = null);
+    bool Load(string path, double? startPosition = null, bool paused = false, string? audioFile = null, bool noVideo = false);
     void Stop();
     bool TogglePause();
     void Play();

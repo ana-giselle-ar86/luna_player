@@ -4,6 +4,7 @@ using LunaPlayer.Configuration;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
 using LunaPlayer.YouTube;
+using LunaPlayer.YouTube.Playback;
 
 namespace LunaPlayer.Application.ActionHandlers;
 
@@ -14,7 +15,7 @@ internal sealed class PlaylistActions
     private readonly PlayerSettings _settings;
     private readonly ISpeechOutput _speech;
     private readonly MediaGuard _guard;
-    private readonly YouTubeSessions _sessions;
+    private readonly Sessions _sessions;
 
     internal PlaylistActions(
         ActionRouter router,
@@ -22,7 +23,7 @@ internal sealed class PlaylistActions
         MediaPlayer player,
         PlayerSettings settings,
         ISpeechOutput speech,
-        YouTubeSessions sessions)
+        Sessions sessions)
     {
         _view = view;
         _player = player;

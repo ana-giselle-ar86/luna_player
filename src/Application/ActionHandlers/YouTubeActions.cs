@@ -5,6 +5,7 @@ using LunaPlayer.Media;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
 using LunaPlayer.YouTube;
+using LunaPlayer.YouTube.Playback;
 using WxSharp;
 
 namespace LunaPlayer.Application.ActionHandlers;
@@ -13,7 +14,7 @@ namespace LunaPlayer.Application.ActionHandlers;
 ///
 /// <remarks>
 /// Only the commands are here. Anything that outlives one keypress - the list a search returned, what
-/// comes after the video playing, what Escape goes back to - belongs to <see cref="YouTubeSessions"/>,
+/// comes after the video playing, what Escape goes back to - belongs to <see cref="Sessions"/>,
 /// which this hands to and otherwise leaves alone.
 ///
 /// The three commands that act on the video playing take its address from
@@ -28,8 +29,8 @@ internal sealed class YouTubeActions
     private readonly ISpeechOutput _speech;
     private readonly IClipboardService _clipboard;
     private readonly Backend _backend;
-    private readonly YouTubeSessions _sessions;
-    private readonly Components _components;
+    private readonly Sessions _sessions;
+    private readonly YouTube.Components.Service _components;
     private readonly IApplicationDispatcher _dispatcher;
     private readonly MediaGuard _guard;
 
@@ -41,8 +42,8 @@ internal sealed class YouTubeActions
         ISpeechOutput speech,
         IClipboardService clipboard,
         Backend backend,
-        YouTubeSessions sessions,
-        Components components,
+        Sessions sessions,
+        YouTube.Components.Service components,
         IApplicationDispatcher dispatcher)
     {
         _view = view;
@@ -157,7 +158,7 @@ internal sealed class YouTubeActions
     {
         if (!Backend.HasComponents
             && _components.Ensure(_settings.YouTube.Channel, () => RunSearch(query, filter))
-                is not Components.ComponentsState.Ready)
+                is not YouTube.Components.Service.ComponentsState.Ready)
             return;
         _sessions.Search(query, filter);
     }
@@ -189,7 +190,7 @@ internal sealed class YouTubeActions
     {
         if (!Backend.HasComponents
             && _components.Ensure(_settings.YouTube.Channel, () => DownloadTo(url))
-                is not Components.ComponentsState.Ready)
+                is not YouTube.Components.Service.ComponentsState.Ready)
             return;
         var folder = _view.ChooseFolder(
             _settings.General.LastDirectory,
@@ -258,7 +259,7 @@ internal sealed class YouTubeActions
             ? TrFormat("Downloading {name}", update.Name)
             // Translators: First message in the download window, before anything has arrived.
             : Tr("Starting download...");
-        return heading + "\n" + Components.Sizes(update);
+        return heading + "\n" + YouTube.Components.Service.Sizes(update);
     }
 
     /// <remarks>
@@ -307,7 +308,7 @@ internal sealed class YouTubeActions
                     return;
                 if (found.Text is null)
                 {
-                    ShowError(YouTubeSessions.Describe(found.Failure, found.Detail), Tr("YouTube"));
+                    ShowError(Utils.Describe(found.Failure, found.Detail), Tr("YouTube"));
                     return;
                 }
                 var text = found.Text.Trim().Length > 0

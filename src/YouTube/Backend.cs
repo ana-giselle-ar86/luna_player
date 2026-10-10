@@ -1,4 +1,3 @@
-using LunaPlayer.Configuration;
 using LunaPlayer.Media;
 
 namespace LunaPlayer.YouTube;
@@ -6,29 +5,31 @@ namespace LunaPlayer.YouTube;
 /// <summary>The operations on a single video that need no session behind them.</summary>
 ///
 /// <remarks>
-/// Playing a list of videos lives in <see cref="YouTubeSessions"/>, because it needs the player and the
+/// Playing a list of videos lives in <see cref="Playback.Sessions"/>, because it needs the player and the
 /// order the results window showed. What is left here is the work that answers about one address and then
 /// finishes: saving it, and reading what the uploader wrote under it. Both run on a worker thread behind a
 /// progress window, so both report a raw failure rather than a translated one.
 ///
-/// Reading about a video - its description, or the contents of a playlist - goes through PyYt, which needs
-/// nothing installed. Saving one goes through yt-dlp, which the user has to fetch first and which is the
-/// only thing that can turn a video into a playable file; when the programs it needs are not there, the
-/// user is told so rather than quietly getting nothing.
+/// Reading about a video - its description, or the contents of a playlist - goes through the metadata
+/// client, which needs nothing installed. Saving one goes through yt-dlp, which the user has to fetch first
+/// and which is the only thing that can turn a video into a playable file; when the programs it needs are
+/// not there, the user is told so rather than quietly getting nothing.
 /// </remarks>
 internal sealed class Backend
 {
-    private readonly PyYtClient _client;
-    private readonly YtDlpClient _ytDlp;
+    private readonly Metadata.Client _client;
+    private readonly Client.Downloader _downloader;
+    private readonly Client.Channels _channels;
 
-    internal Backend(PyYtClient client, YtDlpClient ytDlp)
+    internal Backend(Metadata.Client client, Client.Downloader downloader, Client.Channels channels)
     {
         _client = client;
-        _ytDlp = ytDlp;
+        _downloader = downloader;
+        _channels = channels;
     }
 
     /// <summary>Whether the programs yt-dlp needs have been fetched.</summary>
-    internal static bool HasComponents => Tools.HasAll;
+    internal static bool HasComponents => Utils.HasAll;
 
     /// <summary>The text the uploader wrote under a video.</summary>
     /// <remarks>Runs on a worker thread, so the failure it reports is a code and a raw detail; the
@@ -42,15 +43,15 @@ internal sealed class Backend
         }
         catch (Exception failure)
         {
-            var explained = PyYtClient.Explain(failure, token);
+            var explained = FailureMapping.Explain(failure, token);
             return (null, explained.Failure, explained.Detail);
         }
     }
 
     /// <summary>Every video in a playlist, and what the playlist is called.</summary>
     /// <remarks>
-    /// Through PyYt, which reads the listing without needing anything installed - the same as a search, and
-    /// the same library. Only turning a video into a playable file needs yt-dlp.
+    /// Through the metadata client, which reads the listing without needing anything installed - the same
+    /// as a search, and the same library. Only turning a video into a playable file needs yt-dlp.
     /// </remarks>
     internal (string Title, IReadOnlyList<YouTubeResult> Items, ResolveFailure Failure, string Detail) Playlist(
         string link, CancellationToken token)
@@ -62,7 +63,7 @@ internal sealed class Backend
         }
         catch (Exception failure)
         {
-            var explained = PyYtClient.Explain(failure, token);
+            var explained = FailureMapping.Explain(failure, token);
             return (string.Empty, [], explained.Failure, explained.Detail);
         }
     }
@@ -70,9 +71,9 @@ internal sealed class Backend
     /// <summary>The words YouTube offers to finish what the user has typed, for the search box's live
     /// suggestions.</summary>
     /// <remarks>
-    /// Through PyYt, needing nothing installed. Called on the background thread the search dialog starts on
-    /// each keystroke; a failed or empty fetch is simply no suggestions, so anything that goes wrong reads as
-    /// an empty list rather than an error the box has no way to show.
+    /// Through the metadata client, needing nothing installed. Called on the background thread the search
+    /// dialog starts on each keystroke; a failed or empty fetch is simply no suggestions, so anything that
+    /// goes wrong reads as an empty list rather than an error the box has no way to show.
     /// </remarks>
     internal IReadOnlyList<string> Suggestions(string query, CancellationToken token)
     {
@@ -100,9 +101,9 @@ internal sealed class Backend
     {
         try
         {
-            if (!Tools.HasAll)
+            if (!Utils.HasAll)
                 return new YouTubeOutcome(false, MissingComponents);
-            _ytDlp.Download(watchUrl, folder, audioOnly, quality,
+            _downloader.Download(watchUrl, folder, audioOnly, quality,
                 (name, got, size) => report(Bytes(name, got, size)), token, exactQuality);
             return YouTubeOutcome.Ok;
         }
@@ -126,11 +127,11 @@ internal sealed class Backend
     /// </remarks>
     internal IReadOnlyList<int> AvailableQualities(string watchUrl, bool audioOnly, CancellationToken token)
     {
-        if (!Tools.HasAll)
+        if (!Utils.HasAll)
             return [];
         try
         {
-            return _ytDlp.AvailableQualities(watchUrl, audioOnly, token);
+            return _downloader.AvailableQualities(watchUrl, audioOnly, token);
         }
         catch (Exception failure) when (failure is not OperationCanceledException)
         {
@@ -152,17 +153,17 @@ internal sealed class Backend
     /// </remarks>
     internal ChannelTabResult OpenChannelTab(string channelBase, string tabKey, CancellationToken token)
     {
-        if (!Tools.HasAll)
+        if (!Utils.HasAll)
             return new ChannelTabResult([], null, ResolveFailure.MissingComponents, string.Empty);
-        var page = new ChannelTabPage(_ytDlp, channelBase, tabKey);
+        var page = new Client.ChannelPage(_channels, channelBase, tabKey);
         try
         {
-            var first = page.Take(ChannelTabPage.Batch, token).GetAwaiter().GetResult();
+            var first = page.Take(Client.ChannelPage.Batch, token).GetAwaiter().GetResult();
             return new ChannelTabResult(first, page, ResolveFailure.None, string.Empty);
         }
         catch (Exception failure)
         {
-            var explained = PyYtClient.Explain(failure, token);
+            var explained = FailureMapping.Explain(failure, token);
             _ = page.DisposeAsync();
             return new ChannelTabResult([], null, explained.Failure, explained.Detail);
         }

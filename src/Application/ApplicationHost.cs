@@ -27,13 +27,13 @@ internal sealed class ApplicationHost : IDisposable
     private readonly SubtitleActions _subtitles;
     private readonly LunaPlayer.Equalizer.Library _equalizerLibrary;
     private readonly PathRequestQueue _pathQueue;
-    private readonly LunaPlayer.YouTube.ResolveCache _resolveCache;
-    private readonly LunaPlayer.YouTube.Components _components;
+    private readonly LunaPlayer.YouTube.Playback.ResolveCache _resolveCache;
+    private readonly LunaPlayer.YouTube.Components.Service _components;
     private readonly AppUpdateActions _appUpdates;
     private readonly LunaPlayer.Recording.AudioCatalog _catalog;
     private readonly LunaPlayer.Recording.RecordingSources _recordingSources;
     private readonly LunaPlayer.Recording.RecordingEngine _recorder;
-    private readonly LunaPlayer.YouTube.YouTubeSessions _sessions;
+    private readonly LunaPlayer.YouTube.Playback.Sessions _sessions;
     private readonly ToolsActions _tools;
     private bool _disposed;
 
@@ -83,18 +83,22 @@ internal sealed class ApplicationHost : IDisposable
         _subtitles = new SubtitleActions(router, _view, _player, _speech, _settings, _dispatcher);
         _equalizer = new EqualizerActions(
             router, _view, _player, _settings, _settingsStore, _speech, _equalizerLibrary);
-        var pyYt = new LunaPlayer.YouTube.PyYtClient();
-        var ytDlp = new LunaPlayer.YouTube.YtDlpClient(_settings);
-        var youTube = new LunaPlayer.YouTube.Backend(pyYt, ytDlp);
-        _resolveCache = new LunaPlayer.YouTube.ResolveCache(ytDlp);
-        _components = new LunaPlayer.YouTube.Components(_view, _settings, _speech, _dispatcher, ytDlp);
+        var runner = new LunaPlayer.YouTube.Client.Runner(_settings);
+        var resolver = new LunaPlayer.YouTube.Client.Resolver(runner);
+        var downloader = new LunaPlayer.YouTube.Client.Downloader(runner);
+        var channels = new LunaPlayer.YouTube.Client.Channels(runner);
+        var updater = new LunaPlayer.YouTube.Client.Updater(runner);
+        var metadata = new LunaPlayer.YouTube.Metadata.Client();
+        var youTube = new LunaPlayer.YouTube.Backend(metadata, downloader, channels);
+        _resolveCache = new LunaPlayer.YouTube.Playback.ResolveCache(resolver);
+        _components = new LunaPlayer.YouTube.Components.Service(_view, _settings, _speech, _dispatcher, updater);
         // Shared by the favourites actions and the results window's Ctrl+Space add, so both write the same store.
         var favorites = new FavoriteStore(Paths.FavoritesFile);
         // Sessions need three YouTube actions. Callbacks avoid giving either object access to the other's
         // unrelated responsibilities.
         YouTubeActions? youTubeActions = null;
-        _sessions = new LunaPlayer.YouTube.YouTubeSessions(
-            _view, _player, _settings, _speech, _dispatcher, pyYt, youTube, _resolveCache,
+        _sessions = new LunaPlayer.YouTube.Playback.Sessions(
+            _view, _player, _settings, _speech, _dispatcher, metadata, youTube, _resolveCache,
             url => youTubeActions!.DownloadTo(url),
             url => youTubeActions!.CopyToClipboard(url),
             url => youTubeActions!.OpenInBrowser(url),

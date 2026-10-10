@@ -4,7 +4,7 @@ using System.Text.Json;
 using LunaPlayer.Configuration;
 using LunaPlayer.Media;
 
-namespace LunaPlayer.YouTube;
+namespace LunaPlayer.YouTube.Components;
 
 /// <summary>Fetches yt-dlp and Deno from the projects that publish them.</summary>
 ///
@@ -17,7 +17,7 @@ namespace LunaPlayer.YouTube;
 /// download interrupted half way through then leaves nothing behind rather than an executable that is
 /// present, is the wrong size, and fails in a way nobody can read.
 /// </remarks>
-internal sealed class ComponentInstaller
+internal sealed class Installer
 {
     /// <summary>Named after the player, as courtesy to the projects being asked and because GitHub's
     /// interface refuses a request that does not name itself.</summary>
@@ -30,12 +30,12 @@ internal sealed class ComponentInstaller
 
     private readonly HttpClient _http = new() { Timeout = TimeSpan.FromMinutes(10) };
 
-    internal ComponentInstaller()
+    internal Installer()
         => _http.DefaultRequestHeaders.UserAgent.Add(Agent);
 
     /// <summary>How many of the two are missing, so the window can say "one of two" before it starts.
     /// </summary>
-    internal static int MissingCount => Tools.Missing.Count;
+    internal static int MissingCount => Utils.Missing.Count;
 
     /// <summary>Fetches whichever of the two are not already there.</summary>
     ///
@@ -51,22 +51,22 @@ internal sealed class ComponentInstaller
         CancellationToken token)
     {
         var wanted = new List<(string Name, string Url, bool Archive, string Destination)>(2);
-        if (!Tools.HasYtDlp)
+        if (!Utils.HasYtDlp)
         {
-            var repository = YtDlpClient.ChannelRepository(channel);
+            var repository = Client.Updater.ChannelRepository(channel);
             wanted.Add((
                 $"yt-dlp{Version(LatestTag(repository, token))}",
                 $"https://github.com/{repository}/releases/latest/download/yt-dlp.exe",
                 false,
-                Tools.YtDlpPath));
+                Utils.YtDlpPath));
         }
-        if (!Tools.HasDeno)
+        if (!Utils.HasDeno)
         {
             wanted.Add((
                 $"Deno{Version(LatestTag("denoland/deno", token))}",
                 DenoUrl,
                 true,
-                Path.Combine(Tools.Directory, "deno.zip")));
+                Path.Combine(Utils.Directory, "deno.zip")));
         }
         for (var index = 0; index < wanted.Count; index++)
         {
@@ -110,7 +110,7 @@ internal sealed class ComponentInstaller
 
     private void Fetch(string url, string destination, Action<long, long> report, CancellationToken token)
     {
-        System.IO.Directory.CreateDirectory(Path.GetDirectoryName(destination) ?? Tools.Directory);
+        System.IO.Directory.CreateDirectory(Path.GetDirectoryName(destination) ?? Utils.Directory);
         var scratch = Paths.TemporaryFor(destination);
         try
         {
@@ -149,7 +149,7 @@ internal sealed class ComponentInstaller
         var entry = archive.Entries.FirstOrDefault(candidate =>
             candidate.Name.Equals("deno.exe", StringComparison.OrdinalIgnoreCase))
             ?? throw new InvalidOperationException("The Deno archive does not contain deno.exe.");
-        var scratch = Paths.TemporaryFor(Tools.DenoPath);
+        var scratch = Paths.TemporaryFor(Utils.DenoPath);
         try
         {
             using (var source = entry.Open())
@@ -163,7 +163,7 @@ internal sealed class ComponentInstaller
                     target.Write(buffer, 0, read);
                 }
             }
-            File.Move(scratch, Tools.DenoPath, overwrite: true);
+            File.Move(scratch, Utils.DenoPath, overwrite: true);
         }
         catch (Exception)
         {

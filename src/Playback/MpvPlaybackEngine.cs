@@ -90,13 +90,18 @@ internal sealed class MpvPlaybackEngine : IPlaybackEngine
     /// the next. The async set is submitted before the loadfile, and mpv processes a client's requests in
     /// order, so it is applied before the file loads.
     /// </remarks>
-    public bool Load(string path, double? startPosition = null, bool paused = false, string? audioFile = null)
+    public bool Load(string path, double? startPosition = null, bool paused = false, string? audioFile = null, bool noVideo = false)
     {
         var options = new Dictionary<string, object?>
         {
             // Track ids do not carry across files, and the user opts subtitles in per file through the menu.
             ["sid"] = "no",
             ["pause"] = paused ? "yes" : "no",
+            // An audio-only play - a YouTube video opened "as audio" - can still resolve to a stream that
+            // carries a picture. vid=no leaves that picture undecoded so the play is truly sound only: no
+            // video to go full screen over, and none of the cost of decoding frames nobody is watching. It
+            // rides as a per-file option, so an ordinary load afterwards gets video back on its own.
+            ["vid"] = noVideo ? "no" : "auto",
         };
         if (startPosition.HasValue)
             options["start"] = Precision.Normalize(startPosition.Value);

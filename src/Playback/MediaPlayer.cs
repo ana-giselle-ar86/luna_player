@@ -99,21 +99,21 @@ internal sealed class MediaPlayer : IDisposable
     }
 
     /// <summary>Plays a resolved video in front of the playlist the user opened.</summary>
-    internal bool PlaySessionStream(string url, string? title, string? source, string? audioFile)
+    internal bool PlaySessionStream(string url, string? title, string? source, string? audioFile, bool audioOnly = false)
     {
         EnterSession();
         if (!_playlist.Append(url, jump: true))
             return false;
-        Describe(url, title, source, audioFile);
+        Describe(url, title, source, audioFile, audioOnly);
         return LoadCurrent();
     }
 
     /// <summary>Adds a resolved video to the end of the session's own list without playing it.</summary>
-    internal bool QueueSessionStream(string url, string? title, string? source, string? audioFile)
+    internal bool QueueSessionStream(string url, string? title, string? source, string? audioFile, bool audioOnly = false)
     {
         if (!InSession || !_playlist.Append(url, jump: false))
             return false;
-        Describe(url, title, source, audioFile);
+        Describe(url, title, source, audioFile, audioOnly);
         StateChanged?.Invoke();
         return true;
     }
@@ -213,7 +213,7 @@ internal sealed class MediaPlayer : IDisposable
     /// <param name="audioFile">A second stream carrying the sound, when the first carries only picture.
     /// </param>
     internal bool OpenStream(
-        string url, string? title = null, string? source = null, string? audioFile = null)
+        string url, string? title = null, string? source = null, string? audioFile = null, bool audioOnly = false)
     {
         // A plain stream, or a single video named by a link, belongs to the playlist the user is working
         // in. Only a list of videos from YouTube gets a stage of its own.
@@ -221,7 +221,7 @@ internal sealed class MediaPlayer : IDisposable
         SavePosition();
         if (!_playlist.Append(url, jump: true))
             return false;
-        Describe(url, title, source, audioFile);
+        Describe(url, title, source, audioFile, audioOnly);
         return LoadCurrent();
     }
 
@@ -233,10 +233,10 @@ internal sealed class MediaPlayer : IDisposable
     /// </summary>
     internal int IndexOfSource(string source) => _playlist.IndexOfSource(source);
 
-    private void Describe(string url, string? title, string? source, string? audioFile)
+    private void Describe(string url, string? title, string? source, string? audioFile, bool audioOnly = false)
     {
         _playlist.SetTitle(url, title);
-        _playlist.SetSource(url, source, audioFile);
+        _playlist.SetSource(url, source, audioFile, audioOnly);
     }
 
     internal bool OpenFolder(string folderPath)
@@ -537,7 +537,7 @@ internal sealed class MediaPlayer : IDisposable
         if (!startPosition.HasValue && _trackPositions && _positions is not null && File.Exists(path))
             startPosition = _positions.Get(path);
         _engine.ClearLoop();
-        if (!_engine.Load(path, startPosition, paused, _playlist.GetAudioFile(path)))
+        if (!_engine.Load(path, startPosition, paused, _playlist.GetAudioFile(path), _playlist.GetAudioOnly(path)))
             return false;
         _engine.SetNormalization(_normalizationEnabled);
         _engine.SetMono(_monoEnabled);
