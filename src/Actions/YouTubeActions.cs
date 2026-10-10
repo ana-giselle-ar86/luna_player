@@ -24,7 +24,14 @@ internal static class YouTubeActionDefinitions
         // Translators: Name of the command that shows the text the uploader wrote under the video.
         new(ActionId.VideoDescription, Tr("Show the video description"), new("d", ShortcutModifiers.Alt)),
         // Translators: Name of the command that copies the address of the video being played.
-        new(ActionId.VideoCopyLink, Tr("Copy the video link")),
+        new(ActionId.VideoCopyLink, Tr("Copy the video link"),
+            new("c", ShortcutModifiers.Control | ShortcutModifiers.Shift)),
+        // Translators: Name of the command that opens the video being played in the web browser.
+        new(ActionId.VideoOpenInBrowser, Tr("Open the current video in browser")),
+        // Translators: Name of the command that opens the channel of the video being played in the web browser.
+        new(ActionId.VideoOpenChannelInBrowser, Tr("Open the channel in browser")),
+        // Translators: Name of the command that opens the channel of the video being played inside the player.
+        new(ActionId.VideoGoToChannel, Tr("Go to channel")),
         // Translators: Name of the command that fetches a newer yt-dlp. "yt-dlp" is a program name and is
         // not translated.
         new(ActionId.UpdateYouTubeComponents, Tr("Update YouTube components")),
