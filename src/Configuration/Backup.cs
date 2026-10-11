@@ -1,3 +1,4 @@
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Bookmarks;
 
 namespace LunaPlayer.Configuration;
@@ -21,14 +22,14 @@ internal sealed class BackupService
     /// something about, where "access to the path is denied" does.</summary>
     internal string LastError { get; private set; } = string.Empty;
 
-    internal bool ExportSettings(string destination, PlayerSettings current)
+    internal bool ExportSettings(string destination, Settings current)
     {
         if (!_settings.SaveExplicit(current))
             return Failed(_settings.LastError);
         return Copy(_settings.Path, destination, out var error) ? Succeeded() : Failed(error);
     }
 
-    internal PlayerSettings? ImportSettings(string source)
+    internal Settings? ImportSettings(string source)
     {
         if (!_settings.TryRead(source, out var imported))
         {
@@ -44,9 +45,9 @@ internal sealed class BackupService
         return imported;
     }
 
-    internal PlayerSettings? ResetSettings()
+    internal Settings? ResetSettings()
     {
-        var defaults = new PlayerSettings();
+        var defaults = new Settings();
         if (!_settings.ReplaceExplicit(defaults))
         {
             _ = Failed(_settings.LastError);

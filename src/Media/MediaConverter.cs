@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.YouTube;
 
 namespace LunaPlayer.Media;

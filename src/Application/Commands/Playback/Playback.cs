@@ -2,6 +2,7 @@ using System.Globalization;
 using LunaPlayer.Accessibility;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
 
@@ -12,7 +13,7 @@ internal sealed partial class Playback
     private const double DefaultSeekStep = 5;
     private readonly IMainView _view;
     private readonly MediaPlayer _player;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly SettingsStore _settingsStore;
     private readonly ISpeechOutput _speech;
     private readonly PlaybackSelection _selection;
@@ -22,7 +23,7 @@ internal sealed partial class Playback
         ActionRouter router,
         IMainView view,
         MediaPlayer player,
-        PlayerSettings settings,
+        Settings settings,
         SettingsStore settingsStore,
         ISpeechOutput speech,
         PlaybackSelection selection)

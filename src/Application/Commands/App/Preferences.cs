@@ -1,6 +1,7 @@
 using LunaPlayer.Accessibility;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.UI;
 using LunaPlayer.Playback;
 using LunaPlayer.Media;
@@ -9,12 +10,12 @@ using System.Diagnostics;
 
 namespace LunaPlayer.Application.Commands.App;
 
-internal sealed class Settings
+internal sealed class Preferences
 {
-    internal Settings(
+    internal Preferences(
         ActionRouter router,
         IMainView view,
-        PlayerSettings settings,
+        Settings settings,
         SettingsStore store,
         BackupService backup,
         FileAssociations associations,
@@ -25,7 +26,7 @@ internal sealed class Settings
         Backend youTube,
         LunaPlayer.YouTube.Components.Service youTubeComponents)
     {
-        void ApplyRuntime(PlayerSettings source)
+        void ApplyRuntime(Settings source)
         {
             settings.Apply(source);
             player.TrackPositions(settings.Audio.SaveFilePositions);

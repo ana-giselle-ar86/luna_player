@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 
 namespace LunaPlayer.Application;
 

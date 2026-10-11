@@ -1,3 +1,4 @@
+using LunaPlayer.Configuration.Models;
 using System.Text.Json;
 
 namespace LunaPlayer.Configuration;
@@ -42,13 +43,13 @@ internal sealed class SettingsStore
         return AppTheme.SystemDefault;
     }
 
-    internal PlayerSettings Load()
+    internal Settings Load()
     {
         if (!File.Exists(_jsonPath))
         {
             LastError = string.Empty;
             _writeBlocked = false;
-            return new PlayerSettings();
+            return new Settings();
         }
         if (TryReadFile(_jsonPath, out var settings, out var error))
         {
@@ -58,10 +59,10 @@ internal sealed class SettingsStore
         }
         LastError = error;
         _writeBlocked = true;
-        return new PlayerSettings();
+        return new Settings();
     }
 
-    internal bool SaveExplicit(PlayerSettings settings)
+    internal bool SaveExplicit(Settings settings)
     {
         if (_writeBlocked)
             return false;
@@ -71,7 +72,7 @@ internal sealed class SettingsStore
 
     /// <summary>Replaces a settings file that failed to load after the user imports a valid file or confirms
     /// a reset.</summary>
-    internal bool ReplaceExplicit(PlayerSettings settings)
+    internal bool ReplaceExplicit(Settings settings)
     {
         settings.Validate();
         var written = Write(settings);
@@ -80,22 +81,22 @@ internal sealed class SettingsStore
         return written;
     }
 
-    internal bool SaveSession(PlayerSettings settings)
+    internal bool SaveSession(Settings settings)
         => !settings.General.SaveOnClose || SaveExplicit(settings);
 
-    internal bool TryRead(string path, out PlayerSettings settings)
+    internal bool TryRead(string path, out Settings settings)
     {
         var read = TryReadFile(path, out settings, out var error);
         LastError = error;
         return read;
     }
 
-    private static bool TryReadFile(string path, out PlayerSettings settings, out string error)
+    private static bool TryReadFile(string path, out Settings settings, out string error)
     {
         try
         {
             using var stream = File.OpenRead(path);
-            settings = JsonSerializer.Deserialize(stream, SettingsJsonContext.Default.PlayerSettings)
+            settings = JsonSerializer.Deserialize(stream, SettingsJsonContext.Default.Settings)
                 ?? throw new JsonException("The settings file is empty.");
             settings.ValidateStored();
             settings.Validate();
@@ -104,20 +105,20 @@ internal sealed class SettingsStore
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or JsonException)
         {
-            settings = new PlayerSettings();
+            settings = new Settings();
             error = exception.Message;
             return false;
         }
     }
 
-    private bool Write(PlayerSettings settings)
+    private bool Write(Settings settings)
     {
         try
         {
             Paths.EnsureDirectoryFor(_jsonPath);
             var temporary = Paths.TemporaryFor(_jsonPath);
             using (var stream = File.Create(temporary))
-                JsonSerializer.Serialize(stream, settings, SettingsJsonContext.Default.PlayerSettings);
+                JsonSerializer.Serialize(stream, settings, SettingsJsonContext.Default.Settings);
             File.Move(temporary, _jsonPath, overwrite: true);
             LastError = string.Empty;
             return true;

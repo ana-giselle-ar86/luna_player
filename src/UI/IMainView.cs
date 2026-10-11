@@ -1,5 +1,6 @@
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Favorites;
 using LunaPlayer.Equalizer;
 using LunaPlayer.Iptv;
@@ -176,8 +177,8 @@ internal sealed record PrefsOps(
     string BookmarksPath,
     string SettingsFolder,
     Func<string, bool> ExportSettings,
-    Func<string, PlayerSettings?> ImportSettings,
-    Func<PlayerSettings?> ResetSettings,
+    Func<string, Settings?> ImportSettings,
+    Func<Settings?> ResetSettings,
     Func<string, bool> ExportBookmarks,
     Func<string, bool> ImportBookmarks,
     /// <summary>Why the last backup or restore failed, for the message that reports it.</summary>
@@ -196,7 +197,7 @@ internal sealed record PrefsOps(
     /// fetch from whichever line was chosen last time, not the one on screen.
     /// </remarks>
     Action<YtDlpChannel> DownloadYouTubeComponents,
-    Action<PlayerSettings> ApplyImmediate);
+    Action<Settings> ApplyImmediate);
 
 internal interface IProgressView : IDisposable
 {
@@ -412,7 +413,7 @@ internal interface IMainView : IDisposable
     /// <param name="message">The summary shown above the list.</param>
     /// <param name="details">The per-file failures, one block each.</param>
     void ShowConversionReport(string title, string message, string details);
-    PlayerSettings? EditPreferences(PlayerSettings settings, PrefsOps operations, Action<string> speakHelp);
+    Settings? EditPreferences(Settings settings, PrefsOps operations, Action<string> speakHelp);
     void ApplyShortcuts(ShortcutManager shortcuts);
     /// <summary>Starts watching for the system-wide shortcuts in <paramref name="shortcuts"/>, replacing any
     /// set already being watched. Returns false when the system would not let the player watch the keyboard at

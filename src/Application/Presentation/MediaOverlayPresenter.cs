@@ -1,5 +1,6 @@
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Playback;
 
 namespace LunaPlayer.Application.Presentation;
@@ -16,7 +17,7 @@ namespace LunaPlayer.Application.Presentation;
 internal sealed class MediaOverlayPresenter : IDisposable
 {
     private readonly MediaPlayer _player;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly IApplicationDispatcher _dispatcher;
     private readonly MediaTagsCache _tags;
     private readonly SystemMediaControls _mediaControls = new();
@@ -24,7 +25,7 @@ internal sealed class MediaOverlayPresenter : IDisposable
 
     internal MediaOverlayPresenter(
         MediaPlayer player,
-        PlayerSettings settings,
+        Settings settings,
         IApplicationDispatcher dispatcher,
         MediaTagsCache tags,
         Action<ActionId> onButton)

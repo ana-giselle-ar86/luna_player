@@ -1,4 +1,5 @@
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Media;
 using WxSharp;
 
@@ -107,6 +108,6 @@ internal sealed partial class MainFrame
     { using var dialog = new ConversionProgressDialog(DialogParent, _dispatcher, work); return dialog.Show(); }
     public void ShowConversionReport(string title, string message, string details)
     { using var dialog = new ConversionReportDialog(DialogParent, title, message, details); dialog.Show(); }
-    public PlayerSettings? EditPreferences(PlayerSettings settings, PrefsOps operations, Action<string> speakHelp)
+    public Settings? EditPreferences(Settings settings, PrefsOps operations, Action<string> speakHelp)
     { var editable = settings.Copy(); using var dialog = new PreferencesDialog(DialogParent, editable, operations, speakHelp, _dispatcher, _catalog, _globalShortcuts); return dialog.Show() ? editable : null; }
 }

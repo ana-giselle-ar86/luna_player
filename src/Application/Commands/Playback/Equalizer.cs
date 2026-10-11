@@ -1,6 +1,7 @@
 using LunaPlayer.Accessibility;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Equalizer;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
@@ -19,7 +20,7 @@ internal sealed class Equalizer
 {
     private readonly IMainView _view;
     private readonly MediaPlayer _player;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly SettingsStore _settingsStore;
     private readonly ISpeechOutput _speech;
     private readonly Library _library;
@@ -28,7 +29,7 @@ internal sealed class Equalizer
         ActionRouter router,
         IMainView view,
         MediaPlayer player,
-        PlayerSettings settings,
+        Settings settings,
         SettingsStore settingsStore,
         ISpeechOutput speech,
         Library library)

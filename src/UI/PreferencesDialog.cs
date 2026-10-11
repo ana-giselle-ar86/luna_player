@@ -1,4 +1,5 @@
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using WxSharp;
 
 namespace LunaPlayer.UI;
@@ -15,7 +16,7 @@ internal sealed class PreferencesDialog : IDisposable
     private readonly Dictionary<TreeItemId, Func<IPreferences>> _factories = [];
     private readonly Dictionary<TreeItemId, IPreferences> _pages = [];
     private readonly Action<string> _speakHelp;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly PrefsOps _operations;
     private IPreferences? _current;
 
@@ -26,7 +27,7 @@ internal sealed class PreferencesDialog : IDisposable
 
     /// <param name="dispatcher">Needed by the Recording page, which asks Windows what its encoders will
     /// accept and must not do that on the thread drawing this window.</param>
-    internal PreferencesDialog(Window parent, PlayerSettings settings, PrefsOps operations, Action<string> speakHelp,
+    internal PreferencesDialog(Window parent, Settings settings, PrefsOps operations, Action<string> speakHelp,
         LunaPlayer.Application.IApplicationDispatcher dispatcher, LunaPlayer.Recording.AudioCatalog catalog,
         GlobalShortcuts? globalShortcuts = null)
     {
@@ -203,7 +204,7 @@ internal sealed class PreferencesDialog : IDisposable
         _dialog.EndModal(StandardId.Ok);
     }
 
-    private void ReplaceSettings(PlayerSettings replacement)
+    private void ReplaceSettings(Settings replacement)
     {
         _settings.Apply(replacement);
         // Only built pages need refreshing; one built later reads the replaced settings when it is made.

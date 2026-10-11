@@ -1,6 +1,7 @@
 using System.Globalization;
 using LunaPlayer.Equalizer;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Media;
 using MpvNet;
 

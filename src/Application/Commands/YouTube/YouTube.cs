@@ -1,6 +1,7 @@
 using LunaPlayer.Accessibility;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Media;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
@@ -25,7 +26,7 @@ internal sealed partial class YouTube
 {
     private readonly IMainView _view;
     private readonly MediaPlayer _player;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly ISpeechOutput _speech;
     private readonly IClipboardService _clipboard;
     private readonly Backend _backend;
@@ -38,7 +39,7 @@ internal sealed partial class YouTube
         ActionRouter router,
         IMainView view,
         MediaPlayer player,
-        PlayerSettings settings,
+        Settings settings,
         ISpeechOutput speech,
         IClipboardService clipboard,
         Backend backend,

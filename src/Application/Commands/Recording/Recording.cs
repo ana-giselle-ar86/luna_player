@@ -2,6 +2,7 @@ using System.Diagnostics;
 using LunaPlayer.Accessibility;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Recording;
 using LunaPlayer.UI;
 
@@ -21,7 +22,7 @@ namespace LunaPlayer.Application.Commands.Recording;
 internal sealed class Recording
 {
     private readonly IMainView _view;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly ISpeechOutput _speech;
     private readonly IApplicationDispatcher _dispatcher;
     private readonly AudioCatalog _catalog;
@@ -31,7 +32,7 @@ internal sealed class Recording
     internal Recording(
         ActionRouter router,
         IMainView view,
-        PlayerSettings settings,
+        Settings settings,
         ISpeechOutput speech,
         IApplicationDispatcher dispatcher,
         AudioCatalog catalog,

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 
 namespace LunaPlayer.YouTube.Client;
 
@@ -21,11 +22,11 @@ internal readonly record struct YtDlpRun(IReadOnlyList<string> Lines, string Dia
 /// </remarks>
 internal sealed class Runner
 {
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
 
     /// <param name="settings">Read live on each run, so a cookie source chosen in preferences takes effect
     /// on the next yt-dlp call without the runner being rebuilt.</param>
-    internal Runner(PlayerSettings settings) => _settings = settings;
+    internal Runner(Settings settings) => _settings = settings;
 
     /// <summary>The yt-dlp format selector for sound alone, capped at a bitrate in kbps.</summary>
     private static string AudioFormat(int abr)

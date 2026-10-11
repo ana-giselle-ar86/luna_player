@@ -1,6 +1,7 @@
 using System.Runtime.ExceptionServices;
 using System.Text;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using WxSharp;
 
 namespace LunaPlayer.Application;

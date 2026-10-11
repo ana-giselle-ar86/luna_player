@@ -1,4 +1,5 @@
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 
 namespace LunaPlayer.YouTube.Client;
 

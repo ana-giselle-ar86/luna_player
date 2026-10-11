@@ -2,6 +2,7 @@ using System.Globalization;
 using LunaPlayer.Accessibility;
 using LunaPlayer.Application;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Media;
 using LunaPlayer.UI;
 
@@ -33,7 +34,7 @@ internal sealed class Service
     }
 
     private readonly IMainView _view;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly ISpeechOutput _speech;
     private readonly IApplicationDispatcher _dispatcher;
     private readonly Installer _installer = new();
@@ -41,7 +42,7 @@ internal sealed class Service
 
     internal Service(
         IMainView view,
-        PlayerSettings settings,
+        Settings settings,
         ISpeechOutput speech,
         IApplicationDispatcher dispatcher,
         Client.Updater updater)

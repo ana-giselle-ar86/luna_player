@@ -1,5 +1,6 @@
 using LunaPlayer.Accessibility;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
 

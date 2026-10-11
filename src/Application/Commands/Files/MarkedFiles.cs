@@ -1,6 +1,7 @@
 using LunaPlayer.Accessibility;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Media;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
@@ -11,13 +12,13 @@ internal sealed class MarkedFiles
 {
     private readonly IMainView _view;
     private readonly MediaPlayer _player;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly ISpeechOutput _speech;
     private readonly IClipboardService _clipboard;
     private readonly IApplicationDispatcher _dispatcher;
     private readonly MarkedFileService _files = new();
 
-    internal MarkedFiles(ActionRouter router, IMainView view, MediaPlayer player, PlayerSettings settings,
+    internal MarkedFiles(ActionRouter router, IMainView view, MediaPlayer player, Settings settings,
         ISpeechOutput speech, IClipboardService clipboard, IApplicationDispatcher dispatcher)
     {
         _view = view; _player = player; _settings = settings; _speech = speech; _clipboard = clipboard;
