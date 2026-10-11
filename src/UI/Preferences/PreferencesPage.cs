@@ -2,7 +2,7 @@ using WxSharp;
 
 namespace LunaPlayer.UI;
 
-internal interface IPreferences
+internal interface IPreferencesPage
 {
     Window Window { get; }
     string GetContextHelp(Window? focused);
@@ -11,12 +11,12 @@ internal interface IPreferences
     void Refresh();
 }
 
-internal abstract class Preferences : IPreferences
+internal abstract class PreferencesPage : IPreferencesPage
 {
     private readonly string _defaultHelp;
     private readonly Dictionary<Window, Func<string>> _help = [];
 
-    protected Preferences(Window window, string defaultHelp)
+    protected PreferencesPage(Window window, string defaultHelp)
     {
         Window = window;
         _defaultHelp = defaultHelp;

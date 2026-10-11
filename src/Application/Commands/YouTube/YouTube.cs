@@ -70,7 +70,7 @@ internal sealed partial class YouTube
 
     private void OpenLink()
     {
-        var typed = _view.PromptText(
+        var typed = _view.Dialogs.PromptText(
             // Translators: Asks the user for the address of the YouTube video or playlist they want to play.
             Tr("Enter a YouTube video or playlist link."),
             // Translators: Title of the window that asks for a YouTube address.
@@ -129,7 +129,7 @@ internal sealed partial class YouTube
         {
             MixedLinkBehavior.Video => LinkKind.Video,
             MixedLinkBehavior.Playlist => LinkKind.Playlist,
-            _ => _view.ChooseYouTubeLinkKind() switch
+            _ => _view.Dialogs.ChooseYouTubeLinkKind() switch
             {
                 YouTubeLinkKind.Video => LinkKind.Video,
                 YouTubeLinkKind.Playlist => LinkKind.Playlist,
@@ -145,7 +145,7 @@ internal sealed partial class YouTube
             SuggestionsEnabled: _settings.YouTube.SearchSuggestions,
             FetchSuggestions: _backend.Suggestions,
             AnnounceSuggestions: AnnounceSuggestions);
-        if (_view.SearchYouTube(prompt) is not { } asked || asked.Query.Length == 0)
+        if (_view.Dialogs.SearchYouTube(prompt) is not { } asked || asked.Query.Length == 0)
             return;
         RunSearch(asked.Query, asked.Filter);
     }
@@ -203,5 +203,5 @@ internal sealed partial class YouTube
             ShowError(outcome.Error, Tr("YouTube"));
     }
 
-    private void ShowError(string message, string caption) => _view.ShowError(message, caption);
+    private void ShowError(string message, string caption) => _view.Dialogs.ShowError(message, caption);
 }

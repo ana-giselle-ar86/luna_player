@@ -5,7 +5,7 @@ namespace LunaPlayer.UI;
 
 internal sealed class WxDispatcher : IApplicationDispatcher
 {
-    // Guarded, and this is where it matters most: a posted call runs from wxWidgets' own event loop, so
+    //A posted call runs from wxWidgets' own event loop, so
     // anything it throws would unwind into C++ frames and take the process with it.
     public void Post(Action action) => Wx.CallAfter(() => CrashReport.Guard(action));
 

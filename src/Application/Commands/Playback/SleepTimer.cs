@@ -47,7 +47,7 @@ internal sealed class Sleep
         var saved = _settings.SleepTimer;
         var initial = new SleepTimerRequest(
             saved.Mode, saved.DurationMinutes, saved.Action, saved.Fade, saved.FadeSeconds);
-        var result = _view.ChooseSleepTimer(initial, _timer.IsArmed, _timer.IsArmed ? StatusText() : null);
+        var result = _view.Dialogs.ChooseSleepTimer(initial, _timer.IsArmed, _timer.IsArmed ? StatusText() : null);
         if (result is not SleepTimerDialogResult chosen)
             return;
         if (chosen.TurnOff)
@@ -58,7 +58,7 @@ internal sealed class Sleep
         var request = chosen.Request;
         if (request.Mode == SleepTimerMode.EndOfTrack && !_player.IsLoaded)
         {
-            _view.ShowWarning(
+            _view.Dialogs.ShowWarning(
                 // Translators: Shown when the sleep timer is set to stop at the end of the current track but
                 // nothing is playing.
                 Tr("Open a file before setting the timer to stop at the end of the current track."),

@@ -434,7 +434,7 @@ internal sealed class Sessions : IDisposable
             using var feed = new Feed(this, session);
             // A channel session carries a tab bar; a search or playlist does not.
             var tabs = session.Kind is SessionKind.Channel ? Client.Tabs.DisplayNames() : null;
-            var chosen = _view.ShowYouTubeResults(new YouTubeResultsPrompt(
+            var chosen = _view.Dialogs.ShowYouTubeResults(new YouTubeResultsPrompt(
                 // Translators: Title of the window listing the videos a search or a playlist turned up.
                 Tr("Videos"), session.Label, session.Items, session.Selected, feed, tabs, session.CurrentTab));
             // Another list opened over this one while it was up, and closing it took this session with
@@ -736,7 +736,7 @@ internal sealed class Sessions : IDisposable
 
     private void ShowError(string message) =>
         // Translators: Title of the messages the player shows about YouTube.
-        _view.ShowError(message, Tr("YouTube"));
+        _view.Dialogs.ShowError(message, Tr("YouTube"));
 
     private readonly record struct SearchResults(
         IReadOnlyList<YouTubeResult> Items, Metadata.Page? Page, ResolveFailure Failure, string Detail);

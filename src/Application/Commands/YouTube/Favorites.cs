@@ -48,7 +48,7 @@ internal sealed class Favorites
             var favorites = List();
             if (ReportStoreFailure())
                 return;
-            var request = _view.ManageFavorites(favorites, selectedId);
+            var request = _view.Dialogs.ManageFavorites(favorites, selectedId);
             if (request is not FavoriteRequest chosen)
                 return;
             selectedId = chosen.Id;
@@ -85,7 +85,7 @@ internal sealed class Favorites
         {
             if (_player.OpenStream(favorite.Link))
                 return true;
-            _view.ShowError(
+            _view.Dialogs.ShowError(
                 // Translators: Shown when the address saved as a plain stream could not be played.
                 Tr("Could not open stream link."),
                 // Translators: Title of the messages shown about the window of saved links.
@@ -111,7 +111,7 @@ internal sealed class Favorites
     /// <summary>The id of what was saved, or null when nothing was.</summary>
     private string? Add()
     {
-        var draft = _view.EditFavorite(
+        var draft = _view.Dialogs.EditFavorite(
             // Translators: Title of the window for saving a new link.
             Tr("Add favorite"),
             new FavoriteDraft(string.Empty, FavoriteKind.Video, string.Empty));
@@ -128,7 +128,7 @@ internal sealed class Favorites
     {
         if (_store.Get(id) is not Favorite favorite)
             return;
-        var draft = _view.EditFavorite(
+        var draft = _view.Dialogs.EditFavorite(
             // Translators: Title of the window for changing a link already saved.
             Tr("Edit favorite"),
             new FavoriteDraft(favorite.Name, favorite.Kind, favorite.Link));
@@ -142,7 +142,7 @@ internal sealed class Favorites
     {
         if (_store.Get(id) is not Favorite favorite)
             return false;
-        if (!_view.Confirm(
+        if (!_view.Dialogs.Confirm(
             // Translators: Asks the user to confirm removing one saved link. {name} is what it is called and
             // {kind} is what sort of thing it points at.
             TrFormat("Remove favorite '{name}' ({kind})?", favorite.Name, FavoriteStore.Describe(favorite.Kind)),
@@ -160,7 +160,7 @@ internal sealed class Favorites
     {
         if (_store.LastError.Length == 0)
             return false;
-        _view.ShowError(_store.LastError, Tr("Favorite videos"));
+        _view.Dialogs.ShowError(_store.LastError, Tr("Favorite videos"));
         return true;
     }
 }

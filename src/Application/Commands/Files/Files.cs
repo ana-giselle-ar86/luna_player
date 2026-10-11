@@ -120,7 +120,7 @@ internal sealed partial class Files
 
     private void OpenFileFromDialog()
     {
-        var selection = _view.ChooseFile(_settings.General.LastDirectory);
+        var selection = _view.Dialogs.ChooseFile(_settings.General.LastDirectory);
         if (selection is not FileSelection file)
             return;
         _settings.General.LastDirectory = string.IsNullOrEmpty(file.Directory)
@@ -136,7 +136,7 @@ internal sealed partial class Files
 
     private void OpenLink()
     {
-        var link = _view.PromptText(
+        var link = _view.Dialogs.PromptText(
             // Translators: Asks the user for the web address of the stream they want to play.
             Tr("Enter link to play."),
             // Translators: Title of the window that asks for the web address of a stream to play.
@@ -147,7 +147,7 @@ internal sealed partial class Files
         var url = link.Trim();
         if (!LinkValidator.IsHttpUrl(url))
         {
-            _view.ShowError(
+            _view.Dialogs.ShowError(
                 // Translators: Shown when the address typed into Open Link is not a web address.
                 // "http" and "https" are the names of the two web protocols and are not translated.
                 Tr("The link must start with http or https."),
@@ -161,14 +161,14 @@ internal sealed partial class Files
             return;
         }
         if (!_player.OpenStream(url))
-            _view.ShowError(
+            _view.Dialogs.ShowError(
                 // Translators: Shown when the stream at the address typed into Open Link could not be played.
                 Tr("Could not open the link."), Tr("Error"));
     }
 
     private void OpenFolderFromDialog()
     {
-        var folder = _view.ChooseFolder(_settings.General.LastDirectory);
+        var folder = _view.Dialogs.ChooseFolder(_settings.General.LastDirectory);
         if (string.IsNullOrEmpty(folder))
             return;
         _settings.General.LastDirectory = folder;

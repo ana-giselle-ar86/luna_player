@@ -59,6 +59,7 @@ internal sealed partial class MainFrame : IMainView
     private readonly GlobalShortcuts _globalShortcuts;
     private readonly IApplicationDispatcher _dispatcher;
     private readonly LunaPlayer.Recording.AudioCatalog _catalog;
+    private DialogService? _dialogs;
     private bool _disposed;
     private bool _waitingForCloseKeys;
     private bool _closing;
@@ -342,19 +343,8 @@ internal sealed partial class MainFrame : IMainView
 
     public void SetSubtitleControlsEnabled(bool enabled) => _subtitleMenuItem.Enabled = enabled;
 
-    public EqualizerEditResult? EditEqualizerPreset(EqualizerEditContext context)
-    {
-        using var dialog = new EqualizerEditDialog(
-            _frame, context.Title, context.Name, context.CanRename, context.BasePresetId, context.Slots,
-            context.Library.All, context.Library.Slots, context.Library.DefaultSlots, context.Preview);
-        return dialog.Show();
-    }
-
-    public bool ManageEqualizerPresets(Library library)
-    {
-        using var dialog = new EqualizerPresetsDialog(_frame, library);
-        return dialog.Show();
-    }
+    /// <summary>The dialogs, built lazily and owned here so the window outlives them and parents them.</summary>
+    public IDialogService Dialogs => _dialogs ??= new DialogService(_frame, _dispatcher, _catalog, _globalShortcuts);
 
     public bool ApplyGlobalShortcuts(ShortcutManager shortcuts)
         => _globalShortcuts.Apply(shortcuts.GetBindings());
@@ -450,7 +440,7 @@ internal sealed partial class MainFrame : IMainView
         _globalShortcuts.Dispose();
         // Before the frame: the reused results window is a child of it, so it must be torn down before the
         // frame destroys the native window out from under it.
-        _youTubeResults?.Dispose();
+        _dialogs?.Dispose();
         _frame.Dispose();
         // After the frame, so the buttons that drew them are gone first.
         foreach (var bitmap in _transportBitmaps)

@@ -136,7 +136,7 @@ internal sealed class Subtitles : IDisposable
     {
         if (NoFileOpen())
             return;
-        if (_view.ChooseSubtitleFile() is string path)
+        if (_view.Dialogs.ChooseSubtitleFile() is string path)
             Add(path, System.IO.Path.GetFileNameWithoutExtension(path));
     }
 
@@ -145,7 +145,7 @@ internal sealed class Subtitles : IDisposable
     {
         if (NoFileOpen())
             return;
-        if (_view.PromptSubtitleUrl() is string url)
+        if (_view.Dialogs.PromptSubtitleUrl() is string url)
             Add(url, title: null);
     }
 

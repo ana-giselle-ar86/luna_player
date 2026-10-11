@@ -39,7 +39,7 @@ internal sealed class Edit
         if (!_guard.RequireLocalFile(Tr("Rename is available only for local files."), out var path))
             return;
         var oldName = Path.GetFileName(path);
-        var value = _view.PromptText(
+        var value = _view.Dialogs.PromptText(
             // Translators: Asks the user for the name the current file should be given.
             Tr("Enter new name for the file."),
             // Translators: Title of the window that asks for the name the current file should be given.
@@ -51,7 +51,7 @@ internal sealed class Edit
         if (string.IsNullOrWhiteSpace(Path.GetFileNameWithoutExtension(value)))
         {
             // Translators: Spoken and shown when the user confirms a new file name without typing anything.
-            _view.ShowWarning(Tr("File name cannot be empty."), Tr("Rename File"));
+            _view.Dialogs.ShowWarning(Tr("File name cannot be empty."), Tr("Rename File"));
             return;
         }
         if (string.IsNullOrEmpty(Path.GetExtension(value)))
@@ -60,7 +60,7 @@ internal sealed class Edit
         if (File.Exists(newPath))
         {
             // Translators: Spoken and shown when the new name given to a file is already taken by another file in the same folder.
-            _view.ShowWarning(Tr("A file with that name already exists."), Tr("Rename File"));
+            _view.Dialogs.ShowWarning(Tr("A file with that name already exists."), Tr("Rename File"));
             return;
         }
         if (_player.RenameCurrent(newPath))
@@ -83,7 +83,7 @@ internal sealed class Edit
         if (!_guard.RequireLocalFile(Tr("Delete is available only for local files."), out var path))
             return;
         var name = Path.GetFileName(path);
-        if (!_view.Confirm(
+        if (!_view.Dialogs.Confirm(
             // Translators: Asks the user to confirm deleting a file. {name} is the file name.
             TrFormat("Delete '{name}'?", name),
             // Translators: Title of the window that asks the user to confirm deleting a file.

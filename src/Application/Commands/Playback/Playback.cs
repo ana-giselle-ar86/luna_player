@@ -152,12 +152,12 @@ internal sealed partial class Playback
     {
         if (_player.Duration is not double duration || duration <= 0)
         {
-            _view.ShowWarning(Tr("Time is not available for the current file."),
+            _view.Dialogs.ShowWarning(Tr("Time is not available for the current file."),
                 // Translators: Title of the window that asks the user which point in the file to move to.
                 Tr("Go to time"));
             return;
         }
-        var position = _view.ChooseTime(duration, Math.Clamp(_player.Elapsed ?? 0, 0, duration));
+        var position = _view.Dialogs.ChooseTime(duration, Math.Clamp(_player.Elapsed ?? 0, 0, duration));
         if (!position.HasValue)
             return;
         _player.SeekAbsolute(position.Value);

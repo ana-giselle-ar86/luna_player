@@ -32,7 +32,7 @@ internal sealed class Bookmarks
         // Translators: The name a new bookmark is given unless the user types another one. {time} is the point in the
         // file the bookmark was made at, such as 00:01:20.
         var defaultName = TrFormat("Bookmark {time}", PlaybackTimeFormatter.Format(position) ?? "00:00:00");
-        var name = _view.PromptText(
+        var name = _view.Dialogs.PromptText(
             // Translators: Asks the user what the new bookmark should be called.
             Tr("Enter bookmark name"), Tr("Add a new bookmark"), defaultName);
         if (name is null)
@@ -40,7 +40,7 @@ internal sealed class Bookmarks
         name = name.Trim();
         if (name.Length == 0)
         {
-            _view.ShowWarning(
+            _view.Dialogs.ShowWarning(
                 // Translators: Shown when the user confirms a bookmark name without typing anything.
                 Tr("Bookmark name cannot be empty."), Tr("Bookmarks"));
             return;
@@ -50,7 +50,7 @@ internal sealed class Bookmarks
             ShowStoreError();
             return;
         }
-        _view.ShowInfo(
+        _view.Dialogs.ShowInfo(
             // Translators: Shown once a bookmark has been made. {name} is what it is called and {time} the point in the
             // file it was made at, such as 00:01:20.
             TrFormat("Bookmark '{name}' added at {time}.", name, PlaybackTimeFormatter.Format(position)),
@@ -70,12 +70,12 @@ internal sealed class Bookmarks
                 return;
             if (bookmarks.Count == 0)
             {
-                _view.ShowInfo(
+                _view.Dialogs.ShowInfo(
                     // Translators: Shown when the user opens the bookmark list but the current file has none.
                     Tr("No bookmarks found for the current file."), Tr("Bookmarks"));
                 return;
             }
-            var request = _view.ManageBookmarks(bookmarks.Select(ToListItem).ToArray());
+            var request = _view.Dialogs.ManageBookmarks(bookmarks.Select(ToListItem).ToArray());
             if (request is null)
                 return;
             var bookmark = bookmarks.FirstOrDefault(value => value.Id == request.Value.Id);
@@ -90,7 +90,7 @@ internal sealed class Bookmarks
                     Rename(path, bookmark);
                     break;
                 case BookmarkManagementAction.Delete:
-                    if (_view.Confirm(
+                    if (_view.Dialogs.Confirm(
                         // Translators: Asks the user to confirm removing one bookmark. {name} is what the bookmark is called.
                         TrFormat("Delete bookmark '{name}'?", bookmark.Name),
                         // Translators: Title of the window that asks the user to confirm removing a bookmark.
@@ -107,7 +107,7 @@ internal sealed class Bookmarks
                             return;
                         if (remaining.Count == 0)
                         {
-                            _view.ShowInfo(
+                            _view.Dialogs.ShowInfo(
                                 // Translators: Shown once the last bookmark of the current file has been removed.
                                 Tr("All bookmarks for this file were removed."), Tr("Bookmarks"));
                             return;
@@ -120,7 +120,7 @@ internal sealed class Bookmarks
 
     private void Rename(string path, Bookmark bookmark)
     {
-        var name = _view.PromptText(
+        var name = _view.Dialogs.PromptText(
             // Translators: Asks the user for the new name of a bookmark they are renaming.
             Tr("Edit bookmark name"), Tr("Manage bookmarks"), bookmark.Name);
         if (name is null)
@@ -128,7 +128,7 @@ internal sealed class Bookmarks
         name = name.Trim();
         if (name.Length == 0)
         {
-            _view.ShowWarning(Tr("Bookmark name cannot be empty."),
+            _view.Dialogs.ShowWarning(Tr("Bookmark name cannot be empty."),
                 // Translators: Title of a message telling the user that something went wrong.
                 Tr("Error"));
             return;
@@ -190,7 +190,7 @@ internal sealed class Bookmarks
     {
         if (_store.LastError.Length == 0)
             return false;
-        _view.ShowError(
+        _view.Dialogs.ShowError(
             _store.LastError,
             // Translators: Title of an error message about reading or writing the bookmarks file.
             Tr("Bookmarks"));

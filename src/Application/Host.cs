@@ -65,7 +65,7 @@ internal sealed class ApplicationHost : IDisposable
             _shortcuts, ActionRegistry.All, _dispatcher, _catalog, _equalizerLibrary.All);
         if (settingsError.Length > 0)
         {
-            _dispatcher.Post(() => _view.ShowError(
+            _dispatcher.Post(() => _view.Dialogs.ShowError(
                 TrFormat("The settings file could not be loaded. Default settings will be used, and the existing file will not be overwritten. Import a valid settings file or reset the settings to replace it.\n\n{error}", settingsError),
                 Tr("Settings error")));
         }

@@ -16,7 +16,7 @@ internal enum ShortcutScope
     Global,
 }
 
-internal sealed class ShortcutPreferences : Preferences
+internal sealed class ShortcutPreferences : PreferencesPage
 {
     private readonly ShortcutSettings _settings;
     private readonly ShortcutScope _scope;

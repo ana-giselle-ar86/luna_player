@@ -36,11 +36,11 @@ internal sealed class Tools
 
     private void Run(IReadOnlyList<string>? initialFiles)
     {
-        if (_view.ShowMediaConverter(initialFiles) is not { Jobs.Count: > 0 } request)
+        if (_view.Dialogs.ShowMediaConverter(initialFiles) is not { Jobs.Count: > 0 } request)
             return;
         // Runs behind the converter's own progress window, which does not return until the batch has finished
         // or the user stopped it. A stopped batch gives back nothing, and nothing is said about it.
-        if (_view.RunConversion((report, token) => _converter.Run(request, report, token)) is ConversionOutcome outcome)
+        if (_view.Dialogs.RunConversion((report, token) => _converter.Run(request, report, token)) is ConversionOutcome outcome)
             Report(request, outcome);
     }
 
@@ -52,7 +52,7 @@ internal sealed class Tools
         if (outcome.Failures.Count == 0)
         {
             // Translators: Title of the message shown when every file in a batch was converted.
-            _view.ShowInfo(summary, Tr("Success"));
+            _view.Dialogs.ShowInfo(summary, Tr("Success"));
             return;
         }
         // One block per failed file: the file on its own line, the reason below it, a blank line between blocks.
@@ -66,7 +66,7 @@ internal sealed class Tools
             // Translators: Follows the summary when some files failed, pointing at the list below it.
             + Tr("Some files were not converted. Check the details below.");
         // Translators: Title of the report shown when a batch converted but some files failed.
-        _view.ShowConversionReport(Tr("Warning"), message, details);
+        _view.Dialogs.ShowConversionReport(Tr("Warning"), message, details);
     }
 
     /// <summary>The one-line result: how many files were written, to what format, and how long it took.

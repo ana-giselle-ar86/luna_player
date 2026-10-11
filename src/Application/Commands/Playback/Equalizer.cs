@@ -127,7 +127,7 @@ internal sealed class Equalizer
             _library,
             live ? slots => _player.SetEqualizer(new Preset(id, entry.Name, slots)) : null);
 
-        var result = _view.EditEqualizerPreset(context);
+        var result = _view.Dialogs.EditEqualizerPreset(context);
         if (result is null || !_library.Save(id, result.Name, result.Slots))
         {
             if (result is not null)
@@ -143,7 +143,7 @@ internal sealed class Equalizer
 
     private void Manage()
     {
-        if (!_view.ManageEqualizerPresets(_library))
+        if (!_view.Dialogs.ManageEqualizerPresets(_library))
             return;
         // The preset in force may have been edited, or deleted out from under the setting. Current()
         // answers null in the second case, which switches the equalizer off rather than leaving it on a
@@ -157,7 +157,7 @@ internal sealed class Equalizer
     }
 
     private void Report(string error)
-        => _view.ShowError(
+        => _view.Dialogs.ShowError(
             error.Length > 0
                 ? error
                 // Translators: Shown when an equalizer preset could not be saved and there is no more detail to give.

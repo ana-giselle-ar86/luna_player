@@ -99,7 +99,7 @@ internal sealed class Updates : IDisposable
         {
             if (showLatest)
             {
-                _view.ShowError(
+                _view.Dialogs.ShowError(
                     // Translators: Shown when a manual application update check fails. {reason} is the
                     // network or data error reported by the system.
                     TrFormat("Could not check for updates.\n\n{reason}", outcome.Error),
@@ -112,7 +112,7 @@ internal sealed class Updates : IDisposable
             if (showLatest)
             {
                 // Translators: Shown after a manual check finds no newer Luna Player release.
-                _view.ShowInfo(Tr("You are using the latest version."), Tr("No update"));
+                _view.Dialogs.ShowInfo(Tr("You are using the latest version."), Tr("No update"));
             }
             return;
         }
@@ -120,7 +120,7 @@ internal sealed class Updates : IDisposable
         {
             if (showLatest)
             {
-                _view.ShowInfo(
+                _view.Dialogs.ShowInfo(
                     // Translators: Shown when info.json announces a newer application release before its
                     // installer or portable archive has finished being published.
                     Tr("A new version has been announced, but its download is not available yet. Please try again later."),
@@ -130,7 +130,7 @@ internal sealed class Updates : IDisposable
         }
 
         var update = outcome.Update;
-        if (_view.OfferAppUpdate(new AppUpdatePrompt(AppInfo.Version, update.Version, update.Changes)))
+        if (_view.Dialogs.OfferAppUpdate(new AppUpdatePrompt(AppInfo.Version, update.Version, update.Changes)))
             Download(update);
     }
 
@@ -177,7 +177,7 @@ internal sealed class Updates : IDisposable
     {
         if (outcome.Error.Length > 0)
         {
-            _view.ShowError(
+            _view.Dialogs.ShowError(
                 // Translators: Shown when the application update package cannot be downloaded. {reason}
                 // is the network or file error reported by the system.
                 TrFormat("Could not download update.\n\n{reason}", outcome.Error),
@@ -190,7 +190,7 @@ internal sealed class Updates : IDisposable
         }
         catch (Exception failure)
         {
-            _view.ShowError(
+            _view.Dialogs.ShowError(
                 // Translators: Shown when the downloaded update cannot be handed to Updater.exe. {reason}
                 // is the error reported by the system.
                 TrFormat("Could not start the updater.\n\n{reason}", failure.Message),

@@ -69,7 +69,7 @@ internal sealed class Service
     {
         if (Ready)
             return ComponentsState.Ready;
-        if (!_view.OfferYouTubeComponents())
+        if (!_view.Dialogs.OfferYouTubeComponents())
             return ComponentsState.Declined;
         Install(channel, success =>
         {
@@ -86,7 +86,7 @@ internal sealed class Service
     {
         if (Ready)
         {
-            _view.ShowInfo(
+            _view.Dialogs.ShowInfo(
                 // Translators: Shown when the extra programs YouTube's yt-dlp support needs are already there.
                 Tr("YouTube components are already installed."),
                 Title);
@@ -110,13 +110,13 @@ internal sealed class Service
             {
                 if (outcome.Success)
                 {
-                    _view.ShowInfo(
+                    _view.Dialogs.ShowInfo(
                         // Translators: Shown once the extra programs for yt-dlp have been fetched.
                         Tr("YouTube components were downloaded successfully."), Title);
                     finished?.Invoke(true);
                     return;
                 }
-                _view.ShowError(
+                _view.Dialogs.ShowError(
                     // Translators: Shown when the extra programs for yt-dlp could not be fetched. {reason}
                     // is what went wrong, in the language of the system rather than the player.
                     outcome.Error.Length > 0
@@ -137,7 +137,7 @@ internal sealed class Service
     {
         if (!Utils.HasYtDlp)
         {
-            _view.ShowError(
+            _view.Dialogs.ShowError(
                 // Translators: Shown when the user asks to update yt-dlp and it has not been installed.
                 Tr("yt-dlp is not installed yet."), UpdateTitle);
             return;
@@ -197,7 +197,7 @@ internal sealed class Service
 
     private void OfferUpdate(string local, string remote, YtDlpChannel channel)
     {
-        if (_view.Confirm(
+        if (_view.Dialogs.Confirm(
             // Translators: Asks whether to update yt-dlp now. {channel} is the release line being followed,
             // {current} the version installed and {latest} the one available.
             TrFormat(
@@ -255,7 +255,7 @@ internal sealed class Service
     {
         if (!outcome.Success)
         {
-            _view.ShowError(
+            _view.Dialogs.ShowError(
                 outcome.Error.Length > 0
                     ? outcome.Error
                     // Translators: Shown when yt-dlp could not update itself and said nothing useful about why.
@@ -277,7 +277,7 @@ internal sealed class Service
             // and {channel} is the release line being followed.
             : TrFormat("yt-dlp is already up to date ({version}) on the '{channel}' channel.",
                 outcome.After.Length > 0 ? outcome.After : unknown, name);
-        _view.ShowInfo(message, UpdateTitle);
+        _view.Dialogs.ShowInfo(message, UpdateTitle);
         _speech.Speak(message, message);
     }
 
