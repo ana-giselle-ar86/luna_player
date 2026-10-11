@@ -1,62 +1,25 @@
-using System.Globalization;
-using System.Runtime.InteropServices;
 using LunaPlayer.Actions;
 using LunaPlayer.Application;
 using LunaPlayer.Configuration;
-using LunaPlayer.Configuration.Models;
 using LunaPlayer.Equalizer;
-using LunaPlayer.Playback;
-using LunaPlayer.UI.Equalizer;
 using LunaPlayer.Recording;
 using WxSharp;
 
 namespace LunaPlayer.UI;
 
-internal sealed partial class MainFrame : IMainView
+/// <summary>The main window itself: the frame, its transport buttons, and its lifetime. The menu bar and
+/// its state live in <see cref="MenuController"/> and the keyboard plumbing in <see cref="WindowInput"/>;
+/// this class owns both and forwards the <see cref="IMenuState"/> calls and input events to them, so what
+/// remains here is only what is truly about the window.</summary>
+internal sealed class MainFrame : IMainView
 {
-
     private readonly Frame _frame;
     private readonly CustomBitmapButton _playButton;
     private readonly Bitmap _playBitmap;
     private readonly Bitmap _pauseBitmap;
     private readonly Bitmap[] _transportBitmaps;
-    private readonly Dictionary<ActionId, int> _commandIds = [];
-    private readonly Dictionary<int, ActionId> _commands = [];
-    private readonly List<MenuItem> _playbackItems = [];
-    private readonly List<MenuItem> _mediaFileItems = [];
-    private readonly List<MenuItem> _localFileItems = [];
-    private readonly List<MenuItem> _markedItems = [];
-    private readonly List<MenuItem> _videoItems = [];
-    private readonly List<MenuItem> _audioTrackItems = [];
-    private readonly List<MenuItem> _localEditItems = [];
-    private readonly List<MenuItem> _bookmarkItems = [];
-    private readonly Dictionary<int, string> _equalizerCommands = [];
-    private readonly Dictionary<string, MenuItem> _equalizerItems = new(StringComparer.Ordinal);
-    private readonly Menu _equalizerMenu;
-    private readonly Dictionary<int, string> _subtitleCommands = [];
-    private readonly Dictionary<string, MenuItem> _subtitleItems = new(StringComparer.Ordinal);
-    private readonly Menu _subtitleMenu;
-    private readonly MenuItem _subtitleMenuItem;
-    private readonly MenuItem _subtitleRememberItem;
-    private readonly Dictionary<int, RecentCommand> _recentCommands = [];
-    private readonly Menu _recentFilesMenu;
-    private readonly Menu _recentFoldersMenu;
-    private readonly Menu _recentPlaylistsMenu;
-    private ShortcutManager _shortcuts;
-    private readonly MenuBar _menuBar;
-    private readonly int _bookmarksMenuIndex;
-    private readonly int _markedMenuIndex;
-    private readonly int _videoMenuIndex;
-    private readonly MenuItem _markCurrentItem;
-    private readonly MenuItem _markAllItem;
-    private readonly MenuItem _shuffleItem;
-    private readonly MenuItem _repeatFileItem;
-    private readonly MenuItem _silenceRemovalItem;
-    private readonly MenuItem _fullScreenItem;
-    private readonly MenuItem _startRecordingItem;
-    private readonly MenuItem _pauseRecordingItem;
-    private readonly MenuItem _stopRecordingItem;
-    private readonly GlobalShortcuts _globalShortcuts;
+    private readonly MenuController _menus;
+    private readonly WindowInput _input;
     private readonly IApplicationDispatcher _dispatcher;
     private readonly LunaPlayer.Recording.AudioCatalog _catalog;
     private DialogService? _dialogs;
@@ -66,13 +29,6 @@ internal sealed partial class MainFrame : IMainView
     // The title last handed to the frame, so an unchanged one is not set again: every set is a name-change
     // event a screen reader reads out, and repeating the same text would announce it for nothing.
     private string _windowTitle = AppInfo.Name;
-
-    private const int VirtualKeyShift = 0x10;
-    private const int VirtualKeyControl = 0x11;
-    private const int VirtualKeyAlt = 0x12;
-    private const int VirtualKeyLeftWindows = 0x5B;
-    private const int VirtualKeyRightWindows = 0x5C;
-    private const int VirtualKeyF4 = 0x73;
 
     /// <param name="dispatcher">Handed on to the windows that fetch things in the background - the
     /// recording window asks Windows for its devices and its encoders - so they post their answers back
@@ -84,7 +40,6 @@ internal sealed partial class MainFrame : IMainView
         LunaPlayer.Recording.AudioCatalog catalog,
         IReadOnlyList<PresetEntry> presets)
     {
-        _shortcuts = shortcuts;
         _dispatcher = dispatcher;
         _catalog = catalog;
         _frame = new Frame(title: AppInfo.Name, size: new Size(420, 160));
@@ -101,46 +56,8 @@ internal sealed partial class MainFrame : IMainView
         catch (Exception)
         {
         }
-        BuildCommandIds(actions);
-        var menu = MainMenuBuilder.Build(_frame, _commandIds, shortcuts, presets);
-        _menuBar = menu.MenuBar;
-        _bookmarksMenuIndex = menu.BookmarksMenuIndex;
-        _markedMenuIndex = menu.MarkedMenuIndex;
-        _videoMenuIndex = menu.VideoMenuIndex;
-        _playbackItems.AddRange(menu.PlaybackItems);
-        _mediaFileItems.AddRange(menu.MediaFileItems);
-        _localFileItems.AddRange(menu.LocalFileItems);
-        _markedItems.AddRange(menu.MarkedItems);
-        _videoItems.AddRange(menu.VideoItems);
-        _audioTrackItems.AddRange(menu.AudioTrackItems);
-        _localEditItems.AddRange(menu.LocalEditItems);
-        _bookmarkItems.AddRange(menu.BookmarkItems);
-        foreach (var command in menu.EqualizerCommands)
-            _equalizerCommands[command.Key] = command.Value;
-        foreach (var item in menu.EqualizerItems)
-            _equalizerItems[item.Key] = item.Value;
-        _equalizerMenu = menu.EqualizerMenu;
-        foreach (var command in menu.SubtitleCommands)
-            _subtitleCommands[command.Key] = command.Value;
-        foreach (var item in menu.SubtitleItems)
-            _subtitleItems[item.Key] = item.Value;
-        _subtitleMenu = menu.SubtitleMenu;
-        _subtitleMenuItem = menu.SubtitleMenuItem;
-        _subtitleRememberItem = menu.SubtitleRememberItem;
-        _recentFilesMenu = menu.RecentFilesMenu;
-        _recentFoldersMenu = menu.RecentFoldersMenu;
-        _recentPlaylistsMenu = menu.RecentPlaylistsMenu;
-        _markCurrentItem = menu.MarkCurrentItem;
-        _markAllItem = menu.MarkAllItem;
-        _shuffleItem = menu.ShuffleItem;
-        _repeatFileItem = menu.RepeatFileItem;
-        _silenceRemovalItem = menu.SilenceRemovalItem;
-        _fullScreenItem = menu.FullScreenItem;
-        _startRecordingItem = menu.StartRecordingItem;
-        _pauseRecordingItem = menu.PauseRecordingItem;
-        _stopRecordingItem = menu.StopRecordingItem;
-        BuildAccelerators(shortcuts);
-
+        _menus = new MenuController(_frame, actions, shortcuts, presets);
+        _input = new WindowInput(_frame, _menus, shortcuts);
         // The transport buttons show the control icons rather than text. They sit directly on the frame, not
         // on a wxPanel: a panel with no keyboard-focusable children becomes the focus target when the window
         // opens, and a screen reader announces "panel" on every launch. Each is a CustomBitmapButton, which
@@ -182,44 +99,43 @@ internal sealed partial class MainFrame : IMainView
         _frame.SetSizer(sizer);
         _frame.Fit();
 
-        previousButton.Click += (_, _) => Request(ActionId.PreviousTrack);
-        rewindButton.Click += (_, _) => Request(ActionId.SeekBackward);
-        _playButton.Click += (_, _) => Request(ActionId.PlayPause);
-        forwardButton.Click += (_, _) => Request(ActionId.SeekForward);
-        nextButton.Click += (_, _) => Request(ActionId.NextTrack);
-        _globalShortcuts = new GlobalShortcuts();
-        _globalShortcuts.Pressed += Request;
-        _frame.MenuCommand += OnMenuCommand;
+        previousButton.Click += (_, _) => _input.Request(ActionId.PreviousTrack);
+        rewindButton.Click += (_, _) => _input.Request(ActionId.SeekBackward);
+        _playButton.Click += (_, _) => _input.Request(ActionId.PlayPause);
+        forwardButton.Click += (_, _) => _input.Request(ActionId.SeekForward);
+        nextButton.Click += (_, _) => _input.Request(ActionId.NextTrack);
         _frame.Closing += OnClosing;
-        _frame.Bind(WxEvents.CharHook, OnCharHook);
-        SetMediaLoaded(false);
+        _menus.SetMediaLoaded(false);
     }
-
-    public event Action<ActionId>? ActionRequested;
-    public event Action<string?>? EqualizerPresetRequested;
-    public event Action<int?>? SubtitleTrackRequested;
-    public event Action<RecentCommand>? RecentRequested;
-    public event Action? CloseRequested;
-    public event Func<bool>? EscapePressed;
-
-    /// <remarks>
-    /// Only a bare Escape, and only when something answers to it. Anything else is skipped so the window
-    /// keeps behaving as it did: Escape is not a shortcut the user can bind, and swallowing it
-    /// unconditionally would take away the key that closes things.
-    /// </remarks>
-    private void OnCharHook(object? sender, KeyEventArgs args)
+    // The input events are raised by WindowInput, which owns the keyboard, the global shortcuts and the menu
+    // clicks. The window forwards them so consumers still see one view surface. CloseRequested is the window's
+    // own, raised from OnClosing below.
+    public event Action<ActionId>? ActionRequested
     {
-        if (args.Code == Key.Escape && args.Modifiers == KeyModifiers.None)
-        {
-            // Guarded here rather than at the far end: this runs inside a wxWidgets key event, and an
-            // exception thrown past it would unwind into C++ frames and take the process with it.
-            var handled = false;
-            LunaPlayer.Application.CrashReport.Guard(() => handled = EscapePressed?.Invoke() == true);
-            if (handled)
-                return;
-        }
-        args.Skip();
+        add => _input.ActionRequested += value;
+        remove => _input.ActionRequested -= value;
     }
+    public event Action<string?>? EqualizerPresetRequested
+    {
+        add => _input.EqualizerPresetRequested += value;
+        remove => _input.EqualizerPresetRequested -= value;
+    }
+    public event Action<int?>? SubtitleTrackRequested
+    {
+        add => _input.SubtitleTrackRequested += value;
+        remove => _input.SubtitleTrackRequested -= value;
+    }
+    public event Action<RecentCommand>? RecentRequested
+    {
+        add => _input.RecentRequested += value;
+        remove => _input.RecentRequested -= value;
+    }
+    public event Func<bool>? EscapePressed
+    {
+        add => _input.EscapePressed += value;
+        remove => _input.EscapePressed -= value;
+    }
+    public event Action? CloseRequested;
 
     public nint NativeHandle => _frame.NativeHandle;
 
@@ -250,185 +166,67 @@ internal sealed partial class MainFrame : IMainView
         _frame.Title = title;
     }
 
-    public void SetShuffleChecked(bool isChecked) => _shuffleItem.Checked = isChecked;
-
-    public void SetRepeatFileChecked(bool isChecked) => _repeatFileItem.Checked = isChecked;
-
-    public void SetSilenceRemovalChecked(bool isChecked) => _silenceRemovalItem.Checked = isChecked;
-
     public void SetFullScreen(bool fullScreen)
     {
         _frame.ShowFullScreen(fullScreen, FullScreenStyle.All);
-        _fullScreenItem.Checked = fullScreen;
+        _menus.SetFullScreenChecked(fullScreen);
     }
 
     public bool IsFullScreen => _frame.IsFullScreen;
 
-    public void SetFullScreenAvailable(bool available) => _fullScreenItem.Enabled = available;
+    /// <summary>The dialogs, built lazily and owned here so the window outlives them and parents them.</summary>
+    public IDialogService Dialogs => _dialogs ??= new DialogService(_frame, _dispatcher, _catalog, _input.GlobalShortcuts);
 
-    public void SetEqualizerPreset(string? presetId)
+    public bool ApplyGlobalShortcuts(ShortcutManager shortcuts) => _input.ApplyGlobalShortcuts(shortcuts);
+
+    public void ApplyShortcuts(ShortcutManager shortcuts)
     {
-        // Callers only ever name a preset the menu was built from, or nothing at all. The lookup is a
-        // guard against a name that is neither rather than a case that is expected to happen.
-        var key = presetId ?? MainMenuBuilder.EqualizerOffKey;
-        if (_equalizerItems.TryGetValue(key, out var item))
-            item.Checked = true;
+        _menus.ApplyShortcuts(shortcuts);
+        _input.ApplyAccelerators(shortcuts);
     }
+    public void SetShuffleChecked(bool isChecked) => _menus.SetShuffleChecked(isChecked);
+
+    public void SetRepeatFileChecked(bool isChecked) => _menus.SetRepeatFileChecked(isChecked);
+
+    public void SetSilenceRemovalChecked(bool isChecked) => _menus.SetSilenceRemovalChecked(isChecked);
+
+    public void SetFullScreenAvailable(bool available) => _menus.SetFullScreenAvailable(available);
+
+    public void SetEqualizerPreset(string? presetId) => _menus.SetEqualizerPreset(presetId);
 
     public void RebuildEqualizerMenu(IReadOnlyList<PresetEntry> presets, string? selected)
-    {
-        // Emptied and filled again rather than replaced. The submenu is already attached to the menu bar,
-        // and swapping it would leave the bar pointing at a menu nothing else knows about.
-        while (_equalizerMenu.Count > 0)
-            _equalizerMenu.Delete(_equalizerMenu[0]);
-        _equalizerCommands.Clear();
-        _equalizerItems.Clear();
-        MainMenuBuilder.FillEqualizerMenu(
-            _equalizerMenu, presets, _commandIds, _shortcuts, _equalizerCommands, _equalizerItems);
-        SetEqualizerPreset(selected);
-    }
+        => _menus.RebuildEqualizerMenu(presets, selected);
 
     public void RebuildSubtitleMenu(IReadOnlyList<SubtitleMenuEntry> entries, int? activeId)
-    {
-        // Only the dynamic radio region is rebuilt - the items above the first separator. The fixed commands
-        // below it (load from file/URL, remember) keep their permanent action ids; deleting them would free
-        // those ids, and the next rebuild re-adding the same id trips a wxWidgets auto-id assert.
-        while (_subtitleMenu.Count > 0 && _subtitleMenu[0].Kind != MenuItemKind.Separator)
-            _subtitleMenu.Delete(_subtitleMenu[0]);
-        _subtitleCommands.Clear();
-        _subtitleItems.Clear();
-        MainMenuBuilder.FillSubtitleTracks(_subtitleMenu, entries, activeId, _subtitleCommands, _subtitleItems);
-    }
+        => _menus.RebuildSubtitleMenu(entries, activeId);
 
-    public void SetSubtitleRemember(bool on) => _subtitleRememberItem.Checked = on;
+    public void SetSubtitleRemember(bool on) => _menus.SetSubtitleRemember(on);
 
     public void RebuildRecentsMenu(
         IReadOnlyList<RecentMenuEntry> files,
         IReadOnlyList<RecentMenuEntry> folders,
         IReadOnlyList<RecentMenuEntry> playlists)
-    {
-        // One shared command map for all three submenus, cleared once and refilled with fresh ids.
-        _recentCommands.Clear();
-        FillRecents(_recentFilesMenu, RecentKind.File, files,
-            // Translators: Shown in the Recent files submenu when no files have been opened yet.
-            Tr("No recent files"),
-            // Translators: Recent files submenu item that empties the list of recently opened files.
-            Tr("Clear recent files"));
-        FillRecents(_recentFoldersMenu, RecentKind.Folder, folders,
-            // Translators: Shown in the Recent folders submenu when no folders have been opened yet.
-            Tr("No recent folders"),
-            // Translators: Recent folders submenu item that empties the list of recently opened folders.
-            Tr("Clear recent folders"));
-        FillRecents(_recentPlaylistsMenu, RecentKind.Playlist, playlists,
-            // Translators: Shown in the Recent playlists submenu when no playlists have been opened yet.
-            Tr("No recent playlists"),
-            // Translators: Recent playlists submenu item that empties the list of recently opened playlists.
-            Tr("Clear recent playlists"));
-    }
+        => _menus.RebuildRecentsMenu(files, folders, playlists);
 
-    private void FillRecents(Menu menu, RecentKind kind, IReadOnlyList<RecentMenuEntry> entries,
-        string emptyLabel, string clearLabel)
-    {
-        while (menu.Count > 0)
-            menu.Delete(menu[0]);
-        MainMenuBuilder.FillRecentsSubmenu(menu, kind, entries, emptyLabel, clearLabel, _recentCommands);
-    }
+    public void SetSubtitleSelection(int? activeId) => _menus.SetSubtitleSelection(activeId);
 
-    public void SetSubtitleSelection(int? activeId)
-    {
-        var key = activeId?.ToString(CultureInfo.InvariantCulture) ?? MainMenuBuilder.SubtitleOffKey;
-        if (_subtitleItems.TryGetValue(key, out var item))
-            item.Checked = true;
-    }
+    public void SetSubtitleControlsEnabled(bool enabled) => _menus.SetSubtitleControlsEnabled(enabled);
 
-    public void SetSubtitleControlsEnabled(bool enabled) => _subtitleMenuItem.Enabled = enabled;
+    public void SetMediaLoaded(bool loaded) => _menus.SetMediaLoaded(loaded);
 
-    /// <summary>The dialogs, built lazily and owned here so the window outlives them and parents them.</summary>
-    public IDialogService Dialogs => _dialogs ??= new DialogService(_frame, _dispatcher, _catalog, _globalShortcuts);
+    public void SetEditState(bool hasLocalFile, bool hasMedia) => _menus.SetEditState(hasLocalFile, hasMedia);
 
-    public bool ApplyGlobalShortcuts(ShortcutManager shortcuts)
-        => _globalShortcuts.Apply(shortcuts.GetBindings());
+    public void SetBookmarkState(bool enabled) => _menus.SetBookmarkState(enabled);
 
-    public void ApplyShortcuts(ShortcutManager shortcuts)
-    {
-        _shortcuts = shortcuts;
-        BuildAccelerators(shortcuts);
-        foreach (var pair in _commandIds)
-        {
-            var item = _menuBar.FindItem(pair.Value);
-            if (item is null || item.Kind == MenuItemKind.Separator) continue;
-            var baseLabel = item.Label.Split('\t')[0];
-            item.Label = shortcuts.Get(pair.Key) is Shortcut shortcut
-                ? $"{baseLabel}\t{shortcut.ToDisplayString()}"
-                : baseLabel;
-        }
-    }
+    public void SetMarkState(bool currentMarked, bool allMarked) => _menus.SetMarkState(currentMarked, allMarked);
 
-    public void SetMediaLoaded(bool loaded)
-    {
-        foreach (var item in _playbackItems)
-            item.Enabled = loaded;
-        foreach (var item in _mediaFileItems)
-            item.Enabled = loaded;
-    }
+    public void SetRecordingState(RecordingState state) => _menus.SetRecordingState(state);
 
-    public void SetEditState(bool hasLocalFile, bool hasMedia)
-    {
-        foreach (var item in _localEditItems)
-            item.Enabled = hasLocalFile;
-        foreach (var item in _localFileItems)
-            item.Enabled = hasLocalFile;
-        _markCurrentItem.Enabled = hasMedia;
-        _markAllItem.Enabled = hasMedia;
-    }
+    public void SetVideoOptionsEnabled(bool enabled) => _menus.SetVideoOptionsEnabled(enabled);
 
-    public void SetBookmarkState(bool enabled)
-    {
-        foreach (var item in _bookmarkItems)
-            item.Enabled = enabled;
-        _menuBar.EnableTop(_bookmarksMenuIndex, enabled);
-    }
+    public void SetAudioTrackControlsEnabled(bool enabled) => _menus.SetAudioTrackControlsEnabled(enabled);
 
-    public void SetMarkState(bool currentMarked, bool allMarked)
-    {
-        _markCurrentItem.Checked = currentMarked;
-        _markAllItem.Checked = allMarked;
-    }
-
-    public void SetRecordingState(RecordingState state)
-    {
-        var idle = state is RecordingState.Idle;
-        _startRecordingItem.Enabled = idle;
-        // Both of these need a recording to act on, and neither cares whether it is running or held.
-        _pauseRecordingItem.Enabled = !idle;
-        _stopRecordingItem.Enabled = !idle;
-        // Said the way the button in the window says it, so the menu and the window never disagree about
-        // what the key does. The shortcut is kept: it is the part after the tab, which the menu owns.
-        var parts = _pauseRecordingItem.Label.Split('	');
-        var label = state is RecordingState.Paused
-            // Translators: Recording menu item that starts a paused recording again.
-            ? Tr("Resume")
-            // Translators: Recording menu item that holds a recording where it is.
-            : Tr("Pause");
-        _pauseRecordingItem.Label = parts.Length > 1 ? $"{label}	{parts[1]}" : label;
-    }
-
-    public void SetVideoOptionsEnabled(bool enabled)
-    {
-        foreach (var item in _videoItems) item.Enabled = enabled;
-        _menuBar.EnableTop(_videoMenuIndex, enabled);
-    }
-
-    public void SetAudioTrackControlsEnabled(bool enabled)
-    {
-        foreach (var item in _audioTrackItems) item.Enabled = enabled;
-    }
-
-    public void SetMarkedActionsEnabled(bool enabled)
-    {
-        foreach (var item in _markedItems) item.Enabled = enabled;
-        _menuBar.EnableTop(_markedMenuIndex, enabled);
-    }
+    public void SetMarkedActionsEnabled(bool enabled) => _menus.SetMarkedActionsEnabled(enabled);
 
     public void Dispose()
     {
@@ -437,7 +235,7 @@ internal sealed partial class MainFrame : IMainView
         _disposed = true;
         // Before the frame goes: a keyboard hook left installed keeps being called into a process that is
         // shutting down.
-        _globalShortcuts.Dispose();
+        _input.Dispose();
         // Before the frame: the reused results window is a child of it, so it must be torn down before the
         // frame destroys the native window out from under it.
         _dialogs?.Dispose();
@@ -447,80 +245,13 @@ internal sealed partial class MainFrame : IMainView
             bitmap.Dispose();
     }
 
-    private void BuildCommandIds(IEnumerable<ActionDefinition> actions)
-    {
-        foreach (var action in actions)
-        {
-            if (action.Id == ActionId.OpenFile)
-                AddCommand(action.Id, StandardId.Open);
-            else if (action.Id == ActionId.Exit)
-                AddCommand(action.Id, StandardId.Exit);
-            else
-                AddCommand(action.Id, IdManager.NewId());
-        }
-    }
-
-    /// <remarks>
-    /// An id from <see cref="IdManager.NewId"/> is never released. Putting it on a menu hands the
-    /// reservation to a <c>wxWindowIDRef</c>, and destroying the menu bar with the frame returns it; a
-    /// release afterwards would free it twice, which wxWidgets asserts on in a debug build.
-    /// </remarks>
-    private void AddCommand(ActionId action, int id)
-    {
-        _commandIds[action] = id;
-        _commands[id] = action;
-    }
-
-    private void BuildAccelerators(ShortcutManager shortcuts)
-    {
-        var accelerators = new List<AcceleratorEntry>();
-        foreach (var binding in shortcuts.GetBindings())
-        {
-            // An accelerator table cannot express the Windows key, so a binding using it is left to the
-            // global hot key registration instead of failing the whole table.
-            if ((binding.Shortcut.Modifiers & ShortcutModifiers.Win) != 0) continue;
-            var commandId = _commandIds[binding.Action];
-            var display = binding.Shortcut.ToDisplayString();
-            if (!AcceleratorEntry.TryParse(display, commandId, out var accelerator))
-                throw new InvalidOperationException($"'{display}' is not a valid local shortcut.");
-            accelerators.Add(accelerator);
-        }
-        _frame.SetAcceleratorTable([.. accelerators]);
-    }
-
-    private void OnMenuCommand(object? sender, CommandEventArgs args)
-    {
-        if (_commands.TryGetValue(args.Id, out var action))
-        {
-            Request(action);
-            return;
-        }
-        // Guarded here rather than further along. Menu commands bound to an action are guarded where they
-        // are dispatched, but these are not, and it is still wxWidgets calling in: an exception let past
-        // would unwind into C++ frames.
-        if (_equalizerCommands.TryGetValue(args.Id, out var presetId))
-        {
-            var wanted = presetId.Length == 0 ? null : presetId;
-            LunaPlayer.Application.CrashReport.Guard(() => EqualizerPresetRequested?.Invoke(wanted));
-            return;
-        }
-        if (_subtitleCommands.TryGetValue(args.Id, out var trackKey))
-        {
-            int? wanted = trackKey.Length == 0 ? null : int.Parse(trackKey, CultureInfo.InvariantCulture);
-            LunaPlayer.Application.CrashReport.Guard(() => SubtitleTrackRequested?.Invoke(wanted));
-            return;
-        }
-        if (_recentCommands.TryGetValue(args.Id, out var recent))
-            LunaPlayer.Application.CrashReport.Guard(() => RecentRequested?.Invoke(recent));
-    }
-
     private void OnClosing(object? sender, CloseEventArgs args)
     {
         // Alt+F4 asks the window to close while Alt is commonly still held. Destroying the foreground
         // window before Windows delivers the rest of that chord can leave the newly focused thread with a
         // stale logical modifier state. Keep this window as the keyboard target until the physical keys are
         // up, then issue a fresh close on the UI thread. No synthetic key events are sent.
-        if (!_closing && args.CanVeto && CloseChordIsDown())
+        if (!_closing && args.CanVeto && _input.CloseChordIsDown())
         {
             args.Veto();
             if (!_waitingForCloseKeys)
@@ -534,14 +265,14 @@ internal sealed partial class MainFrame : IMainView
         _closing = true;
         // Stop system-wide shortcuts before the close handlers save state and stop playback, so no action can
         // arrive while shutdown is in progress.
-        _globalShortcuts.Dispose();
+        _input.StopGlobalShortcuts();
         CloseRequested?.Invoke();
         args.Skip();
     }
 
     private async Task CloseAfterKeysAreReleasedAsync()
     {
-        while (!_disposed && CloseChordIsDown())
+        while (!_disposed && _input.CloseChordIsDown())
             await Task.Delay(10).ConfigureAwait(false);
 
         if (_disposed)
@@ -555,19 +286,4 @@ internal sealed partial class MainFrame : IMainView
             _frame.Close();
         });
     }
-
-    private static bool CloseChordIsDown()
-        => IsKeyDown(VirtualKeyShift)
-            || IsKeyDown(VirtualKeyControl)
-            || IsKeyDown(VirtualKeyAlt)
-            || IsKeyDown(VirtualKeyLeftWindows)
-            || IsKeyDown(VirtualKeyRightWindows)
-            || IsKeyDown(VirtualKeyF4);
-
-    private static bool IsKeyDown(int virtualKey) => (GetAsyncKeyState(virtualKey) & 0x8000) != 0;
-
-    [LibraryImport("user32.dll")]
-    private static partial short GetAsyncKeyState(int virtualKey);
-
-    private void Request(ActionId action) => ActionRequested?.Invoke(action);
 }
