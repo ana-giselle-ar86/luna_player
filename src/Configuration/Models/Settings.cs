@@ -151,6 +151,10 @@ internal sealed class Settings
             ? Audio.SeekStepKey : "2";
         YouTube.SearchResultCount = Math.Clamp(YouTube.SearchResultCount, 5, 100);
         YouTube.CookiesPath ??= string.Empty;
+        YouTube.Download ??= new();
+        YouTube.Download.Folder = string.IsNullOrWhiteSpace(YouTube.Download.Folder)
+            ? Paths.DefaultDownloadsDirectory : YouTube.Download.Folder.Trim();
+        YouTube.Download.ConcurrentFragments = Math.Clamp(YouTube.Download.ConcurrentFragments, 1, 16);
         // Only that it is one of the rates the player offers at all. Whether the chosen format can be
         // written at it is a question for the encoder, asked when a recording starts rather than here:
         // this runs at load, and loading an encoder to interrogate it is not something to do then.

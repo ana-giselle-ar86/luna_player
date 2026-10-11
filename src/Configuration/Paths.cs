@@ -124,6 +124,11 @@ internal static class Paths
     internal static string DefaultRecordingsDirectory { get; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), AppInfo.Name, "Recordings");
 
+    /// <summary>Where YouTube downloads go unless the user says otherwise. Under Documents for the same
+    /// reason recordings are: they are the user's files, meant to be found and kept.</summary>
+    internal static string DefaultDownloadsDirectory { get; } = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), AppInfo.Name, "Downloads");
+
     /// <summary>Creates the folder <paramref name="path"/> is about to be written into. Does nothing for a
     /// bare file name, which is already in a folder that exists.</summary>
     internal static void EnsureDirectoryFor(string path)

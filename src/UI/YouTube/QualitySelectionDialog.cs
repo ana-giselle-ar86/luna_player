@@ -80,18 +80,29 @@ internal sealed class QualitySelectionDialog : IDisposable
     public void Dispose() => _dialog.Dispose();
 
     /// <summary>The words shown beside an audio bitrate. Shared with the preferences page, which offers the
-    /// same bitrates.</summary>
-    internal static string AudioLabel(int kbps)
+    /// same bitrates plus the two "prefer best/worst" choices (0 and a negative number).</summary>
+    internal static string AudioLabel(int kbps) => kbps switch
+    {
+        // Translators: Quality choice that takes the best the video offers, with no cap.
+        0 => Tr("Best"),
+        // Translators: Quality choice that takes the smallest/lowest the video offers.
+        < 0 => Tr("Worst"),
         // Translators: One audio-bitrate choice. {rate} is a number of kilobits per second.
-        => TrFormat("{rate} kbps", kbps.ToString(CultureInfo.InvariantCulture));
+        _ => TrFormat("{rate} kbps", kbps.ToString(CultureInfo.InvariantCulture)),
+    };
 
     /// <summary>The words shown beside a picture height, with a plain
-    /// "{height}p" for any height not in the table. Shared with the preferences page.</summary>
+    /// "{height}p" for any height not in the table. Shared with the preferences page, which also offers the
+    /// two "prefer best/worst" choices (0 and a negative number).</summary>
     internal static string VideoLabel(int height)
     {
         var number = height.ToString(CultureInfo.InvariantCulture);
         return height switch
         {
+            // Translators: Quality choice that takes the best the video offers, with no cap.
+            0 => Tr("Best"),
+            // Translators: Quality choice that takes the smallest/lowest the video offers.
+            < 0 => Tr("Worst"),
             // Translators: Description of the 144p video quality.
             144 => Tr("144p (very low quality)"),
             // Translators: Description of the 240p video quality.
