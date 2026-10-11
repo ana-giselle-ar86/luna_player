@@ -28,13 +28,25 @@ internal sealed class Runner
     /// on the next yt-dlp call without the runner being rebuilt.</param>
     internal Runner(Settings settings) => _settings = settings;
 
-    /// <summary>The yt-dlp format selector for sound alone, capped at a bitrate in kbps.</summary>
+    /// <summary>The yt-dlp format selector for sound alone, capped at a bitrate in kbps. A cap of 0 means no
+    /// cap (take the best) and a negative cap means take the worst.</summary>
     private static string AudioFormat(int abr)
-        => $"bestaudio[abr<=?{abr}][ext=m4a]/bestaudio[abr<=?{abr}]/bestaudio[ext=m4a]/bestaudio/best";
+        => abr switch
+        {
+            0 => "bestaudio[ext=m4a]/bestaudio/best",
+            < 0 => "worstaudio/worst",
+            _ => $"bestaudio[abr<=?{abr}][ext=m4a]/bestaudio[abr<=?{abr}]/bestaudio[ext=m4a]/bestaudio/best",
+        };
 
-    /// <summary>The yt-dlp format selector for a video capped at a picture height.</summary>
+    /// <summary>The yt-dlp format selector for a video capped at a picture height. A cap of 0 means no cap
+    /// (take the best) and a negative cap means take the worst.</summary>
     internal static string VideoFormat(int height)
-        => $"best[height<=?{height}][ext=mp4]/best[height<=?{height}]/best[ext=mp4]/best";
+        => height switch
+        {
+            0 => "best[ext=mp4]/best",
+            < 0 => "worst[ext=mp4]/worst",
+            _ => $"best[height<=?{height}][ext=mp4]/best[height<=?{height}]/best[ext=mp4]/best",
+        };
 
     /// <summary>The format selector for a play: sound alone capped at a bitrate, or picture capped at a
     /// height. The number is a bitrate in kbps when <paramref name="audioOnly"/>, a height otherwise.</summary>
@@ -58,7 +70,7 @@ internal sealed class Runner
         // its own argument list rather than going through the common prefix.
         if (Utils.DenoRuntime is string runtime && !all.Contains("--js-runtimes"))
             all.AddRange(["--js-runtimes", runtime]);
-        AddCookies(all);
+        Utils.AddCookies(all, _settings.YouTube);
 
         using var process = Utils.Start(Utils.YtDlpPath, all);
         // Killed the moment the token is set rather than at the next line of output. yt-dlp can sit for a
@@ -123,25 +135,6 @@ internal sealed class Runner
         {
             // It finished between the test and the kill, which is the outcome that was wanted.
         }
-    }
-
-    /// <summary>Adds the cookie source the user chose, if any, to a yt-dlp argument list.</summary>
-    /// <remarks>
-    /// The two sources are mutually exclusive - the preferences page enforces that - so at most one of these
-    /// is ever added. A file that no longer exists is silently skipped rather than handed to yt-dlp, which
-    /// would fail the run outright. This one insertion point covers resolving, downloading, descriptions,
-    /// playlists and the channel tabs, because every one of them routes through <see cref="Run"/>.
-    /// </remarks>
-    private void AddCookies(List<string> arguments)
-    {
-        if (_settings.YouTube.CookiesFromFirefox)
-        {
-            arguments.AddRange(["--cookies-from-browser", "firefox"]);
-            return;
-        }
-        var path = _settings.YouTube.CookiesPath;
-        if (!string.IsNullOrEmpty(path) && File.Exists(path))
-            arguments.AddRange(["--cookies", path]);
     }
 
     private static string ShortDiagnostic(IReadOnlyList<string> lines)

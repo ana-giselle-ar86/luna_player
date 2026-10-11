@@ -23,23 +23,54 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
     private readonly CheckBox _checkUpdates;
     private readonly TextCtrl _cookiesPath;
     private readonly TextCtrl _cookiesStatus;
+    private readonly TextCtrl _downloadFolder;
+    private readonly Choice _downloadType;
+    private readonly Choice _downloadVideoQuality;
+    private readonly Choice _downloadContainer;
+    private readonly Choice _downloadAudioFormat;
+    private readonly Choice _downloadAudioQuality;
+    private readonly StaticText _downloadVideoQualityLabel;
+    private readonly StaticText _downloadContainerLabel;
+    private readonly StaticText _downloadAudioFormatLabel;
+    private readonly StaticText _downloadAudioQualityLabel;
+    private readonly SpinCtrl _concurrentFragments;
+    private readonly CheckBox _embedMetadata;
+    private readonly CheckBox _embedThumbnail;
+    private readonly CheckBox _embedChapters;
+    private readonly CheckBox _embedSubtitles;
+    private readonly CheckBox _sponsorBlock;
 
     /// <summary>Whether Luna is set to read cookies live from Firefox rather than from a file. Held apart
     /// from the settings while the page is open, and mutually exclusive with a chosen file: turning one on
     /// turns the other off.</summary>
     private bool _cookiesFromFirefox;
 
-    /// <summary>The picture heights offered, worst to best, so the list reads the way the download picker's
-    /// does and the chosen index maps straight back to a quality.</summary>
+    /// <summary>The picture heights offered, worst to best (with the two prefer-best/worst choices at the
+    /// ends), so the list reads the way the download picker's does and the chosen index maps straight back to
+    /// a quality.</summary>
     private static readonly VideoQuality[] VideoQualities =
     [
+        VideoQuality.Worst,
         VideoQuality.P144, VideoQuality.P240, VideoQuality.P360, VideoQuality.P480,
         VideoQuality.P720, VideoQuality.P1080, VideoQuality.P1440, VideoQuality.P2160,
+        VideoQuality.Best,
     ];
 
-    /// <summary>The audio bitrates offered, lowest to highest.</summary>
+    /// <summary>The audio bitrates offered, worst to best, with the two prefer-best/worst choices at the ends.</summary>
     private static readonly AudioQuality[] AudioQualities =
-        [AudioQuality.Kbps64, AudioQuality.Kbps128, AudioQuality.Kbps256];
+    [
+        AudioQuality.Worst,
+        AudioQuality.Kbps64, AudioQuality.Kbps96, AudioQuality.Kbps128, AudioQuality.Kbps160,
+        AudioQuality.Kbps192, AudioQuality.Kbps256, AudioQuality.Kbps320,
+        AudioQuality.Best,
+    ];
+
+    /// <summary>The video containers offered, in menu order.</summary>
+    private static readonly VideoContainer[] Containers = [VideoContainer.Mp4, VideoContainer.Mkv];
+
+    /// <summary>The audio file formats offered, in menu order.</summary>
+    private static readonly AudioFileFormat[] AudioFormats =
+        [AudioFileFormat.Mp3, AudioFileFormat.M4a, AudioFileFormat.Opus, AudioFileFormat.Flac, AudioFileFormat.Wav];
 
     internal YouTubePreferences(Window parent, YouTubeSettings settings, PrefsOps operations)
         // Translators: Spoken description of the YouTube settings page, read when the page is opened.
@@ -75,6 +106,79 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
             Tr("Play the video"),
             // Translators: One of the choices for a link naming both: always open the whole playlist.
             Tr("Open the playlist")], (int)settings.MixedLink);
+
+        // The "Download settings" group: the defaults a direct download uses, and the values a normal
+        // download's dialog opens prefilled with. The video and audio options are shown one set at a time,
+        // following the chosen type, since a download is one or the other.
+        var downloadDefaults = settings.Download;
+        // Translators: Heading of the group of settings that control how YouTube videos are downloaded.
+        var downloadBox = new StaticBoxSizer(new StaticBox(panel, Tr("Download settings")), Orientation.Vertical);
+        // Translators: Label of the box holding the folder downloads are saved into.
+        var downloadFolderLabel = new StaticText(panel, label: Tr("Download folder"));
+        _downloadFolder = new TextCtrl(panel, value: downloadDefaults.Folder);
+        // Translators: Button that opens a folder picker to choose where downloads are saved.
+        var browseFolder = new Button(panel, label: Tr("Browse..."));
+        browseFolder.Click += (_, _) => BrowseForDownloadFolder();
+        // Translators: Label of the list that chooses whether a download saves the video or its sound alone by default.
+        var downloadTypeLabel = new StaticText(panel, label: Tr("Default download type"));
+        _downloadType = Choice(panel, [
+            // Translators: One of the download types: save the picture, with its sound, as a video file.
+            Tr("Video"),
+            // Translators: One of the download types: save the sound alone as an audio file.
+            Tr("Audio")], (int)downloadDefaults.Kind);
+        _downloadType.SelectionChanged += (_, _) => SyncDownloadType();
+        // Translators: Label of the list that chooses the picture quality a downloaded video is saved at.
+        _downloadVideoQualityLabel = new StaticText(panel, label: Tr("Video quality"));
+        _downloadVideoQuality = Choice(
+            panel,
+            Array.ConvertAll(VideoQualities, quality => QualitySelectionDialog.VideoLabel((int)quality)),
+            Math.Max(0, Array.IndexOf(VideoQualities, downloadDefaults.VideoQuality)));
+        // Translators: Label of the list that chooses the file type a downloaded video is saved as.
+        _downloadContainerLabel = new StaticText(panel, label: Tr("Video format"));
+        // Translators: The two video container formats. "MP4" and "MKV" are format names and are not translated.
+        _downloadContainer = Choice(panel, [Tr("MP4"), Tr("MKV")],
+            Math.Max(0, Array.IndexOf(Containers, downloadDefaults.Container)));
+        // Translators: Label of the list that chooses the file type a downloaded audio track is saved as.
+        _downloadAudioFormatLabel = new StaticText(panel, label: Tr("Audio format"));
+        // The audio formats are their own names, not translated.
+        _downloadAudioFormat = Choice(panel, ["MP3", "M4A", "Opus", "FLAC", "WAV"],
+            Math.Max(0, Array.IndexOf(AudioFormats, downloadDefaults.AudioFormat)));
+        // Translators: Label of the list that chooses the bitrate a downloaded audio track is saved at.
+        _downloadAudioQualityLabel = new StaticText(panel, label: Tr("Audio quality"));
+        _downloadAudioQuality = Choice(
+            panel,
+            Array.ConvertAll(AudioQualities, quality => QualitySelectionDialog.AudioLabel((int)quality)),
+            Math.Max(0, Array.IndexOf(AudioQualities, downloadDefaults.AudioQuality)));
+        AddBoxField(downloadBox, downloadFolderLabel, _downloadFolder);
+        downloadBox.Add(browseFolder, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
+        AddBoxField(downloadBox, downloadTypeLabel, _downloadType);
+        AddBoxField(downloadBox, _downloadVideoQualityLabel, _downloadVideoQuality);
+        AddBoxField(downloadBox, _downloadContainerLabel, _downloadContainer);
+        AddBoxField(downloadBox, _downloadAudioFormatLabel, _downloadAudioFormat);
+        AddBoxField(downloadBox, _downloadAudioQualityLabel, _downloadAudioQuality);
+
+        // The "Advanced options" group: a separate box below the basics, for the yt-dlp knobs most downloads
+        // never touch.
+        // Translators: Heading of the group of less-used download options (embedding, fragments, SponsorBlock).
+        var advancedBox = new StaticBoxSizer(new StaticBox(panel, Tr("Advanced options")), Orientation.Vertical);
+        // Translators: Label of the box holding how many pieces of a file are fetched at once. "yt-dlp" calls
+        // these fragments.
+        var fragmentsLabel = new StaticText(panel, label: Tr("Concurrent fragments"));
+        _concurrentFragments = new SpinCtrl(panel, downloadDefaults.ConcurrentFragments, 1, 16);
+        // Translators: Tick box: write the title, uploader and other tags into the downloaded file.
+        _embedMetadata = new CheckBox(panel, label: Tr("Embed metadata")) { Checked = downloadDefaults.EmbedMetadata };
+        // Translators: Tick box: embed the video's thumbnail as cover art in the downloaded file.
+        _embedThumbnail = new CheckBox(panel, label: Tr("Embed thumbnail")) { Checked = downloadDefaults.EmbedThumbnail };
+        // Translators: Tick box: write the video's chapter marks into the downloaded file.
+        _embedChapters = new CheckBox(panel, label: Tr("Embed chapters")) { Checked = downloadDefaults.EmbedChapters };
+        // Translators: Tick box: embed available subtitles into the downloaded file.
+        _embedSubtitles = new CheckBox(panel, label: Tr("Embed subtitles")) { Checked = downloadDefaults.EmbedSubtitles };
+        // Translators: Tick box: cut out SponsorBlock segments (sponsor reads, intros) from the download.
+        // "SponsorBlock" is a service name and is not translated.
+        _sponsorBlock = new CheckBox(panel, label: Tr("Remove SponsorBlock segments")) { Checked = downloadDefaults.SponsorBlockRemove };
+        AddBoxField(advancedBox, fragmentsLabel, _concurrentFragments);
+        foreach (var tick in new[] { _embedMetadata, _embedThumbnail, _embedChapters, _embedSubtitles, _sponsorBlock })
+            advancedBox.Add(tick, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
 
         // The "Cookies" group. yt-dlp can be handed cookies so age-restricted or members-only videos, and
         // videos behind a "confirm you are not a robot" wall, still play and download. The two ways in are
@@ -136,6 +240,8 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
         AddField(sizer, resultCountLabel, _resultCount);
         sizer.Add(_searchSuggestions, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
         AddField(sizer, mixedLinkLabel, _mixedLink);
+        sizer.Add(downloadBox, flags: SizerFlags.Expand | SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderTop, border: 8);
+        sizer.Add(advancedBox, flags: SizerFlags.Expand | SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderTop, border: 8);
         sizer.Add(cookiesBox, flags: SizerFlags.Expand | SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderTop, border: 8);
         AddField(sizer, channelLabel, _channel);
         sizer.Add(_checkUpdates, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
@@ -182,7 +288,47 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
         Help(_cookiesStatus,
             // Translators: Help text for the read-only box that reports which cookie source is in use.
             Tr("Reports whether YouTube requests currently use Firefox cookies, a cookie file, or no cookies at all."));
+        Help(_downloadFolder,
+            // Translators: Help text for the box holding the folder downloads are saved into.
+            Tr("The folder downloads are saved into. Leave it empty to use the default Downloads folder under your Documents."));
+        Help(browseFolder,
+            // Translators: Help text for the button that picks the download folder.
+            Tr("Opens a folder picker to choose where downloads are saved."));
+        Help(_downloadType,
+            // Translators: Help text for the list that chooses whether a download saves video or audio.
+            Tr("Whether a direct download saves the video or its sound alone. The normal download dialog opens on this choice and lets you change it per download."));
+        Help(_downloadVideoQuality,
+            // Translators: Help text for the list that chooses the picture quality a downloaded video is saved at.
+            Tr("The picture height a video download is capped at. yt-dlp saves the best quality at or below it."));
+        Help(_downloadContainer,
+            // Translators: Help text for the list that chooses a downloaded video's file type. "MP4"/"MKV" are not translated.
+            Tr("The file type a downloaded video is saved as. MP4 plays almost everywhere; MKV holds more but is less widely supported."));
+        Help(_downloadAudioFormat,
+            // Translators: Help text for the list that chooses a downloaded audio track's file type.
+            Tr("The file type a downloaded audio track is converted to. MP3 plays almost everywhere; FLAC and WAV are lossless and larger."));
+        Help(_downloadAudioQuality,
+            // Translators: Help text for the list that chooses a downloaded audio track's bitrate.
+            Tr("The bitrate a downloaded audio track is converted at. It has no effect on the lossless formats."));
+        Help(_concurrentFragments,
+            // Translators: Help text for the box holding how many file pieces are fetched at once.
+            Tr("How many pieces of a file yt-dlp fetches at once, from 1 through 16. More can be faster on a fast connection; one is gentlest."));
+        Help(_embedMetadata,
+            // Translators: Help text for the tick box that writes tags into the downloaded file.
+            Tr("Writes the title, uploader and other details into the downloaded file."));
+        Help(_embedThumbnail,
+            // Translators: Help text for the tick box that embeds the thumbnail as cover art.
+            Tr("Embeds the video's thumbnail as cover art in the downloaded file."));
+        Help(_embedChapters,
+            // Translators: Help text for the tick box that writes chapter marks into the downloaded file.
+            Tr("Writes the video's chapter marks into the downloaded file, where the format supports them."));
+        Help(_embedSubtitles,
+            // Translators: Help text for the tick box that embeds subtitles into the downloaded file.
+            Tr("Embeds the video's available subtitles into the downloaded file."));
+        Help(_sponsorBlock,
+            // Translators: Help text for the tick box that removes SponsorBlock segments. "SponsorBlock" is a service name and is not translated.
+            Tr("Uses SponsorBlock data to cut sponsor reads, intros and similar segments out of the download."));
         UpdateCookieStatus();
+        SyncDownloadType();
     }
 
     /// <summary>Opens the file picker and, if a file is chosen, uses it and leaves the Firefox mode.</summary>
@@ -203,6 +349,35 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
         // would otherwise run before the flag is settled; the state is then refreshed by hand.
         _cookiesPath.ChangeValue(dialog.Path);
         UpdateCookieStatus();
+    }
+
+    /// <summary>Opens the folder picker and, if a folder is chosen, puts it in the download-folder box.</summary>
+    private void BrowseForDownloadFolder()
+    {
+        using var dialog = new DirDialog(
+            Window,
+            // Translators: Title of the window that picks the folder downloads are saved into.
+            message: Tr("Select the download folder"),
+            defaultPath: _downloadFolder.Value,
+            style: DirDialogStyle.DirMustExist);
+        if (dialog.ShowModal() == StandardId.Ok)
+            _downloadFolder.ChangeValue(dialog.Path);
+    }
+
+    /// <summary>Shows the video options or the audio options, following the chosen default download type, so
+    /// only the ones that apply are on screen and in the tab order.</summary>
+    private void SyncDownloadType()
+    {
+        var video = _downloadType.SelectedIndex == (int)DownloadKind.Video;
+        _downloadVideoQualityLabel.Show(video);
+        _downloadVideoQuality.Show(video);
+        _downloadContainerLabel.Show(video);
+        _downloadContainer.Show(video);
+        _downloadAudioFormatLabel.Show(!video);
+        _downloadAudioFormat.Show(!video);
+        _downloadAudioQualityLabel.Show(!video);
+        _downloadAudioQuality.Show(!video);
+        Window.Layout();
     }
 
     /// <summary>Switches to reading cookies from Firefox, dropping any file that was chosen.</summary>
@@ -244,6 +419,20 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
         // Mutually exclusive: the Firefox mode ignores any file, so a file is only saved when that mode is off.
         _settings.CookiesFromFirefox = _cookiesFromFirefox;
         _settings.CookiesPath = _cookiesFromFirefox ? string.Empty : _cookiesPath.Value.Trim();
+
+        var download = _settings.Download;
+        download.Folder = _downloadFolder.Value.Trim();
+        download.Kind = (DownloadKind)Math.Max(0, _downloadType.SelectedIndex);
+        download.VideoQuality = VideoQualities[Math.Clamp(_downloadVideoQuality.SelectedIndex, 0, VideoQualities.Length - 1)];
+        download.Container = Containers[Math.Clamp(_downloadContainer.SelectedIndex, 0, Containers.Length - 1)];
+        download.AudioFormat = AudioFormats[Math.Clamp(_downloadAudioFormat.SelectedIndex, 0, AudioFormats.Length - 1)];
+        download.AudioQuality = AudioQualities[Math.Clamp(_downloadAudioQuality.SelectedIndex, 0, AudioQualities.Length - 1)];
+        download.ConcurrentFragments = _concurrentFragments.Value;
+        download.EmbedMetadata = _embedMetadata.Checked;
+        download.EmbedThumbnail = _embedThumbnail.Checked;
+        download.EmbedChapters = _embedChapters.Checked;
+        download.EmbedSubtitles = _embedSubtitles.Checked;
+        download.SponsorBlockRemove = _sponsorBlock.Checked;
     }
 
     public override void Refresh()
@@ -258,12 +447,39 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
         _cookiesFromFirefox = _settings.CookiesFromFirefox;
         _cookiesPath.ChangeValue(_settings.CookiesFromFirefox ? string.Empty : _settings.CookiesPath);
         UpdateCookieStatus();
+
+        var download = _settings.Download;
+        _downloadFolder.ChangeValue(download.Folder);
+        _downloadType.SelectedIndex = (int)download.Kind;
+        _downloadVideoQuality.SelectedIndex = Math.Max(0, Array.IndexOf(VideoQualities, download.VideoQuality));
+        _downloadContainer.SelectedIndex = Math.Max(0, Array.IndexOf(Containers, download.Container));
+        _downloadAudioFormat.SelectedIndex = Math.Max(0, Array.IndexOf(AudioFormats, download.AudioFormat));
+        _downloadAudioQuality.SelectedIndex = Math.Max(0, Array.IndexOf(AudioQualities, download.AudioQuality));
+        _concurrentFragments.Value = download.ConcurrentFragments;
+        _embedMetadata.Checked = download.EmbedMetadata;
+        _embedThumbnail.Checked = download.EmbedThumbnail;
+        _embedChapters.Checked = download.EmbedChapters;
+        _embedSubtitles.Checked = download.EmbedSubtitles;
+        _sponsorBlock.Checked = download.SponsorBlockRemove;
+        SyncDownloadType();
     }
 
     private static Choice Choice(Window parent, IEnumerable<string> values, int selected)
     { var choice = new Choice(parent); foreach (var value in values) choice.Add(value); choice.SelectedIndex = selected; return choice; }
 
     private static void AddField(BoxSizer sizer, StaticText label, Window control)
+    {
+        sizer.Add(label,
+            flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderTop,
+            border: 8);
+        sizer.Add(control,
+            flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom | SizerFlags.Expand,
+            border: 8);
+    }
+
+    /// <summary>The label-then-control pair of <see cref="AddField"/>, for a <see cref="StaticBoxSizer"/>
+    /// group rather than the page's top-level box.</summary>
+    private static void AddBoxField(Sizer sizer, StaticText label, Window control)
     {
         sizer.Add(label,
             flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderTop,

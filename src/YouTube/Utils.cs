@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+using LunaPlayer.Configuration.Models;
 using PyYt;
 
 namespace LunaPlayer.YouTube;
@@ -88,6 +89,25 @@ internal static partial class Utils
             ? $"{bundledPath}{Path.PathSeparator}{path}"
             : bundledPath;
         return Process.Start(info) ?? throw new InvalidOperationException($"Could not start {executable}.");
+    }
+
+    /// <summary>Adds the cookie source the user chose, if any, to a yt-dlp argument list.</summary>
+    /// <remarks>
+    /// The two sources are mutually exclusive - the preferences page enforces that - so at most one of these
+    /// is ever added. A file that no longer exists is silently skipped rather than handed to yt-dlp, which
+    /// would fail the run outright. Shared by the resolving/listing runner and the download engine so both
+    /// read one source.
+    /// </remarks>
+    internal static void AddCookies(List<string> arguments, YouTubeSettings youTube)
+    {
+        if (youTube.CookiesFromFirefox)
+        {
+            arguments.AddRange(["--cookies-from-browser", "firefox"]);
+            return;
+        }
+        var path = youTube.CookiesPath;
+        if (!string.IsNullOrEmpty(path) && File.Exists(path))
+            arguments.AddRange(["--cookies", path]);
     }
 
     // ---- watch URLs ----
