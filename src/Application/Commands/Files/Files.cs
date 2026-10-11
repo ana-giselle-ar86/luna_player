@@ -1,6 +1,7 @@
 using LunaPlayer.Accessibility;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Iptv;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
@@ -14,7 +15,7 @@ internal sealed partial class Files
     private const long FileInfoResetMilliseconds = 300;
     private readonly IMainView _view;
     private readonly MediaPlayer _player;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly ISpeechOutput _speech;
     private readonly IClipboardService _clipboard;
     private readonly IApplicationDispatcher _dispatcher;
@@ -28,7 +29,7 @@ internal sealed partial class Files
         ActionRouter router,
         IMainView view,
         MediaPlayer player,
-        PlayerSettings settings,
+        Settings settings,
         ISpeechOutput speech,
         IClipboardService clipboard,
         IApplicationDispatcher dispatcher,

@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using WxSharp;
 
 namespace LunaPlayer.UI;

@@ -1,4 +1,5 @@
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
 
@@ -18,10 +19,10 @@ internal sealed class WindowTitlePresenter
 {
     private readonly IMainView _view;
     private readonly MediaPlayer _player;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly MediaTagsCache _tags;
 
-    internal WindowTitlePresenter(IMainView view, MediaPlayer player, PlayerSettings settings, MediaTagsCache tags)
+    internal WindowTitlePresenter(IMainView view, MediaPlayer player, Settings settings, MediaTagsCache tags)
     {
         _view = view;
         _player = player;

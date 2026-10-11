@@ -1,6 +1,7 @@
 using LunaPlayer.Accessibility;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
 using LunaPlayer.YouTube;
@@ -12,7 +13,7 @@ internal sealed class Playlist
 {
     private readonly IMainView _view;
     private readonly MediaPlayer _player;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly ISpeechOutput _speech;
     private readonly MediaGuard _guard;
     private readonly Sessions _sessions;
@@ -21,7 +22,7 @@ internal sealed class Playlist
         ActionRouter router,
         IMainView view,
         MediaPlayer player,
-        PlayerSettings settings,
+        Settings settings,
         ISpeechOutput speech,
         Sessions sessions)
     {

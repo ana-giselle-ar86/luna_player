@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.UI;
 
 namespace LunaPlayer.Application.Commands.App;

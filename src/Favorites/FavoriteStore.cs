@@ -1,5 +1,6 @@
 using System.Text.Json;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Media;
 
 namespace LunaPlayer.Favorites;

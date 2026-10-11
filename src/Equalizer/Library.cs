@@ -1,4 +1,5 @@
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 
 namespace LunaPlayer.Equalizer;
 
@@ -22,14 +23,14 @@ internal readonly record struct PresetEntry(string Id, string Name, bool IsSyste
 /// </remarks>
 internal sealed class Library
 {
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly SettingsStore _settingsStore;
     private readonly PresetStore _store;
     private List<PresetEntry> _entries = [];
     private Dictionary<string, Band[]> _userBands = new(StringComparer.Ordinal);
 
     internal Library(
-        PlayerSettings settings, SettingsStore settingsStore, PresetStore store)
+        Settings settings, SettingsStore settingsStore, PresetStore store)
     {
         _settings = settings;
         _settingsStore = settingsStore;

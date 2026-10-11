@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 
 namespace LunaPlayer.Update;
 

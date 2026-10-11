@@ -1,5 +1,6 @@
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
 
@@ -20,7 +21,7 @@ internal sealed class Sleep
     private readonly IMainView _view;
     private readonly MediaPlayer _player;
     private readonly SleepTimer _timer;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly SettingsStore _settingsStore;
 
     internal Sleep(
@@ -28,7 +29,7 @@ internal sealed class Sleep
         IMainView view,
         MediaPlayer player,
         SleepTimer timer,
-        PlayerSettings settings,
+        Settings settings,
         SettingsStore settingsStore)
     {
         _view = view;

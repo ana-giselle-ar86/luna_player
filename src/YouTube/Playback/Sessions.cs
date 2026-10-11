@@ -1,6 +1,7 @@
 using LunaPlayer.Accessibility;
 using LunaPlayer.Application;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Favorites;
 using LunaPlayer.Media;
 using LunaPlayer.Playback;
@@ -46,7 +47,7 @@ internal sealed class Sessions : IDisposable
 
     private readonly IMainView _view;
     private readonly MediaPlayer _player;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly ISpeechOutput _speech;
     private readonly IApplicationDispatcher _dispatcher;
     private readonly Metadata.Client _client;
@@ -70,7 +71,7 @@ internal sealed class Sessions : IDisposable
     internal Sessions(
         IMainView view,
         MediaPlayer player,
-        PlayerSettings settings,
+        Settings settings,
         ISpeechOutput speech,
         IApplicationDispatcher dispatcher,
         Metadata.Client client,

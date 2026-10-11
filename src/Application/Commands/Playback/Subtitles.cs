@@ -1,6 +1,7 @@
 using LunaPlayer.Accessibility;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
 
@@ -20,7 +21,7 @@ internal sealed class Subtitles : IDisposable
     private readonly IMainView _view;
     private readonly MediaPlayer _player;
     private readonly ISpeechOutput _speech;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly IApplicationDispatcher _dispatcher;
     // The track last read, so the toggle can bring it back after an off. Reset to the first track when the
     // remembered id is not among the current file's tracks, since ids do not carry across files.
@@ -36,7 +37,7 @@ internal sealed class Subtitles : IDisposable
         IMainView view,
         MediaPlayer player,
         ISpeechOutput speech,
-        PlayerSettings settings,
+        Settings settings,
         IApplicationDispatcher dispatcher)
     {
         _view = view;

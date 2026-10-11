@@ -1,5 +1,6 @@
 using System.Globalization;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using MpvNet;
 
 namespace LunaPlayer.Media;

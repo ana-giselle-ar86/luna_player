@@ -1,4 +1,5 @@
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using PrismSharp;
 using PrismSharp.Speech;
 using PrismSharp.Speech.ScreenReaders;
@@ -7,10 +8,10 @@ namespace LunaPlayer.Accessibility;
 
 internal sealed class SpeechOutput : ISpeechOutput
 {
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private ScreenReaderWorker? _worker;
 
-    internal SpeechOutput(PlayerSettings settings)
+    internal SpeechOutput(Settings settings)
     {
         _settings = settings;
         try

@@ -10,6 +10,7 @@ using LunaPlayer.Application.Commands.App;
 using LunaPlayer.Bookmarks;
 using LunaPlayer.Favorites;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Iptv;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
@@ -21,7 +22,7 @@ internal sealed class ApplicationHost : IDisposable
 {
     private readonly SingleInstanceService _singleInstance;
     private readonly SettingsStore _settingsStore;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly ShortcutManager _shortcuts;
     private readonly ShortcutManager _globalShortcuts;
     private readonly IApplicationDispatcher _dispatcher;
@@ -114,7 +115,7 @@ internal sealed class ApplicationHost : IDisposable
             router, _view, _player, _settings, _speech, clipboard, youTube, _sessions, _components, _dispatcher);
         _ = new Commands.YouTube.Favorites(router, _view, _player, _speech, favorites, _sessions);
         _ = new Commands.YouTube.Playlist(router, _view, _player, _settings, _speech, _sessions);
-        _ = new Settings(router, _view, _settings, _settingsStore,
+        _ = new Commands.App.Preferences(router, _view, _settings, _settingsStore,
             new BackupService(_settingsStore, bookmarks), new FileAssociations(), _player, _shortcuts,
             _globalShortcuts, _speech, youTube, _components);
         _recordingSources = new LunaPlayer.Recording.RecordingSources(_settings.Recording);

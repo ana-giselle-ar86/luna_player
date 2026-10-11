@@ -1,6 +1,7 @@
 using System.Globalization;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Media;
 using LunaPlayer.UI;
 using LunaPlayer.Update;
@@ -11,7 +12,7 @@ namespace LunaPlayer.Application.Commands.App;
 internal sealed class Updates : IDisposable
 {
     private readonly IMainView _view;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly IApplicationDispatcher _dispatcher;
     private readonly AppUpdateService _service = new();
     private readonly CancellationTokenSource _lifetime = new();
@@ -20,7 +21,7 @@ internal sealed class Updates : IDisposable
     internal Updates(
         ActionRouter router,
         IMainView view,
-        PlayerSettings settings,
+        Settings settings,
         IApplicationDispatcher dispatcher)
     {
         _view = view;

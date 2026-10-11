@@ -4,6 +4,7 @@ using LunaPlayer.Application.Commands;
 using LunaPlayer.Application.Commands.Files;
 using LunaPlayer.Application.Presentation;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Media;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
@@ -17,7 +18,7 @@ internal sealed class ApplicationController : IDisposable
 {
     private readonly IMainView _view;
     private readonly MediaPlayer _player;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly SettingsStore _settingsStore;
     private readonly IApplicationDispatcher _dispatcher;
     private readonly ActionRouter _router;
@@ -34,7 +35,7 @@ internal sealed class ApplicationController : IDisposable
     internal ApplicationController(
         IMainView view,
         MediaPlayer player,
-        PlayerSettings settings,
+        Settings settings,
         SettingsStore settingsStore,
         IApplicationDispatcher dispatcher,
         ActionRouter router,

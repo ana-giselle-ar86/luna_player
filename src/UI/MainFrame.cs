@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using LunaPlayer.Actions;
 using LunaPlayer.Application;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Equalizer;
 using LunaPlayer.Playback;
 using LunaPlayer.UI.Equalizer;

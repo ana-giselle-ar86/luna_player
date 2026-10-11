@@ -1,6 +1,7 @@
 using System.Globalization;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Equalizer;
 using LunaPlayer.Playback;
 using WxSharp;

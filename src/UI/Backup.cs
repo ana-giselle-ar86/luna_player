@@ -1,4 +1,5 @@
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using WxSharp;
 
 namespace LunaPlayer.UI;
@@ -6,9 +7,9 @@ namespace LunaPlayer.UI;
 internal sealed class BackupPreferences : Preferences
 {
     private readonly PrefsOps _operations;
-    private readonly Action<PlayerSettings> _replaceSettings;
+    private readonly Action<Settings> _replaceSettings;
 
-    internal BackupPreferences(Window parent, PrefsOps operations, Action<PlayerSettings> replaceSettings)
+    internal BackupPreferences(Window parent, PrefsOps operations, Action<Settings> replaceSettings)
         : base(new Panel(parent),
             // Translators: Spoken description of the backup and restore settings page, read when the page is opened.
             Tr("Save portable copies of preferences and bookmarks, restore them from earlier copies, or open Luna's configuration folder."))

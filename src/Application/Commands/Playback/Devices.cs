@@ -1,6 +1,7 @@
 using LunaPlayer.Accessibility;
 using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Playback;
 using LunaPlayer.UI;
 
@@ -10,11 +11,11 @@ internal sealed class Devices
 {
     private readonly IMainView _view;
     private readonly MediaPlayer _player;
-    private readonly PlayerSettings _settings;
+    private readonly Settings _settings;
     private readonly SettingsStore _settingsStore;
     private readonly ISpeechOutput _speech;
 
-    internal Devices(ActionRouter router, IMainView view, MediaPlayer player, PlayerSettings settings,
+    internal Devices(ActionRouter router, IMainView view, MediaPlayer player, Settings settings,
         SettingsStore settingsStore, ISpeechOutput speech)
     {
         _view = view;

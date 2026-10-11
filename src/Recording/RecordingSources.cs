@@ -9,7 +9,7 @@ namespace LunaPlayer.Recording;
 ///
 /// Nothing here is written to the settings file. A process id means nothing by the next launch, and a
 /// list where half the entries survived and half did not would be worse than starting empty. What does
-/// persist is <see cref="Configuration.RecordingSettings"/>, which this is seeded from and which the
+/// persist is <see cref="Configuration.Models.RecordingSettings"/>, which this is seeded from and which the
 /// recording shortcuts fall back to when no sources have been set up.
 /// </remarks>
 internal sealed class RecordingSources
@@ -18,7 +18,7 @@ internal sealed class RecordingSources
 
     /// <param name="defaults">The saved settings, copied so the window can be changed for one session
     /// without rewriting what the player starts with next time.</param>
-    internal RecordingSources(Configuration.RecordingSettings defaults) => Options = new RecordingOptions(
+    internal RecordingSources(Configuration.Models.RecordingSettings defaults) => Options = new RecordingOptions(
         defaults.Format, defaults.SampleRate, defaults.Channels, defaults.Bitrate, defaults.Folder);
 
     internal IReadOnlyList<RecordingSource> All => _sources;

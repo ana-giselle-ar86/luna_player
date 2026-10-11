@@ -1,5 +1,6 @@
 using LunaPlayer.Application;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 using LunaPlayer.Recording;
 using WxSharp;
 

@@ -1,5 +1,6 @@
 using LunaPlayer.Equalizer;
 using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
 
 namespace LunaPlayer.Playback;
 
