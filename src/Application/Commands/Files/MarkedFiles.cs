@@ -33,7 +33,7 @@ internal sealed class MarkedFiles
     {
         var marked = GetMarked();
         if (marked.Count == 0) return;
-        var target = _view.ChooseFolder(_settings.General.LastDirectory);
+        var target = _view.Dialogs.ChooseFolder(_settings.General.LastDirectory);
         if (string.IsNullOrEmpty(target)) return;
         _settings.General.LastDirectory = target;
         var prompt = new ProgressPrompt(
@@ -75,7 +75,7 @@ internal sealed class MarkedFiles
     {
         var marked = GetMarked();
         if (marked.Count == 0) return;
-        if (!_view.Confirm(
+        if (!_view.Dialogs.Confirm(
             // Translators: Asks the user to confirm deleting the marked files. {count} is how many are marked.
             TrPluralFormat("Delete {count} marked file?", "Delete {count} marked files?", marked.Count, marked.Count),
             Tr("Confirm Delete"))) return;
@@ -87,7 +87,7 @@ internal sealed class MarkedFiles
             _player.Reload();
         if (result.Succeeded.Count > 0 && result.Failed.Count == 0)
         {
-            _view.ShowInfo(
+            _view.Dialogs.ShowInfo(
                 // Translators: Shown once the marked files have been deleted. {count} is how many were deleted.
                 TrPluralFormat("Deleted {count} marked file.", "Deleted {count} marked files.", result.Succeeded.Count, result.Succeeded.Count),
                 // Translators: Title of the message shown once deleting the marked files has finished.
@@ -98,7 +98,7 @@ internal sealed class MarkedFiles
         }
         else if (result.Succeeded.Count > 0)
         {
-            _view.ShowWarning(
+            _view.Dialogs.ShowWarning(
                 // Translators: Shown when only some of the marked files could be deleted.
                 // {deleted} is how many were deleted and {failed} how many could not be.
                 TrFormat("Deleted {deleted} files. Failed to delete {failed} files.", result.Succeeded.Count, result.Failed.Count),
@@ -133,7 +133,7 @@ internal sealed class MarkedFiles
         }
         if (result.Succeeded.Count > 0 && result.Failed.Count == 0)
         {
-            _view.ShowInfo(
+            _view.Dialogs.ShowInfo(
                 // Translators: Shown once every marked file has been copied or moved. {count} is how many were dealt with.
                 TrPluralFormat("{count} file processed successfully.", "{count} files processed successfully.", result.Succeeded.Count, result.Succeeded.Count),
                 // Translators: Title of the message shown once copying or moving the marked files has finished.
@@ -151,7 +151,7 @@ internal sealed class MarkedFiles
         }
         else if (result.Succeeded.Count > 0)
         {
-            _view.ShowWarning(
+            _view.Dialogs.ShowWarning(
                 // Translators: Shown when only some of the marked files could be copied or moved.
                 // {processed} is how many were dealt with and {failed} how many could not be.
                 TrFormat("Processed {processed} files. Failed for {failed} files.", result.Succeeded.Count, result.Failed.Count),

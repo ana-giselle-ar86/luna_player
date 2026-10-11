@@ -15,7 +15,7 @@ internal sealed class Help
     {
         _view = view;
         router.Register(ActionId.UserGuide, OpenUserGuide);
-        router.Register(ActionId.About, view.ShowAbout);
+        router.Register(ActionId.About, view.Dialogs.ShowAbout);
         router.Register(ActionId.ReleaseNotes, OpenReleaseNotes);
     }
 
@@ -35,7 +35,7 @@ internal sealed class Help
             return;
         }
 
-        _view.ShowError(
+        _view.Dialogs.ShowError(
             // Translators: Shown when no local user-guide HTML file was included with the application.
             Tr("The user guide is not installed."),
             Tr("User guide"));
@@ -62,7 +62,7 @@ internal sealed class Help
         }
         catch (Exception failure)
         {
-            _view.ShowError($"{failureMessage}\n\n{failure.Message}", caption);
+            _view.Dialogs.ShowError($"{failureMessage}\n\n{failure.Message}", caption);
         }
     }
 

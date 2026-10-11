@@ -29,6 +29,6 @@ internal static class GlobalShortcutBinder
         if (speech is not null)
             speech.Speak(Failure, Failure);
         else
-            view.ShowWarning(Failure, Tr("Global Shortcuts"));
+            view.Dialogs.ShowWarning(Failure, Tr("Global Shortcuts"));
     }
 }

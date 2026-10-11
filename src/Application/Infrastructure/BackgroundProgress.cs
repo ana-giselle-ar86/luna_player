@@ -105,7 +105,7 @@ internal static class BackgroundProgress
             _dispatcher = dispatcher;
             _prompt = prompt;
             _completed = completed;
-            _progress = view.BeginProgress(prompt.Title, prompt.Starting, prompt.Proportional, prompt.Detailed);
+            _progress = view.Dialogs.BeginProgress(prompt.Title, prompt.Starting, prompt.Proportional, prompt.Detailed);
             // The token is given to Task.Run as well as to the job. Without it a job that aborts by throwing
             // OperationCanceledException leaves the task Faulted rather than Canceled - the exception's token
             // has to match the task's for .NET to read it as the abort it is - and the fault would then be

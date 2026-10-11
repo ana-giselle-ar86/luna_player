@@ -33,7 +33,7 @@ internal sealed partial class YouTube
             && _components.Ensure(_settings.YouTube.Channel, () => DownloadTo(url))
                 is not LunaPlayer.YouTube.Components.Service.ComponentsState.Ready)
             return;
-        var folder = _view.ChooseFolder(
+        var folder = _view.Dialogs.ChooseFolder(
             _settings.General.LastDirectory,
             // Translators: Title of the window that asks where a video should be saved.
             Tr("Select download folder"));
@@ -71,7 +71,7 @@ internal sealed partial class YouTube
         int? exactQuality = null;
         if (options.Count > 0)
         {
-            var chosen = _view.ChooseYouTubeQuality(options, audioOnly);
+            var chosen = _view.Dialogs.ChooseYouTubeQuality(options, audioOnly);
             if (chosen is null)
                 return;
             exactQuality = chosen;

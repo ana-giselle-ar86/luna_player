@@ -40,7 +40,7 @@ internal sealed class Devices
         }
         var current = _player.CurrentAudioDevice;
         var selected = Math.Max(0, devices.ToList().FindIndex(device => device.Name == current));
-        var index = _view.ChooseAudioDevice(devices.Select(device => device.Description).ToArray(), selected);
+        var index = _view.Dialogs.ChooseAudioDevice(devices.Select(device => device.Description).ToArray(), selected);
         if (!index.HasValue)
             return;
         var device = devices[index.Value];

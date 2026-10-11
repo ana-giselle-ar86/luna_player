@@ -88,7 +88,7 @@ internal sealed class Playlist
                 Tr("No other files."));
             return;
         }
-        var value = _view.PromptText(
+        var value = _view.Dialogs.PromptText(
             // Translators: Asks the user which file in the playlist to move to. {count} is how many files are loaded.
             TrFormat("Enter file number (1-{count})", _player.Count),
             // Translators: Title of the window that asks which file in the playlist to move to.

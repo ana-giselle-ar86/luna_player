@@ -11,7 +11,7 @@ namespace LunaPlayer.UI.YouTube;
 /// time a YouTube search is run and which every YouTube feature then leans on; they are grouped together
 /// below the settings that shape a search and its results.
 /// </remarks>
-internal sealed class Preferences : UI.Preferences
+internal sealed class YouTubePreferences : UI.PreferencesPage
 {
     private readonly YouTubeSettings _settings;
     private readonly Choice _videoQuality;
@@ -41,7 +41,7 @@ internal sealed class Preferences : UI.Preferences
     private static readonly AudioQuality[] AudioQualities =
         [AudioQuality.Kbps64, AudioQuality.Kbps128, AudioQuality.Kbps256];
 
-    internal Preferences(Window parent, YouTubeSettings settings, PrefsOps operations)
+    internal YouTubePreferences(Window parent, YouTubeSettings settings, PrefsOps operations)
         // Translators: Spoken description of the YouTube settings page, read when the page is opened.
         : base(new ScrolledWindow(parent), Tr("Move through this page with Tab or Shift+Tab. Press F1 while a control is focused to hear what it changes."))
     {

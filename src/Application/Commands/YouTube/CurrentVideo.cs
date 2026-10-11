@@ -43,7 +43,7 @@ internal sealed partial class YouTube
                     ? found.Text.Trim()
                     // Translators: Shown in place of the text under a video when the uploader wrote none.
                     : Tr("No description is available.");
-                _view.ShowVideoDescription(title, text);
+                _view.Dialogs.ShowVideoDescription(title, text);
             });
     }
 

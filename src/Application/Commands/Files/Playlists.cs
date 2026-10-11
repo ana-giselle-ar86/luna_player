@@ -41,7 +41,7 @@ internal sealed partial class Files
     {
         if (result.Error is string error)
         {
-            _view.ShowError(
+            _view.Dialogs.ShowError(
                 // Translators: Shown when an M3U or M3U8 playlist could not be read. {error} is the reason.
                 TrFormat("Could not open the playlist: {error}", error), Tr("Error"));
             return false;
@@ -52,14 +52,14 @@ internal sealed partial class Files
             return network ? _player.OpenStream(source) : _player.OpenFile(source);
         if (result.Entries.Count == 0)
         {
-            _view.ShowError(
+            _view.Dialogs.ShowError(
                 // Translators: Shown when an M3U or M3U8 file contains no usable local files or web links.
                 Tr("The playlist contains no playable entries."), Tr("Error"));
             return false;
         }
         if (_player.OpenPlaylist(result.Entries))
             return true;
-        _view.ShowError(
+        _view.Dialogs.ShowError(
             // Translators: Shown when the entries in an M3U or M3U8 playlist could not be loaded.
             Tr("Could not load the playlist entries."), Tr("Error"));
         return false;

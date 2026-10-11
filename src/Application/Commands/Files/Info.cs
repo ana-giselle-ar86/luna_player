@@ -51,7 +51,7 @@ internal sealed partial class Files
             return;
         // The names are not worked out here: the list asks for the ones it is about to draw.
         var files = _player.Files;
-        var request = _view.ChooseOpenedFile(files.Count,
+        var request = _view.Dialogs.ChooseOpenedFile(files.Count,
             index => index >= 0 && index < files.Count ? _player.DisplayName(files[index]) : string.Empty,
             selected);
         if (request is null)
@@ -87,7 +87,7 @@ internal sealed partial class Files
             totals =>
             {
                 // Translators: Title of the window listing details of every file in the playlist.
-                _view.ShowTextInfo(Tr("Playlist Info"), Describe(totals));
+                _view.Dialogs.ShowTextInfo(Tr("Playlist Info"), Describe(totals));
                 completed();
             });
     }

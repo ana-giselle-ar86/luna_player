@@ -13,12 +13,12 @@ internal sealed class PreferencesDialog : IDisposable
     // A page is built the first time its category is chosen, then kept. The factory map holds how to build
     // each page; the page map holds the ones built so far. Opening the window builds only the first page,
     // which is what keeps it quick however many categories there are - the rest cost nothing until opened.
-    private readonly Dictionary<TreeItemId, Func<IPreferences>> _factories = [];
-    private readonly Dictionary<TreeItemId, IPreferences> _pages = [];
+    private readonly Dictionary<TreeItemId, Func<IPreferencesPage>> _factories = [];
+    private readonly Dictionary<TreeItemId, IPreferencesPage> _pages = [];
     private readonly Action<string> _speakHelp;
     private readonly Settings _settings;
     private readonly PrefsOps _operations;
-    private IPreferences? _current;
+    private IPreferencesPage? _current;
 
     // A generous fixed size, chosen rather than measured: measuring would mean building every page up front,
     // which is the cost this lazy loading exists to avoid. A page taller or wider than this scrolls - every
@@ -75,7 +75,7 @@ internal sealed class PreferencesDialog : IDisposable
         _factories[backupItem] = () => new BackupPreferences(_book, operations, ReplaceSettings);
         _factories[audioItem] = () => new AudioPreferences(_book, settings.Audio);
         _factories[silenceItem] = () => new SilencePreferences(_book, settings.Silence);
-        _factories[youTubeItem] = () => new YouTube.Preferences(_book, settings.YouTube, operations);
+        _factories[youTubeItem] = () => new YouTube.YouTubePreferences(_book, settings.YouTube, operations);
         _factories[recordingItem] = () => new RecordingPreferences(_book, settings.Recording, dispatcher, catalog);
         _factories[shortcutsItem] = () => new ShortcutPreferences(_book, settings.Shortcuts, ShortcutScope.Local, globalShortcuts);
         _factories[globalsItem] = () => new ShortcutPreferences(_book, settings.Shortcuts, ShortcutScope.Global, globalShortcuts);
@@ -128,7 +128,7 @@ internal sealed class PreferencesDialog : IDisposable
 
     /// <summary>Returns the page for a category, building it the first time and keeping it thereafter. A new
     /// page is added to the book hidden; the switch in <see cref="DoCategoryChange"/> shows it.</summary>
-    private IPreferences GetOrBuildPage(TreeItemId item)
+    private IPreferencesPage GetOrBuildPage(TreeItemId item)
     {
         if (_pages.TryGetValue(item, out var existing))
             return existing;

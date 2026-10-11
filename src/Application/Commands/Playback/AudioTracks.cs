@@ -37,7 +37,7 @@ internal sealed class AudioTracks
         }
         var labels = tracks.Select(track => Describe(track, beginner: true)).ToArray();
         var selected = Math.Max(0, tracks.ToList().FindIndex(track => track.Selected));
-        var index = _view.ChooseAudioTrack(labels, selected);
+        var index = _view.Dialogs.ChooseAudioTrack(labels, selected);
         if (index.HasValue)
             Apply(tracks, index.Value);
     }

@@ -58,7 +58,7 @@ internal sealed class Recording
         _view.SetRecordingState(_engine.State);
     }
 
-    private void Open() => _view.ShowRecording(_catalog, _sources, _engine);
+    private void Open() => _view.Dialogs.ShowRecording(_catalog, _sources, _engine);
 
     private void Start()
     {
@@ -101,12 +101,12 @@ internal sealed class Recording
     {
         if (!outcome.Success)
         {
-            _view.ShowError(RecordingSources.Describe(outcome.Failure, outcome.Detail), Title);
+            _view.Dialogs.ShowError(RecordingSources.Describe(outcome.Failure, outcome.Detail), Title);
             return;
         }
         if (failures.Count > 0)
         {
-            _view.ShowWarning(
+            _view.Dialogs.ShowWarning(
                 // Translators: Shown when recording started but some sources would not open. {names} is a
                 // list of what the user called them, separated by commas.
                 TrFormat("Recording started, but these sources could not be opened: {names}",
@@ -166,7 +166,7 @@ internal sealed class Recording
     {
         // The falling tone the engine plays is the confirmation, so nothing is spoken on success either.
         if (!outcome.Success)
-            _view.ShowError(RecordingSources.Describe(outcome.Failure, outcome.Detail), Title);
+            _view.Dialogs.ShowError(RecordingSources.Describe(outcome.Failure, outcome.Detail), Title);
     }
 
     private void OpenFolder()
@@ -180,7 +180,7 @@ internal sealed class Recording
         catch (Exception failure) when (failure is IOException or UnauthorizedAccessException
             or ArgumentException or NotSupportedException or System.ComponentModel.Win32Exception)
         {
-            _view.ShowError(
+            _view.Dialogs.ShowError(
                 // Translators: Shown when the folder recordings are saved into could not be opened.
                 // {reason} is what went wrong, in the language of the system rather than the player.
                 TrFormat("{message}\n{reason}", Tr("Could not open the recordings folder."), failure.Message),

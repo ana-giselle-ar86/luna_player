@@ -1,33 +1,45 @@
+using LunaPlayer.Application;
 using LunaPlayer.Configuration;
 using LunaPlayer.Configuration.Models;
 using LunaPlayer.Media;
+using LunaPlayer.UI.Equalizer;
 using WxSharp;
 
 namespace LunaPlayer.UI;
 
-internal sealed partial class MainFrame
+/// <summary>Builds and shows every dialog the player offers, and nothing else. It is the one place coupled
+/// to the concrete dialog classes, so the main window is not.</summary>
+///
+/// <remarks>
+/// Dialogs are parented to the active top-level window, not always the main one: a dialog opened from inside
+/// another - the Preferences window's "download components" button is the case in point - must be a child of
+/// that window, or closing it hands activation back to a disabled window and the player looks hung. Falls
+/// back to the main frame when nothing is active (startup, or when Luna is not foreground).
+/// </remarks>
+internal sealed class DialogService : IDialogService, IDisposable
 {
-    /// <summary>The window a new dialog should belong to.</summary>
-    ///
-    /// <remarks>
-    /// The active top-level window, not always the main one. A dialog can be opened from inside another -
-    /// the Preferences window's button that fetches the YouTube components is the case in point - and
-    /// giving that the main window as its parent makes it the child of a window the Preferences window has
-    /// disabled. When it then closes, activation is handed back to a disabled window: the Preferences
-    /// window drops behind, nothing takes the focus, and the player looks hung. Which is exactly what it
-    /// did.
-    ///
-    /// Falls back to the main window when nothing is active, which is the case at startup and whenever the
-    /// player is not the foreground application.
-    /// </remarks>
-    private Window DialogParent => Wx.GetActiveWindow() ?? _frame;
+    private readonly Frame _frame;
+    private readonly IApplicationDispatcher _dispatcher;
+    private readonly LunaPlayer.Recording.AudioCatalog _catalog;
+    private readonly GlobalShortcuts _globalShortcuts;
 
-    /// <summary>The single-list YouTube results window, built once and reused. A search, a playlist and the
+    /// <summary>The single-list YouTube results window, built once and reused: a search, a playlist and the
     /// return from the player all show the same plain list, so the window is kept and its contents refreshed
-    /// rather than the whole thing - list, buttons, menu and all - being reconstructed on every open, which
-    /// was the lag felt whenever one opened. A channel's tabbed browser has a different structure and is
-    /// still built per open.</summary>
+    /// rather than rebuilt on every open. A channel's tabbed browser has a different structure and is built
+    /// per open.</summary>
     private YouTube.ResultsDialog? _youTubeResults;
+
+    internal DialogService(
+        Frame frame, IApplicationDispatcher dispatcher,
+        LunaPlayer.Recording.AudioCatalog catalog, GlobalShortcuts globalShortcuts)
+    {
+        _frame = frame;
+        _dispatcher = dispatcher;
+        _catalog = catalog;
+        _globalShortcuts = globalShortcuts;
+    }
+
+    private Window DialogParent => Wx.GetActiveWindow() ?? _frame;
 
     public FileSelection? ChooseFile(string initialDirectory)
     {
@@ -71,6 +83,21 @@ internal sealed partial class MainFrame
     public BookmarkManagementRequest? ManageBookmarks(IReadOnlyList<BookmarkListItem> bookmarks) { using var dialog = new BookmarkManagerDialog(DialogParent, bookmarks); return dialog.Show(); }
     public OpenedFilesRequest? ChooseOpenedFile(int count, Func<int, string> nameAt, int selectedIndex) { using var dialog = new OpenedFilesDialog(DialogParent, count, nameAt, selectedIndex); return dialog.Show(); }
     public IProgressView BeginProgress(string title, string message, bool proportional, bool detailed) => new ProgressView(DialogParent, title, message, proportional, detailed);
+
+    public EqualizerEditResult? EditEqualizerPreset(EqualizerEditContext context)
+    {
+        using var dialog = new Equalizer.EqualizerEditDialog(
+            _frame, context.Title, context.Name, context.CanRename, context.BasePresetId, context.Slots,
+            context.Library.All, context.Library.Slots, context.Library.DefaultSlots, context.Preview);
+        return dialog.Show();
+    }
+
+    public bool ManageEqualizerPresets(LunaPlayer.Equalizer.Library library)
+    {
+        using var dialog = new Equalizer.EqualizerPresetsDialog(_frame, library);
+        return dialog.Show();
+    }
+
     public YouTubeLinkKind? ChooseYouTubeLinkKind() { using var dialog = new YouTube.LinkKindDialog(DialogParent); return dialog.Show(); }
     public YouTubeSearchRequest? SearchYouTube(YouTubeSearchPrompt prompt) { using var dialog = new YouTube.SearchDialog(DialogParent, _dispatcher, prompt); return dialog.Show(); }
     public FavoriteRequest? ManageFavorites(IReadOnlyList<FavoriteListItem> favorites, string selectedId) { using var dialog = new YouTube.FavoritesDialog(DialogParent, favorites, selectedId); return dialog.Show(); }
@@ -110,4 +137,8 @@ internal sealed partial class MainFrame
     { using var dialog = new ConversionReportDialog(DialogParent, title, message, details); dialog.Show(); }
     public Settings? EditPreferences(Settings settings, PrefsOps operations, Action<string> speakHelp)
     { var editable = settings.Copy(); using var dialog = new PreferencesDialog(DialogParent, editable, operations, speakHelp, _dispatcher, _catalog, _globalShortcuts); return dialog.Show() ? editable : null; }
+
+    /// <summary>Tears down the reused results window. Called before the frame is destroyed, since that window
+    /// is a child of it.</summary>
+    public void Dispose() => _youTubeResults?.Dispose();
 }

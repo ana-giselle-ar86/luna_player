@@ -4,7 +4,7 @@ using WxSharp;
 
 namespace LunaPlayer.UI;
 
-internal sealed class GeneralPreferences : Preferences
+internal sealed class GeneralPreferences : PreferencesPage
 {
     private readonly GeneralSettings _settings;
     private readonly Choice _language;

@@ -14,7 +14,7 @@ namespace LunaPlayer.UI;
 /// the recording window - and what that window starts from each time the player is launched. Changing the
 /// format in the window for one afternoon does not come back here.
 /// </remarks>
-internal sealed class RecordingPreferences : Preferences
+internal sealed class RecordingPreferences : PreferencesPage
 {
     private readonly RecordingSettings _settings;
     private readonly IApplicationDispatcher _dispatcher;

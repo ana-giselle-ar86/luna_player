@@ -5,7 +5,7 @@ using WxSharp;
 
 namespace LunaPlayer.UI;
 
-internal sealed class SilencePreferences : Preferences
+internal sealed class SilencePreferences : PreferencesPage
 {
     // Translators: Spoken description of the box for the shortest silence that will be trimmed, on the silence removal settings page.
     private static readonly string MinimumHint = Tr("Quiet sections shorter than this many seconds remain unchanged. The default is 0.5 seconds.");

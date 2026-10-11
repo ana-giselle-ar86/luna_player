@@ -4,7 +4,7 @@ using WxSharp;
 
 namespace LunaPlayer.UI;
 
-internal sealed class BackupPreferences : Preferences
+internal sealed class BackupPreferences : PreferencesPage
 {
     private readonly PrefsOps _operations;
     private readonly Action<Settings> _replaceSettings;

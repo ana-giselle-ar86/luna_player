@@ -62,7 +62,7 @@ internal sealed class Iptv
             var sources = List();
             if (ReportStoreFailure())
                 return;
-            var request = _view.ManageIptvSources(sources, selectedId);
+            var request = _view.Dialogs.ManageIptvSources(sources, selectedId);
             if (request is not IptvSourceRequest chosen)
                 return;
             selectedId = chosen.Id;
@@ -132,7 +132,7 @@ internal sealed class Iptv
     {
         if (result.Catalog is not IptvCatalog catalog)
         {
-            _view.ShowError(
+            _view.Dialogs.ShowError(
                 result.Error ??
                 // Translators: Shown when an IPTV source is of a kind Luna Player cannot open yet (Xtream or
                 // Stalker, before those are supported).
@@ -143,12 +143,12 @@ internal sealed class Iptv
         }
         if (catalog.Channels.Count == 0)
         {
-            _view.ShowError(
+            _view.Dialogs.ShowError(
                 // Translators: Shown when an IPTV source loaded but holds no channels to play.
                 Tr("This source holds no channels."), Tr("IPTV"));
             return;
         }
-        var chosen = _view.BrowseChannels(new ChannelBrowserPrompt(
+        var chosen = _view.Dialogs.BrowseChannels(new ChannelBrowserPrompt(
             // Translators: Title of the channel browser window. {name} is the source being browsed.
             TrFormat("Channels - {name}", source.Name),
             catalog.Categories,
@@ -177,7 +177,7 @@ internal sealed class Iptv
             ResolveAndPlay(source, channel, cmd);
             return;
         }
-        _view.ShowError(
+        _view.Dialogs.ShowError(
             // Translators: Shown when a chosen channel carries no address and none could be worked out.
             Tr("This channel cannot be played."), Tr("IPTV"));
     }
@@ -201,7 +201,7 @@ internal sealed class Iptv
                 if (resolved is { Length: > 0 } url)
                     OpenStream(url, channel.Name);
                 else
-                    _view.ShowError(
+                    _view.Dialogs.ShowError(
                         // Translators: Shown when a Stalker channel's play address could not be worked out.
                         Tr("Could not open the channel."), Tr("IPTV"));
             });
@@ -210,7 +210,7 @@ internal sealed class Iptv
     private void OpenStream(string url, string name)
     {
         if (!_player.OpenStream(url, title: name))
-            _view.ShowError(
+            _view.Dialogs.ShowError(
                 // Translators: Shown when a chosen IPTV channel could not be played.
                 Tr("Could not open the channel."), Tr("IPTV"));
     }
@@ -218,7 +218,7 @@ internal sealed class Iptv
     /// <summary>The id of what was saved, or null when nothing was.</summary>
     private string? Add()
     {
-        var draft = _view.EditIptvSource(
+        var draft = _view.Dialogs.EditIptvSource(
             // Translators: Title of the window for saving a new IPTV source.
             Tr("Add IPTV source"),
             new IptvSourceDraft());
@@ -235,7 +235,7 @@ internal sealed class Iptv
     {
         if (_store.Get(id) is not IptvSource source)
             return;
-        var draft = _view.EditIptvSource(
+        var draft = _view.Dialogs.EditIptvSource(
             // Translators: Title of the window for changing an IPTV source already saved.
             Tr("Edit IPTV source"),
             IptvSourceDraft.From(source));
@@ -249,7 +249,7 @@ internal sealed class Iptv
     {
         if (_store.Get(id) is not IptvSource source)
             return false;
-        if (!_view.Confirm(
+        if (!_view.Dialogs.Confirm(
             // Translators: Asks the user to confirm removing one saved IPTV source. {name} is what it is
             // called and {kind} is what sort of source it is.
             TrFormat("Remove IPTV source '{name}' ({kind})?", source.Name, IptvSourceStore.Describe(source.Kind)),
@@ -269,7 +269,7 @@ internal sealed class Iptv
     {
         if (_store.LastError.Length == 0)
             return false;
-        _view.ShowError(_store.LastError, Tr("IPTV"));
+        _view.Dialogs.ShowError(_store.LastError, Tr("IPTV"));
         return true;
     }
 }
