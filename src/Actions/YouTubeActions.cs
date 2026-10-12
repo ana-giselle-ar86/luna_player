@@ -19,8 +19,13 @@ internal static class YouTubeActions
         // Translators: Name of the command that opens the window listing the links the user has saved.
         new(ActionId.OpenFavorites, Tr("Favorite videos dialog"),
             new("f", ShortcutModifiers.Control | ShortcutModifiers.Shift)),
-        // Translators: Name of the command that saves the video being played to a folder on this computer.
-        new(ActionId.VideoDownload, Tr("Download the current video"), new("d", ShortcutModifiers.Control)),
+        // Translators: Name of the command that saves the video being played straight to disk with the saved
+        // download settings, without asking.
+        new(ActionId.VideoDirectDownload, Tr("Direct download of the current video"), new("d", ShortcutModifiers.Control)),
+        // Translators: Name of the command that opens the download window to choose how the video being
+        // played is saved.
+        new(ActionId.VideoDownload, Tr("Download the current video..."),
+            new("d", ShortcutModifiers.Control | ShortcutModifiers.Shift)),
         // Translators: Name of the command that shows the text the uploader wrote under the video.
         new(ActionId.VideoDescription, Tr("Show the video description"), new("d", ShortcutModifiers.Alt)),
         // Translators: Name of the command that copies the address of the video being played.

@@ -5,6 +5,7 @@ using LunaPlayer.Equalizer;
 using LunaPlayer.Iptv;
 using LunaPlayer.UI.Equalizer;
 using LunaPlayer.YouTube;
+using Downloads = LunaPlayer.YouTube.Download;
 
 namespace LunaPlayer.UI;
 
@@ -98,13 +99,15 @@ internal interface IDialogService
     /// </summary>
     ResultChoice? ShowYouTubeResults(YouTubeResultsPrompt prompt);
 
-    /// <summary>Asks which of the qualities a video actually offers it should be saved at. The numbers are
-    /// picture heights for a video download and audio bitrates in kbps for an audio-only one. Returns the
-    /// chosen number, or null when the user backed out.</summary>
-    int? ChooseYouTubeQuality(IReadOnlyList<int> options, bool audioOnly);
-
     /// <summary>Offers to fetch the programs a YouTube download needs. True when the user accepted.</summary>
     bool OfferYouTubeComponents();
+
+    /// <summary>Opens the download dialog prefilled from <paramref name="defaults"/>; null if closed without starting.</summary>
+    Downloads.Request? ShowDownloadOptions(Downloads.Request defaults);
+
+    /// <summary>Runs a download behind its progress window; null if the user stopped it.</summary>
+    Downloads.Outcome? RunDownload(
+        Func<Action<Downloads.Progress>, CancellationToken, Downloads.Outcome> work);
 
     /// <summary>Opens the window where recording is set up and run. It is modal, but closing it does not
     /// end a recording: the sources and the recorder outlive it.</summary>

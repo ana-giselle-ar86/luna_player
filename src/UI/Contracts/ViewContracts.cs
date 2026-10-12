@@ -122,7 +122,10 @@ internal interface IYouTubeResultsFeed
     /// none.</summary>
     void OpenChannelInBrowser(int index);
 
-    /// <summary>Saves a row to a folder on this computer, asking which folder first.</summary>
+    /// <summary>Saves a row straight to disk with the saved download settings.</summary>
+    void DirectDownload(int index);
+
+    /// <summary>Opens the download window on a row, to choose how it is saved before downloading.</summary>
     void Download(int index);
 
     /// <summary>Whether the row is already in the favourites, so the window can offer to remove rather than

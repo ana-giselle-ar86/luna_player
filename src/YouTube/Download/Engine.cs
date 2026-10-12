@@ -4,29 +4,19 @@ using LunaPlayer.Configuration.Models;
 
 namespace LunaPlayer.YouTube.Download;
 
-/// <summary>Runs one yt-dlp download, reporting progress as it goes and handing back the saved file or the
-/// reason it failed. Standalone from the playback-oriented <see cref="Client.Runner"/>: it owns its own
-/// process so it can read the machine-readable progress off both streams and wait with no overall timeout,
-/// since a download is as long as the file is.</summary>
-///
-/// <remarks>
-/// Waits on an external process and must run on a worker thread. FFmpeg comes from the child PATH that
-/// <see cref="Utils.Start"/> sets, so the audio conversion works with no separate install.
-/// </remarks>
-internal sealed class DownloadEngine
+/// <summary>Runs one yt-dlp download on a worker thread, reporting progress and returning the saved file or an error.</summary>
+internal sealed class Engine
 {
     private const int ErrorTailLines = 12;
 
     private readonly Settings _settings;
 
-    /// <param name="settings">Read live for the cookie source, so a change in preferences takes effect on the
-    /// next download without rebuilding the engine.</param>
-    internal DownloadEngine(Settings settings) => _settings = settings;
+    /// <param name="settings">Read live so a cookie-source change takes effect on the next download.</param>
+    internal Engine(Settings settings) => _settings = settings;
 
-    /// <summary>Downloads the request's video, calling <paramref name="report"/> as bytes arrive. Returns the
-    /// saved file on success or the failure reason; throws <see cref="OperationCanceledException"/> when the
-    /// token is set.</summary>
-    internal DownloadOutcome Run(DownloadRequest request, Action<DownloadProgress> report, CancellationToken token)
+    /// <summary>Downloads the request's video, reporting as bytes arrive. Returns the saved file or the
+    /// failure reason; throws <see cref="OperationCanceledException"/> on cancel.</summary>
+    internal Outcome Run(Request request, Action<Progress> report, CancellationToken token)
     {
         try
         {
@@ -34,16 +24,14 @@ internal sealed class DownloadEngine
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
         {
-            return DownloadOutcome.Failed(exception.Message);
+            return Outcome.Failed(exception.Message);
         }
 
-        var arguments = DownloadArguments.Build(request);
+        var arguments = Arguments.Build(request);
         Utils.AddCookies(arguments, _settings.YouTube);
         arguments.Add(request.Url);
 
         using var process = Utils.Start(Utils.YtDlpPath, arguments);
-        // Killed the moment the token is set rather than at the next line, since yt-dlp can sit a long time
-        // on a slow link or a retry, and a Cancel that only answers when it next speaks does not work.
         using var abort = token.Register(() => Stop(process));
 
         var sync = new object();
@@ -56,9 +44,9 @@ internal sealed class DownloadEngine
                 return;
             lock (sync)
             {
-                if (line.StartsWith(DownloadArguments.FileSentinel + "|", StringComparison.Ordinal))
+                if (line.StartsWith(Arguments.FileSentinel + "|", StringComparison.Ordinal))
                 {
-                    finalPath = line[(DownloadArguments.FileSentinel.Length + 1)..].Trim();
+                    finalPath = line[(Arguments.FileSentinel.Length + 1)..].Trim();
                     return;
                 }
                 if (TryParseProgress(line, out var progress))
@@ -72,8 +60,7 @@ internal sealed class DownloadEngine
             }
         }
 
-        // Progress may land on either stream depending on yt-dlp's build, so both are read and parsed the
-        // same way; the final-path print comes on stdout and the complaints on stderr.
+        // Progress and the final-path print can arrive on either stream, so both are read the same way.
         var readingErrors = Task.Run(() =>
         {
             string? line;
@@ -89,10 +76,7 @@ internal sealed class DownloadEngine
                 token.ThrowIfCancellationRequested();
                 Handle(line.Trim());
             }
-            // No timeout: a download is as long as the file is. Cancellation, not a clock, ends a stuck one.
             process.WaitForExit();
-            // A killed process exits like any other, so a cancel is reported here rather than left to look
-            // like a download that failed.
             token.ThrowIfCancellationRequested();
         }
         catch (Exception)
@@ -106,14 +90,14 @@ internal sealed class DownloadEngine
         }
 
         return process.ExitCode == 0
-            ? DownloadOutcome.Saved(finalPath)
-            : DownloadOutcome.Failed(Diagnostic(errorTail, process.ExitCode));
+            ? Outcome.Saved(finalPath)
+            : Outcome.Failed(Diagnostic(errorTail, process.ExitCode));
     }
 
-    private static bool TryParseProgress(string line, out DownloadProgress progress)
+    private static bool TryParseProgress(string line, out Progress progress)
     {
         progress = default;
-        if (!line.StartsWith(DownloadArguments.ProgressSentinel + "|", StringComparison.Ordinal))
+        if (!line.StartsWith(Arguments.ProgressSentinel + "|", StringComparison.Ordinal))
             return false;
         // Sentinel, status, downloaded, total, total-estimate, speed, eta.
         var parts = line.Split('|');
@@ -124,11 +108,11 @@ internal sealed class DownloadEngine
         if (total <= 0)
             total = ParseLong(parts[4]);
         var percent = total > 0 ? Math.Clamp(downloaded * 100.0 / total, 0, 100) : 0;
-        progress = new DownloadProgress(parts[1], downloaded, total, percent, ParseDouble(parts[5]), ParseDouble(parts[6]));
+        progress = new Progress(parts[1], downloaded, total, percent, ParseDouble(parts[5]), ParseDouble(parts[6]));
         return true;
     }
 
-    /// <summary>A yt-dlp number field as a count of bytes. "NA" and anything unparseable read as 0.</summary>
+    /// <summary>A yt-dlp number field as bytes; "NA" or anything unparseable reads as 0.</summary>
     private static long ParseLong(string text)
         => double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out var value) && value > 0
             ? (long)value : 0;
@@ -146,11 +130,10 @@ internal sealed class DownloadEngine
         }
         catch (Exception exception) when (exception is InvalidOperationException or NotSupportedException)
         {
-            // It finished between the test and the kill, which is the outcome that was wanted.
         }
     }
 
-    /// <summary>The reason a failed run gives, preferring the last line that reads like a yt-dlp error.</summary>
+    /// <summary>The failure reason, preferring the last line that looks like a yt-dlp error.</summary>
     private static string Diagnostic(IReadOnlyList<string> errorTail, int exitCode)
     {
         var complaint = string.Empty;

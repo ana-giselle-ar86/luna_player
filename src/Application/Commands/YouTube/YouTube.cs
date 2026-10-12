@@ -59,6 +59,7 @@ internal sealed partial class YouTube
         _guard = new MediaGuard(player, speech);
         router.Register(ActionId.OpenYouTubeLink, OpenLink);
         router.Register(ActionId.SearchYouTube, Search);
+        router.Register(ActionId.VideoDirectDownload, DirectDownload);
         router.Register(ActionId.VideoDownload, Download);
         router.Register(ActionId.VideoDescription, ShowDescription);
         router.Register(ActionId.VideoCopyLink, CopyLink);
@@ -195,12 +196,6 @@ internal sealed partial class YouTube
             // Translators: The short wording spoken when a YouTube command is used on something that is not one.
             Tr("No YouTube video."));
         return false;
-    }
-
-    private void Report(YouTubeOutcome outcome)
-    {
-        if (!outcome.Success)
-            ShowError(outcome.Error, Tr("YouTube"));
     }
 
     private void ShowError(string message, string caption) => _view.Dialogs.ShowError(message, caption);

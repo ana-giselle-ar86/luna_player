@@ -1,128 +1,76 @@
-using LunaPlayer.Accessibility;
-using LunaPlayer.Actions;
 using LunaPlayer.Configuration;
-using LunaPlayer.Configuration.Models;
-using LunaPlayer.Media;
-using LunaPlayer.Playback;
-using LunaPlayer.UI;
 using LunaPlayer.YouTube;
-using LunaPlayer.YouTube.Playback;
-using WxSharp;
+using Downloads = LunaPlayer.YouTube.Download;
 
 namespace LunaPlayer.Application.Commands.YouTube;
 
 internal sealed partial class YouTube
 {
+    /// <summary>Direct-downloads the current video with the saved settings, no dialog.</summary>
+    private void DirectDownload()
+    {
+        if (RequireVideo(out var watchUrl))
+            DirectDownloadTo(watchUrl);
+    }
+
+    /// <summary>Opens the download dialog for the current video.</summary>
     private void Download()
     {
         if (RequireVideo(out var watchUrl))
-            DownloadTo(watchUrl);
+            DownloadTo(watchUrl, _player.CurrentTitle ?? string.Empty);
     }
 
-    /// <remarks>
-    /// Off the UI thread behind a progress window, because a download is as long as the file is. The job
-    /// gets only the strings it needs; everything it reports is turned into words back on this thread.
-    ///
-    /// Saving goes through yt-dlp, the only thing that can turn a video into a file, so it needs the
-    /// programs present. When they are not, the offer is made here rather than a refusal shown: accepting
-    /// it fetches them and comes back to this.
-    /// </remarks>
-    internal void DownloadTo(string url)
+    /// <summary>Downloads a video with the saved settings, no dialog.</summary>
+    internal void DirectDownloadTo(string url)
     {
-        if (!Backend.HasComponents
-            && _components.Ensure(_settings.YouTube.Channel, () => DownloadTo(url))
-                is not LunaPlayer.YouTube.Components.Service.ComponentsState.Ready)
+        if (!EnsureComponents(() => DirectDownloadTo(url)))
             return;
-        var folder = _view.Dialogs.ChooseFolder(
-            _settings.General.LastDirectory,
-            // Translators: Title of the window that asks where a video should be saved.
-            Tr("Select download folder"));
-        if (string.IsNullOrEmpty(folder))
+        Run(Downloads.Request.FromSettings(_settings.YouTube.Download, url));
+    }
+
+    /// <summary>Opens the download dialog for a video, then downloads what was chosen.</summary>
+    internal void DownloadTo(string url, string title)
+    {
+        if (!EnsureComponents(() => DownloadTo(url, title)))
             return;
-        _settings.General.LastDirectory = folder;
-        // A download saves the picture at the video quality. The audio-only setting that once governed this
-        // is gone - playback now chooses picture or sound per play, but a saved file is a video - so the
-        // picker below lists heights, and the sound is carried inside the file as yt-dlp muxes it.
-        const bool audioOnly = false;
-        var quality = (int)_settings.YouTube.VideoQuality;
-        // Ask yt-dlp which qualities this video really offers, off-thread behind a short window, so the
-        // picker only ever lists qualities the download can honour. It sweeps rather than fills, because a
-        // single probe cannot say how far through it is.
-        var probe = new ProgressPrompt(
-            // Translators: Title of the short window shown while a video's available qualities are read.
-            Tr("Reading qualities"),
-            // Translators: Message shown while a video's available download qualities are being read.
-            Tr("Reading available qualities..."),
-            _ => Tr("Reading available qualities...")) { Proportional = false };
-        BackgroundProgress.Start(_view, _dispatcher, probe,
-            (report, token) => _backend.AvailableQualities(url, audioOnly, token),
-            options => StartDownload(url, folder, audioOnly, quality, options));
+        var stem = string.IsNullOrWhiteSpace(title) ? string.Empty : Paths.SafeFileName(title);
+        var defaults = Downloads.Request.FromSettings(_settings.YouTube.Download, url, stem);
+        if (_view.Dialogs.ShowDownloadOptions(defaults) is { } request)
+            Run(request);
     }
-
-    /// <summary>Shows the quality picker, then saves the video at the chosen quality.</summary>
-    /// <remarks>
-    /// On the UI thread, once the probe has come back. A video that offered qualities gets the picker, and
-    /// backing out of it abandons the download; one whose formats could not be read comes back with nothing
-    /// to offer and is saved at the settings quality, exactly as it was before the picker existed.
-    /// </remarks>
-    private void StartDownload(
-        string url, string folder, bool audioOnly, int quality, IReadOnlyList<int> options)
+    /// <summary>Runs a download behind the progress window and shows the result with a Success or Error
+    /// title. A download the user stopped says nothing.</summary>
+    private void Run(Downloads.Request request)
     {
-        int? exactQuality = null;
-        if (options.Count > 0)
-        {
-            var chosen = _view.Dialogs.ChooseYouTubeQuality(options, audioOnly);
-            if (chosen is null)
-                return;
-            exactQuality = chosen;
-        }
-        var prompt = new ProgressPrompt(
-            // Translators: Title of the window shown while a video is being saved to this computer.
-            Tr("Downloading video"),
-            // Translators: First message in the download window, before anything has arrived.
-            Tr("Starting download..."),
-            Describe) { Detailed = true };
-        BackgroundProgress.Start(_view, _dispatcher, prompt,
-            (report, token) => _backend.Download(url, folder, audioOnly, quality, report, token, exactQuality),
-            Saved);
-    }
-
-    /// <summary>The lines the download window shows.</summary>
-    /// <remarks>
-    /// Called from the progress window's own tick, which is on the UI thread, so it may translate. The
-    /// name is only known once the first bytes arrive, so the heading stands alone until then rather than
-    /// naming an empty file.
-    /// </remarks>
-    private static string Describe(Media.ProgressUpdate update)
-    {
-        var heading = update.Name.Length > 0
-            // Translators: Progress heading while a video is being saved. {name} is the file being written.
-            ? TrFormat("Downloading {name}", update.Name)
-            // Translators: First message in the download window, before anything has arrived.
-            : Tr("Starting download...");
-        return heading + "\n" + LunaPlayer.YouTube.Components.Service.Sizes(update);
-    }
-
-    /// <remarks>
-    /// Spoken rather than shown, in both directions: a download runs for minutes behind a window the user
-    /// has probably stopped looking at, and a message box that has to
-    /// be dismissed before anything else works is the wrong way to say a file arrived.
-    /// </remarks>
-    private void Saved(YouTubeOutcome outcome)
-    {
-        if (outcome.Success)
-        {
-            _speech.Speak(
-                // Translators: Spoken once a video has been saved to this computer.
-                Tr("Download completed."),
-                // Translators: The short wording spoken once a video has been saved.
-                Tr("Download completed."));
+        var engine = new Downloads.Engine(_settings);
+        var outcome = _view.Dialogs.RunDownload((report, token) => engine.Run(request, report, token));
+        if (outcome is not { } result)
             return;
-        }
-        var message = outcome.Error.Length > 0
-            ? outcome.Error
-            // Translators: Spoken when a video could not be saved and nothing said why.
-            : Tr("Download failed.");
-        _speech.Speak(message, message);
+        if (result.Success)
+            _view.Dialogs.ShowInfo(
+                result.FilePath.Length > 0
+                    // Translators: Shown when a download has finished. {path} is the saved file's full path.
+                    ? TrFormat("Saved to {path}", result.FilePath)
+                    // Translators: Shown when a download has finished and the saved path is not known.
+                    : Tr("The download finished."),
+                // Translators: Title of the message shown when a download has finished.
+                Tr("Success"));
+        else
+            _view.Dialogs.ShowError(
+                result.Error.Length > 0
+                    ? result.Error
+                    // Translators: Shown when a download could not finish and nothing said why.
+                    : Tr("The download failed."),
+                // Translators: Title of the message shown when a download could not finish.
+                Tr("Error"));
+    }
+
+    /// <summary>Whether the yt-dlp programs are present; offers to fetch them and retries if not.</summary>
+    private bool EnsureComponents(System.Action retry)
+    {
+        if (Backend.HasComponents)
+            return true;
+        return _components.Ensure(_settings.YouTube.Channel, retry)
+            is LunaPlayer.YouTube.Components.Service.ComponentsState.Ready;
     }
 }

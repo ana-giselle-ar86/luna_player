@@ -24,7 +24,7 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
     private readonly TextCtrl _cookiesPath;
     private readonly TextCtrl _cookiesStatus;
     private readonly TextCtrl _downloadFolder;
-    private readonly Choice _downloadType;
+    private readonly RadioBox _downloadType;
     private readonly Choice _downloadVideoQuality;
     private readonly Choice _downloadContainer;
     private readonly Choice _downloadAudioFormat;
@@ -84,13 +84,13 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
         var videoQualityLabel = new StaticText(panel, label: Tr("Video quality"));
         _videoQuality = Choice(
             panel,
-            Array.ConvertAll(VideoQualities, quality => QualitySelectionDialog.VideoLabel((int)quality)),
+            Array.ConvertAll(VideoQualities, quality => QualityLabels.VideoLabel((int)quality)),
             Math.Max(0, Array.IndexOf(VideoQualities, settings.VideoQuality)));
         // Translators: Label of the list that chooses the sound quality a video's audio is played at.
         var audioQualityLabel = new StaticText(panel, label: Tr("Audio quality"));
         _audioQuality = Choice(
             panel,
-            Array.ConvertAll(AudioQualities, quality => QualitySelectionDialog.AudioLabel((int)quality)),
+            Array.ConvertAll(AudioQualities, quality => QualityLabels.AudioLabel((int)quality)),
             Math.Max(0, Array.IndexOf(AudioQualities, settings.AudioQuality)));
         // Translators: Label of the box holding how many videos a search should look for.
         var resultCountLabel = new StaticText(panel, label: Tr("Number of search results"));
@@ -107,9 +107,7 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
             // Translators: One of the choices for a link naming both: always open the whole playlist.
             Tr("Open the playlist")], (int)settings.MixedLink);
 
-        // The "Download settings" group: the defaults a direct download uses, and the values a normal
-        // download's dialog opens prefilled with. The video and audio options are shown one set at a time,
-        // following the chosen type, since a download is one or the other.
+        // "Download settings" group.
         var downloadDefaults = settings.Download;
         // Translators: Heading of the group of settings that control how YouTube videos are downloaded.
         var downloadBox = new StaticBoxSizer(new StaticBox(panel, Tr("Download settings")), Orientation.Vertical);
@@ -119,19 +117,18 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
         // Translators: Button that opens a folder picker to choose where downloads are saved.
         var browseFolder = new Button(panel, label: Tr("Browse..."));
         browseFolder.Click += (_, _) => BrowseForDownloadFolder();
-        // Translators: Label of the list that chooses whether a download saves the video or its sound alone by default.
-        var downloadTypeLabel = new StaticText(panel, label: Tr("Default download type"));
-        _downloadType = Choice(panel, [
+        // Translators: Heading of the radio group that chooses whether a download saves the video or its sound alone by default.
+        _downloadType = new RadioBox(panel, Tr("Default download type"), [
             // Translators: One of the download types: save the picture, with its sound, as a video file.
             Tr("Video"),
             // Translators: One of the download types: save the sound alone as an audio file.
-            Tr("Audio")], (int)downloadDefaults.Kind);
+            Tr("Audio")]) { SelectedIndex = (int)downloadDefaults.Kind };
         _downloadType.SelectionChanged += (_, _) => SyncDownloadType();
         // Translators: Label of the list that chooses the picture quality a downloaded video is saved at.
         _downloadVideoQualityLabel = new StaticText(panel, label: Tr("Video quality"));
         _downloadVideoQuality = Choice(
             panel,
-            Array.ConvertAll(VideoQualities, quality => QualitySelectionDialog.VideoLabel((int)quality)),
+            Array.ConvertAll(VideoQualities, quality => QualityLabels.VideoLabel((int)quality)),
             Math.Max(0, Array.IndexOf(VideoQualities, downloadDefaults.VideoQuality)));
         // Translators: Label of the list that chooses the file type a downloaded video is saved as.
         _downloadContainerLabel = new StaticText(panel, label: Tr("Video format"));
@@ -147,18 +144,17 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
         _downloadAudioQualityLabel = new StaticText(panel, label: Tr("Audio quality"));
         _downloadAudioQuality = Choice(
             panel,
-            Array.ConvertAll(AudioQualities, quality => QualitySelectionDialog.AudioLabel((int)quality)),
+            Array.ConvertAll(AudioQualities, quality => QualityLabels.AudioLabel((int)quality)),
             Math.Max(0, Array.IndexOf(AudioQualities, downloadDefaults.AudioQuality)));
         AddBoxField(downloadBox, downloadFolderLabel, _downloadFolder);
         downloadBox.Add(browseFolder, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
-        AddBoxField(downloadBox, downloadTypeLabel, _downloadType);
+        downloadBox.Add(_downloadType, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderTop | SizerFlags.Expand, border: 8);
         AddBoxField(downloadBox, _downloadVideoQualityLabel, _downloadVideoQuality);
         AddBoxField(downloadBox, _downloadContainerLabel, _downloadContainer);
         AddBoxField(downloadBox, _downloadAudioFormatLabel, _downloadAudioFormat);
         AddBoxField(downloadBox, _downloadAudioQualityLabel, _downloadAudioQuality);
 
-        // The "Advanced options" group: a separate box below the basics, for the yt-dlp knobs most downloads
-        // never touch.
+        // "Advanced options" group.
         // Translators: Heading of the group of less-used download options (embedding, fragments, SponsorBlock).
         var advancedBox = new StaticBoxSizer(new StaticBox(panel, Tr("Advanced options")), Orientation.Vertical);
         // Translators: Label of the box holding how many pieces of a file are fetched at once. "yt-dlp" calls
@@ -477,8 +473,7 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
             border: 8);
     }
 
-    /// <summary>The label-then-control pair of <see cref="AddField"/>, for a <see cref="StaticBoxSizer"/>
-    /// group rather than the page's top-level box.</summary>
+    /// <summary>Label-then-control pair, added to a StaticBoxSizer group.</summary>
     private static void AddBoxField(Sizer sizer, StaticText label, Window control)
     {
         sizer.Add(label,
