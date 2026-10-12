@@ -113,40 +113,40 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
         // Translators: Heading of the group of settings that control how YouTube videos are downloaded.
         var downloadBox = new StaticBoxSizer(new StaticBox(panel, Tr("Download settings")), Orientation.Vertical);
         // Translators: Label of the box holding the folder downloads are saved into.
-        var downloadFolderLabel = new StaticText(panel, label: Tr("Download folder"));
-        _downloadFolder = new TextCtrl(panel, value: downloadDefaults.Folder);
+        var downloadFolderLabel = new StaticText(downloadBox.Box, label: Tr("Download folder"));
+        _downloadFolder = new TextCtrl(downloadBox.Box, value: downloadDefaults.Folder);
         // Translators: Button that opens a folder picker to choose where downloads are saved.
-        var browseFolder = new Button(panel, label: Tr("Browse..."));
+        var browseFolder = new Button(downloadBox.Box, label: Tr("Browse..."));
         browseFolder.Click += (_, _) => BrowseForDownloadFolder();
         // Translators: Tick box: sort downloads into 'videos' and 'audios' subfolders of the download folder.
-        _splitByType = new CheckBox(panel, label: Tr("Sort downloads by type")) { Checked = downloadDefaults.SplitByType };
+        _splitByType = new CheckBox(downloadBox.Box, label: Tr("Sort downloads by type")) { Checked = downloadDefaults.SplitByType };
         // Translators: Heading of the radio group that chooses whether a download saves the video or its sound alone by default.
-        _downloadType = new RadioBox(panel, Tr("Default download type"), [
+        _downloadType = new RadioBox(downloadBox.Box, Tr("Default download type"), [
             // Translators: One of the download types: save the picture, with its sound, as a video file.
             Tr("Video"),
             // Translators: One of the download types: save the sound alone as an audio file.
             Tr("Audio")]) { SelectedIndex = (int)downloadDefaults.Kind };
         _downloadType.SelectionChanged += (_, _) => SyncDownloadType();
         // Translators: Label of the list that chooses the picture quality a downloaded video is saved at.
-        _downloadVideoQualityLabel = new StaticText(panel, label: Tr("Video quality"));
+        _downloadVideoQualityLabel = new StaticText(downloadBox.Box, label: Tr("Video quality"));
         _downloadVideoQuality = Choice(
-            panel,
+            downloadBox.Box,
             Array.ConvertAll(VideoQualities, quality => QualityLabels.VideoLabel((int)quality)),
             Math.Max(0, Array.IndexOf(VideoQualities, downloadDefaults.VideoQuality)));
         // Translators: Label of the list that chooses the file type a downloaded video is saved as.
-        _downloadContainerLabel = new StaticText(panel, label: Tr("Video format"));
+        _downloadContainerLabel = new StaticText(downloadBox.Box, label: Tr("Video format"));
         // Translators: The two video container formats. "MP4" and "MKV" are format names and are not translated.
-        _downloadContainer = Choice(panel, [Tr("MP4"), Tr("MKV")],
+        _downloadContainer = Choice(downloadBox.Box, [Tr("MP4"), Tr("MKV")],
             Math.Max(0, Array.IndexOf(Containers, downloadDefaults.Container)));
         // Translators: Label of the list that chooses the file type a downloaded audio track is saved as.
-        _downloadAudioFormatLabel = new StaticText(panel, label: Tr("Audio format"));
+        _downloadAudioFormatLabel = new StaticText(downloadBox.Box, label: Tr("Audio format"));
         // The audio formats are their own names, not translated.
-        _downloadAudioFormat = Choice(panel, ["MP3", "M4A", "Opus", "FLAC", "WAV"],
+        _downloadAudioFormat = Choice(downloadBox.Box, ["MP3", "M4A", "Opus", "FLAC", "WAV"],
             Math.Max(0, Array.IndexOf(AudioFormats, downloadDefaults.AudioFormat)));
         // Translators: Label of the list that chooses the bitrate a downloaded audio track is saved at.
-        _downloadAudioQualityLabel = new StaticText(panel, label: Tr("Audio quality"));
+        _downloadAudioQualityLabel = new StaticText(downloadBox.Box, label: Tr("Audio quality"));
         _downloadAudioQuality = Choice(
-            panel,
+            downloadBox.Box,
             Array.ConvertAll(AudioQualities, quality => QualityLabels.AudioLabel((int)quality)),
             Math.Max(0, Array.IndexOf(AudioQualities, downloadDefaults.AudioQuality)));
         AddBoxField(downloadBox, downloadFolderLabel, _downloadFolder);
