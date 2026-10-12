@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using LunaPlayer.Media;
 
 namespace LunaPlayer.Configuration;
@@ -14,7 +15,7 @@ namespace LunaPlayer.Configuration;
 /// stop agreeing: one would resolve a relative path and another would not, one would fold case and another
 /// would compare a URL as though it were a file name. They now ask this.
 /// </remarks>
-internal static class Paths
+internal static partial class Paths
 {
     /// <summary>The folder holding the settings, bookmarks and saved positions.</summary>
     internal static string RootDirectory { get; } = Path.Combine(
@@ -124,10 +125,32 @@ internal static class Paths
     internal static string DefaultRecordingsDirectory { get; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), AppInfo.Name, "Recordings");
 
-    /// <summary>Where YouTube downloads go unless the user says otherwise. Under Documents for the same
-    /// reason recordings are: they are the user's files, meant to be found and kept.</summary>
-    internal static string DefaultDownloadsDirectory { get; } = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), AppInfo.Name, "Downloads");
+    /// <summary>The base folder downloads go into unless the user says otherwise: a Luna Player folder in
+    /// the user's Downloads. A video or audio subfolder is added under it per download.</summary>
+    internal static string DefaultDownloadsDirectory { get; } = Path.Combine(DownloadsDirectory(), AppInfo.Name);
+
+    /// <summary>The user's Downloads folder, from the Windows known folder, falling back to the profile.</summary>
+    private static string DownloadsDirectory()
+    {
+        var downloads = new Guid("374DE290-123F-4565-9164-39C4925E467B");
+        if (SHGetKnownFolderPath(in downloads, 0, 0, out var pointer) == 0)
+        {
+            try
+            {
+                var path = Marshal.PtrToStringUni(pointer);
+                if (!string.IsNullOrEmpty(path))
+                    return path;
+            }
+            finally
+            {
+                Marshal.FreeCoTaskMem(pointer);
+            }
+        }
+        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+    }
+
+    [LibraryImport("shell32.dll")]
+    private static partial int SHGetKnownFolderPath(in Guid rfid, uint dwFlags, nint hToken, out nint ppszPath);
 
     /// <summary>Creates the folder <paramref name="path"/> is about to be written into. Does nothing for a
     /// bare file name, which is already in a folder that exists.</summary>

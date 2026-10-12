@@ -24,6 +24,7 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
     private readonly TextCtrl _cookiesPath;
     private readonly TextCtrl _cookiesStatus;
     private readonly TextCtrl _downloadFolder;
+    private readonly CheckBox _splitByType;
     private readonly RadioBox _downloadType;
     private readonly Choice _downloadVideoQuality;
     private readonly Choice _downloadContainer;
@@ -117,6 +118,8 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
         // Translators: Button that opens a folder picker to choose where downloads are saved.
         var browseFolder = new Button(panel, label: Tr("Browse..."));
         browseFolder.Click += (_, _) => BrowseForDownloadFolder();
+        // Translators: Tick box: sort downloads into 'videos' and 'audios' subfolders of the download folder.
+        _splitByType = new CheckBox(panel, label: Tr("Sort downloads by type")) { Checked = downloadDefaults.SplitByType };
         // Translators: Heading of the radio group that chooses whether a download saves the video or its sound alone by default.
         _downloadType = new RadioBox(panel, Tr("Default download type"), [
             // Translators: One of the download types: save the picture, with its sound, as a video file.
@@ -148,6 +151,7 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
             Math.Max(0, Array.IndexOf(AudioQualities, downloadDefaults.AudioQuality)));
         AddBoxField(downloadBox, downloadFolderLabel, _downloadFolder);
         downloadBox.Add(browseFolder, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
+        downloadBox.Add(_splitByType, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderBottom, border: 8);
         downloadBox.Add(_downloadType, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderTop | SizerFlags.Expand, border: 8);
         AddBoxField(downloadBox, _downloadVideoQualityLabel, _downloadVideoQuality);
         AddBoxField(downloadBox, _downloadContainerLabel, _downloadContainer);
@@ -256,7 +260,7 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
             Tr("Sets the size of the first result page, from 5 through 100 videos. Larger pages take longer to fetch; reaching the end still loads more results."));
         Help(_searchSuggestions,
             // Translators: Help text for the tick box that offers search suggestions while typing.
-            Tr("Offers a list of completions as you type in the search box, fetched from YouTube. Clear this option to type without those background network requests."));
+            Tr("When checked, a list of completions is offered as you type, fetched from YouTube. When unchecked, no completions are fetched and typing makes no background network requests."));
         Help(_mixedLink,
             // Translators: Help text for the list that chooses what to do with a link naming a video and a playlist at once.
             Tr("For an address containing both a video and a playlist, Luna can ask each time, open only that video, or list the complete playlist."));
@@ -266,7 +270,7 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
         Help(_checkUpdates,
             // Translators: Help text for the tick box that looks for a newer yt-dlp at startup. "yt-dlp" is a program
             // name and is not translated.
-            Tr("Looks for a newer yt-dlp in the background when Luna starts and offers to download it. Clear this option to avoid that startup network request."));
+            Tr("When checked, Luna looks for a newer yt-dlp when it starts and offers to download it. When unchecked, no update check runs at startup."));
         Help(download,
             // Translators: Help text for the button that fetches the extra programs YouTube downloads need. "yt-dlp" is
             // a program name and is not translated.
@@ -286,7 +290,10 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
             Tr("Reports whether YouTube requests currently use Firefox cookies, a cookie file, or no cookies at all."));
         Help(_downloadFolder,
             // Translators: Help text for the box holding the folder downloads are saved into.
-            Tr("The folder downloads are saved into. Leave it empty to use the default Downloads folder under your Documents."));
+            Tr("The base folder downloads are saved into. When empty, a Luna Player folder in your Downloads is used."));
+        Help(_splitByType,
+            // Translators: Help text for the tick box that sorts downloads into video and audio subfolders.
+            Tr("When checked, downloads are sorted into 'videos' and 'audios' subfolders. When unchecked, they are saved straight into the download folder."));
         Help(browseFolder,
             // Translators: Help text for the button that picks the download folder.
             Tr("Opens a folder picker to choose where downloads are saved."));
@@ -310,19 +317,19 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
             Tr("How many pieces of a file yt-dlp fetches at once, from 1 through 16. More can be faster on a fast connection; one is gentlest."));
         Help(_embedMetadata,
             // Translators: Help text for the tick box that writes tags into the downloaded file.
-            Tr("Writes the title, uploader and other details into the downloaded file."));
+            Tr("When checked, the title, uploader and other details are written into the downloaded file."));
         Help(_embedThumbnail,
             // Translators: Help text for the tick box that embeds the thumbnail as cover art.
-            Tr("Embeds the video's thumbnail as cover art in the downloaded file."));
+            Tr("When checked, the video's thumbnail is embedded as cover art in the downloaded file."));
         Help(_embedChapters,
             // Translators: Help text for the tick box that writes chapter marks into the downloaded file.
-            Tr("Writes the video's chapter marks into the downloaded file, where the format supports them."));
+            Tr("When checked, the video's chapter marks are written into the downloaded file, where the format supports them."));
         Help(_embedSubtitles,
             // Translators: Help text for the tick box that embeds subtitles into the downloaded file.
-            Tr("Embeds the video's available subtitles into the downloaded file."));
+            Tr("When checked, the video's available subtitles are embedded into the downloaded file."));
         Help(_sponsorBlock,
             // Translators: Help text for the tick box that removes SponsorBlock segments. "SponsorBlock" is a service name and is not translated.
-            Tr("Uses SponsorBlock data to cut sponsor reads, intros and similar segments out of the download."));
+            Tr("When checked, SponsorBlock data is used to cut sponsor reads, intros and similar segments out of the download."));
         UpdateCookieStatus();
         SyncDownloadType();
     }
@@ -418,6 +425,7 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
 
         var download = _settings.Download;
         download.Folder = _downloadFolder.Value.Trim();
+        download.SplitByType = _splitByType.Checked;
         download.Kind = (DownloadKind)Math.Max(0, _downloadType.SelectedIndex);
         download.VideoQuality = VideoQualities[Math.Clamp(_downloadVideoQuality.SelectedIndex, 0, VideoQualities.Length - 1)];
         download.Container = Containers[Math.Clamp(_downloadContainer.SelectedIndex, 0, Containers.Length - 1)];
@@ -446,6 +454,7 @@ internal sealed class YouTubePreferences : UI.PreferencesPage
 
         var download = _settings.Download;
         _downloadFolder.ChangeValue(download.Folder);
+        _splitByType.Checked = download.SplitByType;
         _downloadType.SelectedIndex = (int)download.Kind;
         _downloadVideoQuality.SelectedIndex = Math.Max(0, Array.IndexOf(VideoQualities, download.VideoQuality));
         _downloadContainer.SelectedIndex = Math.Max(0, Array.IndexOf(Containers, download.Container));

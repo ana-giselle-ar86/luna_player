@@ -18,8 +18,11 @@ internal sealed class DownloadSettings
     [JsonConverter(typeof(JsonStringEnumConverter<DownloadKind>))]
     public DownloadKind Kind { get; set; } = DownloadKind.Video;
 
-    /// <summary>Where downloads are saved. Empty means the default folder under Documents.</summary>
+    /// <summary>Where downloads are saved. Empty means the default folder.</summary>
     public string Folder { get; set; } = "";
+
+    /// <summary>Whether downloads are sorted into 'videos' and 'audios' subfolders of the folder.</summary>
+    public bool SplitByType { get; set; } = true;
 
     /// <summary>The height a video download is capped at.</summary>
     [JsonConverter(typeof(JsonStringEnumConverter<VideoQuality>))]
@@ -61,6 +64,7 @@ internal sealed class DownloadSettings
     {
         Kind = source.Kind;
         Folder = source.Folder;
+        SplitByType = source.SplitByType;
         VideoQuality = source.VideoQuality;
         Container = source.Container;
         AudioFormat = source.AudioFormat;

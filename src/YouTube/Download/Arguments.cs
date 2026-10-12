@@ -24,7 +24,7 @@ internal static class Arguments
             $"download:{ProgressSentinel}|%(progress.status)s|%(progress.downloaded_bytes)s|%(progress.total_bytes)s|%(progress.total_bytes_estimate)s|%(progress.speed)s|%(progress.eta)s",
             "--print",
             $"after_move:{FileSentinel}|%(filepath)s",
-            "-P", request.Folder,
+            "-P", request.SaveFolder(),
             "-o", OutputTemplate(request.FileName),
         };
         if (request.ConcurrentFragments > 1)

@@ -14,6 +14,9 @@ internal sealed record Request
     /// <summary>The folder to save into.</summary>
     public required string Folder { get; init; }
 
+    /// <summary>Whether to sort into 'videos'/'audios' subfolders of the folder.</summary>
+    public bool SplitByType { get; init; } = true;
+
     /// <summary>The name without extension, or empty to use the video's title.</summary>
     public string FileName { get; init; } = "";
 
@@ -45,6 +48,7 @@ internal sealed record Request
             Url = url,
             Kind = settings.Kind,
             Folder = settings.Folder,
+            SplitByType = settings.SplitByType,
             FileName = fileName,
             VideoQuality = settings.VideoQuality,
             Container = settings.Container,
@@ -57,4 +61,9 @@ internal sealed record Request
             EmbedSubtitles = settings.EmbedSubtitles,
             SponsorBlockRemove = settings.SponsorBlockRemove,
         };
+
+    /// <summary>The folder the file is written into: the base folder, plus a per-type subfolder when
+    /// <see cref="SplitByType"/> is set.</summary>
+    internal string SaveFolder()
+        => SplitByType ? Path.Combine(Folder, Kind == DownloadKind.Audio ? "audios" : "videos") : Folder;
 }
