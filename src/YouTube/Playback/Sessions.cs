@@ -37,7 +37,7 @@ internal enum NextOutcome
 /// <see cref="Backend"/> knows about neither. Everything here runs on the UI thread except the work handed
 /// to <see cref="ResolveCache"/>, which is the only thing that touches the network.
 /// </remarks>
-internal sealed class Sessions : IDisposable
+internal sealed partial class Sessions : IDisposable
 {
     /// <summary>How many videos to resolve ahead when a list of results is first shown.</summary>
     private const int OpeningPrefetch = 5;
@@ -53,7 +53,8 @@ internal sealed class Sessions : IDisposable
     private readonly Metadata.Client _client;
     private readonly Backend _backend;
     private readonly ResolveCache _cache;
-    private readonly Action<string> _download;
+    private readonly Action<string> _directDownload;
+    private readonly Action<string, string> _download;
     private readonly Action<string> _copy;
     private readonly Action<string> _browse;
     private readonly FavoriteStore _favorites;
@@ -61,9 +62,7 @@ internal sealed class Sessions : IDisposable
     private Session? _session;
     private PendingNext? _pending;
 
-    /// <param name="download">What to do when a row is downloaded. Saving a video is the action handler's
-    /// job - it owns the folder chooser and the progress window - so it is passed in rather than repeated
-    /// here.</param>
+    /// <param name="directDownload">Downloads a row straight to disk with the saved settings.</param>
     /// <param name="favorites">The shared store, so a row can be saved to the favourites straight from the
     /// results list. The same store the favourites manager writes to, so an addition shows up there.</param>
     /// <param name="components">The programs the channel browser needs, offered when a channel is opened and
@@ -77,7 +76,8 @@ internal sealed class Sessions : IDisposable
         Metadata.Client client,
         Backend backend,
         ResolveCache cache,
-        Action<string> download,
+        Action<string> directDownload,
+        Action<string, string> download,
         Action<string> copy,
         Action<string> browse,
         FavoriteStore favorites,
@@ -91,6 +91,7 @@ internal sealed class Sessions : IDisposable
         _client = client;
         _backend = backend;
         _cache = cache;
+        _directDownload = directDownload;
         _download = download;
         _copy = copy;
         _browse = browse;
@@ -534,419 +535,4 @@ internal sealed class Sessions : IDisposable
             completed);
     }
 
-    // ---- playing ----
-
-    /// <summary>Starts a video from a session and makes it the session's current one.</summary>
-    private bool Start(Session session, int index, Resolved ready)
-    {
-        // Refusing rather than installing it: a session that is no longer the current one has been
-        // disposed, and putting it back would leave the player driving a list nothing can add to.
-        if (!ReferenceEquals(_session, session))
-            return false;
-        if (!Open(ready, Session.AudioFor(session.Mode)))
-            return false;
-        session.Selected = index;
-        Prefetch(session, index + 1, 1);
-        return true;
-    }
-
-    /// <summary>Starts a video from a list, in front of the playlist the user opened.</summary>
-    /// <remarks>
-    /// So that playlist keeps its files, its order and its place. Nothing here has to turn shuffle off
-    /// either - the session's list starts without it, and the one the user set stays set on the playlist it
-    /// belongs to.
-    /// </remarks>
-    /// <param name="audioOnly">Whether this play is sound only - Ctrl+Enter rather than Enter - so the
-    /// player leaves any picture the stream carries undecoded.</param>
-    private bool Open(Resolved ready, bool audioOnly)
-    {
-        _activeChannelUrl = ready.Item.ChannelUrl;
-        return Report(_player.PlaySessionStream(
-            ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl, audioOnly));
-    }
-
-    /// <summary>Starts a video that came from a link rather than from a list.</summary>
-    /// <remarks>
-    /// Into the playlist the user is working in, which is where a single video belongs: there is no list
-    /// behind it to move through, nothing for Escape to go back to,
-    /// and nothing a stage of its own would keep separate. A plain network stream is opened the same way.
-    /// </remarks>
-    private bool OpenAlone(Resolved ready)
-    {
-        _activeChannelUrl = ready.Item.ChannelUrl;
-        return Report(_player.OpenStream(ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl));
-    }
-
-    private bool Report(bool opened)
-    {
-        if (opened)
-            return true;
-        ShowError(
-            // Translators: Shown when a video was found but the player could not start playing it.
-            Tr("Could not open YouTube stream."));
-        return false;
-    }
-
-    /// <summary>Moves playback to a video that is ready, adding it to the playlist if it is not there yet.
-    /// </summary>
-    private bool Advance(Session session, int from, int to, Resolved ready)
-    {
-        // Asked before anything is added to the playlist, not after. Between asking for the next video and
-        // its arriving the user may have opened something else entirely - and an entry appended on the way
-        // to a move that is then refused stays in the playlist for good, named after a video that is not
-        // playing and pointing at an address that expires within the hour.
-        if (!ReferenceEquals(_session, session)
-            || CurrentWatchUrl is not string playing || session.IndexOf(playing) != from)
-            return false;
-        if (_player.IndexOfSource(ready.Item.Url) < 0
-            && !_player.QueueSessionStream(
-                ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl, Session.AudioFor(session.Mode)))
-            return false;
-        if (!_player.Next(wrap: false))
-            return false;
-        _activeChannelUrl = ready.Item.ChannelUrl;
-        session.Selected = to;
-        Prefetch(session, to + 1, 1);
-        return true;
-    }
-
-    /// <summary>Resolves the next video in the background and moves to it when it arrives.</summary>
-    private void LoadNext(Session session, int from, int to, YouTubeResult item)
-    {
-        var pending = new PendingNext(session, from, to, item.Url);
-        _pending = pending;
-        _speech.Speak(
-            // Translators: Spoken when the video after this one is being fetched before it can be played.
-            Tr("Loading next video..."),
-            // Translators: The short wording spoken while the video after this one is being fetched.
-            Tr("Loading next video..."));
-        var task = _cache.Start(
-            _cache.Key(item.Url, Session.AudioFor(session.Mode), session.QualityFor(session.Mode)),
-            item.Url, item, Session.AudioFor(session.Mode), session.QualityFor(session.Mode),
-            session.Token);
-        _ = task.ContinueWith(
-            finished => _dispatcher.Post(() => NextReady(pending, finished.Result)),
-            CancellationToken.None,
-            TaskContinuationOptions.OnlyOnRanToCompletion,
-            TaskScheduler.Default);
-    }
-
-    /// <remarks>
-    /// The new title is announced, so the user is not left to work out what is playing. Something is also
-    /// said when the video could not be fetched, so "Loading next video..." is not left as the last thing
-    /// said with nothing following it.
-    /// </remarks>
-    private void NextReady(PendingNext pending, ResolveOutcome outcome)
-    {
-        if (!ReferenceEquals(_pending, pending) || !ReferenceEquals(_session, pending.Session))
-            return;
-        _pending = null;
-        if (outcome.Value is not Resolved ready)
-        {
-            if (outcome.Failure is ResolveFailure.Cancelled)
-                return;
-            _speech.Speak(
-                // Translators: Spoken when the video after this one could not be fetched, so playback stops.
-                Tr("Could not load the next video."),
-                // Translators: The short wording spoken when the next video could not be fetched.
-                Tr("Next video failed."));
-            return;
-        }
-        if (!Advance(pending.Session, pending.From, pending.To, ready))
-            return;
-        if (_settings.General.SpeakFileOnNavigation)
-            _speech.Speak(ready.Item.Title, ready.Item.Title);
-    }
-
-    // ---- prefetching ----
-
-    /// <summary>Starts resolving <paramref name="count"/> videos from <paramref name="start"/>, so they
-    /// play without a wait when they are reached.</summary>
-    /// <remarks>
-    /// Both streams of each: the user chooses picture or sound only when they
-    /// press the key, so both must be ready by then rather than one guessed at. The four-wide gate in
-    /// <see cref="ResolveCache"/> keeps asking for two per row from flooding YouTube - the second simply
-    /// queues behind the first - and a mode nobody plays costs one resolve that the bound soon evicts.
-    /// </remarks>
-    private void Prefetch(Session session, int start, int count)
-    {
-        if (session.IsCancelled)
-            return;
-        var end = Math.Min(session.Items.Count, Math.Max(0, start) + count);
-        for (var index = Math.Max(0, start); index < end; index++)
-        {
-            var item = session.Items[index];
-            // Only videos resolve to a stream; a playlist or channel row is browsed into, not played, so
-            // there is nothing to make ready for it.
-            if (item.ItemType is not YouTubeItemType.Video)
-                continue;
-            _cache.Prefetch(item.Url, item, false, session.VideoQuality, session.Token);
-            _cache.Prefetch(item.Url, item, true, session.AudioQuality, session.Token);
-        }
-    }
-
-    private Resolved? Ready(Session session, YouTubeResult item)
-        => _cache.TryTake(
-            _cache.Key(item.Url, Session.AudioFor(session.Mode), session.QualityFor(session.Mode)));
-
-    // ---- the background jobs ----
-
-    private SearchResults RunSearch(
-        string query,
-        int filter,
-        int count,
-        int videoQuality,
-        int audioQuality,
-        string fetching,
-        Action<ProgressUpdate> report,
-        CancellationToken token)
-    {
-        try
-        {
-            var (items, page) = _client.Search(query, filter, count, token);
-            if (items.Count == 0)
-                return new SearchResults([], null, ResolveFailure.None, string.Empty);
-            // Only a video is worth resolving ahead: a playlist or channel row opens a browse dialog, not a
-            // stream, so a search filtered to those has nothing here to make ready.
-            if (items[0].ItemType is YouTubeItemType.Video)
-            {
-                report(new ProgressUpdate(0, 0, fetching));
-                // The sound is set going alongside, so Ctrl+Enter on the first row is ready too, while the
-                // picture is waited for: the list opens on its first row played as video, and the point of
-                // doing this before the window appears is that choosing that row plays at once. A video that
-                // will not resolve is not an error - the user still gets their results - so the outcome is
-                // dropped.
-                _cache.Prefetch(items[0].Url, items[0], true, audioQuality, token);
-                _ = _cache.Wait(items[0].Url, items[0], false, videoQuality, token, token);
-            }
-            return new SearchResults(items, page, ResolveFailure.None, string.Empty);
-        }
-        catch (Exception failure)
-        {
-            var explained = FailureMapping.Explain(failure, token);
-            return new SearchResults([], null, explained.Failure, explained.Detail);
-        }
-    }
-
-    private PlaylistResults RunPlaylist(string link, CancellationToken token)
-    {
-        var (title, items, failure, detail) = _backend.Playlist(link, token);
-        return new PlaylistResults(title, items, failure, detail);
-    }
-
-    private void ShowError(string message) =>
-        // Translators: Title of the messages the player shows about YouTube.
-        _view.Dialogs.ShowError(message, Tr("YouTube"));
-
-    private readonly record struct SearchResults(
-        IReadOnlyList<YouTubeResult> Items, Metadata.Page? Page, ResolveFailure Failure, string Detail);
-
-    private readonly record struct PlaylistResults(
-        string Title, IReadOnlyList<YouTubeResult> Items, ResolveFailure Failure, string Detail);
-
-    /// <summary>The move to the next video that is waiting on a resolve.</summary>
-    private sealed record PendingNext(Session Session, int From, int To, string WatchUrl);
-
-    /// <summary>The results window's way of talking back: it reports where the user is, asks for more rows
-    /// and says when it has gone.</summary>
-    ///
-    /// <remarks>
-    /// One of these per opening of the window rather than one per session, so closing it cannot silence
-    /// the next one. Every method runs on the UI thread - the page arrives through
-    /// <see cref="IApplicationDispatcher.Post"/> - which is why one plain field is guard enough and no
-    /// lock appears here.
-    /// </remarks>
-    private sealed class Feed : IYouTubeResultsFeed, IDisposable
-    {
-        private readonly Sessions _owner;
-        private readonly Session _session;
-        private bool _closed;
-        private bool _loading;
-
-        internal Feed(Sessions owner, Session session)
-        {
-            _owner = owner;
-            _session = session;
-        }
-
-        public void Selected(int index) => _owner.Prefetch(_session, index, BrowsingPrefetch);
-
-        public void CopyLink(int index) => On(index, item => _owner._copy(item.Url));
-
-        public void OpenInBrowser(int index) => On(index, item => _owner._browse(item.Url));
-
-        public void OpenChannelInBrowser(int index) => On(index, item => WithChannel(item, _owner._browse));
-
-        /// <summary>Runs <paramref name="action"/> on the row's channel address, or says so when the listing
-        /// named no channel. Shared by the browser and in-player ways of opening a channel.</summary>
-        private void WithChannel(YouTubeResult item, Action<string> action)
-        {
-            if (item.ChannelUrl.Length > 0)
-            {
-                action(item.ChannelUrl);
-                return;
-            }
-            _owner._speech.Speak(
-                // Translators: Spoken when the chosen video does not say which channel published it.
-                Tr("Channel link is not available."),
-                // Translators: The short wording spoken when the chosen video does not name its channel.
-                Tr("No channel link."));
-        }
-
-        public void Download(int index) => On(index, item => _owner._download(item.Url));
-
-        public bool IsFavorite(int index) =>
-            Peek(index) is YouTubeResult item && _owner._favorites.FindByLink(item.Url) is not null;
-
-        public void ToggleFavorite(int index) => On(index, item => _owner.ToggleFavorite(item));
-
-        /// <summary>Reads one row without making it the current selection - a query the context menu runs
-        /// before it opens, which must not move the caret the way acting on a row does.</summary>
-        private YouTubeResult? Peek(int index)
-            => _closed || index < 0 || index >= _session.Items.Count ? null : _session.Items[index];
-
-        /// <summary>Runs something on one row, so long as the row is still there.</summary>
-        /// <remarks>
-        /// The list can be longer than it was when the window opened - a page may have arrived while the
-        /// user was reading - but never shorter, so this only has to guard the bounds rather than re-read
-        /// what the row holds.
-        /// </remarks>
-        private void On(int index, Action<YouTubeResult> action)
-        {
-            if (_closed || index < 0 || index >= _session.Items.Count)
-                return;
-            _session.Selected = index;
-            action(_session.Items[index]);
-        }
-
-        public void RequestMore(Action<IReadOnlyList<YouTubeResult>> appended)
-        {
-            if (_closed || _loading || _session.Exhausted || _session.IsCancelled)
-                return;
-            if (_session.Page is not IResultPage page || !page.HasMore)
-            {
-                _session.Exhausted = true;
-                appended([]);
-                return;
-            }
-            _loading = true;
-            _owner._speech.Speak(
-                // Translators: Spoken when the user reaches the end of the results list and more are being fetched.
-                Tr("Loading more videos..."),
-                // Translators: The short wording spoken while more search results are being fetched.
-                Tr("Loading more videos..."));
-            var count = _owner._settings.YouTube.SearchResultCount;
-            var token = _session.Token;
-            _ = Task.Run(() => page.Take(count, token), token).ContinueWith(
-                finished => _owner._dispatcher.Post(() => Arrived(finished, appended)),
-                CancellationToken.None,
-                TaskContinuationOptions.None,
-                TaskScheduler.Default);
-        }
-
-        public void Close() => _closed = true;
-
-        public void Dispose() => Close();
-
-        /// <summary>Loads another tab of the channel and swaps the list to it.</summary>
-        /// <remarks>
-        /// A tab already visited is switched to at once, with no fetch: the session kept its rows and its
-        /// paging the first time, so returning to it is free. A tab not yet seen is fetched off the UI
-        /// thread the way <see cref="RequestMore"/> pages, and its result posted back. <paramref
-        /// name="replaced"/> is handed the rows on success, or null when the switch failed, was refused, or
-        /// the window closed under it - so a deferred answer that arrives after the dialog has gone touches
-        /// nothing that has been disposed. Only a channel session has tabs; anything else answers null at
-        /// once.
-        /// </remarks>
-        public void SwitchTab(int tabIndex, Action<IReadOnlyList<YouTubeResult>?> replaced)
-        {
-            if (_closed || _session.IsCancelled
-                || _session.Kind is not SessionKind.Channel
-                || tabIndex < 0 || tabIndex >= Client.Tabs.Keys.Length)
-            {
-                replaced(null);
-                return;
-            }
-            // Seen before: make it current and hand back its rows without a fetch.
-            if (_session.HasTab(tabIndex))
-            {
-                _session.ActivateTab(tabIndex);
-                replaced(_session.Items);
-                _owner.Prefetch(_session, 0, OpeningPrefetch);
-                return;
-            }
-            if (_loading)
-            {
-                replaced(null);
-                return;
-            }
-            _loading = true;
-            _owner._speech.Speak(
-                // Translators: Spoken while another tab of a YouTube channel is being loaded.
-                Tr("Loading..."),
-                // Translators: The short wording spoken while a channel tab is being loaded.
-                Tr("Loading..."));
-            var channelBase = _session.ChannelBase;
-            var tabKey = Client.Tabs.Keys[tabIndex];
-            var token = _session.Token;
-            _ = Task.Run(() => _owner._backend.OpenChannelTab(channelBase, tabKey, token), token).ContinueWith(
-                finished => _owner._dispatcher.Post(() => Switched(tabIndex, finished, replaced)),
-                CancellationToken.None,
-                TaskContinuationOptions.None,
-                TaskScheduler.Default);
-        }
-
-        private void Switched(
-            int tabIndex,
-            Task<Backend.ChannelTabResult> finished,
-            Action<IReadOnlyList<YouTubeResult>?> replaced)
-        {
-            _loading = false;
-            // The window closed, or another list replaced this session, while the tab was on its way. The
-            // page that came back has no home now, so it is closed here rather than leaked, and the caller
-            // is not told - its callback belongs to a dialog that has gone.
-            if (_closed || _session.IsCancelled || !ReferenceEquals(_owner._session, _session))
-            {
-                if (finished.IsCompletedSuccessfully && finished.Result.Page is IAsyncDisposable page)
-                    _ = page.DisposeAsync().AsTask();
-                return;
-            }
-            if (!finished.IsCompletedSuccessfully || finished.Result.Failure is not ResolveFailure.None)
-            {
-                replaced(null);
-                return;
-            }
-            var result = finished.Result;
-            _session.CacheTab(tabIndex, result.Items, result.Page);
-            replaced(result.Items);
-            _owner.Prefetch(_session, 0, OpeningPrefetch);
-        }
-
-        private void Arrived(Task<IReadOnlyList<YouTubeResult>> finished, Action<IReadOnlyList<YouTubeResult>> appended)
-        {
-            _loading = false;
-            if (_session.IsCancelled || !ReferenceEquals(_owner._session, _session))
-                return;
-            // A page that failed is not the end of the results, only the end of this attempt: leaving
-            // _exhausted alone lets the user try again by arrowing off the last row and back onto it.
-            if (!finished.IsCompletedSuccessfully)
-                return;
-            var page = finished.Result;
-            if (page.Count == 0)
-            {
-                _session.Exhausted = true;
-                if (!_closed)
-                    appended([]);
-                return;
-            }
-            // Kept on the session before anything else, and kept even when the window has gone. Taking a
-            // page consumes the search's continuation, so a page dropped here could never be asked for
-            // again; this way closing the list while one is in flight only defers it to the next opening.
-            var start = _session.Items.Count;
-            _session.Append(page);
-            if (!_closed)
-                appended(page);
-            _owner.Prefetch(_session, start, OpeningPrefetch);
-        }
-    }
 }

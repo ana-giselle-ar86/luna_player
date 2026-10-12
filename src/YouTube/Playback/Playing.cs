@@ -1,0 +1,171 @@
+using LunaPlayer.Accessibility;
+using LunaPlayer.Application;
+using LunaPlayer.Configuration;
+using LunaPlayer.Configuration.Models;
+using LunaPlayer.Favorites;
+using LunaPlayer.Media;
+using LunaPlayer.Playback;
+using LunaPlayer.UI;
+
+namespace LunaPlayer.YouTube.Playback;
+
+internal sealed partial class Sessions
+{
+    // ---- playing ----
+
+    /// <summary>Starts a video from a session and makes it the session's current one.</summary>
+    private bool Start(Session session, int index, Resolved ready)
+    {
+        // Refusing rather than installing it: a session that is no longer the current one has been
+        // disposed, and putting it back would leave the player driving a list nothing can add to.
+        if (!ReferenceEquals(_session, session))
+            return false;
+        if (!Open(ready, Session.AudioFor(session.Mode)))
+            return false;
+        session.Selected = index;
+        Prefetch(session, index + 1, 1);
+        return true;
+    }
+
+    /// <summary>Starts a video from a list, in front of the playlist the user opened.</summary>
+    /// <remarks>
+    /// So that playlist keeps its files, its order and its place. Nothing here has to turn shuffle off
+    /// either - the session's list starts without it, and the one the user set stays set on the playlist it
+    /// belongs to.
+    /// </remarks>
+    /// <param name="audioOnly">Whether this play is sound only - Ctrl+Enter rather than Enter - so the
+    /// player leaves any picture the stream carries undecoded.</param>
+    private bool Open(Resolved ready, bool audioOnly)
+    {
+        _activeChannelUrl = ready.Item.ChannelUrl;
+        return Report(_player.PlaySessionStream(
+            ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl, audioOnly));
+    }
+
+    /// <summary>Starts a video that came from a link rather than from a list.</summary>
+    /// <remarks>
+    /// Into the playlist the user is working in, which is where a single video belongs: there is no list
+    /// behind it to move through, nothing for Escape to go back to,
+    /// and nothing a stage of its own would keep separate. A plain network stream is opened the same way.
+    /// </remarks>
+    private bool OpenAlone(Resolved ready)
+    {
+        _activeChannelUrl = ready.Item.ChannelUrl;
+        return Report(_player.OpenStream(ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl));
+    }
+
+    private bool Report(bool opened)
+    {
+        if (opened)
+            return true;
+        ShowError(
+            // Translators: Shown when a video was found but the player could not start playing it.
+            Tr("Could not open YouTube stream."));
+        return false;
+    }
+
+    /// <summary>Moves playback to a video that is ready, adding it to the playlist if it is not there yet.
+    /// </summary>
+    private bool Advance(Session session, int from, int to, Resolved ready)
+    {
+        // Asked before anything is added to the playlist, not after. Between asking for the next video and
+        // its arriving the user may have opened something else entirely - and an entry appended on the way
+        // to a move that is then refused stays in the playlist for good, named after a video that is not
+        // playing and pointing at an address that expires within the hour.
+        if (!ReferenceEquals(_session, session)
+            || CurrentWatchUrl is not string playing || session.IndexOf(playing) != from)
+            return false;
+        if (_player.IndexOfSource(ready.Item.Url) < 0
+            && !_player.QueueSessionStream(
+                ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl, Session.AudioFor(session.Mode)))
+            return false;
+        if (!_player.Next(wrap: false))
+            return false;
+        _activeChannelUrl = ready.Item.ChannelUrl;
+        session.Selected = to;
+        Prefetch(session, to + 1, 1);
+        return true;
+    }
+
+    /// <summary>Resolves the next video in the background and moves to it when it arrives.</summary>
+    private void LoadNext(Session session, int from, int to, YouTubeResult item)
+    {
+        var pending = new PendingNext(session, from, to, item.Url);
+        _pending = pending;
+        _speech.Speak(
+            // Translators: Spoken when the video after this one is being fetched before it can be played.
+            Tr("Loading next video..."),
+            // Translators: The short wording spoken while the video after this one is being fetched.
+            Tr("Loading next video..."));
+        var task = _cache.Start(
+            _cache.Key(item.Url, Session.AudioFor(session.Mode), session.QualityFor(session.Mode)),
+            item.Url, item, Session.AudioFor(session.Mode), session.QualityFor(session.Mode),
+            session.Token);
+        _ = task.ContinueWith(
+            finished => _dispatcher.Post(() => NextReady(pending, finished.Result)),
+            CancellationToken.None,
+            TaskContinuationOptions.OnlyOnRanToCompletion,
+            TaskScheduler.Default);
+    }
+
+    /// <remarks>
+    /// The new title is announced, so the user is not left to work out what is playing. Something is also
+    /// said when the video could not be fetched, so "Loading next video..." is not left as the last thing
+    /// said with nothing following it.
+    /// </remarks>
+    private void NextReady(PendingNext pending, ResolveOutcome outcome)
+    {
+        if (!ReferenceEquals(_pending, pending) || !ReferenceEquals(_session, pending.Session))
+            return;
+        _pending = null;
+        if (outcome.Value is not Resolved ready)
+        {
+            if (outcome.Failure is ResolveFailure.Cancelled)
+                return;
+            _speech.Speak(
+                // Translators: Spoken when the video after this one could not be fetched, so playback stops.
+                Tr("Could not load the next video."),
+                // Translators: The short wording spoken when the next video could not be fetched.
+                Tr("Next video failed."));
+            return;
+        }
+        if (!Advance(pending.Session, pending.From, pending.To, ready))
+            return;
+        if (_settings.General.SpeakFileOnNavigation)
+            _speech.Speak(ready.Item.Title, ready.Item.Title);
+    }
+
+    // ---- prefetching ----
+
+    /// <summary>Starts resolving <paramref name="count"/> videos from <paramref name="start"/>, so they
+    /// play without a wait when they are reached.</summary>
+    /// <remarks>
+    /// Both streams of each: the user chooses picture or sound only when they
+    /// press the key, so both must be ready by then rather than one guessed at. The four-wide gate in
+    /// <see cref="ResolveCache"/> keeps asking for two per row from flooding YouTube - the second simply
+    /// queues behind the first - and a mode nobody plays costs one resolve that the bound soon evicts.
+    /// </remarks>
+    private void Prefetch(Session session, int start, int count)
+    {
+        if (session.IsCancelled)
+            return;
+        var end = Math.Min(session.Items.Count, Math.Max(0, start) + count);
+        for (var index = Math.Max(0, start); index < end; index++)
+        {
+            var item = session.Items[index];
+            // Only videos resolve to a stream; a playlist or channel row is browsed into, not played, so
+            // there is nothing to make ready for it.
+            if (item.ItemType is not YouTubeItemType.Video)
+                continue;
+            _cache.Prefetch(item.Url, item, false, session.VideoQuality, session.Token);
+            _cache.Prefetch(item.Url, item, true, session.AudioQuality, session.Token);
+        }
+    }
+
+    private Resolved? Ready(Session session, YouTubeResult item)
+        => _cache.TryTake(
+            _cache.Key(item.Url, Session.AudioFor(session.Mode), session.QualityFor(session.Mode)));
+
+    /// <summary>The move to the next video that is waiting on a resolve.</summary>
+    private sealed record PendingNext(Session Session, int From, int To, string WatchUrl);
+}
