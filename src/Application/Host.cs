@@ -92,11 +92,10 @@ internal sealed class ApplicationHost : IDisposable
             router, _view, _player, _settings, _settingsStore, _speech, _equalizerLibrary);
         var runner = new LunaPlayer.YouTube.Client.Runner(_settings);
         var resolver = new LunaPlayer.YouTube.Client.Resolver(runner);
-        var downloader = new LunaPlayer.YouTube.Client.Downloader(runner);
         var channels = new LunaPlayer.YouTube.Client.Channels(runner);
         var updater = new LunaPlayer.YouTube.Client.Updater(runner);
         var metadata = new LunaPlayer.YouTube.Metadata.Client();
-        var youTube = new LunaPlayer.YouTube.Backend(metadata, downloader, channels);
+        var youTube = new LunaPlayer.YouTube.Backend(metadata, channels);
         _resolveCache = new LunaPlayer.YouTube.Playback.ResolveCache(resolver);
         _components = new LunaPlayer.YouTube.Components.Service(_view, _settings, _speech, _dispatcher, updater);
         // Shared by the favourites actions and the results window's Ctrl+Space add, so both write the same store.
@@ -106,7 +105,8 @@ internal sealed class ApplicationHost : IDisposable
         Commands.YouTube.YouTube? youTubeActions = null;
         _sessions = new LunaPlayer.YouTube.Playback.Sessions(
             _view, _player, _settings, _speech, _dispatcher, metadata, youTube, _resolveCache,
-            url => youTubeActions!.DownloadTo(url),
+            url => youTubeActions!.DirectDownloadTo(url),
+            (url, title) => youTubeActions!.DownloadTo(url, title),
             url => youTubeActions!.CopyToClipboard(url),
             url => youTubeActions!.OpenInBrowser(url),
             favorites,

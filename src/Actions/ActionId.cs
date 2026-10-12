@@ -23,7 +23,7 @@ internal enum ActionId
     OpenAudioTracks, NextAudioTrack, PreviousAudioTrack,
     ToggleSubtitles, LoadSubtitleFile, LoadSubtitleUrl, RememberSubtitle,
     ToggleSilenceRemoval, EditEqualizerPreset, ManageEqualizerPresets,
-    OpenYouTubeLink, SearchYouTube, OpenFavorites, VideoDownload, VideoDescription, VideoCopyLink,
+    OpenYouTubeLink, SearchYouTube, OpenFavorites, VideoDirectDownload, VideoDownload, VideoDescription, VideoCopyLink,
     VideoOpenInBrowser, VideoOpenChannelInBrowser, VideoGoToChannel,
     UserGuide, About, ReleaseNotes, CheckAppUpdates, UpdateYouTubeComponents,
     OpenRecordingInterface, StartRecording, PauseRecording, StopRecording, OpenRecordingsFolder,

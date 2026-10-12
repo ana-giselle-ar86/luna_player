@@ -12,8 +12,10 @@ internal static partial class MainMenuBuilder
     {
         var videoItems = new List<MenuItem>();
         var videoMenu = new Menu();
-        // Translators: Item in the Video options menu that saves the video being played to a folder on this computer.
+        // Translators: Item in the Video options menu that opens the download window to choose how the video being played is saved.
         Add(videoMenu, videoItems, commandIds, shortcuts, ActionId.VideoDownload, Tr("Download..."));
+        // Translators: Item in the Video options menu that saves the video being played straight to disk with the saved download settings.
+        Add(videoMenu, videoItems, commandIds, shortcuts, ActionId.VideoDirectDownload, Tr("Direct download"));
         // Translators: Item in the Video options menu that shows the text the uploader wrote under the video.
         Add(videoMenu, videoItems, commandIds, shortcuts, ActionId.VideoDescription, Tr("Video description..."));
         // Translators: Item in the Video options menu that copies the address of the video being played.

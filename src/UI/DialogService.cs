@@ -4,6 +4,7 @@ using LunaPlayer.Configuration.Models;
 using LunaPlayer.Media;
 using LunaPlayer.UI.Equalizer;
 using WxSharp;
+using Downloads = LunaPlayer.YouTube.Download;
 
 namespace LunaPlayer.UI;
 
@@ -121,8 +122,14 @@ internal sealed class DialogService : IDialogService, IDisposable
             _youTubeResults.Refresh(prompt);
         return _youTubeResults.Show();
     }
-    public int? ChooseYouTubeQuality(IReadOnlyList<int> options, bool audioOnly) { using var dialog = new YouTube.QualitySelectionDialog(DialogParent, options, audioOnly); return dialog.Show(); }
     public bool OfferYouTubeComponents() { using var dialog = new YouTube.ComponentsDialog(DialogParent); return dialog.Show(); }
+
+    public Downloads.Request? ShowDownloadOptions(Downloads.Request defaults)
+    { using var dialog = new YouTube.DownloadDialog(DialogParent, defaults); return dialog.Show(); }
+
+    public Downloads.Outcome? RunDownload(
+        Func<Action<Downloads.Progress>, CancellationToken, Downloads.Outcome> work)
+    { using var dialog = new YouTube.DownloadProgressDialog(DialogParent, _dispatcher, work); return dialog.Show(); }
     public void ShowTextInfo(string title, string text) { using var dialog = new TextInfoDialog(DialogParent, title, text); dialog.Show(); }
     public void ShowVideoDescription(string title, string description) { using var dialog = new YouTube.DescriptionDialog(DialogParent, title, description); dialog.Show(); }
     public void ShowRecording(
