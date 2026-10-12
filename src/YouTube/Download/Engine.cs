@@ -20,7 +20,7 @@ internal sealed class Engine
     {
         try
         {
-            Directory.CreateDirectory(request.Folder);
+            Directory.CreateDirectory(request.SaveFolder());
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
         {

@@ -26,6 +26,7 @@ internal sealed class DownloadDialog : IDisposable
 
     private readonly Dialog _dialog;
     private readonly string _url;
+    private readonly bool _splitByType;
     private readonly BoxSizer _form;
     private readonly TextCtrl _fileName;
     private readonly TextCtrl _folder;
@@ -49,6 +50,7 @@ internal sealed class DownloadDialog : IDisposable
     internal DownloadDialog(Window parent, Downloads.Request defaults)
     {
         _url = defaults.Url;
+        _splitByType = defaults.SplitByType;
         // Translators: Title of the window where a download's name, type, format and quality are chosen.
         _dialog = new Dialog(parent, title: Tr("Download"), style: DialogStyle.Default | DialogStyle.ResizeBorder);
 
@@ -165,6 +167,7 @@ internal sealed class DownloadDialog : IDisposable
             Url = _url,
             Kind = (DownloadKind)Math.Max(0, _type.SelectedIndex),
             Folder = folder,
+            SplitByType = _splitByType,
             FileName = _fileName.Value.Trim(),
             VideoQuality = VideoQualities[Math.Clamp(_videoQuality.SelectedIndex, 0, VideoQualities.Length - 1)],
             Container = Containers[Math.Clamp(_container.SelectedIndex, 0, Containers.Length - 1)],
