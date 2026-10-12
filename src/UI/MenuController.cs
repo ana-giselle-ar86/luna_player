@@ -7,11 +7,8 @@ using WxSharp;
 
 namespace LunaPlayer.UI;
 
-/// <summary>Owns the menu bar and everything hanging off it: the command-id maps the window routes through,
-/// the groups of items that are enabled and disabled together, and the dynamic equalizer, subtitle and
-/// recents submenus that are rebuilt as the player runs. The main window holds one of these and forwards its
-/// <see cref="IMenuState"/> calls here, so the menu bookkeeping lives in one place rather than spread across
-/// the window.</summary>
+/// <summary>Owns the menu bar: the command-id maps, the groups enabled/disabled together, and the dynamic
+/// equalizer, subtitle and recents submenus. The main window forwards its IMenuState calls here.</summary>
 internal sealed class MenuController
 {
     private readonly Dictionary<ActionId, int> _commandIds = [];
@@ -97,15 +94,13 @@ internal sealed class MenuController
         _stopRecordingItem = menu.StopRecordingItem;
     }
 
-    /// <summary>The menu-command id reserved for each action, which the window turns an accelerator key or a
-    /// menu click back into an action through.</summary>
+    /// <summary>The menu-command id reserved for each action, used to build the accelerator table.</summary>
     internal IReadOnlyDictionary<ActionId, int> CommandIds => _commandIds;
 
-    /// <summary>Resolves a menu-command id to the fixed action it stands for, if any.</summary>
+    /// <summary>Resolves a menu-command id to the action it stands for.</summary>
     internal bool TryGetAction(int commandId, out ActionId action) => _commands.TryGetValue(commandId, out action);
 
-    /// <summary>Resolves a menu-command id to the equalizer preset it selects: the preset's id, or null for
-    /// the Off item. Returns false when the id is not an equalizer entry.</summary>
+    /// <summary>Resolves a menu-command id to the equalizer preset it selects (null = Off); false if not one.</summary>
     internal bool TryGetEqualizerPreset(int commandId, out string? presetId)
     {
         if (_equalizerCommands.TryGetValue(commandId, out var key))
@@ -117,8 +112,7 @@ internal sealed class MenuController
         return false;
     }
 
-    /// <summary>Resolves a menu-command id to the subtitle track it selects: the track id, or null for the
-    /// Off item. Returns false when the id is not a subtitle entry.</summary>
+    /// <summary>Resolves a menu-command id to the subtitle track it selects (null = Off); false if not one.</summary>
     internal bool TryGetSubtitleTrack(int commandId, out int? trackId)
     {
         if (_subtitleCommands.TryGetValue(commandId, out var key))
@@ -130,24 +124,22 @@ internal sealed class MenuController
         return false;
     }
 
-    /// <summary>Resolves a menu-command id to the recents command it stands for, if any.</summary>
+    /// <summary>Resolves a menu-command id to the recents command it stands for.</summary>
     internal bool TryGetRecent(int commandId, out RecentCommand recent) => _recentCommands.TryGetValue(commandId, out recent);
+
     internal void SetShuffleChecked(bool isChecked) => _shuffleItem.Checked = isChecked;
 
     internal void SetRepeatFileChecked(bool isChecked) => _repeatFileItem.Checked = isChecked;
 
     internal void SetSilenceRemovalChecked(bool isChecked) => _silenceRemovalItem.Checked = isChecked;
 
-    /// <summary>Ticks or clears the full-screen menu item to match the window. The window owns going full
-    /// screen; this only keeps the item in step.</summary>
+    /// <summary>Ticks the full-screen item to match the window.</summary>
     internal void SetFullScreenChecked(bool fullScreen) => _fullScreenItem.Checked = fullScreen;
 
     internal void SetFullScreenAvailable(bool available) => _fullScreenItem.Enabled = available;
 
     internal void SetEqualizerPreset(string? presetId)
     {
-        // Callers only ever name a preset the menu was built from, or nothing at all. The lookup is a
-        // guard against a name that is neither rather than a case that is expected to happen.
         var key = presetId ?? MainMenuBuilder.EqualizerOffKey;
         if (_equalizerItems.TryGetValue(key, out var item))
             item.Checked = true;
@@ -285,9 +277,8 @@ internal sealed class MenuController
         _menuBar.EnableTop(_markedMenuIndex, enabled);
     }
 
-    /// <summary>Takes a new set of shortcuts and relabels every menu item to show the key now bound to it,
-    /// keeping the label text and swapping only the part after the tab. The window rebuilds its accelerator
-    /// table from the same set separately.</summary>
+    /// <summary>Relabels every menu item with its newly-bound key (keeping the text before the tab). The
+    /// window rebuilds the accelerator table separately.</summary>
     internal void ApplyShortcuts(ShortcutManager shortcuts)
     {
         _shortcuts = shortcuts;
@@ -315,11 +306,8 @@ internal sealed class MenuController
         }
     }
 
-    /// <remarks>
-    /// An id from <see cref="IdManager.NewId"/> is never released. Putting it on a menu hands the
-    /// reservation to a <c>wxWindowIDRef</c>, and destroying the menu bar with the frame returns it; a
-    /// release afterwards would free it twice, which wxWidgets asserts on in a debug build.
-    /// </remarks>
+    /// <summary>An IdManager id is never released: the menu bar holds the reservation and returns it when
+    /// destroyed, so releasing it here would be a double free (wxWidgets asserts on it).</summary>
     private void AddCommand(ActionId action, int id)
     {
         _commandIds[action] = id;

@@ -7,10 +7,8 @@ using WxSharp;
 
 namespace LunaPlayer.UI;
 
-/// <summary>The main window itself: the frame, its transport buttons, and its lifetime. The menu bar and
-/// its state live in <see cref="MenuController"/> and the keyboard plumbing in <see cref="WindowInput"/>;
-/// this class owns both and forwards the <see cref="IMenuState"/> calls and input events to them, so what
-/// remains here is only what is truly about the window.</summary>
+/// <summary>The main window: frame, transport buttons, and lifetime. Menu state lives in MenuController and
+/// keyboard input in WindowInput; this forwards IMenuState calls and input events to them.</summary>
 internal sealed class MainFrame : IMainView
 {
     private readonly Frame _frame;
@@ -107,9 +105,7 @@ internal sealed class MainFrame : IMainView
         _frame.Closing += OnClosing;
         _menus.SetMediaLoaded(false);
     }
-    // The input events are raised by WindowInput, which owns the keyboard, the global shortcuts and the menu
-    // clicks. The window forwards them so consumers still see one view surface. CloseRequested is the window's
-    // own, raised from OnClosing below.
+    // Input events are raised by WindowInput and forwarded here; CloseRequested is the window's own.
     public event Action<ActionId>? ActionRequested
     {
         add => _input.ActionRequested += value;
@@ -174,7 +170,7 @@ internal sealed class MainFrame : IMainView
 
     public bool IsFullScreen => _frame.IsFullScreen;
 
-    /// <summary>The dialogs, built lazily and owned here so the window outlives them and parents them.</summary>
+    /// <summary>Dialogs, built lazily and parented to this window.</summary>
     public IDialogService Dialogs => _dialogs ??= new DialogService(_frame, _dispatcher, _catalog, _input.GlobalShortcuts);
 
     public bool ApplyGlobalShortcuts(ShortcutManager shortcuts) => _input.ApplyGlobalShortcuts(shortcuts);

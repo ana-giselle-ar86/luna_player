@@ -91,13 +91,7 @@ internal static partial class Utils
         return Process.Start(info) ?? throw new InvalidOperationException($"Could not start {executable}.");
     }
 
-    /// <summary>Adds the cookie source the user chose, if any, to a yt-dlp argument list.</summary>
-    /// <remarks>
-    /// The two sources are mutually exclusive - the preferences page enforces that - so at most one of these
-    /// is ever added. A file that no longer exists is silently skipped rather than handed to yt-dlp, which
-    /// would fail the run outright. Shared by the resolving/listing runner and the download engine so both
-    /// read one source.
-    /// </remarks>
+    /// <summary>Adds the chosen cookie source to a yt-dlp argument list, if any. Shared by the runner and the engine.</summary>
     internal static void AddCookies(List<string> arguments, YouTubeSettings youTube)
     {
         if (youTube.CookiesFromFirefox)
