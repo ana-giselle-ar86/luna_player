@@ -38,12 +38,8 @@ internal sealed record MainMenuComponents(
     MenuItem StartRecordingItem,
     MenuItem PauseRecordingItem,
     MenuItem StopRecordingItem);
-/// <summary>Assembles the menu bar from one builder per top-level menu, each kept in its own file beside
-/// this one (<c>Menus/FileMenu.cs</c>, <c>Menus/PlayerMenu.cs</c>, and so on). This file holds only what is
-/// shared: the <see cref="MainMenuComponents"/> the main window reads back, the <see cref="Build"/>
-/// orchestrator that fixes the menu-bar order and the position indices written out below, and the two
-/// helpers (<see cref="Add"/>, <see cref="Label"/>) every menu builder leans on. A new menu is a new file
-/// and one more line here, so no single file grows with the menus.</summary>
+/// <summary>Assembles the menu bar from one builder per top-level menu (see Menus/). Holds the shared Build
+/// orchestrator and the Add/Label helpers; each menu lives in its own file.</summary>
 internal static partial class MainMenuBuilder
 {
     internal static MainMenuComponents Build(
@@ -100,8 +96,7 @@ internal static partial class MainMenuBuilder
             player.FullScreenItem, recording.StartItem, recording.PauseItem, recording.StopItem);
     }
 
-    /// <summary>Appends one action-backed item to <paramref name="menu"/>, labelled with its shortcut, and
-    /// records it in <paramref name="items"/> so the main window can enable or grey it as a group.</summary>
+    /// <summary>Appends an action item (labelled with its shortcut) and records it for group enable/disable.</summary>
     private static void Add(
         Menu menu,
         ICollection<MenuItem> items,
@@ -111,8 +106,7 @@ internal static partial class MainMenuBuilder
         string label)
         => items.Add(menu.Append(commandIds[action], Label(label, action, shortcuts)));
 
-    /// <summary>A menu label with the action's shortcut appended after a tab, or the bare label when the
-    /// action has no shortcut bound.</summary>
+    /// <summary>The label with the action's shortcut after a tab, or the bare label when none is bound.</summary>
     private static string Label(string label, ActionId action, ShortcutManager shortcuts)
         => shortcuts.Get(action) is Shortcut shortcut
             ? $"{label}\t{shortcut.ToDisplayString()}"

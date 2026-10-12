@@ -4,10 +4,8 @@ using WxSharp;
 
 namespace LunaPlayer.UI;
 
-/// <summary>Everything that turns a key into a request on the main window: the local accelerator table, the
-/// system-wide shortcuts, the menu-command clicks, and the bare Escape key. It resolves each through the
-/// <see cref="MenuController"/>'s command maps and raises the events the window exposes, so the window itself
-/// holds no keyboard plumbing. Also reads the live modifier state used to defer an Alt+F4 close.</summary>
+/// <summary>Turns keys into requests on the main window: accelerators, global shortcuts, menu clicks, and
+/// Escape. Resolves menu ids through the MenuController and raises the window's input events.</summary>
 internal sealed partial class WindowInput : IDisposable
 {
     private readonly Frame _frame;
@@ -37,37 +35,32 @@ internal sealed partial class WindowInput : IDisposable
     internal event Action<int?>? SubtitleTrackRequested;
     internal event Action<RecentCommand>? RecentRequested;
 
-    /// <summary>Asked when Escape is pressed with no modifier. Returning true means it was dealt with and
-    /// the key goes no further.</summary>
+    /// <summary>True means Escape was handled and should go no further.</summary>
     internal event Func<bool>? EscapePressed;
 
-    /// <summary>The system-wide shortcut watcher, shared with the dialogs so a dialog can pause and resume
-    /// it. Owned here and torn down with this object.</summary>
+    /// <summary>The system-wide shortcut watcher, shared with the dialogs. Owned and disposed here.</summary>
     internal GlobalShortcuts GlobalShortcuts => _globalShortcuts;
 
-    /// <summary>Raises an action request from a source outside the keyboard - the window's transport buttons
-    /// go through here so every action travels one path.</summary>
+    /// <summary>Raises an action request from outside the keyboard (the transport buttons).</summary>
     internal void Request(ActionId action) => ActionRequested?.Invoke(action);
 
     internal bool ApplyGlobalShortcuts(ShortcutManager shortcuts)
         => _globalShortcuts.Apply(shortcuts.GetBindings());
 
-    /// <summary>Builds the local accelerator table again from a new set of shortcuts.</summary>
+    /// <summary>Rebuilds the local accelerator table from a new set of shortcuts.</summary>
     internal void ApplyAccelerators(ShortcutManager shortcuts) => BuildAccelerators(shortcuts);
 
-    /// <summary>Stops the system-wide shortcuts without tearing the rest down, for the close sequence: no
-    /// action should arrive once shutdown has begun. Disposing is idempotent, so the final
-    /// <see cref="Dispose"/> may still run.</summary>
+    /// <summary>Stops global shortcuts early for the close sequence. Disposing is idempotent.</summary>
     internal void StopGlobalShortcuts() => _globalShortcuts.Dispose();
 
     public void Dispose() => _globalShortcuts.Dispose();
+
     private void BuildAccelerators(ShortcutManager shortcuts)
     {
         var accelerators = new List<AcceleratorEntry>();
         foreach (var binding in shortcuts.GetBindings())
         {
-            // An accelerator table cannot express the Windows key, so a binding using it is left to the
-            // global hot key registration instead of failing the whole table.
+            // The Windows key can't go in an accelerator table; it's left to the global hot-key registration.
             if ((binding.Shortcut.Modifiers & ShortcutModifiers.Win) != 0) continue;
             var commandId = _menus.CommandIds[binding.Action];
             var display = binding.Shortcut.ToDisplayString();
@@ -85,9 +78,7 @@ internal sealed partial class WindowInput : IDisposable
             Request(action);
             return;
         }
-        // Guarded here rather than further along. Menu commands bound to an action are guarded where they
-        // are dispatched, but these are not, and it is still wxWidgets calling in: an exception let past
-        // would unwind into C++ frames.
+        // Guarded: wxWidgets is calling in, so an exception must not unwind into C++ frames.
         if (_menus.TryGetEqualizerPreset(args.Id, out var presetId))
         {
             LunaPlayer.Application.CrashReport.Guard(() => EqualizerPresetRequested?.Invoke(presetId));
@@ -102,17 +93,12 @@ internal sealed partial class WindowInput : IDisposable
             LunaPlayer.Application.CrashReport.Guard(() => RecentRequested?.Invoke(recent));
     }
 
-    /// <remarks>
-    /// Only a bare Escape, and only when something answers to it. Anything else is skipped so the window
-    /// keeps behaving as it did: Escape is not a shortcut the user can bind, and swallowing it
-    /// unconditionally would take away the key that closes things.
-    /// </remarks>
+    /// <summary>Only a bare Escape, and only when something handles it; everything else is skipped.</summary>
     private void OnCharHook(object? sender, KeyEventArgs args)
     {
         if (args.Code == Key.Escape && args.Modifiers == KeyModifiers.None)
         {
-            // Guarded here rather than at the far end: this runs inside a wxWidgets key event, and an
-            // exception thrown past it would unwind into C++ frames and take the process with it.
+            // Guarded: this runs inside a wxWidgets key event.
             var handled = false;
             LunaPlayer.Application.CrashReport.Guard(() => handled = EscapePressed?.Invoke() == true);
             if (handled)
@@ -121,8 +107,7 @@ internal sealed partial class WindowInput : IDisposable
         args.Skip();
     }
 
-    /// <summary>Whether any of the keys that make up a window-closing chord (the modifiers, a Windows key, or
-    /// F4) is physically down right now. Used to hold an Alt+F4 close until the chord is released.</summary>
+    /// <summary>Whether any key of a window-closing chord is down, to hold an Alt+F4 close until released.</summary>
     internal bool CloseChordIsDown()
         => IsKeyDown(VirtualKeyShift)
             || IsKeyDown(VirtualKeyControl)
