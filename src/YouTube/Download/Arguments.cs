@@ -19,6 +19,7 @@ internal static class Arguments
             "--no-playlist",
             "--no-warnings",
             "--newline",
+            "--progress",
             "--force-overwrites",
             "--progress-template",
             $"download:{ProgressSentinel}|%(progress.status)s|%(progress.downloaded_bytes)s|%(progress.total_bytes)s|%(progress.total_bytes_estimate)s|%(progress.speed)s|%(progress.eta)s",
