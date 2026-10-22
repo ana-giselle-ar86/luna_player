@@ -2081,6 +2081,12 @@ namespace MpvNet
                 return handle;
             }
         }
+
+        // Async replies are queued even when replyUserData is zero. With the event thread enabled they
+        // must go to the client that thread drains, not the synchronous control client: an unread reply
+        // queue eventually fills and prevents all further async loads. Manual mode keeps WaitEvent's client.
+        private IntPtr AsyncHandle => eventThread is null ? handle : eventHandle;
+
         public string ClientName => Native.Utf8(Native.mpv_client_name(handle)) ?? "";
         public static (int Major, int Minor) ClientApiVersion
         {
@@ -2534,7 +2540,7 @@ namespace MpvNet
         {
             CheckCoreAlive();
             using var a = new UnmanagedArgs(new object?[] { name }.Concat(args));
-            MpvError.Throw(Native.mpv_command_async(handle, replyUserData, a.Pointer));
+            MpvError.Throw(Native.mpv_command_async(AsyncHandle, replyUserData, a.Pointer));
         }
 
         public object? NodeCommand(string name, params object?[] args)
@@ -2557,7 +2563,7 @@ namespace MpvNet
         {
             CheckCoreAlive();
             using var input = new NodeStringArray(new object?[] { name }.Concat(args));
-            MpvError.Throw(Native.mpv_command_node_async(handle, replyUserData, ref input.Node));
+            MpvError.Throw(Native.mpv_command_node_async(AsyncHandle, replyUserData, ref input.Node));
         }
 
         public void GetPropertyAsync(
@@ -2568,7 +2574,7 @@ namespace MpvNet
         {
             CheckCoreAlive();
             MpvError.Throw(
-                Native.mpv_get_property_async(handle, replyUserData, Native.Z(name), format)
+                Native.mpv_get_property_async(AsyncHandle, replyUserData, Native.Z(name), format)
             );
         }
 
@@ -2587,7 +2593,7 @@ namespace MpvNet
                     Marshal.StructureToPtr(n.Node, p, false);
                     MpvError.Throw(
                         Native.mpv_set_property_async(
-                            handle,
+                            AsyncHandle,
                             replyUserData,
                             Native.Z(name),
                             MpvFormat.Node,
@@ -2615,7 +2621,7 @@ namespace MpvNet
                     Marshal.WriteIntPtr(pointer, text);
                     MpvError.Throw(
                         Native.mpv_set_property_async(
-                            handle,
+                            AsyncHandle,
                             replyUserData,
                             Native.Z(name),
                             MpvFormat.String,
@@ -3279,7 +3285,7 @@ namespace MpvNet
         // The same as LoadFile but issued through mpv_command_async: it returns the instant the request is
         // queued, without waiting for mpv's core to accept or start it, so the caller's thread - the UI
         // thread, here - is never blocked by a slow stream opening. Load failures still arrive as the usual
-        // end-file/error events. replyUserData is 0 because nothing waits for the completion reply.
+        // end-file/error events. The event thread still drains the completion reply with replyUserData 0.
         public void LoadFileAsync(
             string filename,
             string mode = "replace",

@@ -11,6 +11,8 @@ internal sealed class ApplicationHost : IDisposable
     private readonly MainFrame _view;
     private readonly Startup _startup;
     private readonly List<IReadOnlyList<string>> _pendingPathRequests = [];
+    private IReadOnlyList<string>? _pendingExternalPaths;
+    private int _externalOpenQueued;
     private Features? _features;
     private bool _shown;
     private bool _stopping;
@@ -38,7 +40,7 @@ internal sealed class ApplicationHost : IDisposable
         _view.Show();
         _startup.ShellPainted();
         // Named-pipe construction stays on its own thread and starts only after the shell is painted.
-        _singleInstance.StartListening(paths => _dispatcher.Post(() => HandleExternalPaths(paths)));
+        _singleInstance.StartListening(QueueExternalPaths);
         _startup.WindowShown();
     }
 
@@ -80,6 +82,30 @@ internal sealed class ApplicationHost : IDisposable
         else
             _ = launch.ContinueWith(OpenPrepared, CancellationToken.None,
                 TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+    }
+
+    private void QueueExternalPaths(IReadOnlyList<string> paths)
+    {
+        if (paths.Count == 0)
+        {
+            _dispatcher.Post(() => HandleExternalPaths(paths));
+            return;
+        }
+        // Explorer key repeat can produce opens faster than playback can replace a file. Keep only the
+        // latest unhandled request, rather than making recovery replay every stale file-opening command.
+        Interlocked.Exchange(ref _pendingExternalPaths, paths);
+        if (Interlocked.Exchange(ref _externalOpenQueued, 1) == 0)
+            _dispatcher.Post(OpenPendingExternalPaths);
+    }
+
+    private void OpenPendingExternalPaths()
+    {
+        // Release the posting flag before taking the request. A concurrent arrival is either included in
+        // this exchange or schedules another callback; it can never be left pending without a callback.
+        Interlocked.Exchange(ref _externalOpenQueued, 0);
+        var paths = Interlocked.Exchange(ref _pendingExternalPaths, null);
+        if (paths is not null)
+            HandleExternalPaths(paths);
     }
 
     private void HandleExternalPaths(IReadOnlyList<string> paths)
