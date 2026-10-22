@@ -55,6 +55,7 @@ internal sealed partial class Engine
 
     private void ResumePlayback()
     {
+        _seekFadeActive = false;
         _pauseRequested = false;
         if (_fadePauseResume && _fadeIntervalMilliseconds > 0)
         {
@@ -100,6 +101,7 @@ internal sealed partial class Engine
         }
         if (IsPaused)
             return;
+        _seekFadeActive = false;
         CancelEndFade();
         if (!_fadePauseResume || _fadeIntervalMilliseconds <= 0)
         {
@@ -175,16 +177,18 @@ internal sealed partial class Engine
 
     private void FadeAroundSeek(Func<bool> seek)
     {
-        CancelEndFade();
-        if (!_fadeSeeking || !_loaded)
+        if (!_fadeSeeking || !_loaded || IsPaused)
         {
+            CancelEndFade();
             seek();
             return;
         }
 
-        // Seeking must remain responsive when a key is pressed repeatedly. Silence the current sample,
-        // move immediately, then fade the new position in; another seek simply replaces this fade.
+        CancelEndFade();
+        // Do not fade the destination out after seeking. The outgoing audio is silenced before moving,
+        // then the new position fades in. Repeated requests replace the fade rather than delaying seeks.
         _seekFadeActive = true;
+        _pauseRequested = null;
         _fader.Set(0);
         if (!seek())
         {
@@ -192,7 +196,8 @@ internal sealed partial class Engine
             _fader.Set(1);
             return;
         }
-        _fader.FadeTo(1, _seekFadeIntervalMilliseconds, () => _seekFadeActive = false);
+        _fader.FadeTo(1, _seekFadeIntervalMilliseconds, () => _seekFadeActive = false,
+            startWhen: () => ReadBoolean("seeking") != true);
     }
 
 }

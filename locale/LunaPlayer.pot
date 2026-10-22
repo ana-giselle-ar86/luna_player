@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Luna Player\n"
 "Report-Msgid-Bugs-To: https://github.com/diamondStar35/luna_player/issues\n"
-"POT-Creation-Date: 2026-10-20 14:26+0300\n"
+"POT-Creation-Date: 2026-10-22 12:30+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -77,26 +77,6 @@ msgstr ""
 #. Translators: Name of the command that ends a recording and closes the file.
 #: Actions/GlobalActions.cs:33 Actions/RecordingActions.cs:24
 msgid "Stop recording"
-msgstr ""
-
-#. Translators: Name of the command that opens the Luna Player user guide.
-#. Translators: Help menu item that opens the user guide matching the application language.
-#: Actions/HelpActions.cs:9 Application/Commands/App/Help.cs:34
-#: Application/Commands/App/Help.cs:41 UI/Menus/HelpMenu.cs:18
-msgid "User guide"
-msgstr ""
-
-#. Translators: Name of the command that shows information about Luna Player.
-#. Translators: Help menu item that shows information about Luna Player.
-#: Actions/HelpActions.cs:11 UI/Menus/HelpMenu.cs:20
-msgid "About"
-msgstr ""
-
-#. Translators: Name of the command that opens the notes for the installed Luna Player release.
-#. Translators: Help menu item that opens the GitHub page for the installed release.
-#: Actions/HelpActions.cs:13 Application/Commands/App/Help.cs:51
-#: UI/Menus/HelpMenu.cs:22
-msgid "Release notes"
 msgstr ""
 
 #. Translators: Name of the command that opens the window where IPTV sources are added and edited.
@@ -403,6 +383,7 @@ msgid "Load subtitle from a web address"
 msgstr ""
 
 #. Translators: Name of the command that keeps the chosen subtitle selected across the playlist for this session.
+#. Translators: Subtitles submenu item that keeps the chosen subtitle selected until the player closes.
 #: Actions/PlaybackActions.cs:100 UI/Menus/PlayerMenu.cs:278
 msgid "Remember subtitle for this session"
 msgstr ""
@@ -614,6 +595,40 @@ msgstr ""
 msgid "Open the recordings folder"
 msgstr ""
 
+#. Translators: Name of the command that opens the Luna Player user guide.
+#. Translators: Title of an error about opening the user guide.
+#. Translators: Title of an error about the user guide.
+#. Translators: Help menu item that opens the user guide matching the application language.
+#: Actions/Registry.cs:16 Application/Commands/App/Help.cs:35
+#: Application/Commands/App/Help.cs:43 UI/Menus/HelpMenu.cs:18
+msgid "User guide"
+msgstr ""
+
+#. Translators: Name of the command that shows information about Luna Player.
+#. Translators: Help menu item that shows information about Luna Player.
+#: Actions/Registry.cs:18 UI/Menus/HelpMenu.cs:20
+msgid "About"
+msgstr ""
+
+#. Translators: Name of the command that opens the notes for the installed Luna Player release.
+#. Translators: Title of an error about opening the release notes.
+#. Translators: Help menu item that opens the GitHub page for the installed release.
+#: Actions/Registry.cs:20 Application/Commands/App/Help.cs:54
+#: UI/Menus/HelpMenu.cs:22
+msgid "Release notes"
+msgstr ""
+
+#. Translators: Name of the command that checks whether a newer Luna Player release is available.
+#. Translators: Help menu item that checks whether a newer Luna Player release is available.
+#: Actions/Registry.cs:30 UI/Menus/HelpMenu.cs:13
+msgid "Check for app updates"
+msgstr ""
+
+#. Translators: Name of the command that opens the window for converting files to another audio format.
+#: Actions/Registry.cs:40
+msgid "Open the media converter"
+msgstr ""
+
 #. Translators: Name of the command that opens the window where a sleep timer is set.
 #: Actions/SleepTimerActions.cs:16
 msgid "Set sleep timer..."
@@ -627,17 +642,6 @@ msgstr ""
 #. Translators: Name of the command that speaks how long is left before the sleep timer fires.
 #: Actions/SleepTimerActions.cs:21
 msgid "Sleep timer remaining"
-msgstr ""
-
-#. Translators: Name of the command that opens the window for converting files to another audio format.
-#: Actions/ToolsActions.cs:16
-msgid "Open the media converter"
-msgstr ""
-
-#. Translators: Name of the command that checks whether a newer Luna Player release is available.
-#. Translators: Help menu item that checks whether a newer Luna Player release is available.
-#: Actions/UpdateActions.cs:9 UI/Menus/HelpMenu.cs:13
-msgid "Check for app updates"
 msgstr ""
 
 #. Translators: Name of the command that asks for a YouTube address and plays what it points at.
@@ -718,52 +722,56 @@ msgid "The user guide could not be opened."
 msgstr ""
 
 #. Translators: Shown when no local user-guide HTML file was included with the application.
-#: Application/Commands/App/Help.cs:40
+#: Application/Commands/App/Help.cs:41
 msgid "The user guide is not installed."
 msgstr ""
 
 #. Translators: Shown when Windows cannot open the release page in a web browser.
-#: Application/Commands/App/Help.cs:50
+#: Application/Commands/App/Help.cs:52
 msgid "The release notes could not be opened."
 msgstr ""
 
 #. Translators: Detail shown when Windows accepts an item to open but starts no application.
-#: Application/Commands/App/Help.cs:61
+#: Application/Commands/App/Help.cs:64
 msgid "Windows did not start an application for this item."
 msgstr ""
 
 #. Translators: Shown when the setting that evens out the loudness could not be turned on or off.
-#: Application/Commands/App/Preferences.cs:38
+#: Application/Commands/App/Preferences.cs:39
 msgid "Could not apply the audio normalization filter."
 msgstr ""
 
+#. Translators: Title of an error caused by applying a preference.
+#. Translators: Title of an error caused by saving preferences.
+#. Translators: Title of the message shown after changing the language preference.
 #. Translators: Title of the window holding every setting of the player.
-#: Application/Commands/App/Preferences.cs:38
-#: Application/Commands/App/Preferences.cs:42
-#: Application/Commands/App/Preferences.cs:48
-#: Application/Commands/App/Preferences.cs:116
-#: Application/Commands/App/Preferences.cs:123
-#: UI/Dialogs/PreferencesDialog.cs:38 UI/Dialogs/PreferencesDialog.cs:218
+#. Translators: Title of an error caused by an invalid preference value.
+#: Application/Commands/App/Preferences.cs:41
+#: Application/Commands/App/Preferences.cs:47
+#: Application/Commands/App/Preferences.cs:55
+#: Application/Commands/App/Preferences.cs:125
+#: Application/Commands/App/Preferences.cs:134
+#: UI/Dialogs/PreferencesDialog.cs:38 UI/Dialogs/PreferencesDialog.cs:228
 msgid "Preferences"
 msgstr ""
 
 #. Translators: Shown when the setting that mixes both channels into one could not be turned on or off.
-#: Application/Commands/App/Preferences.cs:42
+#: Application/Commands/App/Preferences.cs:45
 msgid "Could not apply the mono audio filter."
 msgstr ""
 
 #. Translators: Shown when the setting that trims the silent parts out could not be turned on or off.
-#: Application/Commands/App/Preferences.cs:48
+#: Application/Commands/App/Preferences.cs:53
 msgid "Could not apply the silence removal filter."
 msgstr ""
 
 #. Translators: Shown when the settings the user accepted could not be written to disk.
-#: Application/Commands/App/Preferences.cs:116
+#: Application/Commands/App/Preferences.cs:123
 msgid "Could not save settings."
 msgstr ""
 
 #. Translators: Shown after the user picks a different language, because the player only reads it when it starts.
-#: Application/Commands/App/Preferences.cs:123
+#: Application/Commands/App/Preferences.cs:132
 msgid "Please restart the app for language changes to take effect."
 msgstr ""
 
@@ -771,8 +779,8 @@ msgstr ""
 #. Translators: Title of the message shown once a bookmark has been made.
 #. Translators: Title of the message shown when a download has finished.
 #: Application/Commands/App/Tools.cs:55
-#: Application/Commands/Playback/Bookmarks.cs:66
-#: Application/Commands/YouTube/Download.cs:110
+#: Application/Commands/Playback/Bookmarks.cs:70
+#: Application/Commands/YouTube/Download.cs:111
 msgid "Success"
 msgstr ""
 
@@ -794,8 +802,8 @@ msgstr ""
 #. Translators: Title of the prompt shown when the user tries to stop a running download.
 #: Application/Commands/App/Tools.cs:69
 #: Application/Commands/Playback/SelectionSaving.cs:159
-#: UI/Dialogs/ConversionProgressDialog.cs:180 UI/YouTube/DownloadDialog.cs:165
-#: UI/YouTube/DownloadProgressDialog.cs:205
+#: UI/Dialogs/ConversionProgressDialog.cs:180 UI/YouTube/DownloadDialog.cs:171
+#: UI/YouTube/DownloadProgressDialog.cs:209
 msgid "Warning"
 msgstr ""
 
@@ -811,40 +819,47 @@ msgid "Checking for app updates"
 msgstr ""
 
 #. Translators: Initial message shown while contacting the application update server.
+#. Translators: Status shown while the application update check is still running.
 #: Application/Commands/App/Updates.cs:72
-#: Application/Commands/App/Updates.cs:73
+#: Application/Commands/App/Updates.cs:74
 msgid "Checking for updates..."
 msgstr ""
 
 #. Translators: Shown when a manual application update check fails. {reason} is the
 #. network or data error reported by the system.
-#: Application/Commands/App/Updates.cs:109
+#: Application/Commands/App/Updates.cs:110
 msgid ""
 "Could not check for updates.\n"
 "\n"
 "{reason}"
 msgstr ""
 
-#: Application/Commands/App/Updates.cs:110
-#: Application/Commands/App/Updates.cs:131
-#: Application/Commands/App/Updates.cs:210
-#: Application/Commands/App/Updates.cs:218
-#: Application/Commands/App/Updates.cs:232
+#. Translators: Title of an error raised while checking for an application update.
+#. Translators: Title of a message about an unavailable application update package.
+#. Translators: Title of an application update integrity error.
+#. Translators: Title of an error raised while downloading an application update.
+#. Translators: Title of an error raised while starting the application updater.
+#: Application/Commands/App/Updates.cs:112
+#: Application/Commands/App/Updates.cs:137
+#: Application/Commands/App/Updates.cs:217
+#: Application/Commands/App/Updates.cs:226
+#: Application/Commands/App/Updates.cs:241
 msgid "Application update"
 msgstr ""
 
-#: Application/Commands/App/Updates.cs:119
-msgid "No update"
+#. Translators: Shown after a manual check finds no newer Luna Player release.
+#: Application/Commands/App/Updates.cs:121
+msgid "You are using the latest version."
 msgstr ""
 
-#. Translators: Shown after a manual check finds no newer Luna Player release.
-#: Application/Commands/App/Updates.cs:119
-msgid "You are using the latest version."
+#. Translators: Title of the message shown when no newer application release exists.
+#: Application/Commands/App/Updates.cs:123
+msgid "No update"
 msgstr ""
 
 #. Translators: Shown when info.json announces a newer application release before its
 #. installer, portable archive, or checksum file has finished being published.
-#: Application/Commands/App/Updates.cs:130
+#: Application/Commands/App/Updates.cs:135
 msgid ""
 "A new version has been announced, but its download is not available yet. "
 "Please try again later."
@@ -852,18 +867,18 @@ msgstr ""
 
 #. Translators: Shown and spoken after an application update has downloaded, while its SHA-256
 #. checksum is compared with the checksum published alongside the release.
-#: Application/Commands/App/Updates.cs:146
+#: Application/Commands/App/Updates.cs:152
 msgid "Verifying integrity..."
 msgstr ""
 
 #. Translators: Title of the window shown while a Luna Player update package is downloaded.
-#: Application/Commands/App/Updates.cs:161
+#: Application/Commands/App/Updates.cs:167
 msgid "Downloading update"
 msgstr ""
 
 #. Translators: Shown when an application's downloaded update does not match the
 #. SHA-256 checksum published with the release, or that checksum cannot be obtained.
-#: Application/Commands/App/Updates.cs:209
+#: Application/Commands/App/Updates.cs:215
 msgid ""
 "The downloaded update failed its integrity check. This may indicate "
 "malicious activity on the network or an internet problem. The updater was "
@@ -872,7 +887,7 @@ msgstr ""
 
 #. Translators: Shown when the application update package cannot be downloaded. {reason}
 #. is the network or file error reported by the system.
-#: Application/Commands/App/Updates.cs:217
+#: Application/Commands/App/Updates.cs:224
 msgid ""
 "Could not download update.\n"
 "\n"
@@ -881,14 +896,14 @@ msgstr ""
 
 #. Translators: Shown when the downloaded update cannot be handed to Updater.exe. {reason}
 #. is the error reported by the system.
-#: Application/Commands/App/Updates.cs:231
+#: Application/Commands/App/Updates.cs:239
 msgid ""
 "Could not start the updater.\n"
 "\n"
 "{reason}"
 msgstr ""
 
-#: Application/Commands/App/Updates.cs:244
+#: Application/Commands/App/Updates.cs:253
 msgid ""
 "Total size: {total}\n"
 "Downloaded: {downloaded}\n"
@@ -897,7 +912,7 @@ msgstr ""
 
 #. Translators: Stands in for a file size the download server did not state.
 #. Translators: Stands in for a file size the download did not state.
-#: Application/Commands/App/Updates.cs:254 YouTube/Components/Service.cs:308
+#: Application/Commands/App/Updates.cs:263 YouTube/Components/Service.cs:313
 msgid "Unknown"
 msgstr ""
 
@@ -912,309 +927,334 @@ msgid "Enter new name for the file."
 msgstr ""
 
 #. Translators: Title of the window that asks for the name the current file should be given.
-#: Application/Commands/Files/Edit.cs:46 Application/Commands/Files/Edit.cs:54
-#: Application/Commands/Files/Edit.cs:63
+#. Translators: Title of the warning shown when a new file name is empty.
+#. Translators: Title of the warning shown when a new file name is already in use.
+#: Application/Commands/Files/Edit.cs:46 Application/Commands/Files/Edit.cs:57
+#: Application/Commands/Files/Edit.cs:69
 msgid "Rename File"
 msgstr ""
 
 #. Translators: Spoken and shown when the user confirms a new file name without typing anything.
-#: Application/Commands/Files/Edit.cs:54
+#: Application/Commands/Files/Edit.cs:55
 msgid "File name cannot be empty."
 msgstr ""
 
-#. Translators: Spoken and shown when the new name given to a file is already taken by another file in the same folder.
-#: Application/Commands/Files/Edit.cs:63
+#. Translators: Spoken and shown when a new file name is already used in the same folder.
+#: Application/Commands/Files/Edit.cs:67
 msgid "A file with that name already exists."
 msgstr ""
 
 #. Translators: Spoken once the current file has been given its new name.
-#: Application/Commands/Files/Edit.cs:69
+#: Application/Commands/Files/Edit.cs:75
 msgid "File renamed."
 msgstr ""
 
 #. Translators: The short wording spoken once the current file has been given its new name.
-#: Application/Commands/Files/Edit.cs:71
+#: Application/Commands/Files/Edit.cs:77
 msgid "Renamed."
 msgstr ""
 
 #. Translators: Spoken when the current file could not be given a new name.
-#: Application/Commands/Files/Edit.cs:75
+#: Application/Commands/Files/Edit.cs:81
 msgid "Could not rename the file."
 msgstr ""
 
 #. Translators: The short wording spoken when the current file could not be given a new name.
-#: Application/Commands/Files/Edit.cs:77
+#: Application/Commands/Files/Edit.cs:83
 msgid "Rename failed."
 msgstr ""
 
 #. Translators: Spoken when the user asks to delete what is playing but it is a stream rather than a file on this computer.
-#: Application/Commands/Files/Edit.cs:83
+#: Application/Commands/Files/Edit.cs:89
 msgid "Delete is available only for local files."
 msgstr ""
 
 #. Translators: Asks the user to confirm deleting a file. {name} is the file name.
-#: Application/Commands/Files/Edit.cs:88
+#: Application/Commands/Files/Edit.cs:94
 msgid "Delete '{name}'?"
 msgstr ""
 
 #. Translators: Title of the window that asks the user to confirm deleting a file.
-#: Application/Commands/Files/Edit.cs:90
-#: Application/Commands/Files/MarkedFiles.cs:81
+#. Translators: Title of the dialog that confirms deletion of marked files.
+#: Application/Commands/Files/Edit.cs:96
+#: Application/Commands/Files/MarkedFiles.cs:86
 msgid "Confirm Delete"
 msgstr ""
 
 #. Translators: Spoken once the current file has been deleted from the disk.
-#: Application/Commands/Files/Edit.cs:95
+#: Application/Commands/Files/Edit.cs:101
 msgid "File deleted."
 msgstr ""
 
 #. Translators: The short wording spoken once the current file has been deleted from the disk.
-#: Application/Commands/Files/Edit.cs:97
-#: Application/Commands/Files/MarkedFiles.cs:97
+#. Translators: Short announcement once marked files have been deleted.
+#: Application/Commands/Files/Edit.cs:103
+#: Application/Commands/Files/MarkedFiles.cs:104
 msgid "Deleted."
 msgstr ""
 
 #. Translators: Spoken when the current file could not be deleted from the disk.
-#: Application/Commands/Files/Edit.cs:101
+#: Application/Commands/Files/Edit.cs:107
 msgid "Could not delete the file."
 msgstr ""
 
 #. Translators: The short wording spoken when the current file could not be deleted from the disk.
-#: Application/Commands/Files/Edit.cs:103
-#: Application/Commands/Files/MarkedFiles.cs:113
+#. Translators: Short announcement when no marked file could be deleted.
+#: Application/Commands/Files/Edit.cs:109
+#: Application/Commands/Files/MarkedFiles.cs:125
 msgid "Delete failed."
 msgstr ""
 
 #. Translators: Spoken once the current file has been copied to the clipboard, ready to be pasted elsewhere.
-#: Application/Commands/Files/Edit.cs:114
+#: Application/Commands/Files/Edit.cs:120
 msgid "Current file copied to clipboard."
 msgstr ""
 
 #. Translators: Spoken when the current file could not be copied to the clipboard.
-#: Application/Commands/Files/Edit.cs:116
+#: Application/Commands/Files/Edit.cs:122
 msgid "Unable to copy current file to clipboard."
 msgstr ""
 
 #. Translators: The short wording spoken once the current file has been copied to the clipboard.
+#. Translators: Short announcement after copying the current file path succeeds.
+#. Translators: Short announcement after copying marked files to the clipboard succeeds.
+#. Translators: The short wording spoken once the marked files have been copied into the chosen folder.
 #. Translators: The short wording spoken once the address of a video has been copied.
-#: Application/Commands/Files/Edit.cs:119
-#: Application/Commands/Files/Info.cs:146
-#: Application/Commands/Files/MarkedFiles.cs:71
-#: Application/Commands/Files/MarkedFiles.cs:150
-#: Application/Commands/YouTube/CurrentVideo.cs:98
+#: Application/Commands/Files/Edit.cs:125
+#: Application/Commands/Files/Info.cs:148
+#: Application/Commands/Files/MarkedFiles.cs:73
+#: Application/Commands/Files/MarkedFiles.cs:168
+#: Application/Commands/YouTube/CurrentVideo.cs:101
 msgid "Copied."
 msgstr ""
 
 #. Translators: The short wording spoken when the current file could not be copied to the clipboard.
+#. Translators: Short announcement after copying the current file path fails.
+#. Translators: Short announcement after copying marked files to the clipboard fails.
 #. Translators: The short wording spoken when the address of a video could not be copied.
-#: Application/Commands/Files/Edit.cs:121
-#: Application/Commands/Files/Info.cs:146
-#: Application/Commands/Files/MarkedFiles.cs:71
-#: Application/Commands/YouTube/CurrentVideo.cs:104
+#: Application/Commands/Files/Edit.cs:127
+#: Application/Commands/Files/Info.cs:150
+#: Application/Commands/Files/MarkedFiles.cs:75
+#: Application/Commands/YouTube/CurrentVideo.cs:107
 msgid "Copy failed."
 msgstr ""
 
 #. Translators: Spoken when the user pastes but the clipboard holds no files or folders to open.
-#: Application/Commands/Files/Edit.cs:131
+#: Application/Commands/Files/Edit.cs:137
 msgid "Clipboard does not contain files or folders."
 msgstr ""
 
 #. Translators: The short wording spoken when the clipboard holds no files or folders to open.
-#: Application/Commands/Files/Edit.cs:133
+#: Application/Commands/Files/Edit.cs:139
 msgid "Clipboard empty."
 msgstr ""
 
 #. Translators: Spoken when what was pasted names a file or folder that is not there. {path} is what was pasted.
-#: Application/Commands/Files/Edit.cs:143
+#: Application/Commands/Files/Edit.cs:149
 msgid "Clipboard path could not be resolved: {path}"
 msgstr ""
 
 #. Translators: The short wording spoken when what was pasted names nothing that exists.
-#: Application/Commands/Files/Edit.cs:145
+#: Application/Commands/Files/Edit.cs:151
 msgid "Invalid path in clipboard."
 msgstr ""
 
 #. Translators: Spoken when what was pasted exists but holds nothing this player can play.
-#: Application/Commands/Files/Edit.cs:151
+#: Application/Commands/Files/Edit.cs:157
 msgid "Could not open the file from clipboard."
 msgstr ""
 
 #. Translators: The short wording spoken when what was pasted could not be opened.
-#: Application/Commands/Files/Edit.cs:153
+#: Application/Commands/Files/Edit.cs:159
 msgid "Cannot open clipboard data."
 msgstr ""
 
 #. Translators: Spoken once the current file has been added to the marked files.
-#: Application/Commands/Files/Edit.cs:167
+#: Application/Commands/Files/Edit.cs:173
 msgid "File added to marked files."
 msgstr ""
 
 #. Translators: Spoken once the current file has been taken out of the marked files.
-#: Application/Commands/Files/Edit.cs:169
+#: Application/Commands/Files/Edit.cs:175
 msgid "File removed from marked files."
 msgstr ""
 
 #. Translators: The short wording spoken once the current file has been added to the marked files.
-#: Application/Commands/Files/Edit.cs:172
+#: Application/Commands/Files/Edit.cs:178
 msgid "Marked."
 msgstr ""
 
 #. Translators: The short wording spoken once the current file has been taken out of the marked files.
-#: Application/Commands/Files/Edit.cs:174
+#: Application/Commands/Files/Edit.cs:180
 msgid "Unmarked."
 msgstr ""
 
 #. Translators: Spoken once every loaded file has been marked.
-#: Application/Commands/Files/Edit.cs:185
+#: Application/Commands/Files/Edit.cs:191
 msgid "All files marked."
 msgstr ""
 
 #. Translators: Spoken once every loaded file has been unmarked.
-#: Application/Commands/Files/Edit.cs:187
+#: Application/Commands/Files/Edit.cs:193
 msgid "All files unmarked."
 msgstr ""
 
 #. Translators: The short wording spoken once every loaded file has been marked.
-#: Application/Commands/Files/Edit.cs:190
+#: Application/Commands/Files/Edit.cs:196
 msgid "All marked."
 msgstr ""
 
 #. Translators: The short wording spoken once every loaded file has been unmarked.
-#: Application/Commands/Files/Edit.cs:192
+#: Application/Commands/Files/Edit.cs:198
 msgid "All unmarked."
 msgstr ""
 
 #. Translators: Spoken once the list of marked files has been emptied.
-#: Application/Commands/Files/Edit.cs:201
+#: Application/Commands/Files/Edit.cs:207
 msgid "Marked files list cleared."
 msgstr ""
 
 #. Translators: Spoken when the user clears the marked files but none were marked.
-#: Application/Commands/Files/Edit.cs:203
-#: Application/Commands/Files/MarkedFiles.cs:119
+#. Translators: Spoken when an action needs marked files but none are marked.
+#: Application/Commands/Files/Edit.cs:209
+#: Application/Commands/Files/MarkedFiles.cs:134
 msgid "No marked files."
 msgstr ""
 
 #. Translators: The short wording spoken once the list of marked files has been emptied.
-#: Application/Commands/Files/Edit.cs:206
+#: Application/Commands/Files/Edit.cs:212
 msgid "Marks cleared."
 msgstr ""
 
 #. Translators: The short wording spoken when the user clears the marked files but none were marked.
-#: Application/Commands/Files/Edit.cs:208
-#: Application/Commands/Files/MarkedFiles.cs:119
+#. Translators: Short announcement when no files are marked.
+#: Application/Commands/Files/Edit.cs:214
+#: Application/Commands/Files/MarkedFiles.cs:136
 msgid "No marks."
 msgstr ""
 
 #. Translators: Spoken when the user asks how many files are marked. {count} is that number.
-#: Application/Commands/Files/Edit.cs:215
+#: Application/Commands/Files/Edit.cs:221
 msgid "{count} file marked"
 msgid_plural "{count} files marked"
 msgstr[0] ""
 msgstr[1] ""
 
+#. Translators: Spoken when a launch-time folder holds nothing this player can play.
+#. Translators: Spoken when the chosen folder holds nothing this player can play.
+#. Translators: Spoken when the folder and the folders inside it hold nothing this player can play.
+#: Application/Commands/Files/Files.cs:107
+#: Application/Commands/Files/Files.cs:211
+#: Application/Commands/Files/Files.cs:343
+msgid "No audio files found in that folder."
+msgstr ""
+
+#. Translators: Short announcement when a launch-time folder holds no playable files.
+#. Translators: The short wording spoken when the chosen folder holds nothing this player can play.
+#. Translators: The short wording spoken when a folder holds nothing this player can play.
+#: Application/Commands/Files/Files.cs:109
+#: Application/Commands/Files/Files.cs:213
+#: Application/Commands/Files/Files.cs:345
+msgid "No audio files."
+msgstr ""
+
 #. Translators: Asks the user for the web address of the stream they want to play.
-#: Application/Commands/Files/Files.cs:140
+#: Application/Commands/Files/Files.cs:172
 msgid "Enter link to play."
 msgstr ""
 
 #. Translators: Title of the window that asks for the web address of a stream to play.
-#: Application/Commands/Files/Files.cs:142
+#: Application/Commands/Files/Files.cs:174
 msgid "Open Link"
 msgstr ""
 
 #. Translators: Shown when the address typed into Open Link is not a web address.
 #. "http" and "https" are the names of the two web protocols and are not translated.
-#. Translators: Title of the message shown when what was typed is not a YouTube address.
+#. Translators: Shown when a typed YouTube address does not begin with a supported web protocol.
 #. Translators: Shown when a favourite is saved with something that is not a web address.
-#: Application/Commands/Files/Files.cs:152
-#: Application/Commands/YouTube/YouTube.cs:91 Favorites/FavoriteStore.cs:140
+#: Application/Commands/Files/Files.cs:184
+#: Application/Commands/YouTube/YouTube.cs:92 Favorites/FavoriteStore.cs:140
 msgid "The link must start with http or https."
 msgstr ""
 
 #. Translators: Title of the message shown when the address typed into Open Link is not a web address.
-#: Application/Commands/Files/Files.cs:154
-#: Application/Commands/YouTube/YouTube.cs:91
+#. Translators: Title of the message shown when what was typed is not a web address.
+#: Application/Commands/Files/Files.cs:186
+#: Application/Commands/YouTube/YouTube.cs:94
 msgid "Invalid link"
 msgstr ""
 
 #. Translators: Shown when the stream at the address typed into Open Link could not be played.
-#: Application/Commands/Files/Files.cs:165
+#: Application/Commands/Files/Files.cs:197
 msgid "Could not open the link."
 msgstr ""
 
+#. Translators: Title of an error shown when a web link cannot be opened.
+#. Translators: Title of an error shown when a playlist cannot be opened.
+#. Translators: Title of an error shown for an empty or unusable playlist.
+#. Translators: Title of an error shown when playlist entries cannot be loaded.
 #. Translators: Title of a message telling the user that something went wrong.
 #. Translators: Title of the message shown when a download could not finish.
-#: Application/Commands/Files/Files.cs:165
-#: Application/Commands/Files/Playlists.cs:46
-#: Application/Commands/Files/Playlists.cs:57
-#: Application/Commands/Files/Playlists.cs:64
-#: Application/Commands/Playback/Bookmarks.cs:141
-#: Application/Commands/YouTube/Download.cs:120
+#: Application/Commands/Files/Files.cs:199
+#: Application/Commands/Files/Playlists.cs:49
+#: Application/Commands/Files/Playlists.cs:62
+#: Application/Commands/Files/Playlists.cs:71
+#: Application/Commands/Playback/Bookmarks.cs:153
+#: Application/Commands/YouTube/Download.cs:121
 msgid "Error"
 msgstr ""
 
-#. Translators: Spoken when the chosen folder holds nothing this player can play.
-#. Translators: Spoken when the folder and the folders inside it hold nothing this player can play.
-#: Application/Commands/Files/Files.cs:177
-#: Application/Commands/Files/Files.cs:301
-msgid "No audio files found in that folder."
-msgstr ""
-
-#. Translators: The short wording spoken when the chosen folder holds nothing this player can play.
-#. Translators: The short wording spoken when a folder holds nothing this player can play.
-#: Application/Commands/Files/Files.cs:179
-#: Application/Commands/Files/Files.cs:303
-msgid "No audio files."
-msgstr ""
-
 #. Translators: Spoken when the current file could not be taken out of the playlist.
-#: Application/Commands/Files/Files.cs:189
+#: Application/Commands/Files/Files.cs:223
 msgid "Could not close the file."
 msgstr ""
 
 #. Translators: The short wording spoken when a file could not be closed.
 #. Translators: The short wording spoken when the files could not be closed.
-#: Application/Commands/Files/Files.cs:191
-#: Application/Commands/Files/Files.cs:206
+#: Application/Commands/Files/Files.cs:225
+#: Application/Commands/Files/Files.cs:244
 msgid "Close failed."
 msgstr ""
 
-#. Translators: Spoken once the current file has been taken out of the playlist.
-#: Application/Commands/Files/Files.cs:194
+#. Translators: Spoken once the current file has been removed from the playlist.
+#. Translators: Short announcement once the current file has been removed from the playlist.
+#: Application/Commands/Files/Files.cs:230
+#: Application/Commands/Files/Files.cs:232
 msgid "File closed."
 msgstr ""
 
 #. Translators: Spoken when the loaded files could not be taken out of the playlist.
-#: Application/Commands/Files/Files.cs:204
+#: Application/Commands/Files/Files.cs:242
 msgid "Could not close files."
 msgstr ""
 
-#. Translators: Spoken once every file has been taken out of the playlist.
-#: Application/Commands/Files/Files.cs:209
+#. Translators: Spoken once every file has been removed from the playlist.
+#. Translators: Short announcement once every file has been removed from the playlist.
+#: Application/Commands/Files/Files.cs:249
+#: Application/Commands/Files/Files.cs:251
 msgid "All files closed."
 msgstr ""
 
 #. Translators: The short wording spoken when Windows could not be asked to open a folder.
 #. Translators: The short wording spoken when Windows could not show a file's properties.
-#: Application/Commands/Files/Files.cs:217
+#: Application/Commands/Files/Files.cs:259
 #: Application/Commands/Files/Info.cs:35
 msgid "Open failed."
 msgstr ""
 
 #. Translators: Title of the progress window shown while a folder and the folders inside it are being searched for media.
-#: Application/Commands/Files/Files.cs:281
+#: Application/Commands/Files/Files.cs:323
 msgid "Opening files"
 msgstr ""
 
 #. Translators: First message in the progress window, before any file has been found.
-#: Application/Commands/Files/Files.cs:283
+#: Application/Commands/Files/Files.cs:325
 msgid "Loading files from folder and subfolders..."
 msgstr ""
 
 #. Translators: Progress message while a folder is being searched. {found} is how many media files
 #. have been found so far.
-#: Application/Commands/Files/Files.cs:286
+#: Application/Commands/Files/Files.cs:328
 msgid "Opening files... {found} media files found"
 msgstr ""
 
@@ -1294,12 +1334,12 @@ msgid "Unable to copy to clipboard."
 msgstr ""
 
 #. Translators: Spoken when the current media file contains no title metadata.
-#: Application/Commands/Files/Info.cs:161
+#: Application/Commands/Files/Info.cs:165
 msgid "The current file has no title."
 msgstr ""
 
 #. Translators: Short announcement when the current media file contains no title metadata.
-#: Application/Commands/Files/Info.cs:163
+#: Application/Commands/Files/Info.cs:167
 msgid "No title."
 msgstr ""
 
@@ -1334,112 +1374,114 @@ msgid "Unable to copy marked files to clipboard."
 msgstr ""
 
 #. Translators: Asks the user to confirm deleting the marked files. {count} is how many are marked.
-#: Application/Commands/Files/MarkedFiles.cs:80
+#: Application/Commands/Files/MarkedFiles.cs:84
 msgid "Delete {count} marked file?"
 msgid_plural "Delete {count} marked files?"
 msgstr[0] ""
 msgstr[1] ""
 
 #. Translators: Shown once the marked files have been deleted. {count} is how many were deleted.
-#: Application/Commands/Files/MarkedFiles.cs:92
+#: Application/Commands/Files/MarkedFiles.cs:97
 msgid "Deleted {count} marked file."
 msgid_plural "Deleted {count} marked files."
 msgstr[0] ""
 msgstr[1] ""
 
 #. Translators: Title of the message shown once deleting the marked files has finished.
-#: Application/Commands/Files/MarkedFiles.cs:94
-#: Application/Commands/Files/MarkedFiles.cs:105
+#. Translators: Title of the result shown after deleting marked files.
+#: Application/Commands/Files/MarkedFiles.cs:99
+#: Application/Commands/Files/MarkedFiles.cs:113
 msgid "Delete Complete"
 msgstr ""
 
 #. Translators: Spoken once the marked files have been deleted.
-#: Application/Commands/Files/MarkedFiles.cs:97
+#: Application/Commands/Files/MarkedFiles.cs:102
 msgid "Marked files deleted."
 msgstr ""
 
 #. Translators: Shown when only some of the marked files could be deleted.
 #. {deleted} is how many were deleted and {failed} how many could not be.
-#: Application/Commands/Files/MarkedFiles.cs:104
+#: Application/Commands/Files/MarkedFiles.cs:111
 msgid "Deleted {deleted} files. Failed to delete {failed} files."
 msgstr ""
 
 #. Translators: Spoken when only some of the marked files could be deleted.
-#: Application/Commands/Files/MarkedFiles.cs:108
+#: Application/Commands/Files/MarkedFiles.cs:116
 msgid "Some files were deleted."
 msgstr ""
 
 #. Translators: The short wording spoken when only some of the marked files could be deleted.
-#: Application/Commands/Files/MarkedFiles.cs:110
+#: Application/Commands/Files/MarkedFiles.cs:118
 msgid "Partial delete."
 msgstr ""
 
 #. Translators: Spoken when none of the marked files could be deleted.
-#: Application/Commands/Files/MarkedFiles.cs:113
+#: Application/Commands/Files/MarkedFiles.cs:123
 msgid "Could not delete marked files."
 msgstr ""
 
 #. Translators: Spoken when the user stops copying or moving the marked files before it has finished.
-#: Application/Commands/Files/MarkedFiles.cs:129
+#: Application/Commands/Files/MarkedFiles.cs:146
 msgid "Operation canceled."
 msgstr ""
 
 #. Translators: The short wording spoken when the user stops copying or moving the marked files.
-#: Application/Commands/Files/MarkedFiles.cs:131
+#: Application/Commands/Files/MarkedFiles.cs:148
 msgid "Canceled."
 msgstr ""
 
 #. Translators: Shown once every marked file has been copied or moved. {count} is how many were dealt with.
-#: Application/Commands/Files/MarkedFiles.cs:138
+#: Application/Commands/Files/MarkedFiles.cs:155
 msgid "{count} file processed successfully."
 msgid_plural "{count} files processed successfully."
 msgstr[0] ""
 msgstr[1] ""
 
 #. Translators: Title of the message shown once copying or moving the marked files has finished.
-#: Application/Commands/Files/MarkedFiles.cs:140
-#: Application/Commands/Files/MarkedFiles.cs:158
+#. Translators: Title of a partial-success result for copying or moving marked files.
+#: Application/Commands/Files/MarkedFiles.cs:157
+#: Application/Commands/Files/MarkedFiles.cs:177
 msgid "Operation Complete"
 msgstr ""
 
 #. Translators: Spoken once the marked files have been moved into the chosen folder.
-#: Application/Commands/Files/MarkedFiles.cs:144
+#: Application/Commands/Files/MarkedFiles.cs:161
 msgid "Marked files moved."
 msgstr ""
 
 #. Translators: Spoken once the marked files have been copied into the chosen folder.
-#: Application/Commands/Files/MarkedFiles.cs:146
+#: Application/Commands/Files/MarkedFiles.cs:163
 msgid "Marked files copied."
 msgstr ""
 
 #. Translators: The short wording spoken once the marked files have been moved into the chosen folder.
-#: Application/Commands/Files/MarkedFiles.cs:149
+#: Application/Commands/Files/MarkedFiles.cs:166
 msgid "Moved."
 msgstr ""
 
 #. Translators: Shown when only some of the marked files could be copied or moved.
 #. {processed} is how many were dealt with and {failed} how many could not be.
-#: Application/Commands/Files/MarkedFiles.cs:157
+#: Application/Commands/Files/MarkedFiles.cs:175
 msgid "Processed {processed} files. Failed for {failed} files."
 msgstr ""
 
 #. Translators: Spoken when copying or moving the marked files worked for some of them but not all.
-#: Application/Commands/Files/MarkedFiles.cs:161
+#: Application/Commands/Files/MarkedFiles.cs:180
 msgid "Operation completed with errors."
 msgstr ""
 
 #. Translators: The short wording spoken when copying or moving the marked files worked for some of them but not all.
-#: Application/Commands/Files/MarkedFiles.cs:163
+#: Application/Commands/Files/MarkedFiles.cs:182
 msgid "Partial success."
 msgstr ""
 
 #. Translators: Spoken when none of the marked files could be copied or moved.
-#: Application/Commands/Files/MarkedFiles.cs:167
+#: Application/Commands/Files/MarkedFiles.cs:186
 msgid "Operation failed."
 msgstr ""
 
 #. Translators: The short wording spoken when none of the marked files could be copied or moved.
-#: Application/Commands/Files/MarkedFiles.cs:169
+#: Application/Commands/Files/MarkedFiles.cs:188
 msgid "Failed."
 msgstr ""
 
@@ -1449,23 +1491,24 @@ msgid "Opening playlist"
 msgstr ""
 
 #. Translators: Message shown while a playlist is downloaded.
+#. Translators: Status shown while a playlist download is still running.
 #: Application/Commands/Files/Playlists.cs:30
-#: Application/Commands/Files/Playlists.cs:31
+#: Application/Commands/Files/Playlists.cs:32
 msgid "Downloading playlist..."
 msgstr ""
 
 #. Translators: Shown when an M3U or M3U8 playlist could not be read. {error} is the reason.
-#: Application/Commands/Files/Playlists.cs:46
+#: Application/Commands/Files/Playlists.cs:47
 msgid "Could not open the playlist: {error}"
 msgstr ""
 
 #. Translators: Shown when an M3U or M3U8 file contains no usable local files or web links.
-#: Application/Commands/Files/Playlists.cs:57
+#: Application/Commands/Files/Playlists.cs:60
 msgid "The playlist contains no playable entries."
 msgstr ""
 
 #. Translators: Shown when the entries in an M3U or M3U8 playlist could not be loaded.
-#: Application/Commands/Files/Playlists.cs:64
+#: Application/Commands/Files/Playlists.cs:69
 msgid "Could not load the playlist entries."
 msgstr ""
 
@@ -1499,86 +1542,93 @@ msgstr ""
 msgid "{number}. {name}"
 msgstr ""
 
-#: Application/Commands/Iptv/Iptv.cs:113
+#. Translators: Category name used for IPTV channels whose source provides no category.
+#: Application/Commands/Iptv/Iptv.cs:114
 msgid "Uncategorized"
 msgstr ""
 
 #. Translators: Title of the progress window shown while an IPTV source's channels are loaded.
-#: Application/Commands/Iptv/Iptv.cs:116
+#: Application/Commands/Iptv/Iptv.cs:117
 msgid "Opening IPTV source"
 msgstr ""
 
 #. Translators: Message shown while an IPTV source's channels are loaded.
-#: Application/Commands/Iptv/Iptv.cs:118 Application/Commands/Iptv/Iptv.cs:119
+#. Translators: Status shown while an IPTV source's channels are still loading.
+#: Application/Commands/Iptv/Iptv.cs:119 Application/Commands/Iptv/Iptv.cs:121
 msgid "Loading channels..."
 msgstr ""
 
 #. Translators: Shown when an IPTV source is of a kind Luna Player cannot open yet (Xtream or
 #. Stalker, before those are supported).
-#: Application/Commands/Iptv/Iptv.cs:139
+#: Application/Commands/Iptv/Iptv.cs:141
 msgid "This kind of IPTV source is not supported yet."
 msgstr ""
 
 #. Translators: Title of the messages shown about IPTV.
+#. Translators: Title of an error about an IPTV source.
+#. Translators: Title of an error about an IPTV channel.
+#. Translators: Title of an error about opening an IPTV channel.
+#. Translators: Title of an error about saved IPTV sources.
 #. Translators: Tools submenu holding the IPTV source manager and channel browser.
-#: Application/Commands/Iptv/Iptv.cs:141 Application/Commands/Iptv/Iptv.cs:148
-#: Application/Commands/Iptv/Iptv.cs:182 Application/Commands/Iptv/Iptv.cs:206
-#: Application/Commands/Iptv/Iptv.cs:215 Application/Commands/Iptv/Iptv.cs:272
+#: Application/Commands/Iptv/Iptv.cs:143 Application/Commands/Iptv/Iptv.cs:152
+#: Application/Commands/Iptv/Iptv.cs:188 Application/Commands/Iptv/Iptv.cs:215
+#: Application/Commands/Iptv/Iptv.cs:226 Application/Commands/Iptv/Iptv.cs:286
 #: UI/Menus/ToolsMenu.cs:27
 msgid "IPTV"
 msgstr ""
 
 #. Translators: Shown when an IPTV source loaded but holds no channels to play.
-#: Application/Commands/Iptv/Iptv.cs:148
+#: Application/Commands/Iptv/Iptv.cs:150
 msgid "This source holds no channels."
 msgstr ""
 
 #. Translators: Title of the channel browser window. {name} is the source being browsed.
-#: Application/Commands/Iptv/Iptv.cs:153
+#: Application/Commands/Iptv/Iptv.cs:157
 msgid "Channels - {name}"
 msgstr ""
 
 #. Translators: Shown when a chosen channel carries no address and none could be worked out.
-#: Application/Commands/Iptv/Iptv.cs:182
+#: Application/Commands/Iptv/Iptv.cs:186
 msgid "This channel cannot be played."
 msgstr ""
 
 #. Translators: Title of the brief progress window shown while a channel's address is worked out.
-#: Application/Commands/Iptv/Iptv.cs:190
+#: Application/Commands/Iptv/Iptv.cs:196
 msgid "Opening channel"
 msgstr ""
 
 #. Translators: Message shown while a Stalker channel's short-lived play address is worked out.
-#: Application/Commands/Iptv/Iptv.cs:192 Application/Commands/Iptv/Iptv.cs:193
+#. Translators: Status shown while an IPTV channel address is still being prepared.
+#: Application/Commands/Iptv/Iptv.cs:198 Application/Commands/Iptv/Iptv.cs:200
 msgid "Preparing the channel..."
 msgstr ""
 
 #. Translators: Shown when a Stalker channel's play address could not be worked out.
 #. Translators: Shown when a chosen IPTV channel could not be played.
-#: Application/Commands/Iptv/Iptv.cs:206 Application/Commands/Iptv/Iptv.cs:215
+#: Application/Commands/Iptv/Iptv.cs:213 Application/Commands/Iptv/Iptv.cs:224
 msgid "Could not open the channel."
 msgstr ""
 
 #. Translators: Title of the window for saving a new IPTV source.
-#: Application/Commands/Iptv/Iptv.cs:223
+#: Application/Commands/Iptv/Iptv.cs:234
 msgid "Add IPTV source"
 msgstr ""
 
 #. Translators: Title of the window for changing an IPTV source already saved.
-#: Application/Commands/Iptv/Iptv.cs:240
+#: Application/Commands/Iptv/Iptv.cs:251
 msgid "Edit IPTV source"
 msgstr ""
 
 #. Translators: Asks the user to confirm removing one saved IPTV source. {name} is what it is
 #. called and {kind} is what sort of source it is.
-#: Application/Commands/Iptv/Iptv.cs:255
+#: Application/Commands/Iptv/Iptv.cs:266
 msgid "Remove IPTV source '{name}' ({kind})?"
 msgstr ""
 
 #. Translators: Title of the window that asks the user to confirm removing a saved IPTV source.
 #. Translators: Title of the window that asks the user to confirm removing a saved link.
 #. Translators: Title of the window that asks the user to confirm removing a recording source.
-#: Application/Commands/Iptv/Iptv.cs:257
+#: Application/Commands/Iptv/Iptv.cs:268
 #: Application/Commands/YouTube/Favorites.cs:150
 #: UI/Recording/RecordingDialog.cs:334
 msgid "Confirm remove"
@@ -1605,8 +1655,9 @@ msgid "Time not available"
 msgstr ""
 
 #. Translators: The short wording spoken when a time the user asked for is not known.
+#. Translators: Short announcement when playback progress cannot be calculated.
 #: Application/Commands/MediaGuard.cs:108
-#: Application/Commands/Playback/Playback.cs:253
+#: Application/Commands/Playback/Playback.cs:270
 msgid "Unavailable"
 msgstr ""
 
@@ -1677,100 +1728,106 @@ msgstr ""
 msgid "Bookmark {time}"
 msgstr ""
 
-#. Translators: Bookmarks menu item that saves the current position in the file as a bookmark.
-#: Application/Commands/Playback/Bookmarks.cs:45 UI/Menus/BookmarksMenu.cs:16
-msgid "Add a new bookmark"
-msgstr ""
-
 #. Translators: Asks the user what the new bookmark should be called.
 #: Application/Commands/Playback/Bookmarks.cs:45
 msgid "Enter bookmark name"
 msgstr ""
 
+#. Translators: Title of the dialog used to name a new bookmark.
+#. Translators: Bookmarks menu item that saves the current position in the file as a bookmark.
+#: Application/Commands/Playback/Bookmarks.cs:47 UI/Menus/BookmarksMenu.cs:16
+msgid "Add a new bookmark"
+msgstr ""
+
 #. Translators: Shown when the user confirms a bookmark name without typing anything.
-#: Application/Commands/Playback/Bookmarks.cs:53
-#: Application/Commands/Playback/Bookmarks.cs:139
+#: Application/Commands/Playback/Bookmarks.cs:55
+#: Application/Commands/Playback/Bookmarks.cs:151
 msgid "Bookmark name cannot be empty."
 msgstr ""
 
+#. Translators: Title of a warning about an invalid bookmark name.
+#. Translators: Title of a message about bookmarks for the current file.
 #. Translators: Title of an error message about reading or writing the bookmarks file.
 #. Translators: Name of the Bookmarks menu in the menu bar.
-#: Application/Commands/Playback/Bookmarks.cs:53
-#: Application/Commands/Playback/Bookmarks.cs:83
-#: Application/Commands/Playback/Bookmarks.cs:120
-#: Application/Commands/Playback/Bookmarks.cs:205 UI/MenuBuilder.cs:74
+#: Application/Commands/Playback/Bookmarks.cs:57
+#: Application/Commands/Playback/Bookmarks.cs:89
+#: Application/Commands/Playback/Bookmarks.cs:128
+#: Application/Commands/Playback/Bookmarks.cs:217 UI/MenuBuilder.cs:74
 msgid "Bookmarks"
 msgstr ""
 
 #. Translators: Shown once a bookmark has been made. {name} is what it is called and {time} the point in the
 #. file it was made at, such as 00:01:20.
-#: Application/Commands/Playback/Bookmarks.cs:64
+#: Application/Commands/Playback/Bookmarks.cs:68
 msgid "Bookmark '{name}' added at {time}."
 msgstr ""
 
 #. Translators: Shown when the user opens the bookmark list but the current file has none.
-#: Application/Commands/Playback/Bookmarks.cs:83
+#: Application/Commands/Playback/Bookmarks.cs:87
 msgid "No bookmarks found for the current file."
 msgstr ""
 
 #. Translators: Asks the user to confirm removing one bookmark. {name} is what the bookmark is called.
-#: Application/Commands/Playback/Bookmarks.cs:103
+#: Application/Commands/Playback/Bookmarks.cs:109
 msgid "Delete bookmark '{name}'?"
 msgstr ""
 
 #. Translators: Title of the window that asks the user to confirm removing a bookmark.
-#: Application/Commands/Playback/Bookmarks.cs:105
+#: Application/Commands/Playback/Bookmarks.cs:111
 msgid "Confirm delete"
 msgstr ""
 
 #. Translators: Shown once the last bookmark of the current file has been removed.
-#: Application/Commands/Playback/Bookmarks.cs:120
+#: Application/Commands/Playback/Bookmarks.cs:126
 msgid "All bookmarks for this file were removed."
 msgstr ""
 
 #. Translators: Asks the user for the new name of a bookmark they are renaming.
-#: Application/Commands/Playback/Bookmarks.cs:133
+#: Application/Commands/Playback/Bookmarks.cs:141
 msgid "Edit bookmark name"
 msgstr ""
 
+#. Translators: Title of the dialog used to rename an existing bookmark.
+#. Translators: Title of the window used to manage bookmarks for the current file.
 #. Translators: Bookmarks menu item that opens the window for renaming and deleting bookmarks.
-#: Application/Commands/Playback/Bookmarks.cs:133
-#: UI/Dialogs/BookmarkManagerDialog.cs:16 UI/Menus/BookmarksMenu.cs:18
+#: Application/Commands/Playback/Bookmarks.cs:143
+#: UI/Dialogs/BookmarkManagerDialog.cs:17 UI/Menus/BookmarksMenu.cs:18
 msgid "Manage bookmarks"
 msgstr ""
 
 #. Translators: Spoken when the user asks for one of the ten numbered bookmark slots but nothing is saved
 #. in it. {slot} is the slot number, 1 to 10.
-#: Application/Commands/Playback/Bookmarks.cs:159
+#: Application/Commands/Playback/Bookmarks.cs:171
 msgid "No bookmark in slot {slot}."
 msgstr ""
 
 #. Translators: The short wording spoken when a numbered bookmark slot is empty. {slot} is the slot number, 1 to 10.
-#: Application/Commands/Playback/Bookmarks.cs:161
+#: Application/Commands/Playback/Bookmarks.cs:173
 msgid "No bookmark {slot}."
 msgstr ""
 
 #. Translators: Spoken once playing has moved to a bookmark. {name} is what the bookmark is called.
-#: Application/Commands/Playback/Bookmarks.cs:173
+#: Application/Commands/Playback/Bookmarks.cs:185
 msgid "Jumped to bookmark {name}."
 msgstr ""
 
 #. Translators: The short wording spoken once playing has moved to a bookmark. {name} is what the bookmark is
 #. called and {time} the point in the file it sits at, such as 00:01:20.
-#: Application/Commands/Playback/Bookmarks.cs:176
+#: Application/Commands/Playback/Bookmarks.cs:188
 msgid "Jumped to '{name}' at {time}."
 msgstr ""
 
 #. Translators: Spoken when a command needs to know where playing has got to but the player cannot tell.
+#. Translators: Shown when the player cannot determine the current file's duration.
 #. Translators: Shown when the player cannot offer exact time fields for the current item.
-#: Application/Commands/Playback/Bookmarks.cs:187
-#: Application/Commands/Playback/Playback.cs:194
+#: Application/Commands/Playback/Bookmarks.cs:199
+#: Application/Commands/Playback/Playback.cs:197
 #: Application/Commands/Playback/SelectionPoints.cs:206
 msgid "Time is not available for the current file."
 msgstr ""
 
 #. Translators: The short wording spoken when the player cannot tell where playing has got to.
-#: Application/Commands/Playback/Bookmarks.cs:189
+#: Application/Commands/Playback/Bookmarks.cs:201
 msgid "Time unavailable."
 msgstr ""
 
@@ -1854,8 +1911,8 @@ msgstr ""
 #. Translators: Spoken name of the play/pause button while playback is stopped or paused.
 #. Translators: Button that plays the video chosen in the list of results.
 #: Application/Commands/Playback/Playback.cs:129
-#: Application/Commands/Playback/Playback.cs:137
-#: UI/Iptv/ChannelBrowserDialog.cs:118 UI/MainFrame.cs:97 UI/MainFrame.cs:178
+#: Application/Commands/Playback/Playback.cs:138
+#: UI/Iptv/ChannelBrowserDialog.cs:118 UI/MainFrame.cs:99 UI/MainFrame.cs:180
 #: UI/YouTube/ResultsDialog.cs:196
 msgid "Play"
 msgstr ""
@@ -1867,124 +1924,131 @@ msgstr ""
 #. Translators: Recording menu item that holds a recording where it is, or starts it again.
 #. Translators: Button that holds a recording where it is, and starts it again when pressed a second time.
 #. Translators: Button that holds a recording where it is.
-#: Application/Commands/Playback/Playback.cs:139
-#: UI/Dialogs/SleepTimerDialog.cs:84 UI/MainFrame.cs:176
-#: UI/MenuController.cs:274 UI/Menus/RecordingMenu.cs:23
+#: Application/Commands/Playback/Playback.cs:140
+#: UI/Dialogs/SleepTimerDialog.cs:85 UI/MainFrame.cs:178
+#: UI/MenuController.cs:272 UI/Menus/RecordingMenu.cs:23
 #: UI/Recording/RecordingDialog.cs:169 UI/Recording/RecordingDialog.cs:625
 msgid "Pause"
 msgstr ""
 
 #. Translators: Title of the window that asks the user which point in the file to move to.
-#: Application/Commands/Playback/Playback.cs:196
-#: UI/Dialogs/GoToTimeDialog.cs:22 UI/Dialogs/GoToTimeDialog.cs:113
+#. Translators: Title of the window for moving to a precise time in the current file.
+#. Translators: Title of an error about a time entered in the Go to time window.
+#: Application/Commands/Playback/Playback.cs:199
+#: UI/Dialogs/GoToTimeDialog.cs:23 UI/Dialogs/GoToTimeDialog.cs:116
 msgid "Go to time"
 msgstr ""
 
+#. Translators: Spoken when full-screen mode is turned on. The beginner form names the F11 key so the user knows how to leave it again.
+#: Application/Commands/Playback/Playback.cs:220
+msgid "Full-screen mode on. Press F11 again to turn it off."
+msgstr ""
+
+#. Translators: The short advanced-verbosity wording spoken when full-screen mode is turned on.
+#: Application/Commands/Playback/Playback.cs:222
+msgid "Full-screen on"
+msgstr ""
+
+#. Translators: Spoken when full-screen mode is turned off.
 #. Translators: Spoken when full-screen mode ends on its own because the video stopped playing.
-#. Translators: The short advanced-verbosity wording for the same automatic end of full-screen mode.
-#: Application/Commands/Playback/Playback.cs:215
+#: Application/Commands/Playback/Playback.cs:227
 #: Application/Presentation/ViewStatePresenter.cs:73
 msgid "Full-screen mode off."
 msgstr ""
 
-#. Translators: Spoken when full-screen mode is turned on. The beginner form names the F11 key so the
-#. user knows how to leave it again.
-#: Application/Commands/Playback/Playback.cs:215
-msgid "Full-screen mode on. Press F11 again to turn it off."
-msgstr ""
-
-#: Application/Commands/Playback/Playback.cs:217
-#: Application/Presentation/ViewStatePresenter.cs:73
+#. Translators: The short advanced-verbosity wording spoken when full-screen mode is turned off.
+#. Translators: Short announcement when full-screen mode ends because the video stopped.
+#: Application/Commands/Playback/Playback.cs:229
+#: Application/Presentation/ViewStatePresenter.cs:75
 msgid "Full-screen off"
 msgstr ""
 
-#. Translators: The short advanced-verbosity wording spoken when full-screen mode is turned on or off.
-#: Application/Commands/Playback/Playback.cs:217
-msgid "Full-screen on"
-msgstr ""
-
 #. Translators: Spoken after the loudness has been changed. {volume} is the new loudness as a number out of a hundred.
-#: Application/Commands/Playback/Playback.cs:229
+#: Application/Commands/Playback/Playback.cs:243
 msgid "Volume {volume} percent"
 msgstr ""
 
 #. Translators: Spoken when the user asks how loud the sound is. {percent} is the loudness as a number out of a hundred.
-#: Application/Commands/Playback/Playback.cs:236
+#: Application/Commands/Playback/Playback.cs:250
 msgid "Volume is {percent}%"
 msgstr ""
 
 #. Translators: Spoken when the player cannot work out how far through the file it is.
-#: Application/Commands/Playback/Playback.cs:253
+#: Application/Commands/Playback/Playback.cs:268
 msgid "Percentage not available"
 msgstr ""
 
 #. Translators: Spoken when the user asks how far through the file playing has got. {percent} is that share out of a hundred.
-#: Application/Commands/Playback/Playback.cs:258
-#: Application/Commands/Playback/Playback.cs:388
+#. Translators: Spoken after seeking by percentage. {percent} is a number from 0 to 100.
+#: Application/Commands/Playback/Playback.cs:275
+#: Application/Commands/Playback/Playback.cs:418
 msgid "{percent} percent"
 msgstr ""
 
 #. Translators: Spoken when the user asks how fast the file is playing. {speed} is the speed, where 1 is the normal
 #. speed; "x" is short for "times" and is usually left as it is.
-#: Application/Commands/Playback/Playback.cs:263
-#: Application/Commands/Playback/Playback.cs:271
+#. Translators: Spoken after playback speed changes. {speed} is the multiplier, where 1 is normal; "x" means "times".
+#: Application/Commands/Playback/Playback.cs:280
+#: Application/Commands/Playback/Playback.cs:289
 msgid "{speed}x"
 msgstr ""
 
 #. Translators: Short announcement of pitch in advanced mode. {pitch} is a signed number such as
 #. +1, -2, or +0.25, or zero when pitch is normal.
-#: Application/Commands/Playback/Playback.cs:301
+#: Application/Commands/Playback/Playback.cs:319
 msgid "{pitch} semitones"
 msgstr ""
 
 #. Translators: Spoken when audio is playing at its original pitch.
-#: Application/Commands/Playback/Playback.cs:305
+#: Application/Commands/Playback/Playback.cs:323
 msgid "Pitch normal"
 msgstr ""
 
 #. Translators: Spoken after audio pitch changes or when it is requested. {pitch} is a signed
 #. number of semitones, such as +1, -2, or +0.25.
-#: Application/Commands/Playback/Playback.cs:310
+#: Application/Commands/Playback/Playback.cs:328
 msgid "Pitch {pitch} semitones"
 msgstr ""
 
 #. Translators: Spoken after audio panning changes or when it is requested. Negative values are
 #. toward the left, positive values are toward the right, and zero is centered.
-#: Application/Commands/Playback/Playback.cs:333
+#: Application/Commands/Playback/Playback.cs:351
 msgid "Pan {pan}%"
 msgstr ""
 
 #. Translators: Spoken when the user switches to whole, clearly worded messages. It should read the same as
 #. the "Beginner" entry in the Verbosity list on the General settings page.
-#: Application/Commands/Playback/Playback.cs:343
+#: Application/Commands/Playback/Playback.cs:361
 msgid "Beginner mode"
 msgstr ""
 
 #. Translators: Spoken when the user switches to short messages. It should read the same as the "Advanced"
 #. entry in the Verbosity list on the General settings page.
-#: Application/Commands/Playback/Playback.cs:350
+#: Application/Commands/Playback/Playback.cs:368
 msgid "Advanced mode"
 msgstr ""
 
 #. Translators: Spoken when trimming the silent parts out could not be switched on or off.
-#: Application/Commands/Playback/Playback.cs:362
+#: Application/Commands/Playback/Playback.cs:380
 msgid "Could not change silence removal filter."
 msgstr ""
 
 #. Translators: The short wording spoken when trimming the silent parts out could not be switched on or off.
-#: Application/Commands/Playback/Playback.cs:364
+#: Application/Commands/Playback/Playback.cs:382
 msgid "Filter failed."
 msgstr ""
 
-#. Translators: Spoken once the player has started trimming the silent parts out.
-#: Application/Commands/Playback/Playback.cs:372
-#: Application/Commands/Playback/Playback.cs:375
+#. Translators: Spoken once the player has started trimming silent parts out.
+#. Translators: Short announcement once the player has started trimming silent parts out.
+#: Application/Commands/Playback/Playback.cs:393
+#: Application/Commands/Playback/Playback.cs:395
 msgid "Silence removal on"
 msgstr ""
 
-#. Translators: Spoken once the player has stopped trimming the silent parts out.
-#: Application/Commands/Playback/Playback.cs:374
-#: Application/Commands/Playback/Playback.cs:375
+#. Translators: Spoken once the player has stopped trimming silent parts out.
+#. Translators: Short announcement once the player has stopped trimming silent parts out.
+#: Application/Commands/Playback/Playback.cs:400
+#: Application/Commands/Playback/Playback.cs:402
 msgid "Silence removal off"
 msgstr ""
 
@@ -2120,7 +2184,7 @@ msgstr ""
 #. Translators: Title of the file picker used to save the currently selected part of a file.
 #: Application/Commands/Playback/SelectionSaving.cs:16
 #: Application/Commands/Playback/SelectionSaving.cs:121
-#: UI/DialogService.cs:124
+#: UI/DialogService.cs:128
 msgid "Save selection"
 msgstr ""
 
@@ -2152,7 +2216,7 @@ msgstr ""
 #. Translators: Title of validation warnings in the save-selection-points dialog.
 #: Application/Commands/Playback/SelectionSaving.cs:53
 #: UI/Dialogs/SaveSelectionsDialog.cs:38
-#: UI/Dialogs/SaveSelectionsDialog.cs:188
+#: UI/Dialogs/SaveSelectionsDialog.cs:186
 msgid "Save selection points"
 msgstr ""
 
@@ -2178,7 +2242,7 @@ msgstr ""
 #. Translators: How far the download has got. {percent} is a whole number.
 #: Application/Commands/Playback/SelectionSaving.cs:77
 #: UI/Dialogs/ConversionProgressDialog.cs:155
-#: UI/YouTube/DownloadProgressDialog.cs:146
+#: UI/YouTube/DownloadProgressDialog.cs:158
 msgid "Percentage: {percent}%"
 msgstr ""
 
@@ -2241,22 +2305,25 @@ msgid ""
 "Open a file before setting the timer to stop at the end of the current track."
 msgstr ""
 
+#. Translators: Title of a message about setting the sleep timer.
+#. Translators: Title of the window used to configure the sleep timer.
+#. Translators: Title of a warning about an invalid sleep-timer length.
 #. Translators: Tools submenu holding the sleep-timer commands.
-#: Application/Commands/Playback/SleepTimer.cs:65
-#: UI/Dialogs/SleepTimerDialog.cs:48 UI/Dialogs/SleepTimerDialog.cs:236
+#: Application/Commands/Playback/SleepTimer.cs:66
+#: UI/Dialogs/SleepTimerDialog.cs:49 UI/Dialogs/SleepTimerDialog.cs:239
 #: UI/Menus/ToolsMenu.cs:39
 msgid "Sleep timer"
 msgstr ""
 
 #. Translators: Status line in the sleep-timer window when a timer is already set to stop at the end
 #. of the current track.
-#: Application/Commands/Playback/SleepTimer.cs:88
+#: Application/Commands/Playback/SleepTimer.cs:89
 msgid "A timer is set to stop at the end of the current track."
 msgstr ""
 
 #. Translators: Status line in the sleep-timer window when a timed timer is already running. {time} is a
 #. clock reading like 00:12:30.
-#: Application/Commands/Playback/SleepTimer.cs:92
+#: Application/Commands/Playback/SleepTimer.cs:93
 msgid "A timer is set. {time} remaining."
 msgstr ""
 
@@ -2389,19 +2456,19 @@ msgstr ""
 msgid "Paused."
 msgstr ""
 
-#: Application/Commands/Recording/Recording.cs:192
+#. Translators: Shown when the folder recordings are saved into could not be opened.
+#: Application/Commands/Recording/Recording.cs:190
 msgid "Could not open the recordings folder."
 msgstr ""
 
-#. Translators: Shown when the folder recordings are saved into could not be opened.
-#. {reason} is what went wrong, in the language of the system rather than the player.
+#. Translators: Combines a recording-folder error with {reason}, the system's explanation.
 #. Translators: Adds the technical reason under a message about recording. {message} is that
 #. message and {reason} is the reason, which is not translated.
-#. Translators: Shown when the chosen destination folder could not be created. {reason} is
-#. what went wrong, in the language of the system rather than the player.
-#: Application/Commands/Recording/Recording.cs:192
-#: Recording/RecordingSources.cs:88 UI/Dialogs/MediaConverterDialog.cs:454
-#: YouTube/Components/Service.cs:125
+#. Translators: Adds {reason}, the system's explanation, below a destination-folder error.
+#. Translators: Adds {reason}, the system's explanation, below the YouTube component error in {message}.
+#: Application/Commands/Recording/Recording.cs:193
+#: Recording/RecordingSources.cs:89 UI/Dialogs/MediaConverterDialog.cs:456
+#: YouTube/Components/Service.cs:130
 msgid ""
 "{message}\n"
 "{reason}"
@@ -2409,13 +2476,13 @@ msgstr ""
 
 #. Translators: Spoken when the user asks to pause or stop recording and nothing is being recorded.
 #. Translators: Shown when pausing or stopping was asked for and nothing is being recorded.
-#: Application/Commands/Recording/Recording.cs:199
+#: Application/Commands/Recording/Recording.cs:200
 #: Recording/RecordingSources.cs:70
 msgid "Nothing is being recorded."
 msgstr ""
 
 #. Translators: The short wording spoken when nothing is being recorded.
-#: Application/Commands/Recording/Recording.cs:201
+#: Application/Commands/Recording/Recording.cs:202
 msgid "Not recording."
 msgstr ""
 
@@ -2423,7 +2490,7 @@ msgstr ""
 #. set up, so the default microphone is used.
 #. Translators: The entry in a device list that means whichever microphone Windows is currently set
 #. to use, rather than one particular microphone.
-#: Application/Commands/Recording/Recording.cs:215
+#: Application/Commands/Recording/Recording.cs:216
 #: UI/Recording/SourceDialog.cs:125
 msgid "Default input device"
 msgstr ""
@@ -2433,8 +2500,8 @@ msgstr ""
 #. Translators: Name of the menu bar menu holding what can be recorded and how.
 #. Translators: Title of the window where recording is set up and started.
 #. Translators: Title of the messages shown about recording.
-#: Application/Commands/Recording/Recording.cs:220
-#: UI/Dialogs/PreferencesDialog.cs:59 UI/MenuBuilder.cs:88
+#: Application/Commands/Recording/Recording.cs:221
+#: UI/Dialogs/PreferencesDialog.cs:63 UI/MenuBuilder.cs:88
 #: UI/Recording/RecordingDialog.cs:83 UI/Recording/RecordingDialog.cs:720
 msgid "Recording"
 msgstr ""
@@ -2449,71 +2516,75 @@ msgstr ""
 msgid "Loading video details..."
 msgstr ""
 
+#. Translators: Title of an error shown while loading YouTube video details.
 #. Translators: Name of the expandable settings category containing the general and download pages for YouTube.
 #. Translators: Title of the messages the player shows about YouTube.
-#: Application/Commands/YouTube/CurrentVideo.cs:39
-#: UI/Dialogs/PreferencesDialog.cs:53 YouTube/Playback/Jobs.cs:61
+#. Translators: Title of an error shown while resolving or playing a YouTube video.
+#: Application/Commands/YouTube/CurrentVideo.cs:42
+#: UI/Dialogs/PreferencesDialog.cs:57 YouTube/Playback/Browsing.cs:250
+#: YouTube/Playback/Sessions.cs:357
 msgid "YouTube"
 msgstr ""
 
 #. Translators: Shown in place of the text under a video when the uploader wrote none.
-#: Application/Commands/YouTube/CurrentVideo.cs:45
+#: Application/Commands/YouTube/CurrentVideo.cs:48
 msgid "No description is available."
 msgstr ""
 
 #. Translators: Spoken when the playing video does not say which channel published it.
 #. Translators: Spoken when the chosen video does not say which channel published it.
-#: Application/Commands/YouTube/CurrentVideo.cs:86 YouTube/Playback/Feed.cs:55
-#: YouTube/Playback/Sessions.cs:478
+#: Application/Commands/YouTube/CurrentVideo.cs:89 YouTube/Playback/Feed.cs:55
+#: YouTube/Playback/Sessions.cs:285
 msgid "Channel link is not available."
 msgstr ""
 
 #. Translators: The short wording spoken when the playing video does not name its channel.
 #. Translators: The short wording spoken when the chosen video does not name its channel.
-#: Application/Commands/YouTube/CurrentVideo.cs:88 YouTube/Playback/Feed.cs:57
-#: YouTube/Playback/Sessions.cs:480
+#: Application/Commands/YouTube/CurrentVideo.cs:91 YouTube/Playback/Feed.cs:57
+#: YouTube/Playback/Sessions.cs:287
 msgid "No channel link."
 msgstr ""
 
 #. Translators: Spoken once the address of a video has been put on the clipboard.
-#: Application/Commands/YouTube/CurrentVideo.cs:96
+#: Application/Commands/YouTube/CurrentVideo.cs:99
 msgid "Link copied."
 msgstr ""
 
 #. Translators: Spoken when the address of a video could not be put on the clipboard.
-#: Application/Commands/YouTube/CurrentVideo.cs:102
+#: Application/Commands/YouTube/CurrentVideo.cs:105
 msgid "Could not copy link."
 msgstr ""
 
 #. Translators: Spoken when the web browser could not be started to show a video.
-#: Application/Commands/YouTube/CurrentVideo.cs:118
+#: Application/Commands/YouTube/CurrentVideo.cs:121
 msgid "Could not open browser."
 msgstr ""
 
 #. Translators: The short wording spoken when the web browser could not be started.
-#: Application/Commands/YouTube/CurrentVideo.cs:120
+#: Application/Commands/YouTube/CurrentVideo.cs:123
 msgid "Browser open failed."
 msgstr ""
 
 #. Translators: Spoken after a video has been put in the download queue.
+#. Translators: Short announcement after a video has been put in the download queue.
 #: Application/Commands/YouTube/Download.cs:61
-#: Application/Commands/YouTube/Download.cs:62
+#: Application/Commands/YouTube/Download.cs:63
 msgid "Added to download queue"
 msgstr ""
 
 #. Translators: Shown when the queue's multi-link box contains a non-video YouTube address.
-#: Application/Commands/YouTube/Download.cs:76
+#: Application/Commands/YouTube/Download.cs:77
 msgid "This is not a valid YouTube video link: {link}"
 msgstr ""
 
 #. Translators: Shown when a download finished.
-#: Application/Commands/YouTube/Download.cs:108
+#: Application/Commands/YouTube/Download.cs:109
 msgid "The download finished. The file was saved to your downloads folder."
 msgstr ""
 
 #. Translators: Shown when a download failed. {details} is the technical reason from yt-dlp,
 #. which is not translated.
-#: Application/Commands/YouTube/Download.cs:116
+#: Application/Commands/YouTube/Download.cs:117
 msgid ""
 "The download could not be completed.\n"
 "\n"
@@ -2521,7 +2592,7 @@ msgid ""
 msgstr ""
 
 #. Translators: Shown when a download failed and no reason was given.
-#: Application/Commands/YouTube/Download.cs:118
+#: Application/Commands/YouTube/Download.cs:119
 msgid ""
 "The download could not be completed. Check your internet connection and try "
 "again."
@@ -2533,10 +2604,11 @@ msgid "Could not open stream link."
 msgstr ""
 
 #. Translators: Title of the messages shown about the window of saved links.
+#. Translators: Title of an error about the saved favorite-video list.
 #. Translators: Title of the message shown when a saved link cannot be saved as it was typed.
 #. Translators: Title of the window listing the YouTube links and streams the user has saved.
 #: Application/Commands/YouTube/Favorites.cs:92
-#: Application/Commands/YouTube/Favorites.cs:163
+#: Application/Commands/YouTube/Favorites.cs:166
 #: UI/YouTube/FavoriteEditDialog.cs:73 UI/YouTube/FavoritesDialog.cs:25
 msgid "Favorite videos"
 msgstr ""
@@ -2597,27 +2669,31 @@ msgstr ""
 msgid "Out of range."
 msgstr ""
 
-#. Translators: Spoken once the player has started playing the files in a random order.
-#: Application/Commands/YouTube/Playlist.cs:132
+#. Translators: Spoken once the player has started playing files in a random order.
+#. Translators: Short announcement once shuffle has been enabled.
+#: Application/Commands/YouTube/Playlist.cs:133
 #: Application/Commands/YouTube/Playlist.cs:135
 msgid "Shuffle on"
 msgstr ""
 
-#. Translators: Spoken once the player has gone back to playing the files in their listed order.
-#: Application/Commands/YouTube/Playlist.cs:134
-#: Application/Commands/YouTube/Playlist.cs:135
+#. Translators: Spoken once the player has returned to playing files in their listed order.
+#. Translators: Short announcement once shuffle has been disabled.
+#: Application/Commands/YouTube/Playlist.cs:141
+#: Application/Commands/YouTube/Playlist.cs:143
 msgid "Shuffle off"
 msgstr ""
 
-#. Translators: Spoken once the player has started playing the same file over and over.
-#: Application/Commands/YouTube/Playlist.cs:146
-#: Application/Commands/YouTube/Playlist.cs:149
+#. Translators: Spoken once the player has started playing the same file repeatedly.
+#. Translators: Short announcement once repeating the current file has been enabled.
+#: Application/Commands/YouTube/Playlist.cs:157
+#: Application/Commands/YouTube/Playlist.cs:159
 msgid "Repeat on"
 msgstr ""
 
-#. Translators: Spoken once the player has stopped playing the same file over and over.
-#: Application/Commands/YouTube/Playlist.cs:148
-#: Application/Commands/YouTube/Playlist.cs:149
+#. Translators: Spoken once the player has stopped playing the same file repeatedly.
+#. Translators: Short announcement once repeating the current file has been disabled.
+#: Application/Commands/YouTube/Playlist.cs:165
+#: Application/Commands/YouTube/Playlist.cs:167
 msgid "Repeat off"
 msgstr ""
 
@@ -2633,51 +2709,56 @@ msgid "Open YouTube Link"
 msgstr ""
 
 #. Translators: Shown when the address typed into Open YouTube Link is a web address but not a YouTube one.
-#: Application/Commands/YouTube/YouTube.cs:98
+#: Application/Commands/YouTube/YouTube.cs:101
 msgid "This is not a valid YouTube link."
 msgstr ""
 
 #. Translators: Title of the message shown when a YouTube address was expected and something else was given.
-#: Application/Commands/YouTube/YouTube.cs:100
-#: Application/Commands/YouTube/YouTube.cs:107
-#: UI/YouTube/DownloadQueueDialog.cs:415
+#. Translators: Title of a message shown for an unsupported YouTube channel link.
+#. Translators: Title of a warning shown for an invalid YouTube link.
+#: Application/Commands/YouTube/YouTube.cs:103
+#: Application/Commands/YouTube/YouTube.cs:112
+#: UI/YouTube/DownloadQueueDialog.cs:432
 msgid "Invalid YouTube link"
 msgstr ""
 
 #. Translators: Shown when the address names a whole YouTube channel, which this window cannot open.
-#: Application/Commands/YouTube/YouTube.cs:107
+#: Application/Commands/YouTube/YouTube.cs:110
 msgid "Channel links are not supported here."
 msgstr ""
 
 #. Translators: Spoken when the list of search suggestions appears under the YouTube search box.
-#: Application/Commands/YouTube/YouTube.cs:178
+#: Application/Commands/YouTube/YouTube.cs:183
 msgid "Search suggestions shown"
 msgstr ""
 
 #. Translators: The short wording spoken when search suggestions appear.
-#: Application/Commands/YouTube/YouTube.cs:180
+#: Application/Commands/YouTube/YouTube.cs:185
 msgid "Suggestions shown"
 msgstr ""
 
 #. Translators: Spoken when a command that only works on a YouTube video is used on something else.
-#: Application/Commands/YouTube/YouTube.cs:200
+#: Application/Commands/YouTube/YouTube.cs:205
 msgid "No YouTube video is active."
 msgstr ""
 
 #. Translators: The short wording spoken when a YouTube command is used on something that is not one.
-#: Application/Commands/YouTube/YouTube.cs:202
+#: Application/Commands/YouTube/YouTube.cs:207
 msgid "No YouTube video."
 msgstr ""
 
-#: Application/Host.cs:390
+#. Translators: Title of the notification shown when every queued download has finished.
+#: Application/Features.cs:118
 msgid "Downloads completed"
 msgstr ""
 
-#: Application/Host.cs:391
+#. Translators: Body of the notification shown when every queued download has finished.
+#: Application/Features.cs:120
 msgid "All items in the download queue have completed."
 msgstr ""
 
-#: Application/Host.cs:459
+#. Translators: Shown when settings could not be read. {error} is the underlying file or data error.
+#: Application/Features.cs:181
 msgid ""
 "The settings file could not be loaded. Default settings will be used, and "
 "the existing file will not be overwritten. Import a valid settings file or "
@@ -2686,7 +2767,8 @@ msgid ""
 "{error}"
 msgstr ""
 
-#: Application/Host.cs:460
+#. Translators: Title of the message shown when settings could not be read.
+#: Application/Features.cs:183
 msgid "Settings error"
 msgstr ""
 
@@ -2696,10 +2778,11 @@ msgstr ""
 msgid "Global shortcuts could not be set up and will not work."
 msgstr ""
 
+#. Translators: Title of a warning shown when global shortcuts could not be registered.
 #. Translators: Name of the settings category for the key combinations that work while another program is in front.
 #. Translators: Heading above the list of shortcuts that work while another program is in front.
-#: Application/Infrastructure/GlobalShortcutBinder.cs:32
-#: UI/Dialogs/PreferencesDialog.cs:63 UI/Preferences/ShortcutPreferences.cs:53
+#: Application/Infrastructure/GlobalShortcutBinder.cs:35
+#: UI/Dialogs/PreferencesDialog.cs:67 UI/Preferences/ShortcutPreferences.cs:53
 msgid "Global Shortcuts"
 msgstr ""
 
@@ -2709,68 +2792,75 @@ msgstr ""
 msgid "Sleep timer set for {minutes} minutes."
 msgstr ""
 
-#: Application/Infrastructure/SleepTimer.cs:78
+#. Translators: Short announcement after a timer is set. {minutes} is the number of minutes; "m" means minutes.
+#: Application/Infrastructure/SleepTimer.cs:79
 msgid "Sleep {minutes}m"
 msgstr ""
 
-#: Application/Infrastructure/SleepTimer.cs:102
-msgid "Sleep off"
+#. Translators: Spoken when a running sleep timer is turned off.
+#: Application/Infrastructure/SleepTimer.cs:103
+msgid "Sleep timer cancelled."
 msgstr ""
 
-#. Translators: Spoken when a running sleep timer is turned off.
-#: Application/Infrastructure/SleepTimer.cs:102
-msgid "Sleep timer cancelled."
+#. Translators: Short announcement when a running sleep timer is turned off.
+#: Application/Infrastructure/SleepTimer.cs:105
+msgid "Sleep off"
 msgstr ""
 
 #. Translators: Spoken when the user asks how long is left on the sleep timer. {time} is a clock
 #. reading like 00:12:30.
-#: Application/Infrastructure/SleepTimer.cs:123
+#: Application/Infrastructure/SleepTimer.cs:126
 msgid "Sleep timer: {time} remaining."
 msgstr ""
 
-#: Application/Infrastructure/SleepTimer.cs:170
-msgid "Sleep 1:00"
-msgstr ""
-
 #. Translators: Spoken once, a minute before a sleep timer fires.
-#: Application/Infrastructure/SleepTimer.cs:170
+#: Application/Infrastructure/SleepTimer.cs:173
 msgid "Sleep timer: one minute remaining."
 msgstr ""
 
+#. Translators: Short warning spoken one minute before a sleep timer fires.
+#: Application/Infrastructure/SleepTimer.cs:175
+msgid "Sleep 1:00"
+msgstr ""
+
 #. Translators: Spoken when the sleep timer is set to fire at the end of the current track.
-#: Application/Infrastructure/SleepTimer.cs:222
+#: Application/Infrastructure/SleepTimer.cs:226
 msgid "Sleep timer set for the end of the current track."
 msgstr ""
 
-#: Application/Infrastructure/SleepTimer.cs:222
+#. Translators: Short announcement when the sleep timer will fire at the end of the track.
+#: Application/Infrastructure/SleepTimer.cs:228
 msgid "Sleep: end of track"
 msgstr ""
 
 #. Translators: Spoken when the sleep timer fires and stops playback.
-#: Application/Infrastructure/SleepTimer.cs:228
+#: Application/Infrastructure/SleepTimer.cs:235
 msgid "Sleep timer: playback stopped."
 msgstr ""
 
-#. Translators: Spoken when the sleep timer fires and pauses playback.
-#: Application/Infrastructure/SleepTimer.cs:230
-msgid "Sleep timer: playback paused."
-msgstr ""
-
-#: Application/Infrastructure/SleepTimer.cs:231
-msgid "Sleep: paused"
-msgstr ""
-
-#: Application/Infrastructure/SleepTimer.cs:231
+#. Translators: Short announcement when the sleep timer stops playback.
+#: Application/Infrastructure/SleepTimer.cs:237
 msgid "Sleep: stopped"
 msgstr ""
 
-#: Application/Infrastructure/SleepTimer.cs:236
-msgid "No sleep timer"
+#. Translators: Spoken when the sleep timer fires and pauses playback.
+#: Application/Infrastructure/SleepTimer.cs:243
+msgid "Sleep timer: playback paused."
+msgstr ""
+
+#. Translators: Short announcement when the sleep timer pauses playback.
+#: Application/Infrastructure/SleepTimer.cs:245
+msgid "Sleep: paused"
 msgstr ""
 
 #. Translators: Spoken when a sleep-timer command is used but no timer is currently set.
-#: Application/Infrastructure/SleepTimer.cs:236
+#: Application/Infrastructure/SleepTimer.cs:252
 msgid "No sleep timer is set."
+msgstr ""
+
+#. Translators: Short announcement when no sleep timer is set.
+#: Application/Infrastructure/SleepTimer.cs:254
+msgid "No sleep timer"
 msgstr ""
 
 #. Translators: Window title while playback is paused. {title} is the track, {app} the program name.
@@ -2871,7 +2961,7 @@ msgstr ""
 
 #. Translators: Name of the equalizer preset that changes nothing, and which the user is meant to edit into whatever they want.
 #. Translators: The entry in the length list that lets the user type their own hours and minutes.
-#: Equalizer/Presets.cs:161 UI/Dialogs/SleepTimerDialog.cs:71
+#: Equalizer/Presets.cs:161 UI/Dialogs/SleepTimerDialog.cs:72
 msgid "Custom"
 msgstr ""
 
@@ -2992,16 +3082,24 @@ msgstr ""
 msgid "That IPTV source is no longer saved."
 msgstr ""
 
-#: Iptv/PlaylistReader.cs:34 Media/M3uPlaylist.cs:36
+#. Translators: Shown when a local IPTV playlist exceeds the safe size limit.
+#. Translators: Shown when a local M3U playlist exceeds the safe size limit.
+#: Iptv/PlaylistReader.cs:35 Media/M3uPlaylist.cs:37
 msgid "The playlist file is too large."
 msgstr ""
 
-#: Iptv/PlaylistReader.cs:56 Iptv/PlaylistReader.cs:66 Media/M3uPlaylist.cs:55
-#: Media/M3uPlaylist.cs:65
+#. Translators: Shown when an IPTV playlist download exceeds the safe size limit.
+#. Translators: Shown when an IPTV playlist download grows beyond the safe size limit.
+#. Translators: Shown when an M3U playlist download exceeds the safe size limit.
+#. Translators: Shown when an M3U playlist download grows beyond the safe size limit.
+#: Iptv/PlaylistReader.cs:58 Iptv/PlaylistReader.cs:69 Media/M3uPlaylist.cs:57
+#: Media/M3uPlaylist.cs:68
 msgid "The network playlist is too large."
 msgstr ""
 
-#: Iptv/PlaylistReader.cs:77 Media/M3uPlaylist.cs:76
+#. Translators: Shown when downloading an IPTV playlist takes too long.
+#. Translators: Shown when downloading an M3U playlist takes too long.
+#: Iptv/PlaylistReader.cs:81 Media/M3uPlaylist.cs:80
 msgid "The playlist request timed out."
 msgstr ""
 
@@ -3041,28 +3139,48 @@ msgid "The Xtream server did not respond in time."
 msgstr ""
 
 #. Translators: Shown when the user asks the player to open its file types but the system is not Windows.
-#: Media/Associations.cs:25 Media/Associations.cs:53
+#. Translators: Shown when removing file associations is attempted on a non-Windows system.
+#: Media/Associations.cs:25 Media/Associations.cs:54
 msgid "File associations are available only on Windows."
 msgstr ""
 
-#: Media/MediaConverter.cs:343
+#. Translators: Shown when media conversion fails without a more specific reason.
+#: Media/MediaConverter.cs:344
 msgid "The file could not be converted."
 msgstr ""
 
-#: Media/MediaConverter.cs:345
+#. Translators: Shown when the converter cannot read the input media format.
+#: Media/MediaConverter.cs:347
 msgid "Unsupported file type."
 msgstr ""
 
-#: Media/MediaConverter.cs:347
+#. Translators: Shown when a file selected for conversion no longer exists.
+#: Media/MediaConverter.cs:350
 msgid "The file could not be found."
 msgstr ""
 
-#: Media/MediaConverter.cs:349
+#. Translators: Shown when the converter lacks permission to read or write a file.
+#: Media/MediaConverter.cs:353
 msgid "Access to the file was denied."
 msgstr ""
 
-#: Media/MediaConverter.cs:351
+#. Translators: Shown when media conversion runs out of disk space.
+#: Media/MediaConverter.cs:356
 msgid "There is not enough free disk space."
+msgstr ""
+
+#. Translators: The two names in the Open dialog's file-type list. The patterns beside them are
+#. literal and must not be translated.
+#: Media/MediaLibrary.cs:68
+msgid "Media Files"
+msgstr ""
+
+#. Translators: File-type name for the entry that shows every file in an Open dialog.
+#. Translators: File-type name for the entry that shows every file in a picker.
+#. Translators: File type name for showing every file in the cookie-file picker on the general YouTube settings page.
+#: Media/MediaLibrary.cs:70 UI/Iptv/IptvSourceEditDialog.cs:184
+#: UI/YouTube/GeneralPreferences.cs:196
+msgid "All Files"
 msgstr ""
 
 #. Translators: Shown when recording was asked for with nothing to record from.
@@ -3080,54 +3198,311 @@ msgstr ""
 msgid "Could not write to the recordings folder."
 msgstr ""
 
-#: Recording/RecordingSources.cs:80
+#. Translators: Shown when the recording format does not support the selected sample rate and channel count.
+#: Recording/RecordingSources.cs:81
 msgid ""
 "This format cannot be recorded at the chosen sample rate and channel count."
 msgstr ""
 
 #. Translators: Shown when recording went wrong in a way the player cannot explain more precisely.
-#: Recording/RecordingSources.cs:82
+#: Recording/RecordingSources.cs:83
 msgid "Could not record."
 msgstr ""
 
 #. Translators: Shown when a recording source was left without a name.
-#: Recording/RecordingSources.cs:102
+#: Recording/RecordingSources.cs:103
 msgid "Give this source a name."
 msgstr ""
 
 #. Translators: Shown when a recording source is set to capture a program but none was chosen.
-#: Recording/RecordingSources.cs:108
+#: Recording/RecordingSources.cs:109
 msgid "Choose a program to capture."
 msgstr ""
 
 #. Translators: How a microphone or line-in source is described in the recording sources list.
-#: Recording/RecordingSources.cs:126
+#: Recording/RecordingSources.cs:127
 msgid "input device"
 msgstr ""
 
 #. Translators: How a source that captures everything a speaker plays is described in the list.
-#: Recording/RecordingSources.cs:128
+#: Recording/RecordingSources.cs:129
 msgid "system output"
 msgstr ""
 
 #. Translators: How a source that captures everything except one program is described.
-#: Recording/RecordingSources.cs:133
+#: Recording/RecordingSources.cs:134
 msgid "everything except {program}; PID: {pid}"
 msgstr ""
 
-#: Recording/RecordingSources.cs:134
+#. Translators: How a source that captures one program is described. {program} is its name and {pid} its process number.
+#: Recording/RecordingSources.cs:136
 msgid "program {program}; PID: {pid}"
 msgstr ""
 
 #. Translators: One row of the recording sources list. {name} is what the user called the source,
 #. {kind} says what it captures and {volume} is a percentage.
-#: Recording/RecordingSources.cs:138
+#: Recording/RecordingSources.cs:140
 msgid "{name} - {kind} - {volume}%"
+msgstr ""
+
+#. Translators: Spoken description of the General page inside Audio settings.
+#. Translators: Spoken description of the Playback page inside Audio settings.
+#. Translators: Spoken description of the General settings page, read when the page is opened.
+#. Translators: Spoken description of the Recording settings page, read when the page is opened.
+#. Translators: Spoken description of the YouTube download settings page, read when the page is open.
+#. Translators: Spoken description of the general YouTube settings page, read when the page is open.
+#: UI/Audio/GeneralPreferences.cs:22 UI/Audio/PlaybackPreferences.cs:22
+#: UI/Preferences/GeneralPreferences.cs:26
+#: UI/Preferences/RecordingPreferences.cs:44
+#: UI/YouTube/DownloadPreferences.cs:56 UI/YouTube/GeneralPreferences.cs:48
+msgid ""
+"Move through this page with Tab or Shift+Tab. Press F1 while a control is "
+"focused to hear what it changes."
+msgstr ""
+
+#. Translators: Label of the box holding the seek amount used by the "Custom value" seek step, in seconds.
+#: UI/Audio/GeneralPreferences.cs:28
+msgid "Custom seek value (seconds)"
+msgstr ""
+
+#. Translators: Label of the box holding how much faster or slower one press of the speed keys makes the file play.
+#: UI/Audio/GeneralPreferences.cs:31
+msgid "Speed step"
+msgstr ""
+
+#. Translators: Label of the box holding how many semitones one press of a pitch key changes the sound.
+#: UI/Audio/GeneralPreferences.cs:34
+msgid "Pitch step (semitones)"
+msgstr ""
+
+#. Translators: Label of the box holding how much louder or quieter one press of the volume keys makes the sound.
+#: UI/Audio/GeneralPreferences.cs:37
+msgid "Volume step"
+msgstr ""
+
+#. Translators: Label of the box holding how far one press moves the sound left or right.
+#: UI/Audio/GeneralPreferences.cs:40
+msgid "Pan step (percent)"
+msgstr ""
+
+#. Translators: Label of the list that chooses what the player does when it reaches the end of a file.
+#: UI/Audio/GeneralPreferences.cs:43
+msgid "What happens after a file ends?"
+msgstr ""
+
+#. Translators: One of the things the player can do at the end of a file: play the next one.
+#: UI/Audio/GeneralPreferences.cs:46
+msgid "Advance to the next file"
+msgstr ""
+
+#. Translators: One of the things the player can do at the end of a file: play the same one again.
+#: UI/Audio/GeneralPreferences.cs:48
+msgid "Loop the file"
+msgstr ""
+
+#. Translators: One of the things the player can do at the end of a file: stop there.
+#: UI/Audio/GeneralPreferences.cs:50
+msgid "Do nothing"
+msgstr ""
+
+#. Translators: Tick box on the Audio General settings page: after the last file, carry on from the first one again.
+#: UI/Audio/GeneralPreferences.cs:52
+msgid "Wrap to top for multiple files"
+msgstr ""
+
+#. Translators: Tick box on the Audio General settings page: remember where each file was stopped and start there again.
+#: UI/Audio/GeneralPreferences.cs:54
+msgid "Save current position for each file"
+msgstr ""
+
+#. Translators: Help text for the box holding the seek amount used by the "Custom value" seek step.
+#: UI/Audio/GeneralPreferences.cs:69
+msgid ""
+"Enter the number of seconds skipped by the seek shortcuts when Custom value "
+"is selected. Positive whole numbers and decimals are accepted; for example, "
+"2.5."
+msgstr ""
+
+#. Translators: Help text for the box holding how much one press of the speed keys changes the playing speed.
+#: UI/Audio/GeneralPreferences.cs:72
+msgid ""
+"Sets how much each Speed Up or Speed Down command changes the playback rate. "
+"For example, 0.025 changes 1x speed to 1.025x."
+msgstr ""
+
+#. Translators: Help text for the box holding how much one press of the pitch keys raises or lowers a sound.
+#: UI/Audio/GeneralPreferences.cs:75
+msgid ""
+"Sets how far each Raise Pitch or Lower Pitch command moves. One semitone is "
+"the distance between adjacent piano keys; 0.1 semitone is 10 cents. Enter a "
+"value from 0.001 to 12."
+msgstr ""
+
+#. Translators: Help text for the box holding how much one press of the volume keys changes the loudness.
+#: UI/Audio/GeneralPreferences.cs:78
+msgid ""
+"Sets the amount added or subtracted by each Volume Up or Volume Down "
+"command. Enter a whole number from 1 to 20."
+msgstr ""
+
+#. Translators: Help text for the box holding how far one press moves the sound left or right.
+#: UI/Audio/GeneralPreferences.cs:81
+msgid ""
+"Sets how many percentage points each Pan Left or Pan Right command moves the "
+"sound. Enter a whole number from 1 to 100."
+msgstr ""
+
+#. Translators: Help text for the list that chooses what the player does at the end of a file.
+#: UI/Audio/GeneralPreferences.cs:84
+msgid ""
+"Choose whether reaching the end starts the next playlist item, repeats the "
+"current item, or leaves playback stopped at the end."
+msgstr ""
+
+#. Translators: Help text for the tick box that carries on from the first file after the last one.
+#: UI/Audio/GeneralPreferences.cs:87
+msgid ""
+"With at least two items loaded, Next on the final item returns to the first "
+"and Previous on the first returns to the final item. Automatic advance "
+"follows the same rule."
+msgstr ""
+
+#. Translators: Help text for the tick box that remembers where each file was stopped.
+#: UI/Audio/GeneralPreferences.cs:90
+msgid ""
+"Keeps a separate resume time for every item and returns to that time when "
+"the item is opened again during navigation."
+msgstr ""
+
+#. Translators: Error message shown when the speed step was typed as something other than a number above zero.
+#: UI/Audio/GeneralPreferences.cs:98
+msgid "Speed step must be a positive number."
+msgstr ""
+
+#. Translators: Error shown when the pitch step is not a number from 0.001 through 12.
+#: UI/Audio/GeneralPreferences.cs:103
+msgid "Pitch step must be a number from 0.001 to 12."
+msgstr ""
+
+#. Translators: Tick box that evens out audio loudness and holds back the loudest peaks.
+#: UI/Audio/PlaybackPreferences.cs:28
+msgid "Enable dynamic normalize and limiter"
+msgstr ""
+
+#. Translators: Tick box that plays the left and right audio channels mixed together.
+#: UI/Audio/PlaybackPreferences.cs:30
+msgid "Play audio as Mono"
+msgstr ""
+
+#. Translators: Label of the duration used to fade audio when playback starts, stops, pauses, or resumes.
+#: UI/Audio/PlaybackPreferences.cs:32
+msgid "Volume fading interval (milliseconds)"
+msgstr ""
+
+#. Translators: Tick box that fades audio down and up around a seek operation.
+#: UI/Audio/PlaybackPreferences.cs:36
+msgid "Enable volume fading during seeking"
+msgstr ""
+
+#. Translators: Label of the duration used to fade audio around a seek operation.
+#: UI/Audio/PlaybackPreferences.cs:38
+msgid "Seek fading interval (milliseconds)"
+msgstr ""
+
+#. Translators: Tick box that fades audio when moving from one file to another.
+#: UI/Audio/PlaybackPreferences.cs:42
+msgid "Enable volume fading at the start or end of a file"
+msgstr ""
+
+#. Translators: Tick box that fades audio when playback is paused or resumed.
+#: UI/Audio/PlaybackPreferences.cs:44
+msgid "Enable volume fading when pausing or resuming playback"
+msgstr ""
+
+#. Translators: Label of the list that controls uninterrupted playback between adjacent files.
+#: UI/Audio/PlaybackPreferences.cs:46
+msgid "Gapless playback mode"
+msgstr ""
+
+#. Translators: Gapless playback is turned off.
+#: UI/Audio/PlaybackPreferences.cs:49
+msgid "Disabled"
+msgstr ""
+
+#. Translators: Use gapless playback only when adjacent files have compatible audio formats.
+#: UI/Audio/PlaybackPreferences.cs:51
+msgid "Compatible files"
+msgstr ""
+
+#. Translators: Ask the player to preserve gapless playback even when it must adapt differing audio formats.
+#: UI/Audio/PlaybackPreferences.cs:53
+msgid "Always when possible"
+msgstr ""
+
+#. Translators: Help text for the tick box that evens out loudness and holds back loud peaks.
+#: UI/Audio/PlaybackPreferences.cs:70
+msgid ""
+"Evens out changing loudness and restrains the loudest peaks to reduce "
+"clipping. Clear this option to hear the source without those filters."
+msgstr ""
+
+#. Translators: Help text for the tick box that mixes the left and right channels together.
+#: UI/Audio/PlaybackPreferences.cs:73
+msgid ""
+"Combines the left and right channels into one mono output. Clear this option "
+"to preserve the source channel layout."
+msgstr ""
+
+#. Translators: Help text for the normal playback fade duration.
+#: UI/Audio/PlaybackPreferences.cs:76
+msgid ""
+"Sets how long playback fades take. Zero disables these fades even when a "
+"related option is selected. Seek fading uses its own interval."
+msgstr ""
+
+#. Translators: Help text for the option that fades sound around seeking.
+#: UI/Audio/PlaybackPreferences.cs:79
+msgid ""
+"Fades the sound out before moving and back in after playback restarts at the "
+"new position."
+msgstr ""
+
+#. Translators: Help text for the seek fade duration.
+#: UI/Audio/PlaybackPreferences.cs:82
+msgid ""
+"Sets the duration of each fade around a seek, from 1 to 10000 milliseconds."
+msgstr ""
+
+#. Translators: Help text for fading between files without mixing the files together.
+#: UI/Audio/PlaybackPreferences.cs:85
+msgid ""
+"Fades out as a file reaches its end and fades in when another file starts, "
+"including after manual navigation. This does not mix two files together."
+msgstr ""
+
+#. Translators: Help text for fading when playback is paused or resumed.
+#: UI/Audio/PlaybackPreferences.cs:88
+msgid "Fades out before pausing and fades in after playback resumes."
+msgstr ""
+
+#. Translators: Help text for gapless playback modes.
+#: UI/Audio/PlaybackPreferences.cs:91
+msgid ""
+"The Compatible files mode preserves the original audio format. Always when "
+"possible may adapt later files to the first file's output format. Online "
+"streams use gapless playback only when the next stream is ready."
+msgstr ""
+
+#. Translators: Error shown when the seek fade duration is not a whole number from 1 through 10000.
+#: UI/Audio/PlaybackPreferences.cs:126
+msgid ""
+"Seek fading interval must be a whole number from 1 to 10000 milliseconds."
 msgstr ""
 
 #. Translators: The button that stops a job that is running behind a progress window.
 #. Translators: The button that stops a running conversion. It asks for confirmation first.
 #. Translators: The button that closes a window and leaves everything as it was.
+#. Translators: Button that closes the Opened Files window without taking action.
 #. Translators: Button that closes the save-selection-points dialog without saving anything.
 #. Translators: Button that closes a selection time dialog without changing anything.
 #. Translators: The button that closes a window and leaves everything as it was.
@@ -3136,12 +3511,12 @@ msgstr ""
 #. Translators: Closes the link-entry window without adding anything.
 #. Translators: The button that closes a window and leaves everything as it was.
 #: UI/Controls/ProgressView.cs:66 UI/Dialogs/ConversionProgressDialog.cs:84
-#: UI/Dialogs/GoToTimeDialog.cs:71 UI/Dialogs/OpenedFilesDialog.cs:50
+#: UI/Dialogs/GoToTimeDialog.cs:72 UI/Dialogs/OpenedFilesDialog.cs:51
 #: UI/Dialogs/SaveSelectionsDialog.cs:89 UI/Dialogs/SelectionTimeDialog.cs:61
-#: UI/Dialogs/SleepTimerDialog.cs:170 UI/Equalizer/EditDialog.cs:116
-#: UI/YouTube/DownloadDialog.cs:127 UI/YouTube/DownloadExitDialog.cs:22
-#: UI/YouTube/DownloadProgressDialog.cs:59
-#: UI/YouTube/DownloadQueueDialog.cs:367 UI/YouTube/LinkKindDialog.cs:33
+#: UI/Dialogs/SleepTimerDialog.cs:171 UI/Equalizer/EditDialog.cs:116
+#: UI/YouTube/DownloadDialog.cs:133 UI/YouTube/DownloadExitDialog.cs:22
+#: UI/YouTube/DownloadProgressDialog.cs:60
+#: UI/YouTube/DownloadQueueDialog.cs:380 UI/YouTube/LinkKindDialog.cs:33
 msgid "Cancel"
 msgstr ""
 
@@ -3150,84 +3525,86 @@ msgstr ""
 msgid "Load subtitle"
 msgstr ""
 
-#: UI/DialogService.cs:58
+#. Translators: File-type filter for supported subtitle files, followed by all files.
+#: UI/DialogService.cs:59
 msgid ""
 "Subtitle files (*.srt;*.ass;*.ssa;*.vtt;*.sub)|*.srt;*.ass;*.ssa;*.vtt;*.sub|"
 "All files (*.*)|*.*"
 msgstr ""
 
-#. Translators: Prompt, then title, of the box asking for a subtitle's web address.
-#: UI/DialogService.cs:66
+#. Translators: Prompt asking for a subtitle file's web address.
+#: UI/DialogService.cs:67
 msgid "Enter the web address of a subtitle file:"
 msgstr ""
 
-#: UI/DialogService.cs:66
+#. Translators: Title of the box asking for a subtitle file's web address.
+#: UI/DialogService.cs:69
 msgid "Load subtitle from URL"
 msgstr ""
 
 #. Translators: Default base name for a selected part when the source has no usable file name.
 #. Translators: Default common name for numbered files created by Save Selection Points.
-#: UI/DialogService.cs:110 UI/DialogService.cs:149
+#: UI/DialogService.cs:114 UI/DialogService.cs:153
 msgid "selection"
 msgstr ""
 
 #. Translators: Default file name for a saved selection. {name} is the source file's base name.
-#: UI/DialogService.cs:112
+#: UI/DialogService.cs:116
 msgid "{name} - selection"
 msgstr ""
 
 #. Translators: MP4 choice in the format list when saving selected parts of a video.
-#: UI/DialogService.cs:159
+#: UI/DialogService.cs:163
 msgid "MP4 video (*.mp4)"
 msgstr ""
 
 #. Translators: Matroska choice in the format list when saving selected parts of a video.
-#: UI/DialogService.cs:161
+#: UI/DialogService.cs:165
 msgid "Matroska video (*.mkv)"
 msgstr ""
 
 #. Translators: WebM choice in the format list when saving selected parts of a video.
-#: UI/DialogService.cs:163
+#: UI/DialogService.cs:167
 msgid "WebM video (*.webm)"
 msgstr ""
 
 #. Translators: QuickTime choice in the format list when saving selected parts of a video.
-#: UI/DialogService.cs:165
+#: UI/DialogService.cs:169
 msgid "QuickTime video (*.mov)"
 msgstr ""
 
 #. Translators: AVI choice in the format list when saving selected parts of a video.
-#: UI/DialogService.cs:167
+#: UI/DialogService.cs:171
 msgid "AVI video (*.avi)"
 msgstr ""
 
 #. Translators: MP3 choice in the format list when saving selected parts of an audio file.
-#: UI/DialogService.cs:172
+#: UI/DialogService.cs:176
 msgid "MP3 audio (*.mp3)"
 msgstr ""
 
 #. Translators: M4A choice in the format list when saving selected parts of an audio file.
-#: UI/DialogService.cs:174
+#: UI/DialogService.cs:178
 msgid "M4A audio (*.m4a)"
 msgstr ""
 
 #. Translators: FLAC choice in the format list when saving selected parts of an audio file.
-#: UI/DialogService.cs:176
+#: UI/DialogService.cs:180
 msgid "FLAC audio (*.flac)"
 msgstr ""
 
 #. Translators: WAV choice in the format list when saving selected parts of an audio file.
-#: UI/DialogService.cs:178
+#: UI/DialogService.cs:182
 msgid "WAV audio (*.wav)"
 msgstr ""
 
 #. Translators: Ogg Vorbis choice in the format list when saving selected parts of an audio file.
-#: UI/DialogService.cs:180
+#: UI/DialogService.cs:184
 msgid "Ogg Vorbis audio (*.ogg)"
 msgstr ""
 
 #. Translators: Opus choice in the format list when saving selected parts of an audio file.
-#: UI/DialogService.cs:182
+#: UI/DialogService.cs:186
 msgid "Opus audio (*.opus)"
 msgstr ""
 
@@ -3276,11 +3653,12 @@ msgstr ""
 msgid "Visit the Luna Player website"
 msgstr ""
 
+#. Translators: Button that closes the About window.
 #. Translators: The button that accepts a window and carries the change out.
 #. Translators: Button that accepts the time entered in a selection time dialog.
 #. Translators: The button that accepts a window and carries the change out.
-#: UI/Dialogs/AboutDialog.cs:49 UI/Dialogs/GoToTimeDialog.cs:66
-#: UI/Dialogs/SelectionTimeDialog.cs:56 UI/Dialogs/SleepTimerDialog.cs:165
+#: UI/Dialogs/AboutDialog.cs:50 UI/Dialogs/GoToTimeDialog.cs:67
+#: UI/Dialogs/SelectionTimeDialog.cs:56 UI/Dialogs/SleepTimerDialog.cs:166
 msgid "OK"
 msgstr ""
 
@@ -3339,7 +3717,7 @@ msgstr ""
 #. Translators: Label of the box holding what the user calls a recording source.
 #. Translators: Label of the box holding what a saved link is called.
 #. Translators: Heading of the favourites list column holding what each saved link is called.
-#: UI/Dialogs/BookmarkManagerDialog.cs:19
+#: UI/Dialogs/BookmarkManagerDialog.cs:20
 #: UI/Dialogs/SaveSelectionsDialog.cs:43 UI/Equalizer/EditDialog.cs:87
 #: UI/Iptv/ChannelBrowserDialog.cs:79 UI/Iptv/IptvSourceEditDialog.cs:56
 #: UI/Iptv/IptvSourcesDialog.cs:29 UI/Recording/SourceDialog.cs:49
@@ -3348,36 +3726,41 @@ msgid "Name"
 msgstr ""
 
 #. Translators: Heading of the bookmark list column holding the point in the file each bookmark sits at.
-#: UI/Dialogs/BookmarkManagerDialog.cs:21
+#: UI/Dialogs/BookmarkManagerDialog.cs:22
 msgid "Position"
 msgstr ""
 
 #. Translators: Button that moves playing to the chosen bookmark.
-#: UI/Dialogs/BookmarkManagerDialog.cs:35
+#: UI/Dialogs/BookmarkManagerDialog.cs:36
 msgid "Jump"
 msgstr ""
 
+#. Translators: Button that renames the chosen bookmark.
 #. Translators: Name of the Edit menu in the menu bar.
-#: UI/Dialogs/BookmarkManagerDialog.cs:36 UI/MenuBuilder.cs:69
+#: UI/Dialogs/BookmarkManagerDialog.cs:38 UI/MenuBuilder.cs:69
 msgid "Edit"
 msgstr ""
 
+#. Translators: Button that removes the chosen bookmark.
 #. Translators: Button that removes the chosen equalizer preset.
 #. Translators: Edit menu item that deletes the current file from the disk.
-#: UI/Dialogs/BookmarkManagerDialog.cs:37 UI/Equalizer/PresetsDialog.cs:53
+#: UI/Dialogs/BookmarkManagerDialog.cs:40 UI/Equalizer/PresetsDialog.cs:53
 #: UI/Menus/EditMenu.cs:22
 msgid "Delete"
 msgstr ""
 
 #. Translators: The button that closes a window.
+#. Translators: Button that closes the media conversion report.
+#. Translators: The button that closes a window.
 #. Translators: Button that closes the media converter without converting anything.
+#. Translators: Button that closes a read-only information window.
 #. Translators: Button that closes a window when there is nothing to accept or cancel.
 #. Translators: The button that closes a window.
 #. Translators: Closes the queue window. Active downloads continue in the background.
 #. Translators: The button that closes a window.
-#: UI/Dialogs/BookmarkManagerDialog.cs:40
-#: UI/Dialogs/ConversionReportDialog.cs:23 UI/Dialogs/CrashDialog.cs:48
-#: UI/Dialogs/MediaConverterDialog.cs:217 UI/Dialogs/TextInfoDialog.cs:18
+#: UI/Dialogs/BookmarkManagerDialog.cs:43
+#: UI/Dialogs/ConversionReportDialog.cs:24 UI/Dialogs/CrashDialog.cs:48
+#: UI/Dialogs/MediaConverterDialog.cs:219 UI/Dialogs/TextInfoDialog.cs:19
 #: UI/Equalizer/PresetsDialog.cs:56 UI/Iptv/ChannelBrowserDialog.cs:121
 #: UI/Iptv/IptvSourcesDialog.cs:62 UI/Recording/RecordingDialog.cs:171
 #: UI/YouTube/DescriptionDialog.cs:53 UI/YouTube/DownloadQueueDialog.cs:68
@@ -3408,25 +3791,27 @@ msgstr ""
 #. not yet worth making.
 #. Translators: Estimated time left for all unfinished queue items.
 #: UI/Dialogs/ConversionProgressDialog.cs:160
-#: UI/YouTube/DownloadProgressDialog.cs:155
-#: UI/YouTube/DownloadQueueDialog.cs:297
+#: UI/YouTube/DownloadProgressDialog.cs:163
+#: UI/YouTube/DownloadQueueDialog.cs:306
 msgid "Estimated time left: {time}"
 msgstr ""
 
 #. Translators: Shown for the estimated time left before enough is done to guess it.
-#. Translators: Shown for the speed before enough has downloaded to measure it.
-#. Translators: Shown for the estimated time left before enough is done to guess it.
+#. Translators: Shown for download speed before enough data exists to measure it.
+#. Translators: Shown for estimated time left before enough data exists to calculate it.
+#. Translators: Shown for queue speed before enough data exists to measure it.
+#. Translators: Shown for queue time remaining before enough data exists to calculate it.
 #: UI/Dialogs/ConversionProgressDialog.cs:164
-#: UI/YouTube/DownloadProgressDialog.cs:152
-#: UI/YouTube/DownloadProgressDialog.cs:159
-#: UI/YouTube/DownloadQueueDialog.cs:295 UI/YouTube/DownloadQueueDialog.cs:299
+#: UI/YouTube/DownloadProgressDialog.cs:147
+#: UI/YouTube/DownloadProgressDialog.cs:151
+#: UI/YouTube/DownloadQueueDialog.cs:290 UI/YouTube/DownloadQueueDialog.cs:294
 msgid "calculating…"
 msgstr ""
 
 #. Translators: How far the whole batch has got. {percent} is a whole number.
 #. Translators: Aggregate progress through all videos in the download queue.
 #: UI/Dialogs/ConversionProgressDialog.cs:166
-#: UI/YouTube/DownloadQueueDialog.cs:291
+#: UI/YouTube/DownloadQueueDialog.cs:302
 msgid "Total percentage: {percent}%"
 msgstr ""
 
@@ -3475,42 +3860,42 @@ msgid "The details could not be copied. They are in the file named above."
 msgstr ""
 
 #. Translators: Label above the boxes where the user types the point in the file to move to.
-#: UI/Dialogs/GoToTimeDialog.cs:28
+#: UI/Dialogs/GoToTimeDialog.cs:29
 msgid "Choose time position:"
 msgstr ""
 
 #. Translators: Label of the box holding the hours part of the point in the file to move to.
 #. Translators: Label of the hours box in a selection time dialog.
 #. Translators: Label of the box holding the hours part of a custom timer length.
-#: UI/Dialogs/GoToTimeDialog.cs:30 UI/Dialogs/SelectionTimeDialog.cs:26
-#: UI/Dialogs/SleepTimerDialog.cs:74
+#: UI/Dialogs/GoToTimeDialog.cs:31 UI/Dialogs/SelectionTimeDialog.cs:26
+#: UI/Dialogs/SleepTimerDialog.cs:75
 msgid "Hours"
 msgstr ""
 
 #. Translators: Label of the box holding the minutes part of the point in the file to move to.
 #. Translators: Label of the minutes box in a selection time dialog.
 #. Translators: Label of the box holding the minutes part of a custom timer length.
-#: UI/Dialogs/GoToTimeDialog.cs:33 UI/Dialogs/SelectionTimeDialog.cs:29
-#: UI/Dialogs/SleepTimerDialog.cs:77
+#: UI/Dialogs/GoToTimeDialog.cs:34 UI/Dialogs/SelectionTimeDialog.cs:29
+#: UI/Dialogs/SleepTimerDialog.cs:78
 msgid "Minutes"
 msgstr ""
 
 #. Translators: Label of the box holding the seconds part of the point in the file to move to.
 #. Translators: Label of the seconds box in a selection time dialog.
-#: UI/Dialogs/GoToTimeDialog.cs:36 UI/Dialogs/SelectionTimeDialog.cs:33
+#: UI/Dialogs/GoToTimeDialog.cs:37 UI/Dialogs/SelectionTimeDialog.cs:33
 msgid "Seconds"
 msgstr ""
 
 #. Translators: Shown when the point in the file the user typed lies past the end of the file.
 #. Translators: Shown when a manually entered selection marker lies beyond the file's end.
-#: UI/Dialogs/GoToTimeDialog.cs:113 UI/Dialogs/SelectionTimeDialog.cs:92
+#: UI/Dialogs/GoToTimeDialog.cs:114 UI/Dialogs/SelectionTimeDialog.cs:92
 msgid "The selected time exceeds the file duration."
 msgstr ""
 
 #. Translators: Title of the window where files are converted to another audio format.
 #. Translators: Title of the messages the media converter shows.
 #: UI/Dialogs/MediaConverterDialog.cs:94
-#: UI/Dialogs/MediaConverterDialog.cs:513
+#: UI/Dialogs/MediaConverterDialog.cs:515
 msgid "Media converter"
 msgstr ""
 
@@ -3554,9 +3939,11 @@ msgid "Sample rate"
 msgstr ""
 
 #. Translators: First item in a converter list, meaning the file's own value is kept unchanged.
+#. Translators: First item in the converter's channel list, meaning the source channel layout is kept.
+#. Translators: First item in the converter's quality list, meaning the source quality is kept.
 #: UI/Dialogs/MediaConverterDialog.cs:125
-#: UI/Dialogs/MediaConverterDialog.cs:132
-#: UI/Dialogs/MediaConverterDialog.cs:140
+#: UI/Dialogs/MediaConverterDialog.cs:133
+#: UI/Dialogs/MediaConverterDialog.cs:142
 msgid "Preserve original"
 msgstr ""
 
@@ -3578,7 +3965,7 @@ msgstr ""
 
 #. Translators: The one-channel choice in the converter's channels list.
 #. Translators: One of the channel counts a recording can be made in: one channel.
-#: UI/Dialogs/MediaConverterDialog.cs:134
+#: UI/Dialogs/MediaConverterDialog.cs:135
 #: UI/Preferences/RecordingPreferences.cs:62
 #: UI/Preferences/RecordingPreferences.cs:196
 #: UI/Recording/RecordingDialog.cs:138 UI/Recording/RecordingDialog.cs:402
@@ -3587,7 +3974,7 @@ msgstr ""
 
 #. Translators: The two-channel choice in the converter's channels list.
 #. Translators: One of the channel counts a recording can be made in: two channels.
-#: UI/Dialogs/MediaConverterDialog.cs:136
+#: UI/Dialogs/MediaConverterDialog.cs:137
 #: UI/Preferences/RecordingPreferences.cs:64
 #: UI/Preferences/RecordingPreferences.cs:198
 #: UI/Recording/RecordingDialog.cs:140 UI/Recording/RecordingDialog.cs:404
@@ -3595,70 +3982,70 @@ msgid "Stereo"
 msgstr ""
 
 #. Translators: Label of the list that chooses the audio quality (bitrate) of the converted files.
-#: UI/Dialogs/MediaConverterDialog.cs:138
+#: UI/Dialogs/MediaConverterDialog.cs:139
 msgid "Quality"
 msgstr ""
 
 #. Translators: One bitrate in the converter's quality list. {rate} is a number in kilobits per second.
 #. Translators: One audio-bitrate choice. {rate} is a number of kilobits per second.
-#: UI/Dialogs/MediaConverterDialog.cs:143 UI/YouTube/QualityLabels.cs:15
+#: UI/Dialogs/MediaConverterDialog.cs:145 UI/YouTube/QualityLabels.cs:15
 msgid "{rate} kbps"
 msgstr ""
 
 #. Translators: Label of the list that chooses whether Opus uses a constant or variable bitrate.
-#: UI/Dialogs/MediaConverterDialog.cs:145
+#: UI/Dialogs/MediaConverterDialog.cs:147
 msgid "Bitrate mode"
 msgstr ""
 
 #. Translators: The Opus bitrate mode that holds one steady rate. Written in full rather than as "CBR".
-#: UI/Dialogs/MediaConverterDialog.cs:148
+#: UI/Dialogs/MediaConverterDialog.cs:150
 msgid "Constant bitrate"
 msgstr ""
 
 #. Translators: The Opus bitrate mode that varies the rate with the sound. Written in full rather than as "VBR".
-#: UI/Dialogs/MediaConverterDialog.cs:150
+#: UI/Dialogs/MediaConverterDialog.cs:152
 msgid "Variable bitrate"
 msgstr ""
 
 #. Translators: Label of the list that chooses what Opus tunes its variable bitrate for.
-#: UI/Dialogs/MediaConverterDialog.cs:152
+#: UI/Dialogs/MediaConverterDialog.cs:154
 msgid "Optimize for"
 msgstr ""
 
 #. Translators: The Opus profile for music and general audio.
-#: UI/Dialogs/MediaConverterDialog.cs:155
+#: UI/Dialogs/MediaConverterDialog.cs:157
 msgid "Music"
 msgstr ""
 
 #. Translators: The Opus profile for speech.
-#: UI/Dialogs/MediaConverterDialog.cs:157
+#: UI/Dialogs/MediaConverterDialog.cs:159
 msgid "Speech"
 msgstr ""
 
 #. Translators: The Opus profile that keeps the delay as short as possible.
-#: UI/Dialogs/MediaConverterDialog.cs:159
+#: UI/Dialogs/MediaConverterDialog.cs:161
 msgid "Low delay"
 msgstr ""
 
 #. Translators: Label of the box that chooses how many files are converted at the same time.
-#: UI/Dialogs/MediaConverterDialog.cs:161
+#: UI/Dialogs/MediaConverterDialog.cs:163
 msgid "Maximum simultaneous conversions"
 msgstr ""
 
 #. Translators: Title of the group holding where the converted files are written and what happens to
 #. the originals.
-#: UI/Dialogs/MediaConverterDialog.cs:166
+#: UI/Dialogs/MediaConverterDialog.cs:168
 msgid "Location"
 msgstr ""
 
 #. Translators: Tick box on the converter. When on, each converted file is written beside the file it
 #. came from; when off, they all go to one chosen folder instead.
-#: UI/Dialogs/MediaConverterDialog.cs:169
+#: UI/Dialogs/MediaConverterDialog.cs:171
 msgid "Preserve original file locations"
 msgstr ""
 
 #. Translators: Label of the box holding the folder the converted files are written to.
-#: UI/Dialogs/MediaConverterDialog.cs:172
+#: UI/Dialogs/MediaConverterDialog.cs:174
 msgid "Destination folder"
 msgstr ""
 
@@ -3669,47 +4056,48 @@ msgstr ""
 #. Translators: Button that opens a folder picker to choose where the download is saved.
 #. Translators: Button on the YouTube download settings page that opens a folder picker.
 #. Translators: Button that opens a file picker to choose a cookie file by hand.
-#: UI/Dialogs/MediaConverterDialog.cs:175
-#: UI/Dialogs/SaveSelectionsDialog.cs:54 UI/Iptv/IptvSourceEditDialog.cs:71
+#: UI/Dialogs/MediaConverterDialog.cs:177
+#: UI/Dialogs/SaveSelectionsDialog.cs:54 UI/Iptv/IptvSourceEditDialog.cs:72
 #: UI/Preferences/RecordingPreferences.cs:72
-#: UI/Recording/RecordingDialog.cs:148 UI/YouTube/DownloadDialog.cs:90
+#: UI/Recording/RecordingDialog.cs:148 UI/YouTube/DownloadDialog.cs:96
 #: UI/YouTube/DownloadPreferences.cs:66 UI/YouTube/GeneralPreferences.cs:90
 msgid "Browse..."
 msgstr ""
 
 #. Translators: Tick box on the converter that removes each source file once it has been converted.
-#: UI/Dialogs/MediaConverterDialog.cs:177
+#: UI/Dialogs/MediaConverterDialog.cs:179
 msgid "Delete original files after conversion"
 msgstr ""
 
 #. Translators: Button that starts the conversion and closes the window.
-#: UI/Dialogs/MediaConverterDialog.cs:214
+#: UI/Dialogs/MediaConverterDialog.cs:216
 msgid "Convert"
 msgstr ""
 
 #. Translators: Title of the picker the converter's "Add file" button opens.
-#: UI/Dialogs/MediaConverterDialog.cs:298
+#: UI/Dialogs/MediaConverterDialog.cs:300
 msgid "Add files to convert"
 msgstr ""
 
 #. Translators: Title of the picker the converter's "Add folder" button opens.
-#: UI/Dialogs/MediaConverterDialog.cs:313
+#: UI/Dialogs/MediaConverterDialog.cs:315
 msgid "Add a folder of files to convert"
 msgstr ""
 
 #. Translators: Title of the picker the converter's "Browse" button opens for the destination folder.
-#: UI/Dialogs/MediaConverterDialog.cs:416
+#: UI/Dialogs/MediaConverterDialog.cs:418
 msgid "Choose where converted files are written"
 msgstr ""
 
 #. Translators: Shown when Convert is pressed with no destination folder chosen and files
 #. are not being written beside their sources.
-#: UI/Dialogs/MediaConverterDialog.cs:441
+#: UI/Dialogs/MediaConverterDialog.cs:443
 msgid ""
 "Choose a folder to write the converted files to, or turn on \"Preserve "
 "original file locations\"."
 msgstr ""
 
+#. Translators: Shown when the chosen destination folder could not be created.
 #: UI/Dialogs/MediaConverterDialog.cs:454
 msgid "The destination folder could not be created."
 msgstr ""
@@ -3738,13 +4126,15 @@ msgid "Jump to selected"
 msgstr ""
 
 #. Translators: Label above the list of loaded files, telling the user to pick the one to play.
-#: UI/Dialogs/OpenedFilesDialog.cs:67
+#: UI/Dialogs/OpenedFilesDialog.cs:68
 msgid "Select file to jump to."
 msgstr ""
 
 #. Translators: Name of the settings category holding the language, speech and file-opening settings.
+#. Translators: Name of the general settings page inside the Audio category.
 #. Translators: Name of the general settings page inside the YouTube category.
-#: UI/Dialogs/PreferencesDialog.cs:45 UI/Dialogs/PreferencesDialog.cs:55
+#: UI/Dialogs/PreferencesDialog.cs:45 UI/Dialogs/PreferencesDialog.cs:51
+#: UI/Dialogs/PreferencesDialog.cs:59
 msgid "General"
 msgstr ""
 
@@ -3753,7 +4143,7 @@ msgstr ""
 msgid "Backup and restore"
 msgstr ""
 
-#. Translators: Name of the settings category holding the loudness, speed and seeking settings.
+#. Translators: Name of the expandable settings category containing general and playback audio pages.
 #. Translators: One of the download types: save the sound alone as an audio file.
 #. Translators: One of the YouTube download types: save the sound alone as an audio file.
 #: UI/Dialogs/PreferencesDialog.cs:49 UI/YouTube/DownloadDialog.cs:65
@@ -3761,8 +4151,13 @@ msgstr ""
 msgid "Audio"
 msgstr ""
 
+#. Translators: Name of the playback settings page inside the Audio category.
+#: UI/Dialogs/PreferencesDialog.cs:53
+msgid "Playback"
+msgstr ""
+
 #. Translators: Name of the settings category for trimming the silent parts out of what is played.
-#: UI/Dialogs/PreferencesDialog.cs:51
+#: UI/Dialogs/PreferencesDialog.cs:55
 msgid "Silence removal"
 msgstr ""
 
@@ -3770,18 +4165,18 @@ msgstr ""
 #. Translators: Title of the window where a download's name, type, format and quality are chosen.
 #. Translators: The button that starts this download immediately.
 #. Translators: Button that saves the video chosen in the list of results to a folder on this computer.
-#: UI/Dialogs/PreferencesDialog.cs:57 UI/YouTube/DownloadDialog.cs:55
-#: UI/YouTube/DownloadDialog.cs:120 UI/YouTube/ResultsDialog.cs:202
+#: UI/Dialogs/PreferencesDialog.cs:61 UI/YouTube/DownloadDialog.cs:55
+#: UI/YouTube/DownloadDialog.cs:126 UI/YouTube/ResultsDialog.cs:202
 msgid "Download"
 msgstr ""
 
 #. Translators: Name of the settings category for the key combinations that work while the player is the program in front.
-#: UI/Dialogs/PreferencesDialog.cs:61
+#: UI/Dialogs/PreferencesDialog.cs:65
 msgid "Keyboard Shortcuts"
 msgstr ""
 
 #. Translators: Help text for the settings tree down the left of the Preferences window.
-#: UI/Dialogs/PreferencesDialog.cs:198
+#: UI/Dialogs/PreferencesDialog.cs:205
 msgid ""
 "Use the Arrow keys to move through settings pages. Press the Right Arrow key "
 "on a category to show its pages and the Left Arrow key to hide them. The "
@@ -3789,7 +4184,7 @@ msgid ""
 msgstr ""
 
 #. Translators: Spoken when the user asks for help on a control that has none.
-#: UI/Dialogs/PreferencesDialog.cs:205
+#: UI/Dialogs/PreferencesDialog.cs:212
 msgid "No detailed help is available for this control."
 msgstr ""
 
@@ -3841,9 +4236,8 @@ msgstr ""
 msgid "Choose a folder for the selection files."
 msgstr ""
 
-#. Translators: Warning when the selection folder cannot be created. {message} is the
-#. operating system's explanation.
-#: UI/Dialogs/SaveSelectionsDialog.cs:174
+#. Translators: Warning when the selection folder cannot be created. {message} is the operating system's explanation.
+#: UI/Dialogs/SaveSelectionsDialog.cs:172
 msgid ""
 "The folder could not be created.\n"
 "{message}"
@@ -3861,32 +4255,32 @@ msgstr ""
 
 #. Translators: Label of the list choosing whether the sleep timer ends after a length of time or when
 #. the current track finishes.
-#: UI/Dialogs/SleepTimerDialog.cs:56
+#: UI/Dialogs/SleepTimerDialog.cs:57
 msgid "End the timer"
 msgstr ""
 
 #. Translators: The sleep-timer option that fires after a chosen length of time.
-#: UI/Dialogs/SleepTimerDialog.cs:59
+#: UI/Dialogs/SleepTimerDialog.cs:60
 msgid "After a length of time"
 msgstr ""
 
 #. Translators: The sleep-timer option that fires when the current track finishes.
-#: UI/Dialogs/SleepTimerDialog.cs:61
+#: UI/Dialogs/SleepTimerDialog.cs:62
 msgid "At the end of the current track"
 msgstr ""
 
 #. Translators: Label of the list of ready-made timer lengths.
-#: UI/Dialogs/SleepTimerDialog.cs:65
+#: UI/Dialogs/SleepTimerDialog.cs:66
 msgid "Length"
 msgstr ""
 
 #. Translators: One ready-made timer length. {minutes} is a number of minutes.
-#: UI/Dialogs/SleepTimerDialog.cs:69
+#: UI/Dialogs/SleepTimerDialog.cs:70
 msgid "{minutes} minutes"
 msgstr ""
 
 #. Translators: Label of the list choosing what happens when the timer fires.
-#: UI/Dialogs/SleepTimerDialog.cs:81
+#: UI/Dialogs/SleepTimerDialog.cs:82
 msgid "When the timer fires"
 msgstr ""
 
@@ -3894,28 +4288,28 @@ msgstr ""
 #. Translators: Recording menu item that ends a recording and closes the file.
 #. Translators: Button that ends a recording and closes the file.
 #. Translators: Stops the selected download and returns it to the queue.
-#: UI/Dialogs/SleepTimerDialog.cs:86 UI/Menus/RecordingMenu.cs:25
+#: UI/Dialogs/SleepTimerDialog.cs:87 UI/Menus/RecordingMenu.cs:25
 #: UI/Recording/RecordingDialog.cs:619 UI/YouTube/DownloadQueueDialog.cs:56
 msgid "Stop"
 msgstr ""
 
 #. Translators: Tick box that fades the volume down over the last seconds before the timer fires.
-#: UI/Dialogs/SleepTimerDialog.cs:91
+#: UI/Dialogs/SleepTimerDialog.cs:92
 msgid "Fade the volume out before firing"
 msgstr ""
 
 #. Translators: Label of the box holding how many seconds the fade lasts.
-#: UI/Dialogs/SleepTimerDialog.cs:93
+#: UI/Dialogs/SleepTimerDialog.cs:94
 msgid "Fade length (seconds)"
 msgstr ""
 
 #. Translators: Button in the sleep-timer window that turns off a timer already running.
-#: UI/Dialogs/SleepTimerDialog.cs:159
+#: UI/Dialogs/SleepTimerDialog.cs:160
 msgid "Turn off timer"
 msgstr ""
 
 #. Translators: Shown when a timed sleep timer is set to a length of zero.
-#: UI/Dialogs/SleepTimerDialog.cs:236
+#: UI/Dialogs/SleepTimerDialog.cs:237
 msgid "Choose a length of at least one minute."
 msgstr ""
 
@@ -4115,59 +4509,66 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
+#. Translators: Initial label of the box holding an IPTV source's web address.
 #. Translators: Label of the address box when the source is an M3U playlist at a web address.
-#: UI/Iptv/IptvSourceEditDialog.cs:67 UI/Iptv/IptvSourceEditDialog.cs:158
+#: UI/Iptv/IptvSourceEditDialog.cs:68 UI/Iptv/IptvSourceEditDialog.cs:159
 msgid "Web address"
 msgstr ""
 
 #. Translators: Label of the box holding the username of an Xtream IPTV account.
-#: UI/Iptv/IptvSourceEditDialog.cs:75
+#: UI/Iptv/IptvSourceEditDialog.cs:76
 msgid "Username"
 msgstr ""
 
 #. Translators: Label of the box holding the password of an Xtream IPTV account.
-#: UI/Iptv/IptvSourceEditDialog.cs:78
+#: UI/Iptv/IptvSourceEditDialog.cs:79
 msgid "Password"
 msgstr ""
 
 #. Translators: Label of the box holding the MAC address a Stalker portal is bound to.
-#: UI/Iptv/IptvSourceEditDialog.cs:82
+#: UI/Iptv/IptvSourceEditDialog.cs:83
 msgid "MAC address"
 msgstr ""
 
 #. Translators: Label of the box holding the optional device serial some Stalker portals check.
-#: UI/Iptv/IptvSourceEditDialog.cs:85
+#: UI/Iptv/IptvSourceEditDialog.cs:86
 msgid "Serial (optional)"
 msgstr ""
 
 #. Translators: Label of the box holding an optional programme-guide address. "XMLTV" is a format name.
-#: UI/Iptv/IptvSourceEditDialog.cs:89
+#: UI/Iptv/IptvSourceEditDialog.cs:90
 msgid "EPG address (optional)"
 msgstr ""
 
 #. Translators: Tick box that opens live channels as HLS rather than as a transport stream.
-#: UI/Iptv/IptvSourceEditDialog.cs:94
+#: UI/Iptv/IptvSourceEditDialog.cs:95
 msgid "Open live channels as HLS"
 msgstr ""
 
 #. Translators: Label of the address box when the source is an M3U playlist file on this computer.
-#: UI/Iptv/IptvSourceEditDialog.cs:160
+#: UI/Iptv/IptvSourceEditDialog.cs:161
 msgid "Playlist file"
 msgstr ""
 
 #. Translators: Label of the address box when the source is an Xtream Codes account (its server).
-#: UI/Iptv/IptvSourceEditDialog.cs:162
+#: UI/Iptv/IptvSourceEditDialog.cs:163
 msgid "Server address"
 msgstr ""
 
 #. Translators: Label of the address box when the source is a Stalker portal (its portal address).
-#: UI/Iptv/IptvSourceEditDialog.cs:164
+#: UI/Iptv/IptvSourceEditDialog.cs:165
 msgid "Portal address"
+msgstr ""
+
+#. Translators: File-type name for M3U and M3U8 IPTV playlists.
+#. Translators: A channel browser tab: the playlists the channel publishes.
+#: UI/Iptv/IptvSourceEditDialog.cs:182 YouTube/Client/Channels.cs:36
+msgid "Playlists"
 msgstr ""
 
 #. Translators: Title of the message shown when an IPTV source cannot be saved as it was typed.
 #. Translators: Title of the window listing the IPTV sources the user has saved.
-#: UI/Iptv/IptvSourceEditDialog.cs:198 UI/Iptv/IptvSourcesDialog.cs:25
+#: UI/Iptv/IptvSourceEditDialog.cs:200 UI/Iptv/IptvSourcesDialog.cs:25
 msgid "IPTV sources"
 msgstr ""
 
@@ -4201,26 +4602,26 @@ msgstr ""
 #. Translators: Spoken name of the main-window button that plays the previous track. The button shows an icon, not this text.
 #. Translators: Player menu item that plays the file before the current one.
 #. Translators: Item in the Audio track submenu that switches to the previous audio track in the file.
-#: UI/MainFrame.cs:93 UI/Menus/PlayerMenu.cs:76 UI/Menus/PlayerMenu.cs:148
+#: UI/MainFrame.cs:95 UI/Menus/PlayerMenu.cs:76 UI/Menus/PlayerMenu.cs:148
 msgid "Previous"
 msgstr ""
 
 #. Translators: Spoken name of the main-window button that steps playback backward. The button shows an icon, not this text.
 #. Translators: Player menu item that moves back in the file by one seek step.
-#: UI/MainFrame.cs:95 UI/Menus/PlayerMenu.cs:117
+#: UI/MainFrame.cs:97 UI/Menus/PlayerMenu.cs:117
 msgid "Rewind"
 msgstr ""
 
 #. Translators: Spoken name of the main-window button that steps playback forward. The button shows an icon, not this text.
 #. Translators: Player menu item that moves forward in the file by one seek step.
-#: UI/MainFrame.cs:100 UI/Menus/PlayerMenu.cs:119
+#: UI/MainFrame.cs:102 UI/Menus/PlayerMenu.cs:119
 msgid "Forward"
 msgstr ""
 
 #. Translators: Spoken name of the main-window button that plays the next track. The button shows an icon, not this text.
 #. Translators: Player menu item that plays the file after the current one.
 #. Translators: Item in the Audio track submenu that switches to the next audio track in the file.
-#: UI/MainFrame.cs:102 UI/Menus/PlayerMenu.cs:78 UI/Menus/PlayerMenu.cs:146
+#: UI/MainFrame.cs:104 UI/Menus/PlayerMenu.cs:78 UI/Menus/PlayerMenu.cs:146
 msgid "Next"
 msgstr ""
 
@@ -4261,7 +4662,7 @@ msgstr ""
 
 #. Translators: Recording menu item that starts a paused recording again.
 #. Translators: Button that starts a paused recording again.
-#: UI/MenuController.cs:272 UI/Recording/RecordingDialog.cs:623
+#: UI/MenuController.cs:270 UI/Recording/RecordingDialog.cs:623
 msgid "Resume"
 msgstr ""
 
@@ -4388,32 +4789,32 @@ msgid "Exit"
 msgstr ""
 
 #. Translators: Shown in the Recent files submenu when no files have been opened yet.
-#: UI/Menus/FileMenu.cs:85
+#: UI/Menus/FileMenu.cs:94
 msgid "No recent files"
 msgstr ""
 
 #. Translators: Recent files submenu item that empties the list of recently opened files.
-#: UI/Menus/FileMenu.cs:87
+#: UI/Menus/FileMenu.cs:96
 msgid "Clear recent files"
 msgstr ""
 
 #. Translators: Shown in the Recent folders submenu when no folders have been opened yet.
-#: UI/Menus/FileMenu.cs:90
+#: UI/Menus/FileMenu.cs:99
 msgid "No recent folders"
 msgstr ""
 
 #. Translators: Recent folders submenu item that empties the list of recently opened folders.
-#: UI/Menus/FileMenu.cs:92
+#: UI/Menus/FileMenu.cs:101
 msgid "Clear recent folders"
 msgstr ""
 
 #. Translators: Shown in the Recent playlists submenu when no playlists have been opened yet.
-#: UI/Menus/FileMenu.cs:95
+#: UI/Menus/FileMenu.cs:104
 msgid "No recent playlists"
 msgstr ""
 
 #. Translators: Recent playlists submenu item that empties the list of recently opened playlists.
-#: UI/Menus/FileMenu.cs:97
+#: UI/Menus/FileMenu.cs:106
 msgid "Clear recent playlists"
 msgstr ""
 
@@ -4621,18 +5022,22 @@ msgstr ""
 msgid "Off"
 msgstr ""
 
+#. Translators: Item in the Equalizer submenu that opens the current preset for editing.
 #: UI/Menus/PlayerMenu.cs:211
 msgid "Edit current preset..."
 msgstr ""
 
+#. Translators: Item in the Equalizer submenu that opens the list of presets.
 #: UI/Menus/PlayerMenu.cs:214
 msgid "Manage presets..."
 msgstr ""
 
+#. Translators: Subtitles submenu item that loads a subtitle file from this computer.
 #: UI/Menus/PlayerMenu.cs:272
 msgid "Load from file..."
 msgstr ""
 
+#. Translators: Subtitles submenu item that loads a subtitle from a web address.
 #: UI/Menus/PlayerMenu.cs:275
 msgid "Load from URL..."
 msgstr ""
@@ -4767,168 +5172,6 @@ msgstr ""
 msgid "Open channel in browser"
 msgstr ""
 
-#. Translators: Spoken description of the Audio settings page, read when the page is opened.
-#. Translators: Spoken description of the General settings page, read when the page is opened.
-#. Translators: Spoken description of the Recording settings page, read when the page is opened.
-#. Translators: Spoken description of the YouTube download settings page, read when the page is open.
-#. Translators: Spoken description of the general YouTube settings page, read when the page is open.
-#: UI/Preferences/AudioPreferences.cs:24
-#: UI/Preferences/GeneralPreferences.cs:25
-#: UI/Preferences/RecordingPreferences.cs:44
-#: UI/YouTube/DownloadPreferences.cs:56 UI/YouTube/GeneralPreferences.cs:48
-msgid ""
-"Move through this page with Tab or Shift+Tab. Press F1 while a control is "
-"focused to hear what it changes."
-msgstr ""
-
-#. Translators: Label of the box holding the seek amount used by the "Custom value" seek step, in seconds.
-#: UI/Preferences/AudioPreferences.cs:30
-msgid "Custom seek value (seconds)"
-msgstr ""
-
-#. Translators: Label of the box holding how much faster or slower one press of the speed keys makes the file play.
-#: UI/Preferences/AudioPreferences.cs:33
-msgid "Speed step"
-msgstr ""
-
-#. Translators: Label of the box holding how many semitones one press of a pitch key changes the sound.
-#: UI/Preferences/AudioPreferences.cs:36
-msgid "Pitch step (semitones)"
-msgstr ""
-
-#. Translators: Label of the box holding how much louder or quieter one press of the volume keys makes the sound.
-#: UI/Preferences/AudioPreferences.cs:39
-msgid "Volume step"
-msgstr ""
-
-#. Translators: Label of the box holding how far one press moves the sound left or right.
-#: UI/Preferences/AudioPreferences.cs:42
-msgid "Pan step (percent)"
-msgstr ""
-
-#. Translators: Label of the list that chooses what the player does when it reaches the end of a file.
-#: UI/Preferences/AudioPreferences.cs:45
-msgid "What happens after a file ends?"
-msgstr ""
-
-#. Translators: One of the things the player can do at the end of a file: play the next one.
-#: UI/Preferences/AudioPreferences.cs:48
-msgid "Advance to the next file"
-msgstr ""
-
-#. Translators: One of the things the player can do at the end of a file: play the same one again.
-#: UI/Preferences/AudioPreferences.cs:50
-msgid "Loop the file"
-msgstr ""
-
-#. Translators: One of the things the player can do at the end of a file: stop there.
-#: UI/Preferences/AudioPreferences.cs:52
-msgid "Do nothing"
-msgstr ""
-
-#. Translators: Tick box on the Audio settings page: after the last file, carry on from the first one again.
-#: UI/Preferences/AudioPreferences.cs:54
-msgid "Wrap to top for multiple files"
-msgstr ""
-
-#. Translators: Tick box on the Audio settings page: remember where each file was stopped and start there again.
-#: UI/Preferences/AudioPreferences.cs:56
-msgid "Save current position for each file"
-msgstr ""
-
-#. Translators: Tick box on the Audio settings page: even out the loudness and hold back the loudest peaks.
-#: UI/Preferences/AudioPreferences.cs:58
-msgid "Enable dynamic normalize and limiter"
-msgstr ""
-
-#. Translators: Tick box on the Audio settings page: play the left and right channels mixed together.
-#: UI/Preferences/AudioPreferences.cs:60
-msgid "Play audio as Mono"
-msgstr ""
-
-#. Translators: Help text for the box holding the seek amount used by the "Custom value" seek step.
-#: UI/Preferences/AudioPreferences.cs:75
-msgid ""
-"Enter the number of seconds skipped by the seek shortcuts when Custom value "
-"is selected. Positive whole numbers and decimals are accepted; for example, "
-"2.5."
-msgstr ""
-
-#. Translators: Help text for the box holding how much one press of the speed keys changes the playing speed.
-#: UI/Preferences/AudioPreferences.cs:79
-msgid ""
-"Sets how much each Speed Up or Speed Down command changes the playback rate. "
-"For example, 0.025 changes 1x speed to 1.025x."
-msgstr ""
-
-#. Translators: Help text for the box holding how much one press of the pitch keys raises or lowers a sound.
-#: UI/Preferences/AudioPreferences.cs:82
-msgid ""
-"Sets how far each Raise Pitch or Lower Pitch command moves. One semitone is "
-"the distance between adjacent piano keys; 0.1 semitone is 10 cents. Enter a "
-"value from 0.001 to 12."
-msgstr ""
-
-#. Translators: Help text for the box holding how much one press of the volume keys changes the loudness.
-#: UI/Preferences/AudioPreferences.cs:86
-msgid ""
-"Sets the amount added or subtracted by each Volume Up or Volume Down "
-"command. Enter a whole number from 1 to 20."
-msgstr ""
-
-#. Translators: Help text for the box holding how far one press moves the sound left or right.
-#: UI/Preferences/AudioPreferences.cs:89
-msgid ""
-"Sets how many percentage points each Pan Left or Pan Right command moves the "
-"sound. Enter a whole number from 1 to 100."
-msgstr ""
-
-#. Translators: Help text for the list that chooses what the player does at the end of a file.
-#: UI/Preferences/AudioPreferences.cs:92
-msgid ""
-"Choose whether reaching the end starts the next playlist item, repeats the "
-"current item, or leaves playback stopped at the end."
-msgstr ""
-
-#. Translators: Help text for the tick box that carries on from the first file after the last one.
-#: UI/Preferences/AudioPreferences.cs:95
-msgid ""
-"With at least two items loaded, Next on the final item returns to the first "
-"and Previous on the first returns to the final item. Automatic advance "
-"follows the same rule."
-msgstr ""
-
-#. Translators: Help text for the tick box that remembers where each file was stopped.
-#: UI/Preferences/AudioPreferences.cs:99
-msgid ""
-"Keeps a separate resume time for every item and returns to that time when "
-"the item is opened again during navigation."
-msgstr ""
-
-#. Translators: Help text for the tick box that evens out the loudness and holds back the loudest peaks.
-#: UI/Preferences/AudioPreferences.cs:102
-msgid ""
-"Evens out changing loudness and restrains the loudest peaks to reduce "
-"clipping. Clear this option to hear the source without those filters."
-msgstr ""
-
-#. Translators: Help text for the tick box that plays the left and right channels mixed together.
-#: UI/Preferences/AudioPreferences.cs:105
-msgid ""
-"Combines the left and right channels into one mono output. Clear this option "
-"to preserve the source channel layout."
-msgstr ""
-
-#. Translators: Error message shown when the speed step was typed as something other than a number above zero.
-#: UI/Preferences/AudioPreferences.cs:115
-msgid "Speed step must be a positive number."
-msgstr ""
-
-#. Translators: Error shown when the pitch step is not a number from 0.001 through 12.
-#: UI/Preferences/AudioPreferences.cs:124
-msgid "Pitch step must be a number from 0.001 to 12."
-msgstr ""
-
 #. Translators: Spoken description of the backup and restore settings page, read when the page is opened.
 #: UI/Preferences/BackupPreferences.cs:15
 msgid ""
@@ -4937,37 +5180,47 @@ msgid ""
 msgstr ""
 
 #. Translators: Button on the backup and restore settings page that saves a copy of the settings to a file the user chooses.
+#. Translators: Title of the file picker used to export settings.
+#. Translators: Title of the message shown after settings are exported.
 #: UI/Preferences/BackupPreferences.cs:21
-#: UI/Preferences/BackupPreferences.cs:57
-#: UI/Preferences/BackupPreferences.cs:61
+#: UI/Preferences/BackupPreferences.cs:58
+#: UI/Preferences/BackupPreferences.cs:64
 msgid "Export settings"
 msgstr ""
 
 #. Translators: Button on the backup and restore settings page that loads settings back from a file the user chooses.
+#. Translators: Title of the file picker used to import settings.
+#. Translators: Title of the message shown after settings are imported.
 #: UI/Preferences/BackupPreferences.cs:23
-#: UI/Preferences/BackupPreferences.cs:70
-#: UI/Preferences/BackupPreferences.cs:83
+#: UI/Preferences/BackupPreferences.cs:74
+#: UI/Preferences/BackupPreferences.cs:90
 msgid "Import settings"
 msgstr ""
 
 #. Translators: Button on the backup and restore settings page that saves a copy of the bookmarks to a file the user chooses.
+#. Translators: Title of the file picker used to export bookmarks.
+#. Translators: Title of the message shown after bookmarks are exported.
 #: UI/Preferences/BackupPreferences.cs:25
-#: UI/Preferences/BackupPreferences.cs:89
-#: UI/Preferences/BackupPreferences.cs:93
+#: UI/Preferences/BackupPreferences.cs:99
+#: UI/Preferences/BackupPreferences.cs:105
 msgid "Export bookmarks"
 msgstr ""
 
 #. Translators: Button on the backup and restore settings page that loads bookmarks back from a file the user chooses.
+#. Translators: Title of the file picker used to import bookmarks.
+#. Translators: Title of the message shown after bookmarks are imported.
 #: UI/Preferences/BackupPreferences.cs:27
-#: UI/Preferences/BackupPreferences.cs:100
-#: UI/Preferences/BackupPreferences.cs:104
+#: UI/Preferences/BackupPreferences.cs:115
+#: UI/Preferences/BackupPreferences.cs:121
 msgid "Import bookmarks"
 msgstr ""
 
 #. Translators: Button on the backup and restore settings page that puts every setting back the way it started.
+#. Translators: Title of the confirmation shown before resetting every setting.
+#. Translators: Title of the message shown after resetting every setting.
 #: UI/Preferences/BackupPreferences.cs:29
-#: UI/Preferences/BackupPreferences.cs:113
-#: UI/Preferences/BackupPreferences.cs:125
+#: UI/Preferences/BackupPreferences.cs:133
+#: UI/Preferences/BackupPreferences.cs:148
 msgid "Reset settings"
 msgstr ""
 
@@ -5019,247 +5272,257 @@ msgid ""
 msgstr ""
 
 #. Translators: Message shown once the settings have been saved to the chosen file.
-#: UI/Preferences/BackupPreferences.cs:61
+#: UI/Preferences/BackupPreferences.cs:62
 msgid "Settings exported successfully."
 msgstr ""
 
 #. Translators: Message shown when the settings could not be saved to the chosen file.
-#: UI/Preferences/BackupPreferences.cs:63
+#: UI/Preferences/BackupPreferences.cs:66
 msgid "Could not export settings."
 msgstr ""
 
 #. Translators: Title of the message shown when the settings could not be saved to the chosen file.
-#: UI/Preferences/BackupPreferences.cs:65
-#: UI/Preferences/BackupPreferences.cs:95
+#. Translators: Title of an error shown when bookmarks cannot be exported.
+#: UI/Preferences/BackupPreferences.cs:68
+#: UI/Preferences/BackupPreferences.cs:109
 msgid "Export error"
 msgstr ""
 
 #. Translators: Message shown when the chosen file does not hold settings the player can read.
-#: UI/Preferences/BackupPreferences.cs:76
+#: UI/Preferences/BackupPreferences.cs:80
 msgid "The selected settings file is invalid or could not be imported."
 msgstr ""
 
 #. Translators: Title of the message shown when settings could not be loaded from the chosen file.
-#: UI/Preferences/BackupPreferences.cs:78
-#: UI/Preferences/BackupPreferences.cs:83
-#: UI/Preferences/BackupPreferences.cs:106
+#. Translators: Title of an error shown when settings cannot be imported.
+#. Translators: Title of an error shown when bookmarks cannot be imported.
+#: UI/Preferences/BackupPreferences.cs:82
+#: UI/Preferences/BackupPreferences.cs:92
+#: UI/Preferences/BackupPreferences.cs:125
 msgid "Import error"
 msgstr ""
 
 #. Translators: Message shown once settings have been loaded from the chosen file.
-#: UI/Preferences/BackupPreferences.cs:83
+#: UI/Preferences/BackupPreferences.cs:88
 msgid "Settings imported successfully."
 msgstr ""
 
 #. Translators: Message shown once the bookmarks have been saved to the chosen file.
-#: UI/Preferences/BackupPreferences.cs:93
+#: UI/Preferences/BackupPreferences.cs:103
 msgid "Bookmarks exported successfully."
 msgstr ""
 
 #. Translators: Message shown when the bookmarks could not be saved to the chosen file.
-#: UI/Preferences/BackupPreferences.cs:95
+#: UI/Preferences/BackupPreferences.cs:107
 msgid "Could not export bookmarks."
 msgstr ""
 
 #. Translators: Message shown once bookmarks have been loaded from the chosen file.
-#: UI/Preferences/BackupPreferences.cs:104
+#: UI/Preferences/BackupPreferences.cs:119
 msgid "Bookmarks imported successfully."
 msgstr ""
 
 #. Translators: Message shown when the chosen file does not hold bookmarks the player can read.
-#: UI/Preferences/BackupPreferences.cs:106
+#: UI/Preferences/BackupPreferences.cs:123
 msgid "The selected bookmarks file is invalid or could not be imported."
 msgstr ""
 
 #. Translators: Question asked before every setting is put back the way it started.
-#: UI/Preferences/BackupPreferences.cs:112
+#: UI/Preferences/BackupPreferences.cs:131
 msgid ""
 "Are you sure you want to reset all settings to defaults?\n"
 "This action cannot be undone."
 msgstr ""
 
 #. Translators: Message shown when the settings could not be put back the way they started.
-#: UI/Preferences/BackupPreferences.cs:118
+#: UI/Preferences/BackupPreferences.cs:138
 msgid "Could not reset settings."
 msgstr ""
 
 #. Translators: Title of the message shown when the settings could not be put back the way they started.
-#: UI/Preferences/BackupPreferences.cs:120
-#: UI/Preferences/BackupPreferences.cs:125
+#. Translators: Title of an error shown when settings cannot be reset.
+#: UI/Preferences/BackupPreferences.cs:140
+#: UI/Preferences/BackupPreferences.cs:150
 msgid "Reset error"
 msgstr ""
 
 #. Translators: Message shown once every setting has been put back the way it started.
-#: UI/Preferences/BackupPreferences.cs:125
+#: UI/Preferences/BackupPreferences.cs:146
 msgid "Settings were reset to defaults."
 msgstr ""
 
 #. Translators: Message shown when the folder holding the player's settings could not be opened.
-#: UI/Preferences/BackupPreferences.cs:132
+#: UI/Preferences/BackupPreferences.cs:157
 msgid "Could not open the settings folder."
 msgstr ""
 
 #. Translators: Title of the message shown when the folder holding the player's settings could not be opened.
-#: UI/Preferences/BackupPreferences.cs:134
+#: UI/Preferences/BackupPreferences.cs:159
 msgid "Open folder error"
 msgstr ""
 
 #. Translators: The file types offered when saving a copy of the settings or bookmarks. Translate only
 #. the two names, "JSON files" and "All files"; leave everything else, including the vertical bars, as it is.
-#: UI/Preferences/BackupPreferences.cs:141
-#: UI/Preferences/BackupPreferences.cs:148
+#. Translators: File types offered when opening a settings or bookmarks backup. Translate only the two names.
+#: UI/Preferences/BackupPreferences.cs:166
+#: UI/Preferences/BackupPreferences.cs:174
 msgid "JSON files (*.json)|*.json|All files (*.*)|*.*"
 msgstr ""
 
 #. Translators: Label of the list for choosing the language the player speaks and shows its windows in.
-#: UI/Preferences/GeneralPreferences.cs:30
+#: UI/Preferences/GeneralPreferences.cs:31
 msgid "Language"
 msgstr ""
 
 #. Translators: First entry in the language list: use whatever language Windows itself is set to.
 #. Translators: Theme choice: follow whatever light or dark appearance Windows itself is set to.
-#: UI/Preferences/GeneralPreferences.cs:37
-#: UI/Preferences/GeneralPreferences.cs:43
+#: UI/Preferences/GeneralPreferences.cs:38
+#: UI/Preferences/GeneralPreferences.cs:44
 msgid "System default"
 msgstr ""
 
 #. Translators: Label of the list for choosing the player's light or dark appearance.
-#: UI/Preferences/GeneralPreferences.cs:40
+#: UI/Preferences/GeneralPreferences.cs:41
 msgid "Theme"
 msgstr ""
 
 #. Translators: Theme choice: always use a light appearance.
-#: UI/Preferences/GeneralPreferences.cs:45
+#: UI/Preferences/GeneralPreferences.cs:46
 msgid "Light"
 msgstr ""
 
 #. Translators: Theme choice: always use a dark appearance.
-#: UI/Preferences/GeneralPreferences.cs:47
+#: UI/Preferences/GeneralPreferences.cs:48
 msgid "Dark"
 msgstr ""
 
 #. Translators: Tick box on the General settings page: start again where playing stopped last time.
-#: UI/Preferences/GeneralPreferences.cs:49
+#: UI/Preferences/GeneralPreferences.cs:50
 msgid "Remember last file position"
 msgstr ""
 
 #. Translators: Tick box on the General settings page: say the name of each file as the user moves through the list.
-#: UI/Preferences/GeneralPreferences.cs:51
+#: UI/Preferences/GeneralPreferences.cs:52
 msgid "Speak file name when navigating (Previous/Next)"
 msgstr ""
 
 #. Translators: Tick box on the General settings page: look for a newer version of the player when it starts.
-#: UI/Preferences/GeneralPreferences.cs:53
+#: UI/Preferences/GeneralPreferences.cs:54
 msgid "Check for app updates on startup"
 msgstr ""
 
 #. Translators: Tick box on the General settings page: keep changes such as volume and speed when the player closes.
-#: UI/Preferences/GeneralPreferences.cs:55
+#: UI/Preferences/GeneralPreferences.cs:56
 msgid "Save settings on close"
 msgstr ""
 
+#. Translators: Tick box on the General settings page: send a file opened from Windows to the Luna window that is already running.
+#: UI/Preferences/GeneralPreferences.cs:58
+msgid "Open files in the existing window when Luna is already running"
+msgstr ""
+
 #. Translators: Tick box on the General settings page: keep the player out of the system's media controls entirely.
-#: UI/Preferences/GeneralPreferences.cs:57
+#: UI/Preferences/GeneralPreferences.cs:63
 msgid "Disable system media controls"
 msgstr ""
 
 #. Translators: Tick box on the General settings page: show the playing track in the window title.
-#: UI/Preferences/GeneralPreferences.cs:59
+#: UI/Preferences/GeneralPreferences.cs:65
 msgid "Show the playing track in the window title"
 msgstr ""
 
 #. Translators: Tick box on the General settings page: let a new subtitle line cut off the one still being read.
-#: UI/Preferences/GeneralPreferences.cs:61
+#: UI/Preferences/GeneralPreferences.cs:67
 msgid "Interrupt the current line when a new subtitle appears"
 msgstr ""
 
 #. Translators: Label of the list that chooses how much detail the player speaks.
-#: UI/Preferences/GeneralPreferences.cs:63
+#: UI/Preferences/GeneralPreferences.cs:69
 msgid "Verbosity"
 msgstr ""
 
 #. Translators: One of the two amounts of spoken detail: whole, clearly worded messages.
-#: UI/Preferences/GeneralPreferences.cs:66
+#: UI/Preferences/GeneralPreferences.cs:72
 msgid "Beginner"
 msgstr ""
 
 #. Translators: One of the two amounts of spoken detail: short messages for users who know the player well.
-#: UI/Preferences/GeneralPreferences.cs:68
+#: UI/Preferences/GeneralPreferences.cs:74
 msgid "Advanced"
 msgstr ""
 
 #. Translators: Label of the list that chooses how much of a folder is loaded when one file is opened.
-#: UI/Preferences/GeneralPreferences.cs:70
+#: UI/Preferences/GeneralPreferences.cs:76
 msgid "What would you like to open with files?"
 msgstr ""
 
 #. Translators: One way of opening a file: load nothing but that one file.
-#: UI/Preferences/GeneralPreferences.cs:74
+#: UI/Preferences/GeneralPreferences.cs:80
 msgid "Open the file only"
 msgstr ""
 
 #. Translators: One way of opening a file: load every media file sitting in the same folder as well.
-#: UI/Preferences/GeneralPreferences.cs:76
+#: UI/Preferences/GeneralPreferences.cs:82
 msgid "Open the file and the main folder files"
 msgstr ""
 
 #. Translators: One way of opening a file: load the media files in its folder and in the folders inside it too.
-#: UI/Preferences/GeneralPreferences.cs:78
+#: UI/Preferences/GeneralPreferences.cs:84
 msgid "Open the file with the main and subfolder files"
 msgstr ""
 
 #. Translators: Button on the General settings page that tells Windows this player can open media files.
-#: UI/Preferences/GeneralPreferences.cs:81
+#: UI/Preferences/GeneralPreferences.cs:87
 msgid "Register file extensions"
 msgstr ""
 
 #. Translators: Button on the General settings page that undoes telling Windows this player can open media files.
-#: UI/Preferences/GeneralPreferences.cs:83
+#: UI/Preferences/GeneralPreferences.cs:89
 msgid "Unregister file extensions"
 msgstr ""
 
 #. Translators: Title of the message shown once Windows has been told this player can open media files.
-#: UI/Preferences/GeneralPreferences.cs:86
+#: UI/Preferences/GeneralPreferences.cs:92
 msgid "Registration"
 msgstr ""
 
 #. Translators: Message shown once Windows has been told this player can open media files.
-#: UI/Preferences/GeneralPreferences.cs:88
+#: UI/Preferences/GeneralPreferences.cs:94
 msgid "File extensions registered successfully."
 msgstr ""
 
 #. Translators: Title of the message shown when Windows could not be told this player can open media files.
-#: UI/Preferences/GeneralPreferences.cs:90
+#: UI/Preferences/GeneralPreferences.cs:96
 msgid "Registration Error"
 msgstr ""
 
 #. Translators: Message shown when Windows could not be told this player can open media files.
-#: UI/Preferences/GeneralPreferences.cs:92
+#: UI/Preferences/GeneralPreferences.cs:98
 msgid "Could not register file extensions."
 msgstr ""
 
 #. Translators: Title of the message shown once this player has stopped being offered for media files.
-#: UI/Preferences/GeneralPreferences.cs:95
+#: UI/Preferences/GeneralPreferences.cs:101
 msgid "Unregister"
 msgstr ""
 
 #. Translators: Message shown once this player has stopped being offered for media files.
-#: UI/Preferences/GeneralPreferences.cs:97
+#: UI/Preferences/GeneralPreferences.cs:103
 msgid "File extensions unregistered successfully."
 msgstr ""
 
 #. Translators: Title of the message shown when this player could not stop being offered for media files.
-#: UI/Preferences/GeneralPreferences.cs:99
+#: UI/Preferences/GeneralPreferences.cs:105
 msgid "Unregister Error"
 msgstr ""
 
 #. Translators: Message shown when this player could not stop being offered for media files.
-#: UI/Preferences/GeneralPreferences.cs:101
+#: UI/Preferences/GeneralPreferences.cs:107
 msgid "Could not unregister file extensions."
 msgstr ""
 
 #. Translators: Help text for the language list, spoken when the user asks for help on it.
-#: UI/Preferences/GeneralPreferences.cs:124
+#: UI/Preferences/GeneralPreferences.cs:132
 msgid ""
 "Choose System default to follow the Windows display language, or select a "
 "language included with Luna. A different choice takes effect after Luna "
@@ -5267,7 +5530,7 @@ msgid ""
 msgstr ""
 
 #. Translators: Help text for the theme list, spoken when the user asks for help on it.
-#: UI/Preferences/GeneralPreferences.cs:128
+#: UI/Preferences/GeneralPreferences.cs:136
 msgid ""
 "Chooses whether Luna uses a light or dark appearance. System default follows "
 "the light or dark setting in Windows. A Windows high-contrast theme is "
@@ -5276,7 +5539,7 @@ msgid ""
 msgstr ""
 
 #. Translators: Help text for the tick box that starts again where playing stopped last time.
-#: UI/Preferences/GeneralPreferences.cs:133
+#: UI/Preferences/GeneralPreferences.cs:141
 msgid ""
 "Saves the active item and its playback time when Luna exits, then resumes "
 "there on the next launch. Clear this option to start without restoring the "
@@ -5284,29 +5547,37 @@ msgid ""
 msgstr ""
 
 #. Translators: Help text for the tick box that says the name of each file as the user moves through the list.
-#: UI/Preferences/GeneralPreferences.cs:137
+#: UI/Preferences/GeneralPreferences.cs:145
 msgid ""
 "Announces each newly selected item when you use Previous or Next, so you do "
 "not need to request its name separately."
 msgstr ""
 
 #. Translators: Help text for the tick box that looks for a newer version of the player when it starts.
-#: UI/Preferences/GeneralPreferences.cs:140
+#: UI/Preferences/GeneralPreferences.cs:148
 msgid ""
 "Checks for a newer Luna release in the background after startup. A prompt "
 "appears only when a newer package is ready to download."
 msgstr ""
 
 #. Translators: Help text for the tick box that keeps changes such as volume and speed when the player closes.
-#: UI/Preferences/GeneralPreferences.cs:143
+#: UI/Preferences/GeneralPreferences.cs:151
 msgid ""
 "Writes changes made during the session when Luna exits, including volume and "
 "speed. Clear this option if those changes should last only until the window "
 "closes."
 msgstr ""
 
+#. Translators: Help text for the tick box that chooses whether a file opened from Windows uses the running Luna window.
+#: UI/Preferences/GeneralPreferences.cs:155
+msgid ""
+"When selected, opening a media file from Windows sends it to the Luna window "
+"that is already open. Clear this option to open the file in a separate Luna "
+"window."
+msgstr ""
+
 #. Translators: Help text for the tick box that keeps the player out of the system's media controls.
-#: UI/Preferences/GeneralPreferences.cs:147
+#: UI/Preferences/GeneralPreferences.cs:159
 msgid ""
 "Keeps Luna out of the system media controls and the play, pause and track "
 "keys on a keyboard or headset. Enable this if those keys misbehave with your "
@@ -5314,13 +5585,13 @@ msgid ""
 msgstr ""
 
 #. Translators: Help text for the tick box that shows the playing track in the window title.
-#: UI/Preferences/GeneralPreferences.cs:151
+#: UI/Preferences/GeneralPreferences.cs:163
 msgid ""
 "Shows the playing track in the window title, marked as paused when it is."
 msgstr ""
 
 #. Translators: Help text for the tick box that lets a new subtitle line cut off the one still being read.
-#: UI/Preferences/GeneralPreferences.cs:154
+#: UI/Preferences/GeneralPreferences.cs:166
 msgid ""
 "When reading subtitles aloud, lets a new line stop the one still being "
 "spoken so the speech keeps pace with the picture. Leave it off, the default, "
@@ -5328,14 +5599,14 @@ msgid ""
 msgstr ""
 
 #. Translators: Help text for the list that chooses how much detail the player speaks.
-#: UI/Preferences/GeneralPreferences.cs:158
+#: UI/Preferences/GeneralPreferences.cs:170
 msgid ""
 "Beginner uses complete, explanatory announcements. Advanced keeps "
 "confirmations brief for experienced users."
 msgstr ""
 
 #. Translators: Help text for the list that chooses how much of a folder is loaded when one file is opened.
-#: UI/Preferences/GeneralPreferences.cs:161
+#: UI/Preferences/GeneralPreferences.cs:173
 msgid ""
 "Chooses the playlist Luna builds when Windows opens one media file: only the "
 "selected file, all supported media in its folder, or supported media in that "
@@ -5343,7 +5614,7 @@ msgid ""
 msgstr ""
 
 #. Translators: Help text for the button that tells Windows this player can open media files.
-#: UI/Preferences/GeneralPreferences.cs:165
+#: UI/Preferences/GeneralPreferences.cs:177
 msgid ""
 "Adds Luna to the Windows list of applications that can open supported media "
 "files. Windows may still ask you to choose Luna in Default apps before it "
@@ -5351,7 +5622,7 @@ msgid ""
 msgstr ""
 
 #. Translators: Help text for the button that undoes telling Windows this player can open media files.
-#: UI/Preferences/GeneralPreferences.cs:169
+#: UI/Preferences/GeneralPreferences.cs:181
 msgid ""
 "Removes the media-file associations registered by Luna. It does not delete "
 "any media or change default-app choices managed separately by Windows."
@@ -5360,7 +5631,7 @@ msgstr ""
 #. Translators: Label of the list that chooses what a recording is saved as.
 #. Translators: Label of the list that chooses the file type a downloaded audio track is saved as.
 #. Translators: Label of the list that chooses the file type for downloaded YouTube audio.
-#: UI/Preferences/RecordingPreferences.cs:53 UI/YouTube/DownloadDialog.cs:77
+#: UI/Preferences/RecordingPreferences.cs:53 UI/YouTube/DownloadDialog.cs:83
 #: UI/YouTube/DownloadPreferences.cs:93
 msgid "Audio format"
 msgstr ""
@@ -5369,7 +5640,7 @@ msgstr ""
 #. Translators: Label of the list that chooses the bitrate a downloaded audio track is saved at.
 #. Translators: Label of the list that chooses the bitrate for downloaded YouTube audio.
 #. Translators: Label of the list that chooses the sound quality a video's audio is played at.
-#: UI/Preferences/RecordingPreferences.cs:66 UI/YouTube/DownloadDialog.cs:82
+#: UI/Preferences/RecordingPreferences.cs:66 UI/YouTube/DownloadDialog.cs:88
 #: UI/YouTube/DownloadPreferences.cs:107 UI/YouTube/GeneralPreferences.cs:61
 msgid "Audio quality"
 msgstr ""
@@ -5799,7 +6070,7 @@ msgstr ""
 
 #. Translators: Button that adds a recording source. It opens a menu of the kinds that can be added.
 #. Translators: Confirms adding the entered links to the download queue.
-#: UI/Recording/RecordingDialog.cs:91 UI/YouTube/DownloadQueueDialog.cs:363
+#: UI/Recording/RecordingDialog.cs:91 UI/YouTube/DownloadQueueDialog.cs:376
 msgid "Add"
 msgstr ""
 
@@ -5988,16 +6259,18 @@ msgstr ""
 msgid "Export to web page (.html)..."
 msgstr ""
 
-#: UI/YouTube/DescriptionDialog.cs:125
+#. Translators: File-type filter for exporting a video description as plain text.
+#: UI/YouTube/DescriptionDialog.cs:126
 msgid "Text files (*.txt)|*.txt"
 msgstr ""
 
-#: UI/YouTube/DescriptionDialog.cs:132
+#. Translators: File-type filter for exporting a video description as a web page.
+#: UI/YouTube/DescriptionDialog.cs:134
 msgid "Web pages (*.html)|*.html"
 msgstr ""
 
 #. Translators: Title of the window that asks where to save a video's description.
-#: UI/YouTube/DescriptionDialog.cs:158
+#: UI/YouTube/DescriptionDialog.cs:160
 msgid "Save description"
 msgstr ""
 
@@ -6025,72 +6298,73 @@ msgstr ""
 msgid "Video format"
 msgstr ""
 
-#. Translators: Video format offered on the YouTube download settings page. "MKV" is a format name.
-#: UI/YouTube/DownloadDialog.cs:75 UI/YouTube/DownloadPreferences.cs:90
-msgid "MKV"
+#. Translators: MP4 video-container choice. "MP4" is a format name.
+#. Translators: Video format offered on the YouTube download settings page. "MP4" is a format name.
+#: UI/YouTube/DownloadDialog.cs:77 UI/YouTube/DownloadPreferences.cs:88
+msgid "MP4"
 msgstr ""
 
-#. Translators: The two video container formats. "MP4" and "MKV" are format names and are not translated.
-#. Translators: Video format offered on the YouTube download settings page. "MP4" is a format name.
-#: UI/YouTube/DownloadDialog.cs:75 UI/YouTube/DownloadPreferences.cs:88
-msgid "MP4"
+#. Translators: Matroska video-container choice. "MKV" is a format name.
+#. Translators: Video format offered on the YouTube download settings page. "MKV" is a format name.
+#: UI/YouTube/DownloadDialog.cs:79 UI/YouTube/DownloadPreferences.cs:90
+msgid "MKV"
 msgstr ""
 
 #. Translators: Label of the box holding the folder a download is saved into.
 #. Translators: Label of the box holding the folder YouTube downloads are saved into.
-#: UI/YouTube/DownloadDialog.cs:87 UI/YouTube/DownloadPreferences.cs:63
+#: UI/YouTube/DownloadDialog.cs:93 UI/YouTube/DownloadPreferences.cs:63
 msgid "Download folder"
 msgstr ""
 
 #. Translators: Label of the box holding how many pieces of the file are fetched at once.
 #. Translators: Label of the box holding how many pieces of a YouTube file are fetched at once. "yt-dlp" calls these fragments.
-#: UI/YouTube/DownloadDialog.cs:93 UI/YouTube/DownloadPreferences.cs:117
+#: UI/YouTube/DownloadDialog.cs:99 UI/YouTube/DownloadPreferences.cs:117
 msgid "Concurrent fragments"
 msgstr ""
 
 #. Translators: Tick box: write the title, uploader and other tags into the downloaded file.
 #. Translators: Tick box on the YouTube download settings page: write details into the downloaded file.
-#: UI/YouTube/DownloadDialog.cs:96 UI/YouTube/DownloadPreferences.cs:123
+#: UI/YouTube/DownloadDialog.cs:102 UI/YouTube/DownloadPreferences.cs:123
 msgid "Embed metadata"
 msgstr ""
 
 #. Translators: Tick box: embed the video's thumbnail as cover art in the downloaded file.
 #. Translators: Tick box on the YouTube download settings page: embed the thumbnail as cover art.
-#: UI/YouTube/DownloadDialog.cs:98 UI/YouTube/DownloadPreferences.cs:125
+#: UI/YouTube/DownloadDialog.cs:104 UI/YouTube/DownloadPreferences.cs:125
 msgid "Embed thumbnail"
 msgstr ""
 
 #. Translators: Tick box: write the video's chapter marks into the downloaded file.
 #. Translators: Tick box on the YouTube download settings page: write chapter marks into the downloaded file.
-#: UI/YouTube/DownloadDialog.cs:100 UI/YouTube/DownloadPreferences.cs:127
+#: UI/YouTube/DownloadDialog.cs:106 UI/YouTube/DownloadPreferences.cs:127
 msgid "Embed chapters"
 msgstr ""
 
 #. Translators: Tick box: embed available subtitles into the downloaded file.
 #. Translators: Tick box on the YouTube download settings page: embed available subtitles.
-#: UI/YouTube/DownloadDialog.cs:102 UI/YouTube/DownloadPreferences.cs:129
+#: UI/YouTube/DownloadDialog.cs:108 UI/YouTube/DownloadPreferences.cs:129
 msgid "Embed subtitles"
 msgstr ""
 
 #. Translators: Tick box: cut out SponsorBlock segments. "SponsorBlock" is a service name and is not translated.
 #. Translators: Tick box on the YouTube download settings page: remove segments identified by SponsorBlock. "SponsorBlock" is a service name.
-#: UI/YouTube/DownloadDialog.cs:104 UI/YouTube/DownloadPreferences.cs:131
+#: UI/YouTube/DownloadDialog.cs:110 UI/YouTube/DownloadPreferences.cs:131
 msgid "Remove SponsorBlock segments"
 msgstr ""
 
 #. Translators: The button that saves these choices as an item in the download queue.
-#: UI/YouTube/DownloadDialog.cs:124
+#: UI/YouTube/DownloadDialog.cs:130
 msgid "Add to queue"
 msgstr ""
 
 #. Translators: Shown when OK is pressed in the download window with no folder chosen.
-#: UI/YouTube/DownloadDialog.cs:163
+#: UI/YouTube/DownloadDialog.cs:169
 msgid "Choose a folder to download into."
 msgstr ""
 
 #. Translators: Title of the window that picks the folder a download is saved into.
 #. Translators: Title of the window that picks the folder YouTube downloads are saved into.
-#: UI/YouTube/DownloadDialog.cs:196 UI/YouTube/DownloadPreferences.cs:214
+#: UI/YouTube/DownloadDialog.cs:202 UI/YouTube/DownloadPreferences.cs:214
 msgid "Select the download folder"
 msgstr ""
 
@@ -6258,79 +6532,84 @@ msgid ""
 "similar segments out of the download."
 msgstr ""
 
-#: UI/YouTube/DownloadProgressDialog.cs:37
-#: UI/YouTube/DownloadProgressDialog.cs:136
-#: UI/YouTube/DownloadQueueDialog.cs:311
+#. Translators: Title of the window showing progress for one YouTube download.
+#. Translators: Title of the progress window while a YouTube file is downloading.
+#. Translators: Status of a queue item while it is downloading.
+#: UI/YouTube/DownloadProgressDialog.cs:38
+#: UI/YouTube/DownloadProgressDialog.cs:138
+#: UI/YouTube/DownloadQueueDialog.cs:319
 msgid "Downloading"
 msgstr ""
 
 #. Translators: Shown in the download window before the first progress has arrived.
-#: UI/YouTube/DownloadProgressDialog.cs:45
+#: UI/YouTube/DownloadProgressDialog.cs:46
 msgid "Preparing to download…"
 msgstr ""
 
 #. Translators: Hides this progress window while leaving its download visible in the queue.
-#: UI/YouTube/DownloadProgressDialog.cs:53
+#: UI/YouTube/DownloadProgressDialog.cs:54
 msgid "Minimize to queue"
 msgstr ""
 
-#. Translators: How much of the file has downloaded. {done} and {total} are sizes such as "4.2 MB".
-#: UI/YouTube/DownloadProgressDialog.cs:139
-msgid "Downloaded: {done} of {total}"
+#. Translators: Shown for the total download size before yt-dlp reports it.
+#. Translators: Stands in for a version number that could not be read.
+#: UI/YouTube/DownloadProgressDialog.cs:142 YouTube/Components/Service.cs:274
+msgid "unknown"
 msgstr ""
 
-#. Translators: Shown for the total size before yt-dlp has reported it.
-#. Translators: Stands in for a version number that could not be read.
-#: UI/YouTube/DownloadProgressDialog.cs:144 YouTube/Components/Service.cs:269
-msgid "unknown"
+#. Translators: Download speed. {size} is a file size and "/s" means per second.
+#. Translators: Combined queue speed. {size} is a file size and "/s" means per second.
+#: UI/YouTube/DownloadProgressDialog.cs:145
+#: UI/YouTube/DownloadQueueDialog.cs:288
+msgid "{size}/s"
+msgstr ""
+
+#. Translators: How much of the file has downloaded. {done} and {total} are sizes such as "4.2 MB".
+#: UI/YouTube/DownloadProgressDialog.cs:154
+msgid "Downloaded: {done} of {total}"
 msgstr ""
 
 #. Translators: The current download speed. {speed} is a size per second such as "1.3 MB/s".
 #. Translators: Combined download speed of all active queue items.
-#: UI/YouTube/DownloadProgressDialog.cs:148
-#: UI/YouTube/DownloadQueueDialog.cs:293
+#: UI/YouTube/DownloadProgressDialog.cs:160
+#: UI/YouTube/DownloadQueueDialog.cs:304
 msgid "Speed: {speed}"
-msgstr ""
-
-#: UI/YouTube/DownloadProgressDialog.cs:150
-#: UI/YouTube/DownloadQueueDialog.cs:294
-msgid "{size}/s"
 msgstr ""
 
 #. Translators: A download has finished conversion and is being finalized.
 #. Translators: yt-dlp is moving the finished file to its destination.
-#: UI/YouTube/DownloadProgressDialog.cs:166
-#: UI/YouTube/DownloadProgressDialog.cs:184
+#: UI/YouTube/DownloadProgressDialog.cs:170
+#: UI/YouTube/DownloadProgressDialog.cs:188
 msgid "Finishing…"
 msgstr ""
 
 #. Translators: yt-dlp is joining the downloaded audio and video streams.
-#: UI/YouTube/DownloadProgressDialog.cs:169
+#: UI/YouTube/DownloadProgressDialog.cs:173
 msgid "Merging video and audio…"
 msgstr ""
 
 #. Translators: yt-dlp/ffmpeg is converting the download to the chosen format.
-#: UI/YouTube/DownloadProgressDialog.cs:174
+#: UI/YouTube/DownloadProgressDialog.cs:178
 msgid "Converting…"
 msgstr ""
 
 #. Translators: yt-dlp is embedding metadata, artwork, subtitles, or chapters.
-#: UI/YouTube/DownloadProgressDialog.cs:177
+#: UI/YouTube/DownloadProgressDialog.cs:181
 msgid "Embedding information…"
 msgstr ""
 
 #. Translators: yt-dlp is modifying chapters or removing sponsored sections.
-#: UI/YouTube/DownloadProgressDialog.cs:181
+#: UI/YouTube/DownloadProgressDialog.cs:185
 msgid "Processing chapters…"
 msgstr ""
 
 #. Translators: Generic state while yt-dlp performs a finishing operation after downloading.
-#: UI/YouTube/DownloadProgressDialog.cs:186
+#: UI/YouTube/DownloadProgressDialog.cs:190
 msgid "Post-processing…"
 msgstr ""
 
 #. Translators: Asks the user to confirm stopping a download that is still running.
-#: UI/YouTube/DownloadProgressDialog.cs:203
+#: UI/YouTube/DownloadProgressDialog.cs:207
 msgid "The download is still running. Would you like to stop it?"
 msgstr ""
 
@@ -6364,47 +6643,54 @@ msgstr ""
 msgid "All downloads are complete."
 msgstr ""
 
-#: UI/YouTube/DownloadQueueDialog.cs:277 UI/YouTube/DownloadQueueDialog.cs:280
+#. Translators: Queue status when no download is running and unfinished items are waiting.
+#: UI/YouTube/DownloadQueueDialog.cs:277
 msgid "Ready to download."
 msgstr ""
 
 #. Translators: Technical reason supplied by yt-dlp for a failed queue item.
-#: UI/YouTube/DownloadQueueDialog.cs:280 UI/YouTube/DownloadQueueDialog.cs:305
+#: UI/YouTube/DownloadQueueDialog.cs:281 UI/YouTube/DownloadQueueDialog.cs:312
 msgid "Error: {details}"
 msgstr ""
 
 #. Translators: Queue progress. {current} and {total} are video counts; {percent} is a whole number.
-#: UI/YouTube/DownloadQueueDialog.cs:288
+#: UI/YouTube/DownloadQueueDialog.cs:299
 msgid "Downloading video {current} of {total}, {percent}%"
 msgstr ""
 
-#: UI/YouTube/DownloadQueueDialog.cs:312
+#. Translators: Status after media bytes are downloaded but finishing work may remain.
+#: UI/YouTube/DownloadQueueDialog.cs:321
 msgid "Downloaded"
 msgstr ""
 
-#: UI/YouTube/DownloadQueueDialog.cs:313
+#. Translators: Status of a queue item that finished successfully.
+#: UI/YouTube/DownloadQueueDialog.cs:323
 msgid "Completed"
 msgstr ""
 
-#: UI/YouTube/DownloadQueueDialog.cs:314
+#. Translators: Status of a queue item whose download failed.
+#: UI/YouTube/DownloadQueueDialog.cs:325
 msgid "Failed"
 msgstr ""
 
-#: UI/YouTube/DownloadQueueDialog.cs:315
+#. Translators: Status of a queue item waiting to start.
+#: UI/YouTube/DownloadQueueDialog.cs:327
 msgid "In queue"
 msgstr ""
 
-#: UI/YouTube/DownloadQueueDialog.cs:356 UI/YouTube/DownloadQueueDialog.cs:407
+#. Translators: Title of the window used to add YouTube links to the download queue.
+#. Translators: Title of a warning shown in the queue link-entry window.
+#: UI/YouTube/DownloadQueueDialog.cs:369 UI/YouTube/DownloadQueueDialog.cs:421
 msgid "Add links to download queue"
 msgstr ""
 
 #. Translators: Label above the multi-line box used to add links to the download queue.
-#: UI/YouTube/DownloadQueueDialog.cs:359
+#: UI/YouTube/DownloadQueueDialog.cs:372
 msgid "Enter one YouTube video link on each line."
 msgstr ""
 
 #. Translators: Shown when Add is pressed without entering any links.
-#: UI/YouTube/DownloadQueueDialog.cs:406
+#: UI/YouTube/DownloadQueueDialog.cs:419
 msgid "Enter at least one YouTube video link."
 msgstr ""
 
@@ -6596,11 +6882,6 @@ msgstr ""
 msgid "Cookie files"
 msgstr ""
 
-#. Translators: File type name for showing every file in the cookie-file picker on the general YouTube settings page.
-#: UI/YouTube/GeneralPreferences.cs:196
-msgid "All Files"
-msgstr ""
-
 #. Translators: Cookie status: Luna is reading cookies straight from Firefox. "Firefox" is a program
 #. name and is not translated.
 #: UI/YouTube/GeneralPreferences.cs:226
@@ -6686,12 +6967,14 @@ msgid "Play as audio"
 msgstr ""
 
 #. Translators: Names who published a result. {author} is a channel name.
-#: UI/YouTube/ResultsDialog.cs:347 UI/YouTube/ResultsDialog.cs:364
+#. Translators: Names who published a video result. {author} is a channel name.
+#: UI/YouTube/ResultsDialog.cs:347 UI/YouTube/ResultsDialog.cs:366
 msgid "by {author}"
 msgstr ""
 
 #. Translators: How many videos a playlist holds. {count} is a number.
-#: UI/YouTube/ResultsDialog.cs:350 UI/YouTube/ResultsDialog.cs:358
+#. Translators: How many videos a channel holds. {count} is a number.
+#: UI/YouTube/ResultsDialog.cs:350 UI/YouTube/ResultsDialog.cs:359
 msgid "contains {count} videos"
 msgstr ""
 
@@ -6738,7 +7021,7 @@ msgstr ""
 
 #. Translators: A channel browser tab: the channel's ordinary videos.
 #. Translators: Title of the window listing the videos a search or a playlist turned up.
-#: YouTube/Client/Channels.cs:30 YouTube/Playback/Sessions.cs:450
+#: YouTube/Client/Channels.cs:30 YouTube/Playback/Sessions.cs:257
 msgid "Videos"
 msgstr ""
 
@@ -6750,11 +7033,6 @@ msgstr ""
 #. Translators: A channel browser tab: the channel's live streams and their recordings.
 #: YouTube/Client/Channels.cs:34
 msgid "Streams"
-msgstr ""
-
-#. Translators: A channel browser tab: the playlists the channel publishes.
-#: YouTube/Client/Channels.cs:36
-msgid "Playlists"
 msgstr ""
 
 #. Translators: A channel browser tab: the channel's community posts.
@@ -6779,41 +7057,42 @@ msgstr ""
 
 #. Translators: Progress heading while an extra program is being fetched. {name} is the
 #. program and its version, {step} which one it is and {total} how many there are.
-#: YouTube/Components/Service.cs:107
+#: YouTube/Components/Service.cs:108
 msgid "Downloading {name}, {step} of {total}"
 msgstr ""
 
 #. Translators: Shown once the extra programs for yt-dlp have been fetched.
-#: YouTube/Components/Service.cs:117
+#: YouTube/Components/Service.cs:119
 msgid "YouTube components were downloaded successfully."
 msgstr ""
 
-#: YouTube/Components/Service.cs:125 YouTube/Components/Service.cs:126
+#. Translators: Shown when the extra programs needed for YouTube playback could not be installed.
+#: YouTube/Components/Service.cs:124
 msgid "Could not install YouTube components."
 msgstr ""
 
 #. Translators: Shown when the user asks to update yt-dlp and it has not been installed.
-#: YouTube/Components/Service.cs:144
+#: YouTube/Components/Service.cs:149
 msgid "yt-dlp is not installed yet."
 msgstr ""
 
 #. Translators: Spoken when the user asks to update yt-dlp.
 #. Translators: The short wording spoken when the user asks to update yt-dlp.
-#: YouTube/Components/Service.cs:150 YouTube/Components/Service.cs:152
+#: YouTube/Components/Service.cs:155 YouTube/Components/Service.cs:157
 msgid "Updating yt-dlp..."
 msgstr ""
 
 #. Translators: Title of the window shown while yt-dlp is updating itself.
-#: YouTube/Components/Service.cs:155
+#: YouTube/Components/Service.cs:160
 msgid "Updating yt-dlp"
 msgstr ""
 
 #. Translators: First message shown while yt-dlp is updating itself.
-#: YouTube/Components/Service.cs:157
+#: YouTube/Components/Service.cs:162
 msgid "Checking current yt-dlp version..."
 msgstr ""
 
-#: YouTube/Components/Service.cs:206
+#: YouTube/Components/Service.cs:211
 msgid ""
 "A newer yt-dlp version is available on the '{channel}' channel.\n"
 "Current version: {current}\n"
@@ -6823,23 +7102,23 @@ msgid ""
 msgstr ""
 
 #. Translators: Shown when yt-dlp could not update itself and said nothing useful about why.
-#: YouTube/Components/Service.cs:264
+#: YouTube/Components/Service.cs:269
 msgid "Could not update yt-dlp."
 msgstr ""
 
 #. Translators: Shown once yt-dlp has updated itself. {old} and {new} are version numbers and
 #. {channel} is the release line being followed.
-#: YouTube/Components/Service.cs:274
+#: YouTube/Components/Service.cs:279
 msgid "yt-dlp updated from {old} to {new} on the '{channel}' channel."
 msgstr ""
 
 #. Translators: Shown when yt-dlp was already the newest build. {version} is its version number
 #. and {channel} is the release line being followed.
-#: YouTube/Components/Service.cs:280
+#: YouTube/Components/Service.cs:285
 msgid "yt-dlp is already up to date ({version}) on the '{channel}' channel."
 msgstr ""
 
-#: YouTube/Components/Service.cs:297
+#: YouTube/Components/Service.cs:302
 msgid ""
 "Total size: {total}\n"
 "Downloaded: {got}\n"
@@ -6847,14 +7126,101 @@ msgid ""
 msgstr ""
 
 #. Translators: Title of the messages shown about the extra programs YouTube's yt-dlp support needs.
-#: YouTube/Components/Service.cs:328
+#: YouTube/Components/Service.cs:333
 msgid "YouTube components"
 msgstr ""
 
 #. Translators: Title of the messages shown about updating yt-dlp. "yt-dlp" is a program name and is
 #. not translated.
-#: YouTube/Components/Service.cs:333
+#: YouTube/Components/Service.cs:338
 msgid "yt-dlp update"
+msgstr ""
+
+#. Translators: Message shown while the first video of a search is being made ready to play.
+#: YouTube/Playback/Browsing.cs:55
+msgid "Fetching first stream..."
+msgstr ""
+
+#. Translators: Title of the window shown while a YouTube search is running.
+#: YouTube/Playback/Browsing.cs:58
+msgid "Searching YouTube"
+msgstr ""
+
+#. Translators: First message shown while a YouTube search is running.
+#: YouTube/Playback/Browsing.cs:60
+msgid "Searching videos..."
+msgstr ""
+
+#. Translators: Shown when a YouTube search failed and nothing said why.
+#: YouTube/Playback/Browsing.cs:72
+msgid "Could not complete YouTube search."
+msgstr ""
+
+#. Translators: Shown when a YouTube search found nothing at all.
+#: YouTube/Playback/Browsing.cs:79
+msgid "No videos were found for this search."
+msgstr ""
+
+#. Translators: Shown when an address looked like a YouTube link but names no playlist.
+#: YouTube/Playback/Browsing.cs:93
+msgid "This link does not include a YouTube playlist."
+msgstr ""
+
+#. Translators: Title of the window shown while a YouTube playlist is being read.
+#: YouTube/Playback/Browsing.cs:100
+msgid "Loading YouTube link"
+msgstr ""
+
+#. Translators: First message shown while the videos in a YouTube playlist are being listed.
+#: YouTube/Playback/Browsing.cs:102
+msgid "Loading playlist items..."
+msgstr ""
+
+#. Translators: Shown when a YouTube address could not be read and nothing said why.
+#: YouTube/Playback/Browsing.cs:114
+msgid "Could not read YouTube link data."
+msgstr ""
+
+#. Translators: Shown when a YouTube playlist address opened nothing playable.
+#: YouTube/Playback/Browsing.cs:121
+msgid "No videos were found in this playlist."
+msgstr ""
+
+#. Translators: Title of the window shown while a YouTube channel is being opened.
+#: YouTube/Playback/Browsing.cs:144
+msgid "Loading channel"
+msgstr ""
+
+#. Translators: First message shown while a YouTube channel is being opened.
+#: YouTube/Playback/Browsing.cs:146
+msgid "Loading channel videos..."
+msgstr ""
+
+#. Translators: Shown when a YouTube channel could not be read.
+#: YouTube/Playback/Browsing.cs:158
+msgid "Could not read this YouTube channel."
+msgstr ""
+
+#. Translators: Spoken once a video has been taken back out of the favourites from the results list.
+#. Translators: The short wording spoken once a video has been removed from the favourites.
+#: YouTube/Playback/Browsing.cs:177 YouTube/Playback/Browsing.cs:179
+msgid "Removed from favorites."
+msgstr ""
+
+#. Translators: Spoken when a video could not be removed from the favourites.
+#: YouTube/Playback/Browsing.cs:185
+msgid "Could not remove from favorites."
+msgstr ""
+
+#. Translators: Spoken once a video has been added to the favourites from the results list.
+#. Translators: The short wording spoken once a video has been added to the favourites.
+#: YouTube/Playback/Browsing.cs:194 YouTube/Playback/Browsing.cs:196
+msgid "Added to favorites."
+msgstr ""
+
+#. Translators: Spoken when a video could not be added to the favourites.
+#: YouTube/Playback/Browsing.cs:202
+msgid "Could not add to favorites."
 msgstr ""
 
 #. Translators: Spoken when a playlist or channel row is used with a video-only queue command.
@@ -6874,39 +7240,39 @@ msgid "Loading more videos..."
 msgstr ""
 
 #. Translators: Shown when a video was found but the player could not start playing it.
-#: YouTube/Playback/Playing.cs:65
+#: YouTube/Playback/Playing.cs:68
 msgid "Could not open YouTube stream."
 msgstr ""
 
 #. Translators: Spoken when the video before this one is being fetched before it can be played.
 #. Translators: The short wording spoken while the video before this one is being fetched.
-#: YouTube/Playback/Playing.cs:86 YouTube/Playback/Playing.cs:91
+#: YouTube/Playback/Playing.cs:89 YouTube/Playback/Playing.cs:94
 msgid "Loading previous video..."
 msgstr ""
 
 #. Translators: Spoken when the video after this one is being fetched before it can be played.
 #. Translators: The short wording spoken while the video after this one is being fetched.
-#: YouTube/Playback/Playing.cs:88 YouTube/Playback/Playing.cs:93
+#: YouTube/Playback/Playing.cs:91 YouTube/Playback/Playing.cs:96
 msgid "Loading next video..."
 msgstr ""
 
 #. Translators: Spoken when the video before this one could not be fetched.
-#: YouTube/Playback/Playing.cs:133
+#: YouTube/Playback/Playing.cs:136
 msgid "Could not load the previous video."
 msgstr ""
 
 #. Translators: Spoken when the video after this one could not be fetched, so playback stops.
-#: YouTube/Playback/Playing.cs:135
+#: YouTube/Playback/Playing.cs:138
 msgid "Could not load the next video."
 msgstr ""
 
 #. Translators: The short wording spoken when the previous video could not be fetched.
-#: YouTube/Playback/Playing.cs:138
+#: YouTube/Playback/Playing.cs:141
 msgid "Previous video failed."
 msgstr ""
 
 #. Translators: The short wording spoken when the next video could not be fetched.
-#: YouTube/Playback/Playing.cs:140
+#: YouTube/Playback/Playing.cs:143
 msgid "Next video failed."
 msgstr ""
 
@@ -6920,105 +7286,18 @@ msgstr ""
 msgid "Playlist videos"
 msgstr ""
 
-#. Translators: Message shown while the first video of a search is being made ready to play.
-#: YouTube/Playback/Sessions.cs:145
-msgid "Fetching first stream..."
-msgstr ""
-
-#. Translators: Title of the window shown while a YouTube search is running.
-#: YouTube/Playback/Sessions.cs:148
-msgid "Searching YouTube"
-msgstr ""
-
-#. Translators: First message shown while a YouTube search is running.
-#: YouTube/Playback/Sessions.cs:150
-msgid "Searching videos..."
-msgstr ""
-
-#. Translators: Shown when a YouTube search failed and nothing said why.
-#: YouTube/Playback/Sessions.cs:162
-msgid "Could not complete YouTube search."
-msgstr ""
-
-#. Translators: Shown when a YouTube search found nothing at all.
-#: YouTube/Playback/Sessions.cs:169
-msgid "No videos were found for this search."
-msgstr ""
-
-#. Translators: Shown when an address looked like a YouTube link but names no playlist.
-#: YouTube/Playback/Sessions.cs:188
-msgid "This link does not include a YouTube playlist."
-msgstr ""
-
-#. Translators: Title of the window shown while a YouTube playlist is being read.
-#: YouTube/Playback/Sessions.cs:195
-msgid "Loading YouTube link"
-msgstr ""
-
-#. Translators: First message shown while the videos in a YouTube playlist are being listed.
-#: YouTube/Playback/Sessions.cs:197
-msgid "Loading playlist items..."
-msgstr ""
-
-#. Translators: Shown when a YouTube address could not be read and nothing said why.
-#: YouTube/Playback/Sessions.cs:209
-msgid "Could not read YouTube link data."
-msgstr ""
-
-#. Translators: Shown when a YouTube playlist address opened nothing playable.
-#: YouTube/Playback/Sessions.cs:216
-msgid "No videos were found in this playlist."
-msgstr ""
-
-#. Translators: Title of the window shown while a YouTube channel is being opened.
-#: YouTube/Playback/Sessions.cs:245
-msgid "Loading channel"
-msgstr ""
-
-#. Translators: First message shown while a YouTube channel is being opened.
-#: YouTube/Playback/Sessions.cs:247
-msgid "Loading channel videos..."
-msgstr ""
-
-#. Translators: Shown when a YouTube channel could not be read.
-#: YouTube/Playback/Sessions.cs:259
-msgid "Could not read this YouTube channel."
-msgstr ""
-
-#. Translators: Spoken once a video has been taken back out of the favourites from the results list.
-#. Translators: The short wording spoken once a video has been removed from the favourites.
-#: YouTube/Playback/Sessions.cs:287 YouTube/Playback/Sessions.cs:289
-msgid "Removed from favorites."
-msgstr ""
-
-#. Translators: Spoken when a video could not be removed from the favourites.
-#: YouTube/Playback/Sessions.cs:295
-msgid "Could not remove from favorites."
-msgstr ""
-
-#. Translators: Spoken once a video has been added to the favourites from the results list.
-#. Translators: The short wording spoken once a video has been added to the favourites.
-#: YouTube/Playback/Sessions.cs:304 YouTube/Playback/Sessions.cs:306
-msgid "Added to favorites."
-msgstr ""
-
-#. Translators: Spoken when a video could not be added to the favourites.
-#: YouTube/Playback/Sessions.cs:312
-msgid "Could not add to favorites."
-msgstr ""
-
 #. Translators: Shown when an address looked like a YouTube link but names no video.
-#: YouTube/Playback/Sessions.cs:332
+#: YouTube/Playback/Sessions.cs:139
 msgid "This link does not include a YouTube video."
 msgstr ""
 
 #. Translators: Title of the window shown while the address of a video is being looked up.
-#: YouTube/Playback/Sessions.cs:539
+#: YouTube/Playback/Sessions.cs:346
 msgid "Loading YouTube stream"
 msgstr ""
 
 #. Translators: First message shown while the address of a video is being looked up.
-#: YouTube/Playback/Sessions.cs:541
+#: YouTube/Playback/Sessions.cs:348
 msgid "Fetching stream URL..."
 msgstr ""
 
