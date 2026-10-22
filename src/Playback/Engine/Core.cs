@@ -39,6 +39,8 @@ internal sealed partial class Engine : IEngine
     private bool? _pauseRequested;
     private double? _resumeSeekPosition;
     private bool _seekFadeActive;
+    private double? _seekFadeTarget;
+    private bool _seekFadeIssued;
     private bool _fadeInOnRestart;
     private bool _endFadeActive;
 
@@ -97,7 +99,9 @@ internal sealed partial class Engine : IEngine
             options["wid"] = windowHandle.ToString(CultureInfo.InvariantCulture);
 
         _mpv = new MPV(options: options);
-        _fader = new VolumeFader(_ => ApplyVolume());
+        _fader = new VolumeFader(
+            (target, seconds) => TryDo(mpv => mpv.Command("audio-fade", target, seconds)),
+            ReadFadeState);
         SetPropertySafely("network-timeout", 10);
         ApplyMediaControls(mediaControls);
         _endRegistration = _mpv.OnEvent(HandleEndFile, MpvEventId.EndFile);
@@ -175,12 +179,13 @@ internal sealed partial class Engine : IEngine
             CancelEndFade();
     }
 
-    private void CancelEndFade()
+    private void CancelEndFade(bool restoreVolume = true)
     {
         if (!_endFadeActive)
             return;
         _endFadeActive = false;
-        _fader.Set(1);
+        if (restoreVolume)
+            _fader.FadeTo(1, _fadeIntervalMilliseconds);
     }
 
     private void ApplyEndBehavior()
@@ -209,7 +214,20 @@ internal sealed partial class Engine : IEngine
     private static double ToMpvVolume(double volume)
         => volume <= 0 ? 0 : Precision.Normalize(100 * Math.Cbrt(volume / 100));
 
-    private void ApplyVolume() => SetPropertySafely("volume", ToMpvVolume(_volume * _fader.Level));
+    private void ApplyVolume() => SetPropertySafely("volume", ToMpvVolume(_volume));
+
+    private VolumeFader.State? ReadFadeState()
+    {
+        if (ReadObject("audio-fade") is not IReadOnlyDictionary<string, object?> state
+            || !state.TryGetValue("gain", out var gain) || !TryConvertDouble(gain, out var level))
+            return null;
+        var supported = state.TryGetValue("supported", out var support) && support is true;
+        // A ramp longer than the remaining file cannot finish rendering after EOF. Transport still
+        // has to complete, even when no more samples will arrive or the audio track was removed.
+        var active = state.TryGetValue("active", out var running) && running is true
+            && ReadBoolean("eof-reached") != true && ReadBoolean("idle-active") != true;
+        return new VolumeFader.State(level, active, supported);
+    }
 
     /// <summary>The failures a call into libmpv can produce: mpv refusing the call, the player having been
     /// shut down under it, and a property whose value does not convert to the type the caller asked for.

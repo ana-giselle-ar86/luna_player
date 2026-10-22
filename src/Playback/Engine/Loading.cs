@@ -15,6 +15,8 @@ internal sealed partial class Engine
         CancelSelectionSeek();
         _resumeSeekPosition = null;
         _seekFadeActive = false;
+        _seekFadeTarget = null;
+        _seekFadeIssued = false;
         _endBehaviorRestorePending = false;
         // A delayed EOF from the replaced entry is still identified below, but it must never resume by
         // seeking the newly loaded entry to the old selection's timestamp.
@@ -158,6 +160,8 @@ internal sealed partial class Engine
         _pauseRequested = null;
         _resumeSeekPosition = null;
         _seekFadeActive = false;
+        _seekFadeTarget = null;
+        _seekFadeIssued = false;
         _fadeInOnRestart = false;
         _endFadeActive = false;
         _gaplessAdvancePending = false;

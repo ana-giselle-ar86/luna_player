@@ -31,6 +31,7 @@ internal sealed partial class Engine
             return;
         if (_fadePauseResume && _fadeIntervalMilliseconds > 0
             && ReadBoolean("pause") == true
+            && _fader.Level > 0
             && ReadBoolean("seekable") == true
             && ReadBoolean("eof-reached") != true
             && Elapsed is double pausedAt
@@ -41,9 +42,8 @@ internal sealed partial class Engine
 
     private bool BeginResumeSeek(double position)
     {
-        // WASAPI retains samples already mixed at the old volume when it pauses. Setting volume
-        // to zero cannot change those samples. Refresh at the exact paused timestamp while still
-        // paused, then unpause only after playback-restart confirms the old output was discarded.
+        // A pause outside the faded transport (for example, a selection boundary) can retain audible
+        // samples in the device. Refresh those while paused. A completed fade-out needs no refresh.
         _pauseRequested = false;
         _fader.Set(0);
         _resumeSeekPosition = position;
@@ -55,31 +55,26 @@ internal sealed partial class Engine
 
     private void ResumePlayback()
     {
-        _seekFadeActive = false;
+        CancelSeekFade();
         _pauseRequested = false;
         if (_fadePauseResume && _fadeIntervalMilliseconds > 0)
         {
             var wasPaused = ReadBoolean("pause") == true;
-            Func<bool>? startWhen = null;
-            if (wasPaused && ReadDouble("audio-pts") is double pausedAudioPosition)
+            if (wasPaused)
+                _fader.Set(0);
+            // Arm the native envelope before unpausing. It advances only when the AO consumes audio,
+            // so device startup cannot spend the fade interval or leak a full-volume first frame.
+            _fader.FadeTo(1, _fadeIntervalMilliseconds, () =>
             {
-                // audio-pts accounts for the output delay. Do not consume the fade interval while
-                // the device is starting; an unavailable audio clock falls back to immediate fading.
-                startWhen = () => ReadDouble("audio-pts") is not double position || position > pausedAudioPosition;
-            }
-            // An unfinished fade-out reverses from its current level without seeking or hard muting.
-            _fader.Set(wasPaused ? 0 : _fader.Level);
+                if (_pauseRequested == false)
+                    _pauseRequested = null;
+            });
             if (!TrySetProperty("pause", false))
             {
                 _pauseRequested = null;
                 _fader.Set(1);
                 return;
             }
-            _fader.FadeTo(1, _fadeIntervalMilliseconds, () =>
-            {
-                if (_pauseRequested == false)
-                    _pauseRequested = null;
-            }, startWhen);
         }
         else
         {
@@ -101,8 +96,8 @@ internal sealed partial class Engine
         }
         if (IsPaused)
             return;
-        _seekFadeActive = false;
-        CancelEndFade();
+        CancelSeekFade();
+        CancelEndFade(restoreVolume: false);
         if (!_fadePauseResume || _fadeIntervalMilliseconds <= 0)
         {
             SetPropertySafely("pause", true);
@@ -142,7 +137,14 @@ internal sealed partial class Engine
             SeekAbsolute(resumeAt + delta);
             return;
         }
-        FadeAroundSeek(() => SeekRelativeCore(delta));
+        if (_fadeSeeking && _loaded && !IsPaused
+            && (_seekFadeTarget ?? Elapsed) is double position)
+            FadeAroundSeek(Precision.Normalize(Math.Max(0, position + delta)));
+        else
+        {
+            CancelEndFade();
+            SeekRelativeCore(delta);
+        }
     }
 
     public void SeekAbsolute(double seconds)
@@ -155,7 +157,13 @@ internal sealed partial class Engine
                 ResumePlayback();
             return;
         }
-        FadeAroundSeek(() => SeekAbsoluteCore(target));
+        if (_fadeSeeking && _loaded && !IsPaused)
+            FadeAroundSeek(target);
+        else
+        {
+            CancelEndFade();
+            SeekAbsoluteCore(target);
+        }
     }
 
     private bool SeekRelativeCore(double delta)
@@ -167,37 +175,69 @@ internal sealed partial class Engine
         return TryDo(mpv => mpv.Command("seek", delta, "relative"));
     }
 
-    private bool SeekAbsoluteCore(double target)
+    private bool SeekAbsoluteCore(double target, bool faded = false)
     {
         if (_endBehaviorRestorePending
-            && BeginSelectionSeek(target, restoreEndBehavior: true, play: !IsPaused))
+            && BeginSelectionSeek(target, restoreEndBehavior: true, play: !IsPaused, preserveSeekFade: faded))
             return true;
-        return TryDo(mpv => mpv.Command("seek", target, "absolute"));
+        return TryDo(mpv => mpv.Command("seek", target, faded ? "absolute+exact" : "absolute"));
     }
 
-    private void FadeAroundSeek(Func<bool> seek)
+    private void FadeAroundSeek(double target)
     {
-        if (!_fadeSeeking || !_loaded || IsPaused)
+        if (Duration is double duration && duration > 0)
+            target = Math.Min(target, duration);
+        CancelEndFade(restoreVolume: false);
+        if (_seekFadeTarget.HasValue)
         {
-            CancelEndFade();
-            seek();
+            // While fading out, only replace the destination. Once muted, newer requests can seek
+            // immediately; relative requests accumulate against this target rather than stale PTS.
+            _seekFadeTarget = target;
+            if (_seekFadeIssued)
+                IssueFadedSeek();
             return;
         }
 
-        CancelEndFade();
-        // Do not fade the destination out after seeking. The outgoing audio is silenced before moving,
-        // then the new position fades in. Repeated requests replace the fade rather than delaying seeks.
         _seekFadeActive = true;
+        _seekFadeTarget = target;
+        _seekFadeIssued = false;
         _pauseRequested = null;
-        _fader.Set(0);
-        if (!seek())
-        {
-            _seekFadeActive = false;
-            _fader.Set(1);
+        // A short sample-level de-click ramp silences the outgoing position before the jump. The
+        // configured seek interval belongs to the fade-in, and rapid keys never queue extra ramps.
+        _fader.FadeTo(0, Math.Min(5, _seekFadeIntervalMilliseconds), IssueFadedSeek);
+    }
+
+    private void IssueFadedSeek()
+    {
+        if (_disposed || _seekFadeTarget is not double target)
             return;
+        _seekFadeIssued = true;
+        if (!SeekAbsoluteCore(target, faded: true))
+        {
+            CancelSeekFade();
+            _fader.Set(1);
         }
-        _fader.FadeTo(1, _seekFadeIntervalMilliseconds, () => _seekFadeActive = false,
-            startWhen: () => ReadBoolean("seeking") != true);
+    }
+
+    private void CancelSeekFade()
+    {
+        if (_seekFadeActive)
+            _fader.Set(_fader.Level);
+        _seekFadeActive = false;
+        _seekFadeTarget = null;
+        _seekFadeIssued = false;
+    }
+
+    private bool HasReachedFadedSeek(double target)
+    {
+        if (ReadBoolean("seeking") == true || Elapsed is not double position)
+            return false;
+        if (Math.Abs(position - target) <= 0.5 || ReadBoolean("eof-reached") == true)
+            return true;
+        // An exact seek to an A-B loop's end can restart at its start instead. Do not leave that
+        // legitimate restart muted while waiting for a timestamp the loop will never reach.
+        return ReadDouble("ab-loop-a") is double start && ReadDouble("ab-loop-b") is double end
+            && end > start && target >= end && position >= start && position <= start + 0.5;
     }
 
 }

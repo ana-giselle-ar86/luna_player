@@ -1,26 +1,26 @@
-using System.Diagnostics;
-
 namespace LunaPlayer.Playback;
 
-/// <summary>Runs one cancellable volume ramp. Starting another ramp supersedes the old one, which keeps
-/// rapid seeks and repeated transport commands from leaving playback at an intermediate volume.</summary>
+/// <summary>Starts sample-clocked ramps in mpv. Polling only waits for audible completion; it never
+/// writes intermediate gains or advances a ramp while the output is paused or starved.</summary>
 internal sealed class VolumeFader : IDisposable
 {
-    private const int FrameMilliseconds = 16;
     private readonly Lock _sync = new();
-    private readonly Action<double> _apply;
+    private readonly Func<double, double, bool> _apply;
+    private readonly Func<State?> _read;
     private CancellationTokenSource? _cancellation;
-    private double _level = 1;
     private bool _disposed;
 
-    internal VolumeFader(Action<double> apply)
+    internal readonly record struct State(double Gain, bool Active, bool Supported);
+
+    internal VolumeFader(Func<double, double, bool> apply, Func<State?> read)
     {
         _apply = apply;
+        _read = read;
     }
 
     internal double Level
     {
-        get { lock (_sync) return _level; }
+        get { lock (_sync) return _disposed ? 1 : _read()?.Gain ?? 1; }
     }
 
     internal void Set(double level)
@@ -29,89 +29,71 @@ internal sealed class VolumeFader : IDisposable
         {
             if (_disposed)
                 return;
-            _cancellation?.Cancel();
-            _cancellation?.Dispose();
-            _cancellation = null;
-            _level = Math.Clamp(level, 0, 1);
-            _apply(_level);
+            Cancel();
+            _apply(Math.Clamp(level, 0, 1), 0);
         }
     }
 
-    internal void FadeTo(double target, int milliseconds, Action? completed = null, Func<bool>? startWhen = null)
+    internal void FadeTo(double target, int milliseconds, Action? completed = null)
     {
-        target = Math.Clamp(target, 0, 1);
-        CancellationTokenSource cancellation;
-        CancellationToken token;
-        double start;
         lock (_sync)
         {
             if (_disposed)
                 return;
-            if (milliseconds <= 0 || target == _level)
+            Cancel();
+            // Older libmpv builds and passthrough outputs cannot apply a PCM envelope. Keep their
+            // transport usable without falling back to the block-sized volume jumps this replaces.
+            if (_read() is not { Supported: true }
+                || !_apply(Math.Clamp(target, 0, 1), Math.Clamp(milliseconds / 1000.0, 0, 60)))
             {
-                Set(target);
+                _apply(Math.Clamp(target, 0, 1), 0);
                 completed?.Invoke();
                 return;
             }
-            _cancellation?.Cancel();
-            _cancellation?.Dispose();
-            cancellation = new CancellationTokenSource();
-            token = cancellation.Token;
+            if (completed is null)
+                return;
+            var cancellation = new CancellationTokenSource();
             _cancellation = cancellation;
-            start = _level;
+            _ = WaitForOutput(cancellation, cancellation.Token, completed);
         }
-        // Keep a constant rate when a fade is reversed part-way through. The configured interval is the
-        // time needed to travel the full volume range, not a new full delay for every partial ramp.
-        var duration = Math.Max(1, (int)Math.Round(milliseconds * Math.Abs(target - start)));
-        _ = Run(start, target, duration, cancellation, token, completed, startWhen);
     }
 
-    private async Task Run(double start, double target, int milliseconds,
-        CancellationTokenSource cancellation, CancellationToken token, Action? completed, Func<bool>? startWhen)
+    private async Task WaitForOutput(CancellationTokenSource cancellation, CancellationToken token,
+        Action completed)
     {
         try
         {
-            // Output may still be starting after unpause. Keep the initial level until audio advances;
-            // otherwise part of a fade-in is spent waiting for the device rather than fading audio.
-            while (startWhen is not null && !startWhen())
-                await Task.Delay(FrameMilliseconds, token).ConfigureAwait(false);
-
-            var started = Stopwatch.GetTimestamp();
             while (true)
             {
-                var remaining = milliseconds - Stopwatch.GetElapsedTime(started).TotalMilliseconds;
-                if (remaining > 0)
-                    await Task.Delay(TimeSpan.FromMilliseconds(Math.Min(FrameMilliseconds, remaining)), token)
-                        .ConfigureAwait(false);
+                await Task.Delay(10, token).ConfigureAwait(false);
                 lock (_sync)
                 {
                     if (_disposed || !ReferenceEquals(_cancellation, cancellation))
                         return;
-                    // Measure the whole transition, including volume updates and scheduling delays.
-                    // Counting steps adds that overhead to every frame and stretches the interval.
-                    var fraction = Math.Min(1, Stopwatch.GetElapsedTime(started).TotalMilliseconds / milliseconds);
-                    _level = fraction >= 1 ? target : start + (target - start) * fraction;
-                    // Applying a frame is part of the transition: a replacement ramp must not be
-                    // followed by an old frame or completion callback that changes playback again.
-                    _apply(_level);
-                    if (fraction >= 1)
-                    {
-                        _cancellation = null;
-                        completed?.Invoke();
-                        return;
-                    }
+                    if (_read() is { Active: true, Supported: true })
+                        continue;
+                    _cancellation = null;
+                    // Replacement commands and completion are serialized, so a cancelled pause or
+                    // seek cannot run after a newer transport request has taken over the envelope.
+                    completed();
+                    return;
                 }
             }
         }
         catch (OperationCanceledException)
         {
-            // A new fade or immediate volume change cancels the previous transition by design.
+            // A replacement transition or disposal cancels this completion callback.
         }
         finally
         {
-            lock (_sync)
-                cancellation.Dispose();
+            cancellation.Dispose();
         }
+    }
+
+    private void Cancel()
+    {
+        _cancellation?.Cancel();
+        _cancellation = null;
     }
 
     public void Dispose()
@@ -121,9 +103,7 @@ internal sealed class VolumeFader : IDisposable
             if (_disposed)
                 return;
             _disposed = true;
-            _cancellation?.Cancel();
-            _cancellation?.Dispose();
-            _cancellation = null;
+            Cancel();
         }
     }
 }

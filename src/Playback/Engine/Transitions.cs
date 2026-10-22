@@ -6,8 +6,11 @@ namespace LunaPlayer.Playback;
 
 internal sealed partial class Engine
 {
-    private bool BeginSelectionSeek(double seconds, bool restoreEndBehavior, bool play)
+    private bool BeginSelectionSeek(double seconds, bool restoreEndBehavior, bool play,
+        bool preserveSeekFade = false)
     {
+        if (!preserveSeekFade)
+            CancelSeekFade();
         _resumeSeekPosition = null;
         var target = Precision.Normalize(Math.Max(0, seconds));
         _selectionSeekPending = true;
@@ -57,6 +60,13 @@ internal sealed partial class Engine
         {
             _resumeSeekPosition = null;
             ResumePlayback();
+        }
+        if (_seekFadeIssued && _seekFadeTarget is double seekAt
+            && HasReachedFadedSeek(seekAt))
+        {
+            _seekFadeTarget = null;
+            _seekFadeIssued = false;
+            _fader.FadeTo(1, _seekFadeIntervalMilliseconds, () => _seekFadeActive = false);
         }
         if (_fadeInOnRestart)
         {
@@ -116,10 +126,14 @@ internal sealed partial class Engine
             }
             return;
         }
-        if (remaining < 0)
-            remaining = 0;
+        if (_endFadeActive)
+            return;
         _endFadeActive = true;
-        _fader.Set(interval <= 0 ? 1 : remaining / interval);
+        // Once armed, the output mixer owns every sample of the ramp. Position notifications must
+        // not replace it with block-sized gain changes. Account for playback speed at the boundary.
+        var speed = Math.Max(0.01, ReadDouble("speed") ?? 1);
+        var milliseconds = (int)Math.Clamp(remaining / speed * 1000, 0, 60000);
+        _fader.FadeTo(0, milliseconds);
     }
 
     private void CancelSelectionSeek()
