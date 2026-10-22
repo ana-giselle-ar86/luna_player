@@ -37,8 +37,7 @@ internal sealed partial class Engine : IEngine
     private bool _fadeFileTransitions;
     private bool _fadePauseResume;
     private bool? _pauseRequested;
-    private bool _resumeFadePending;
-    private double? _resumeFadePosition;
+    private double? _resumeSeekPosition;
     private bool _seekFadeActive;
     private bool _fadeInOnRestart;
     private bool _endFadeActive;

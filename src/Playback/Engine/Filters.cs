@@ -13,7 +13,10 @@ internal sealed partial class Engine
             ApplyVolume();
             return true;
         }
-        if (!AddFilter("@audionormalize:lavfi=[dynaudnorm=f=150:g=15,alimiter=limit=0.95]"))
+        // A resume refresh rebuilds this graph. The default boundary mode then ramps the normalizer's
+        // gain from unity again, changing the audible fade even though our volume ramp is unchanged.
+        // Start with the calculated gain instead so normalization does not add its own boundary fades.
+        if (!AddFilter("@audionormalize:lavfi=[dynaudnorm=f=150:g=15:b=1,alimiter=limit=0.95]"))
         {
             RemoveFilter("@audionormalize");
             _normalizationEnabled = false;

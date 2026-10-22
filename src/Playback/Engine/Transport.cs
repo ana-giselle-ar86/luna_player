@@ -27,24 +27,61 @@ internal sealed partial class Engine
             && (Elapsed ?? (_releasedSelectionEndPending ? _releasedSelectionEnd : null)) is double position
             && BeginSelectionSeek(position, restoreEndBehavior: true, play: true))
             return;
+        if (!IsPaused || _resumeSeekPosition.HasValue)
+            return;
+        if (_fadePauseResume && _fadeIntervalMilliseconds > 0
+            && ReadBoolean("pause") == true
+            && ReadBoolean("seekable") == true
+            && ReadBoolean("eof-reached") != true
+            && Elapsed is double pausedAt
+            && BeginResumeSeek(pausedAt))
+            return;
+        ResumePlayback();
+    }
+
+    private bool BeginResumeSeek(double position)
+    {
+        // WASAPI retains samples already mixed at the old volume when it pauses. Setting volume
+        // to zero cannot change those samples. Refresh at the exact paused timestamp while still
+        // paused, then unpause only after playback-restart confirms the old output was discarded.
+        _pauseRequested = false;
+        _fader.Set(0);
+        _resumeSeekPosition = position;
+        if (TryDo(mpv => mpv.Command("seek", position, "absolute+exact")))
+            return true;
+        _resumeSeekPosition = null;
+        return false;
+    }
+
+    private void ResumePlayback()
+    {
         _pauseRequested = false;
         if (_fadePauseResume && _fadeIntervalMilliseconds > 0)
         {
-            _fader.Set(0);
-            _resumeFadePending = true;
-            _resumeFadePosition = Elapsed;
+            var wasPaused = ReadBoolean("pause") == true;
+            Func<bool>? startWhen = null;
+            if (wasPaused && ReadDouble("audio-pts") is double pausedAudioPosition)
+            {
+                // audio-pts accounts for the output delay. Do not consume the fade interval while
+                // the device is starting; an unavailable audio clock falls back to immediate fading.
+                startWhen = () => ReadDouble("audio-pts") is not double position || position > pausedAudioPosition;
+            }
+            // An unfinished fade-out reverses from its current level without seeking or hard muting.
+            _fader.Set(wasPaused ? 0 : _fader.Level);
             if (!TrySetProperty("pause", false))
             {
-                _resumeFadePending = false;
-                _resumeFadePosition = null;
                 _pauseRequested = null;
                 _fader.Set(1);
+                return;
             }
+            _fader.FadeTo(1, _fadeIntervalMilliseconds, () =>
+            {
+                if (_pauseRequested == false)
+                    _pauseRequested = null;
+            }, startWhen);
         }
         else
         {
-            _resumeFadePending = false;
-            _resumeFadePosition = null;
             _fader.Set(1);
             SetPropertySafely("pause", false);
             _pauseRequested = null;
@@ -53,10 +90,18 @@ internal sealed partial class Engine
 
     public void Pause()
     {
+        if (_resumeSeekPosition.HasValue)
+        {
+            // A second pause cancels the pending resume, not the refresh already in progress.
+            _resumeSeekPosition = null;
+            SetPropertySafely("pause", true);
+            _pauseRequested = null;
+            return;
+        }
+        if (IsPaused)
+            return;
         CancelEndFade();
-        _resumeFadePending = false;
-        _resumeFadePosition = null;
-        if (!_fadePauseResume || _fadeIntervalMilliseconds <= 0 || IsPaused)
+        if (!_fadePauseResume || _fadeIntervalMilliseconds <= 0)
         {
             SetPropertySafely("pause", true);
             _fader.Set(1);
@@ -69,7 +114,7 @@ internal sealed partial class Engine
             if (_disposed || _pauseRequested != true)
                 return;
             SetPropertySafely("pause", true);
-            _fader.Set(1);
+            // Restoring full volume here leaves the next resume with an unnecessary hard mute.
             _pauseRequested = null;
         });
     }
@@ -90,12 +135,24 @@ internal sealed partial class Engine
     public void SeekRelative(double seconds)
     {
         var delta = Precision.Normalize(seconds);
+        if (_resumeSeekPosition is double resumeAt)
+        {
+            SeekAbsolute(resumeAt + delta);
+            return;
+        }
         FadeAroundSeek(() => SeekRelativeCore(delta));
     }
 
     public void SeekAbsolute(double seconds)
     {
         var target = Precision.Normalize(Math.Max(0, seconds));
+        if (_resumeSeekPosition.HasValue)
+        {
+            // Replace the pending target so rapid seeks do not resume from an older request.
+            if (!BeginResumeSeek(target))
+                ResumePlayback();
+            return;
+        }
         FadeAroundSeek(() => SeekAbsoluteCore(target));
     }
 

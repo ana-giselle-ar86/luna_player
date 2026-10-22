@@ -8,6 +8,7 @@ internal sealed partial class Engine
 {
     private bool BeginSelectionSeek(double seconds, bool restoreEndBehavior, bool play)
     {
+        _resumeSeekPosition = null;
         var target = Precision.Normalize(Math.Max(0, seconds));
         _selectionSeekPending = true;
         _restoreEndBehaviorAfterSelectionSeek = restoreEndBehavior;
@@ -47,8 +48,15 @@ internal sealed partial class Engine
                 ApplyEndBehavior();
             }
             if (play)
-                Play();
+                ResumePlayback();
             SelectionSeekCompleted?.Invoke();
+        }
+        if (_resumeSeekPosition is double resumeAt
+            && ReadBoolean("seeking") != true
+            && Elapsed is double resumedAt && Math.Abs(resumedAt - resumeAt) <= 0.5)
+        {
+            _resumeSeekPosition = null;
+            ResumePlayback();
         }
         if (_fadeInOnRestart)
         {
@@ -66,7 +74,6 @@ internal sealed partial class Engine
 
     private void HandlePositionChange(string _, object? value)
     {
-        StartResumeFade(value);
         UpdateEndFade(value);
         if (_disposed
             || !_releasedSelectionEndPending
@@ -113,22 +120,6 @@ internal sealed partial class Engine
             remaining = 0;
         _endFadeActive = true;
         _fader.Set(interval <= 0 ? 1 : remaining / interval);
-    }
-
-    private void StartResumeFade(object? value)
-    {
-        if (!_resumeFadePending || _disposed || ReadBoolean("pause") == true
-            || !TryConvertDouble(value, out var position)
-            || _resumeFadePosition is double pausedAt && Math.Abs(position - pausedAt) <= 0.001)
-            return;
-        _resumeFadePending = false;
-        _resumeFadePosition = null;
-        _fader.Set(0);
-        _fader.FadeTo(1, _fadeIntervalMilliseconds, () =>
-        {
-            if (_pauseRequested == false)
-                _pauseRequested = null;
-        });
     }
 
     private void CancelSelectionSeek()

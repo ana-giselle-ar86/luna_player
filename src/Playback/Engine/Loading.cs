@@ -13,6 +13,7 @@ internal sealed partial class Engine
         bool noVideo = false, bool fadeTransition = false)
     {
         CancelSelectionSeek();
+        _resumeSeekPosition = null;
         _seekFadeActive = false;
         _endBehaviorRestorePending = false;
         // A delayed EOF from the replaced entry is still identified below, but it must never resume by
@@ -26,8 +27,6 @@ internal sealed partial class Engine
         _awaitingLoadRestart = true;
         _loadingPath = path;
         _gaplessAdvancePending = false;
-        _resumeFadePending = false;
-        _resumeFadePosition = null;
         _fadeInOnRestart = fadeTransition && ShouldFadeTransitions;
         // Replacement loads cannot be delayed after Luna has already moved its playlist index: during
         // that delay metadata and another navigation command would still belong to the outgoing file.
@@ -157,8 +156,7 @@ internal sealed partial class Engine
         _awaitingLoadRestart = false;
         _loadingPath = null;
         _pauseRequested = null;
-        _resumeFadePending = false;
-        _resumeFadePosition = null;
+        _resumeSeekPosition = null;
         _seekFadeActive = false;
         _fadeInOnRestart = false;
         _endFadeActive = false;
