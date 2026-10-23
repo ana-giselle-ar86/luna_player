@@ -1,5 +1,6 @@
 using LunaPlayer.Configuration;
 using LunaPlayer.Configuration.Models;
+using LunaPlayer.Media;
 
 namespace LunaPlayer.Playback;
 
@@ -12,6 +13,22 @@ internal sealed partial class Engine
     public bool Load(string path, double? startPosition = null, bool paused = false, string? audioFile = null,
         bool noVideo = false, bool fadeTransition = false)
     {
+        lock (_loadSync)
+            return BeginLoad(path, startPosition, paused, audioFile, noVideo, fadeTransition);
+    }
+
+    private bool BeginLoad(string path, double? startPosition, bool paused, string? audioFile,
+        bool noVideo, bool fadeTransition)
+    {
+        var overlap = fadeTransition && _crossfade && _crossfadeManual && _loaded && !IsPaused
+            && !_awaitingLoadRestart && !_currentUsesAudioFile && audioFile is null && CurrentIsAudio();
+        var generation = ++_loadGeneration;
+        ++_queueGeneration;
+        _loadingSourceEntryId = PositiveEntryId();
+        _pendingAdvance = null;
+        _completedAdvance = null;
+        _manualRequest = null;
+        _endFadeActive = false;
         CancelSelectionSeek();
         _endBehaviorRestorePending = false;
         // A delayed EOF from the replaced entry is still identified below, but it must never resume by
@@ -24,14 +41,16 @@ internal sealed partial class Engine
         _queuedSourceEntryId = null;
         _awaitingLoadRestart = true;
         _loadingPath = path;
-        _gaplessAdvancePending = false;
-        _fadeInOnRestart = fadeTransition && ShouldFadeTransitions;
-        // Replacement loads cannot be delayed after Luna has already moved its playlist index: during
-        // that delay metadata and another navigation command would still belong to the outgoing file.
-        // Natural endings receive a full fade-out from the position observer; explicit navigation starts
-        // the replacement muted and fades it in as soon as mpv reports playback-restart.
-        SetFade(_fadeInOnRestart ? 0 : 1);
-        var loaded = LoadCore(request, paused);
+        _fadeInOnRestart = !overlap && fadeTransition && ShouldFadeTransitions;
+        // Ordinary replacement fades begin with the destination muted. Native overlaps retain the
+        // outgoing envelope until the mixer captures it, avoiding a sudden gain jump before the overlap.
+        if (!overlap)
+            SetFade(_fadeInOnRestart ? 0 : 1);
+        // Cancel the old successor immediately, including while a manual destination's metadata is
+        // being inspected. A replaced request may never advance the old queue in the meantime.
+        if (overlap)
+            TryDo(static mpv => mpv.CommandAsync(0, "playlist-clear"));
+        var loaded = overlap ? LoadWithCrossfade(request, paused, fadeTransition, generation) : LoadCore(request, paused);
         _selectionRangeActive = false;
         _selectionRangeRepeats = false;
         _selectionRangeCompleted = false;
@@ -42,7 +61,14 @@ internal sealed partial class Engine
 
     public bool QueueNext(string path, double? startPosition = null, string? audioFile = null, bool noVideo = false)
     {
-        if (_gaplessPlayback == GaplessPlaybackMode.Disabled || string.IsNullOrWhiteSpace(path)
+        lock (_loadSync)
+            return QueueNextCore(path, startPosition, audioFile, noVideo);
+    }
+
+    private bool QueueNextCore(string path, double? startPosition, string? audioFile, bool noVideo)
+    {
+        if ((!_crossfade && _gaplessPlayback == GaplessPlaybackMode.Disabled) || _holdAutomaticAdvance
+            || string.IsNullOrWhiteSpace(path)
             || _currentUsesAudioFile
             // mpv's audio-files property is global rather than a safe per-file option. A split YouTube
             // stream therefore keeps the existing best-effort path instead of risking the current audio
@@ -52,7 +78,19 @@ internal sealed partial class Engine
             ClearQueuedNext();
             return false;
         }
-        _nextRequest = new LoadRequest(path, startPosition, null, noVideo);
+        var request = new LoadRequest(path, startPosition, null, noVideo);
+        if (_queuedNext && _nextRequest == request)
+            return true;
+        // Invalidate the old native entry before waiting for replacement metadata. Otherwise it could
+        // start while the managed request already describes a different successor.
+        if (_nextRequest is not null && _nextRequest != request)
+            ClearQueuedNext();
+        _nextRequest = request;
+        if (_crossfade)
+        {
+            PrepareAudioSuccessor(_nextRequest);
+            return true;
+        }
         var appended = AppendNext();
         if (appended && !_awaitingLoadRestart)
             _queuedSourceEntryId = PositiveEntryId();
@@ -63,13 +101,23 @@ internal sealed partial class Engine
 
     public void ClearQueuedNext()
     {
-        _nextRequest = null;
-        _queuedNext = false;
-        _queuedSourceEntryId = null;
-        TryDo(static mpv => mpv.CommandAsync(0, "playlist-clear"));
+        lock (_loadSync)
+        {
+            ++_queueGeneration;
+            _nextRequest = null;
+            _queuedNext = false;
+            _queuedSourceEntryId = null;
+            TryDo(static mpv => mpv.CommandAsync(0, "playlist-clear"));
+        }
     }
 
     public void ConfigurePlaybackEffects(AudioSettings settings)
+    {
+        lock (_loadSync)
+            ConfigurePlaybackEffectsCore(settings);
+    }
+
+    private void ConfigurePlaybackEffectsCore(AudioSettings settings)
     {
         _fadeIntervalMilliseconds = Math.Clamp(settings.FadeIntervalMilliseconds, 0,
             AudioSettings.MaximumFadeIntervalMilliseconds);
@@ -79,6 +127,16 @@ internal sealed partial class Engine
         _fadeFileTransitions = settings.FadeFileTransitions;
         _fadePauseResume = settings.FadePauseResume;
         _gaplessPlayback = settings.GaplessPlayback;
+        _crossfadeMilliseconds = Math.Clamp(settings.CrossfadeMilliseconds, 1, AudioSettings.MaximumCrossfadeMilliseconds);
+        _crossfadeEqualPower = settings.CrossfadeCurve == CrossfadeCurve.EqualPower;
+        _crossfadeManual = settings.CrossfadeManualNavigation;
+        var hadCrossfade = _crossfade;
+        _crossfade = settings.Crossfade && TryDo(mpv =>
+            mpv.SetAutomaticCrossfade(_crossfadeMilliseconds / 1000.0, _crossfadeEqualPower));
+        if (!_crossfade && hadCrossfade)
+            TryDo(static mpv => mpv.SetAutomaticCrossfade(0));
+        if (_crossfade)
+            _probe ??= new Probe();
         if (!ShouldFadeTransitions)
             CancelEndFade();
         SetPropertySafely("gapless-audio", _gaplessPlayback switch
@@ -87,24 +145,27 @@ internal sealed partial class Engine
             GaplessPlaybackMode.AlwaysWhenPossible => "yes",
             _ => "no",
         });
-        SetPropertySafely("prefetch-playlist", _gaplessPlayback != GaplessPlaybackMode.Disabled);
-        if (_gaplessPlayback == GaplessPlaybackMode.Disabled)
+        SetPropertySafely("prefetch-playlist", _crossfade || _gaplessPlayback != GaplessPlaybackMode.Disabled);
+        if (!_crossfade && _gaplessPlayback == GaplessPlaybackMode.Disabled)
             ClearQueuedNext();
     }
 
-    private bool LoadCore(LoadRequest request, bool paused)
+    private bool LoadCore(LoadRequest request, bool paused, bool crossfade = false)
     {
         var loaded = TryDo(mpv =>
         {
             mpv.SetPropertyAsync(0, "audio-files",
                 request.AudioFile is null ? Array.Empty<string>() : new[] { request.AudioFile });
-            mpv.LoadFileAsync(request.Path, "replace",
-                LoadOptions(request.StartPosition, paused, request.NoVideo));
+            var options = LoadOptions(request.StartPosition, paused, request.NoVideo);
+            if (crossfade)
+                mpv.CrossfadeLoadFileAsync(request.Path, _crossfadeMilliseconds / 1000.0, _crossfadeEqualPower, options);
+            else
+                mpv.LoadFileAsync(request.Path, "replace", options);
         });
         _loaded = loaded;
         _currentUsesAudioFile = request.AudioFile is not null;
         _loadingPaused = paused;
-        if (loaded && _nextRequest is not null)
+        if (loaded && !_crossfade && _nextRequest is not null)
             AppendNext();
         return loaded;
     }
@@ -136,7 +197,7 @@ internal sealed partial class Engine
             // A one-shot selection sets this dynamically. Never let that boundary leak into another file.
             ["end"] = "none",
             ["keep-open"] = _endBehavior == EndBehavior.None ? "yes" : "no",
-            ["loop-file"] = _endBehavior == EndBehavior.Loop ? "inf" : "no",
+            ["loop-file"] = !_holdAutomaticAdvance && _endBehavior == EndBehavior.Loop ? "inf" : "no",
         };
         if (startPosition.HasValue)
             options["start"] = Precision.Normalize(startPosition.Value);
@@ -149,6 +210,17 @@ internal sealed partial class Engine
 
     public void Stop()
     {
+        lock (_loadSync)
+            StopCore();
+    }
+
+    private void StopCore()
+    {
+        ++_loadGeneration;
+        ++_queueGeneration;
+        _pendingAdvance = null;
+        _completedAdvance = null;
+        _manualRequest = null;
         _loaded = false;
         _currentUsesAudioFile = false;
         _awaitingLoadRestart = false;
@@ -156,7 +228,9 @@ internal sealed partial class Engine
         _loadingPaused = null;
         _fadeInOnRestart = false;
         _endFadeActive = false;
-        _gaplessAdvancePending = false;
+        _activeEntryId = null;
+        _activePath = null;
+        _lastPosition = null;
         ClearQueuedNext();
         SetFade(1);
         CancelSelectionSeek();

@@ -25,6 +25,8 @@ internal sealed partial class Player : IDisposable
     private bool _trackPositions;
     private EndBehavior _endBehavior;
     private GaplessPlaybackMode _gaplessPlayback;
+    private bool _crossfade;
+    private bool _holdAutomaticAdvance;
     private bool _wrapPlaylist;
     private PendingSessionStream? _queuedSessionStream;
 
@@ -45,6 +47,7 @@ internal sealed partial class Player : IDisposable
     internal event Action<double>? SelectionEnded;
     internal event Action? CurrentChanged;
     internal event Action? StateChanged;
+    internal event Action? NextPreparationRequested;
     internal event Action? SelectionSeekCompleted;
 
     /// <summary>Raised when <see cref="HasVideo"/> may have changed, a moment after a file loads.</summary>

@@ -47,7 +47,23 @@ internal sealed partial class Engine : IEngine
     private long? _queuedSourceEntryId;
     private bool _awaitingLoadRestart;
     private string? _loadingPath;
-    private bool _gaplessAdvancePending;
+    private readonly Lock _loadSync = new();
+    private Probe? _probe;
+    private long _loadGeneration;
+    private long _queueGeneration;
+    private long? _loadingSourceEntryId;
+    private long? _activeEntryId;
+    private string? _activePath;
+    private double? _lastPosition;
+    private LoadRequest? _pendingAdvance;
+    private double? _pendingSourcePosition;
+    private QueuedAdvance? _completedAdvance;
+    private bool _crossfade;
+    private bool _crossfadeManual;
+    private int _crossfadeMilliseconds = 3000;
+    private bool _crossfadeEqualPower = true;
+    private bool _holdAutomaticAdvance;
+    private LoadRequest? _manualRequest;
 
     private bool _selectionRangeActive;
     private bool _selectionRangeRepeats;
@@ -135,6 +151,10 @@ internal sealed partial class Engine : IEngine
         if (_disposed)
             return;
         _disposed = true;
+        Interlocked.Increment(ref _loadGeneration);
+        Interlocked.Increment(ref _queueGeneration);
+        if (_probe is Probe probe)
+            _ = Task.Run(probe.Dispose);
         _endRegistration.Dispose();
         _playbackRestartRegistration.Dispose();
         _positionRegistration.Dispose();
@@ -182,7 +202,7 @@ internal sealed partial class Engine : IEngine
     private void ApplyEndBehavior()
     {
         SetPropertySafely("keep-open", _endBehavior == EndBehavior.None ? "yes" : "no");
-        SetPropertySafely("loop-file", _endBehavior == EndBehavior.Loop ? "inf" : "no");
+        SetPropertySafely("loop-file", !_holdAutomaticAdvance && _endBehavior == EndBehavior.Loop ? "inf" : "no");
     }
 
     public void SetMediaControls(bool enabled) => ApplyMediaControls(enabled);
@@ -286,8 +306,28 @@ internal sealed partial class Engine : IEngine
 
     private long? PositiveEntryId()
     {
-        var id = ReadInt64("playlist-entry-id");
-        return id is > 0 ? id : null;
+        // MPV exposes entry IDs through playlist records, not a playlist-entry-id property.
+        // Read one snapshot: the current entry can already name the successor while the outgoing
+        // entry is still playing, so a separate index lookup can identify the wrong file.
+        if (ReadObject("playlist") is not IEnumerable<object?> entries)
+            return null;
+        foreach (var value in entries)
+        {
+            if (value is not IDictionary<string, object?> entry
+                || !entry.TryGetValue("playing", out var playing) || playing is not true
+                || !entry.TryGetValue("id", out var raw))
+                continue;
+            try
+            {
+                var id = Convert.ToInt64(raw, CultureInfo.InvariantCulture);
+                return id > 0 ? id : null;
+            }
+            catch (Exception exception) when (IsFailure(exception))
+            {
+                return null;
+            }
+        }
+        return null;
     }
 
     private bool? ReadBoolean(string name)

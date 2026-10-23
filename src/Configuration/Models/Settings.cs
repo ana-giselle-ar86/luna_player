@@ -85,6 +85,9 @@ internal sealed class Settings
         Require(Audio.SeekFadeIntervalMilliseconds is >= 1 and <= AudioSettings.MaximumFadeIntervalMilliseconds,
             "audio.seekFadeIntervalMilliseconds");
         Require(Enum.IsDefined(Audio.GaplessPlayback), "audio.gaplessPlayback");
+        Require(Audio.CrossfadeMilliseconds is >= 1 and <= AudioSettings.MaximumCrossfadeMilliseconds,
+            "audio.crossfadeMilliseconds");
+        Require(Enum.IsDefined(Audio.CrossfadeCurve), "audio.crossfadeCurve");
 
         Require(Playback.LastFile is not null, "playback.lastFile");
         Require(double.IsFinite(Playback.LastPosition) && Playback.LastPosition >= 0,
@@ -164,6 +167,8 @@ internal sealed class Settings
             Audio.FadeIntervalMilliseconds, 0, AudioSettings.MaximumFadeIntervalMilliseconds);
         Audio.SeekFadeIntervalMilliseconds = Math.Clamp(
             Audio.SeekFadeIntervalMilliseconds, 1, AudioSettings.MaximumFadeIntervalMilliseconds);
+        Audio.CrossfadeMilliseconds = Math.Clamp(
+            Audio.CrossfadeMilliseconds, 1, AudioSettings.MaximumCrossfadeMilliseconds);
         Audio.SeekStepKey = Audio.SeekStepKey.Length == 1 && "1234567890-".Contains(Audio.SeekStepKey, StringComparison.Ordinal)
             ? Audio.SeekStepKey : "2";
         YouTube.SearchResultCount = Math.Clamp(YouTube.SearchResultCount, 5, 100);

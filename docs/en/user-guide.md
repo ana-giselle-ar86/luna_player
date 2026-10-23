@@ -762,6 +762,16 @@ Import replaces the corresponding collection; it does not merge entries. Keep ex
 | Enable dynamic normalize and limiter | Evens loudness and restrains peaks. |
 | Play audio as Mono | Mixes left and right channels into mono. |
 
+#### Cross-fading
+
+Under **Audio > Playback**, select **Enable cross-fading for audio files** to overlap the end of one audio file with the beginning of the next. Cross-fading is off by default and excludes files containing video. Album cover art does not count as video.
+
+Set **Cross-fading duration (milliseconds)** from 1 to 30000; the default is 3000, or three seconds. Choose **Equal-power** for an even perceived loudness during the overlap, or **Linear** for a constant rate of gain change. Equal-power can produce higher peaks.
+
+Select **Enable cross-fading during manual navigation** to use overlaps when moving between audio files yourself, including Previous, Next and file-number commands. This option is off by default. Navigation while paused uses an ordinary file change.
+
+Cross-fading works independently of the gapless setting and takes precedence over ordinary file-start and file-end fades during an overlap. Active selections, A-B loops, repeat-file mode and end-of-track sleep timers prevent automatic transitions. Online audio uses an overlap only when the next stream is ready; short files or late streams may shorten it. Longer durations require more decoded audio buffering.
+
 ### Silence removal
 
 See [Silence removal and audio processing](#8-silence-removal-and-audio-processing) for the basic and advanced controls.

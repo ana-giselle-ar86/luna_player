@@ -6,8 +6,10 @@ internal enum EndReason
 {
     EndOfFile,
     Error,
-    GaplessAdvance,
+    QueuedAdvance,
 }
+
+internal readonly record struct QueuedAdvance(string Path, double? PreviousPosition);
 
 internal readonly record struct AudioDevice(string Name, string Description);
 

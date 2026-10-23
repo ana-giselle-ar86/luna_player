@@ -6,6 +6,8 @@ internal enum EndBehavior { Advance, Loop, None }
 
 internal enum GaplessPlaybackMode { Disabled, CompatibleFiles, AlwaysWhenPossible }
 
+internal enum CrossfadeCurve { EqualPower, Linear }
+
 internal sealed class AudioSettings
 {
     internal const double MaximumVolume = 2000;
@@ -16,6 +18,7 @@ internal sealed class AudioSettings
     internal const double MinimumPitchStep = 0.001;
     internal const double MaximumPitchStep = 12;
     internal const int MaximumFadeIntervalMilliseconds = 10000;
+    internal const int MaximumCrossfadeMilliseconds = 30000;
 
     public double Volume { get; set; } = 100;
     public double Speed { get; set; } = 1;
@@ -41,6 +44,11 @@ internal sealed class AudioSettings
     public bool FadePauseResume { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter<GaplessPlaybackMode>))]
     public GaplessPlaybackMode GaplessPlayback { get; set; }
+    public bool Crossfade { get; set; }
+    public int CrossfadeMilliseconds { get; set; } = 3000;
+    [JsonConverter(typeof(JsonStringEnumConverter<CrossfadeCurve>))]
+    public CrossfadeCurve CrossfadeCurve { get; set; } = CrossfadeCurve.EqualPower;
+    public bool CrossfadeManualNavigation { get; set; }
     internal AudioSettings Copy() => (AudioSettings)MemberwiseClone();
     internal void Apply(AudioSettings source)
     {
@@ -66,6 +74,10 @@ internal sealed class AudioSettings
         FadeFileTransitions = source.FadeFileTransitions;
         FadePauseResume = source.FadePauseResume;
         GaplessPlayback = source.GaplessPlayback;
+        Crossfade = source.Crossfade;
+        CrossfadeMilliseconds = source.CrossfadeMilliseconds;
+        CrossfadeCurve = source.CrossfadeCurve;
+        CrossfadeManualNavigation = source.CrossfadeManualNavigation;
     }
 }
 

@@ -39,6 +39,9 @@ internal interface IEngine : IDisposable
     /// the application to react to end-of-file. Returns false when the item cannot be queued safely.</summary>
     bool QueueNext(string path, double? startPosition = null, string? audioFile = null, bool noVideo = false);
     void ClearQueuedNext();
+    QueuedAdvance? TakeQueuedAdvance();
+    double? PositionFor(string path);
+    void HoldAutomaticAdvance(bool hold);
     void ConfigurePlaybackEffects(AudioSettings settings);
     void SetRepeatFile(bool enabled);
     void Stop();

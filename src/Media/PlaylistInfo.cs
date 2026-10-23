@@ -1,7 +1,5 @@
-using System.Globalization;
 using LunaPlayer.Configuration;
 using LunaPlayer.Configuration.Models;
-using MpvNet;
 
 namespace LunaPlayer.Media;
 
@@ -31,7 +29,7 @@ internal sealed class PlaylistInfoService
     {
         var durations = new double?[files.Count];
         long totalSize = 0;
-        using var probe = new MpvProbe();
+        using var probe = new Probe();
         for (var index = 0; index < files.Count; index++)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -69,87 +67,11 @@ internal sealed class PlaylistInfoService
     /// TypeScript source everywhere else - and a playlist built from a folder of source code would otherwise
     /// spend a demuxer start and a two second timeout on every one of them.
     /// </remarks>
-    private static double? Duration(MpvProbe probe, string path, CancellationToken cancellationToken)
+    private static double? Duration(Probe probe, string path, CancellationToken cancellationToken)
         => MediaHeader.Read(path, out var duration) switch
         {
             MediaHeaderVerdict.Duration => duration,
-            MediaHeaderVerdict.NeedsDemuxer => probe.Read(path, cancellationToken),
+            MediaHeaderVerdict.NeedsDemuxer => probe.Read(path, cancellationToken)?.Duration,
             _ => null,
         };
-
-    /// <summary>The fallback: loads a file into mpv to find out how long it is.</summary>
-    ///
-    /// <remarks>
-    /// Only reached for the formats whose header states no length, and for a file the header reader could
-    /// not make sense of. That is a small enough share of any real library that the cost of a demuxer per
-    /// file stops mattering, which is the whole reason the header reader exists.
-    ///
-    /// The instance is created on first need, so a scan that never falls back never pays for it, and it
-    /// waits on mpv's own file-loaded event rather than polling for the duration to appear.
-    /// </remarks>
-    private sealed class MpvProbe : IDisposable
-    {
-        private const int TimeoutMilliseconds = 2000;
-        private readonly Lock _sync = new();
-        private MPV? _probe;
-        private SemaphoreSlim? _loaded;
-        private IDisposable? _registration;
-        private bool _disposed;
-
-        internal double? Read(string path, CancellationToken cancellationToken)
-        {
-            lock (_sync)
-            {
-                if (_disposed)
-                    return null;
-                try
-                {
-                    if (_probe is null)
-                    {
-                        _probe = new MPV(options: new Dictionary<string, object?>
-                        {
-                            ["vo"] = "null", ["ao"] = "null", ["vid"] = "no", ["terminal"] = false,
-                            ["idle"] = "yes",
-                        });
-                        _loaded = new SemaphoreSlim(0);
-                        _registration = _probe.OnEvent(_ => _loaded.Release(), MpvEventId.FileLoaded);
-                    }
-                    // Anything left over from the file before would otherwise be read as this one's signal.
-                    while (_loaded!.CurrentCount > 0) _loaded.Wait(0, CancellationToken.None);
-                    _probe.LoadFile(path);
-                    if (!_loaded.Wait(TimeoutMilliseconds, cancellationToken))
-                        return null;
-                    var raw = _probe.GetProperty("duration");
-                    var duration = raw is null ? null : (double?)Convert.ToDouble(raw, CultureInfo.InvariantCulture);
-                    return duration is > 0 ? duration : null;
-                }
-                catch (Exception exception) when (exception is MpvException or InvalidOperationException or FormatException)
-                {
-                    return null;
-                }
-                finally
-                {
-                    try { _probe?.Command("stop"); }
-                    catch (Exception exception) when (exception is MpvException or InvalidOperationException)
-                    {
-                        // The probe is disposable and will be recreated or released even if mpv already stopped.
-                    }
-                }
-            }
-        }
-
-        public void Dispose()
-        {
-            lock (_sync)
-            {
-                _disposed = true;
-                _registration?.Dispose();
-                _registration = null;
-                _probe?.Dispose();
-                _probe = null;
-                _loaded?.Dispose();
-                _loaded = null;
-            }
-        }
-    }
 }

@@ -6,7 +6,21 @@ internal sealed partial class Engine
 {
     private void HandleEndFile(MpvEvent mpvEvent)
     {
+        lock (_loadSync)
+            HandleEndFileCore(mpvEvent);
+    }
+
+    private void HandleEndFileCore(MpvEvent mpvEvent)
+    {
         if (_disposed || mpvEvent.Data is not MpvEndFileEvent endFile)
+            return;
+        // A replacement owns the next EOF. Late completion from any outgoing entry must not move
+        // the logical playlist again while the replacement is waiting on metadata or opening.
+        if (_awaitingLoadRestart && (endFile.Reason != MpvEndFileReason.Error
+                || endFile.PlaylistEntryId > 0 && _loadingSourceEntryId.HasValue
+                    && endFile.PlaylistEntryId <= _loadingSourceEntryId.Value)
+            || !_awaitingLoadRestart && endFile.PlaylistEntryId > 0
+                && _activeEntryId.HasValue && _activeEntryId != endFile.PlaylistEntryId)
             return;
         var releasedSelectionEnd = false;
         var continueReleasedSelection = false;
@@ -61,20 +75,22 @@ internal sealed partial class Engine
             if (reason == EndReason.EndOfFile && _queuedNext
                 && _queuedSourceEntryId.HasValue
                 && (endFile.PlaylistEntryId <= 0 || _queuedSourceEntryId.Value == endFile.PlaylistEntryId)
-                && (ReadInt64("playlist-count") ?? 0) > 1)
+                && (ReadInt64("playlist-count") ?? 0) > 1
+                && _nextRequest is LoadRequest next)
             {
+                _pendingAdvance = next;
+                _pendingSourcePosition = _lastPosition;
                 _queuedNext = false;
                 _queuedSourceEntryId = null;
                 _nextRequest = null;
-                // A gapless transition must retain continuous volume. File-transition fading remains
-                // available for manual navigation and for the ordinary end path when no successor queued.
+                // Native queued transitions own the overlap or uninterrupted output. An additional
+                // file-start envelope would fade the incoming file a second time.
                 _fadeInOnRestart = false;
                 CancelEndFade();
-                _gaplessAdvancePending = true;
             }
             else
             {
-                _gaplessAdvancePending = false;
+                _pendingAdvance = null;
                 Ended?.Invoke(reason.Value);
             }
         }

@@ -42,8 +42,7 @@ internal sealed partial class Engine
         _selectionRangeRepeats = repeat;
         _selectionRangeCompleted = false;
         _selectionRangeEnd = end;
-        var entryId = ReadInt64("playlist-entry-id");
-        _selectionRangeEntryId = entryId is > 0 ? entryId : null;
+        _selectionRangeEntryId = PositiveEntryId();
         var endSet = TrySetProperty("end", repeat ? "none" : end);
         var fileLoopCleared = TrySetProperty("loop-file", "no");
         // A one-shot selection reaches an artificial EOF. keep-open makes mpv hold the exact boundary so

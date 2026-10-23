@@ -65,6 +65,7 @@ internal sealed class SleepTimer : IDisposable
         _fade = request.Fade;
         _fadeSeconds = Math.Max(1, request.FadeSeconds);
         _warned = false;
+        _player.HoldAutomaticAdvance(_mode == SleepTimerMode.EndOfTrack);
 
         if (_mode == SleepTimerMode.Duration)
         {
@@ -98,6 +99,7 @@ internal sealed class SleepTimer : IDisposable
         StopTick();
         RestoreVolume();
         _armed = false;
+        _player.HoldAutomaticAdvance(false);
         _speech.Speak(
             // Translators: Spoken when a running sleep timer is turned off.
             Tr("Sleep timer cancelled."),
@@ -140,6 +142,7 @@ internal sealed class SleepTimer : IDisposable
         if (_action == SleepTimerAction.Stop)
             _player.Stop();
         _armed = false;
+        _player.HoldAutomaticAdvance(false, prepare: false);
         AnnounceFired();
         return true;
     }
@@ -151,6 +154,7 @@ internal sealed class SleepTimer : IDisposable
         StopTick();
         RestoreVolume();
         _armed = false;
+        _player.HoldAutomaticAdvance(false, prepare: false);
     }
 
     private void OnTick()

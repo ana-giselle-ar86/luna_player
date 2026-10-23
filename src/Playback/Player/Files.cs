@@ -91,6 +91,7 @@ internal sealed partial class Player
             return LoadCurrent();
         if (result.CurrentChanged)
             CurrentChanged?.Invoke();
+        PrepareNext();
         StateChanged?.Invoke();
         return true;
     }
