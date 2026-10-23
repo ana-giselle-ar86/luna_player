@@ -2545,6 +2545,15 @@ namespace MpvNet
         public object? CrossfadeLoadFile(string path, double duration, bool equalPower = false)
             => NodeCommand("crossfade-loadfile", path, duration, equalPower ? "equal-power" : "linear");
 
+        /// <summary>Configures native automatic playlist cross-fading in seconds. Zero disables it.
+        /// Set before loading; mpv reserves PCM, prepares queued successors and advances the playlist.
+        /// The client supplies playlist entries but does not schedule transition timers.</summary>
+        public void SetAutomaticCrossfade(double duration, bool equalPower = false)
+        {
+            SetProperty("audio-crossfade-curve", equalPower ? "equal-power" : "linear");
+            SetProperty("audio-crossfade-duration", duration);
+        }
+
         private static void CommandOn(IntPtr h, string name, params object?[] args)
         {
             using var a = new UnmanagedArgs(new object?[] { name }.Concat(args));
