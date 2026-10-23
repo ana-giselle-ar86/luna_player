@@ -2539,6 +2539,12 @@ namespace MpvNet
         public void FadeSeek(double target, double duration, bool absolute = false)
             => Command("fade-seek", target, duration, absolute ? "absolute" : "relative");
 
+        /// <summary>Replaces the file with a native PCM overlap. Configure audio-crossfade-buffer
+        /// before playback to reserve outgoing audio. The result reports captured seconds; insufficient
+        /// buffering or unsupported outputs fall back to ordinary loading.</summary>
+        public object? CrossfadeLoadFile(string path, double duration, bool equalPower = false)
+            => NodeCommand("crossfade-loadfile", path, duration, equalPower ? "equal-power" : "linear");
+
         private static void CommandOn(IntPtr h, string name, params object?[] args)
         {
             using var a = new UnmanagedArgs(new object?[] { name }.Concat(args));
