@@ -6,12 +6,8 @@ namespace LunaPlayer.Playback;
 
 internal sealed partial class Engine
 {
-    private bool BeginSelectionSeek(double seconds, bool restoreEndBehavior, bool play,
-        bool preserveSeekFade = false)
+    private bool BeginSelectionSeek(double seconds, bool restoreEndBehavior, bool play)
     {
-        if (!preserveSeekFade)
-            CancelSeekFade();
-        _resumeSeekPosition = null;
         var target = Precision.Normalize(Math.Max(0, seconds));
         _selectionSeekPending = true;
         _restoreEndBehaviorAfterSelectionSeek = restoreEndBehavior;
@@ -31,7 +27,7 @@ internal sealed partial class Engine
         {
             _awaitingLoadRestart = false;
             _loadingPath = null;
-            _pauseRequested = null;
+            _loadingPaused = null;
             if (_queuedNext)
                 _queuedSourceEntryId = PositiveEntryId();
         }
@@ -54,26 +50,14 @@ internal sealed partial class Engine
                 ResumePlayback();
             SelectionSeekCompleted?.Invoke();
         }
-        if (_resumeSeekPosition is double resumeAt
-            && ReadBoolean("seeking") != true
-            && Elapsed is double resumedAt && Math.Abs(resumedAt - resumeAt) <= 0.5)
-        {
-            _resumeSeekPosition = null;
-            ResumePlayback();
-        }
-        if (_seekFadeIssued && _seekFadeTarget is double seekAt
-            && HasReachedFadedSeek(seekAt))
-        {
-            _seekFadeTarget = null;
-            _seekFadeIssued = false;
-            _fader.FadeTo(1, _seekFadeIntervalMilliseconds, () => _seekFadeActive = false);
-        }
         if (_fadeInOnRestart)
         {
             _fadeInOnRestart = false;
             _endFadeActive = false;
-            _fader.Set(0);
-            _fader.FadeTo(1, _fadeIntervalMilliseconds);
+            // Loading already muted the new entry. Do not replace a transport request made while
+            // it was opening; mpv owns that envelope until the pause, resume or seek is settled.
+            if (!IsPaused && ReadBoolean("audio-fade/transport-active") != true)
+                FadeVolume(1, _fadeIntervalMilliseconds);
         }
         if (_gaplessAdvancePending)
         {
@@ -112,7 +96,9 @@ internal sealed partial class Engine
     private void UpdateEndFade(object? value)
     {
         if (_disposed || !ShouldFadeTransitions || _selectionRangeActive || _repeatFile
-            || _endBehavior != EndBehavior.Advance || _queuedNext || _seekFadeActive || _pauseRequested.HasValue
+            || _endBehavior != EndBehavior.Advance || _queuedNext || IsPaused
+            || ReadBoolean("audio-fade/transport-active") == true
+            || (!_endFadeActive && ReadBoolean("audio-fade/active") == true)
             || !TryConvertDouble(value, out var position) || Duration is not double duration)
             return;
         var remaining = duration - position;
@@ -122,7 +108,7 @@ internal sealed partial class Engine
             if (_endFadeActive)
             {
                 _endFadeActive = false;
-                _fader.Set(1);
+                SetFade(1);
             }
             return;
         }
@@ -133,7 +119,7 @@ internal sealed partial class Engine
         // not replace it with block-sized gain changes. Account for playback speed at the boundary.
         var speed = Math.Max(0.01, ReadDouble("speed") ?? 1);
         var milliseconds = (int)Math.Clamp(remaining / speed * 1000, 0, 60000);
-        _fader.FadeTo(0, milliseconds);
+        FadeVolume(0, milliseconds);
     }
 
     private void CancelSelectionSeek()

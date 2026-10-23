@@ -13,10 +13,6 @@ internal sealed partial class Engine
         bool noVideo = false, bool fadeTransition = false)
     {
         CancelSelectionSeek();
-        _resumeSeekPosition = null;
-        _seekFadeActive = false;
-        _seekFadeTarget = null;
-        _seekFadeIssued = false;
         _endBehaviorRestorePending = false;
         // A delayed EOF from the replaced entry is still identified below, but it must never resume by
         // seeking the newly loaded entry to the old selection's timestamp.
@@ -34,7 +30,7 @@ internal sealed partial class Engine
         // that delay metadata and another navigation command would still belong to the outgoing file.
         // Natural endings receive a full fade-out from the position observer; explicit navigation starts
         // the replacement muted and fades it in as soon as mpv reports playback-restart.
-        _fader.Set(_fadeInOnRestart ? 0 : 1);
+        SetFade(_fadeInOnRestart ? 0 : 1);
         var loaded = LoadCore(request, paused);
         _selectionRangeActive = false;
         _selectionRangeRepeats = false;
@@ -107,7 +103,7 @@ internal sealed partial class Engine
         });
         _loaded = loaded;
         _currentUsesAudioFile = request.AudioFile is not null;
-        _pauseRequested = paused;
+        _loadingPaused = paused;
         if (loaded && _nextRequest is not null)
             AppendNext();
         return loaded;
@@ -157,16 +153,12 @@ internal sealed partial class Engine
         _currentUsesAudioFile = false;
         _awaitingLoadRestart = false;
         _loadingPath = null;
-        _pauseRequested = null;
-        _resumeSeekPosition = null;
-        _seekFadeActive = false;
-        _seekFadeTarget = null;
-        _seekFadeIssued = false;
+        _loadingPaused = null;
         _fadeInOnRestart = false;
         _endFadeActive = false;
         _gaplessAdvancePending = false;
         ClearQueuedNext();
-        _fader.Set(1);
+        SetFade(1);
         CancelSelectionSeek();
         _endBehaviorRestorePending = false;
         _releasedSelectionEndPending = false;

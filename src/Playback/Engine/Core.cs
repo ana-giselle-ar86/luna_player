@@ -17,7 +17,6 @@ internal sealed partial class Engine : IEngine
     private readonly IDisposable _videoParamsRegistration;
     private readonly IDisposable _trackListRegistration;
     private readonly IDisposable _subTextRegistration;
-    private readonly VolumeFader _fader;
 
     // Cached from the video-params observer; mpv learns it asynchronously after a load, not on demand.
     private bool _hasVideo;
@@ -36,11 +35,7 @@ internal sealed partial class Engine : IEngine
     private int _seekFadeIntervalMilliseconds = 100;
     private bool _fadeFileTransitions;
     private bool _fadePauseResume;
-    private bool? _pauseRequested;
-    private double? _resumeSeekPosition;
-    private bool _seekFadeActive;
-    private double? _seekFadeTarget;
-    private bool _seekFadeIssued;
+    private bool? _loadingPaused;
     private bool _fadeInOnRestart;
     private bool _endFadeActive;
 
@@ -99,9 +94,6 @@ internal sealed partial class Engine : IEngine
             options["wid"] = windowHandle.ToString(CultureInfo.InvariantCulture);
 
         _mpv = new MPV(options: options);
-        _fader = new VolumeFader(
-            (target, seconds) => TryDo(mpv => mpv.Command("audio-fade", target, seconds)),
-            ReadFadeState);
         SetPropertySafely("network-timeout", 10);
         ApplyMediaControls(mediaControls);
         _endRegistration = _mpv.OnEvent(HandleEndFile, MpvEventId.EndFile);
@@ -150,7 +142,6 @@ internal sealed partial class Engine : IEngine
         _videoParamsRegistration.Dispose();
         _trackListRegistration.Dispose();
         _subTextRegistration.Dispose();
-        _fader.Dispose();
         _mpv.Dispose();
     }
 
@@ -185,7 +176,7 @@ internal sealed partial class Engine : IEngine
             return;
         _endFadeActive = false;
         if (restoreVolume)
-            _fader.FadeTo(1, _fadeIntervalMilliseconds);
+            FadeVolume(1, _fadeIntervalMilliseconds);
     }
 
     private void ApplyEndBehavior()
@@ -216,18 +207,10 @@ internal sealed partial class Engine : IEngine
 
     private void ApplyVolume() => SetPropertySafely("volume", ToMpvVolume(_volume));
 
-    private VolumeFader.State? ReadFadeState()
-    {
-        if (ReadObject("audio-fade") is not IReadOnlyDictionary<string, object?> state
-            || !state.TryGetValue("gain", out var gain) || !TryConvertDouble(gain, out var level))
-            return null;
-        var supported = state.TryGetValue("supported", out var support) && support is true;
-        // A ramp longer than the remaining file cannot finish rendering after EOF. Transport still
-        // has to complete, even when no more samples will arrive or the audio track was removed.
-        var active = state.TryGetValue("active", out var running) && running is true
-            && ReadBoolean("eof-reached") != true && ReadBoolean("idle-active") != true;
-        return new VolumeFader.State(level, active, supported);
-    }
+    private void SetFade(double level) => TryDo(mpv => mpv.FadeVolume(level, 0));
+
+    private void FadeVolume(double target, int milliseconds)
+        => TryDo(mpv => mpv.FadeVolume(target, milliseconds / 1000.0));
 
     /// <summary>The failures a call into libmpv can produce: mpv refusing the call, the player having been
     /// shut down under it, and a property whose value does not convert to the type the caller asked for.

@@ -2524,6 +2524,21 @@ namespace MpvNet
             CommandOn(handle, name, args);
         }
 
+        /// <summary>Sets a linear output gain with a sample-clocked ramp. Duration is the full-range
+        /// fade time in seconds. Requires the patched libmpv audio-fade commands.</summary>
+        public void FadeVolume(double target, double duration) => Command("audio-fade", target, duration);
+
+        /// <summary>Fades out and pauses after the last ramp sample reaches the output.</summary>
+        public void FadePause(double duration) => Command("fade-pause", duration);
+
+        /// <summary>Arms a fade-in before resuming, or reverses a pending fade-out.</summary>
+        public void FadePlay(double duration) => Command("fade-play", duration);
+
+        /// <summary>Fades out, seeks and fades in. Duration is in seconds; repeated relative requests
+        /// accumulate against the pending destination inside mpv, without managed completion timers.</summary>
+        public void FadeSeek(double target, double duration, bool absolute = false)
+            => Command("fade-seek", target, duration, absolute ? "absolute" : "relative");
+
         private static void CommandOn(IntPtr h, string name, params object?[] args)
         {
             using var a = new UnmanagedArgs(new object?[] { name }.Concat(args));
