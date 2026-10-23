@@ -10,8 +10,8 @@ Media decoding and playback.
 
 - Source: https://github.com/mpv-player/mpv
 - Build project: https://github.com/diamondStar35/mpv-winbuild
-- Binary: https://github.com/diamondStar35/mpv-winbuild/releases/download/2026-09-07-989d32716e/mpv-dev-lgpl-shared-x86_64-v3-20260907-git-989d32716e.7z
-- Version: v0.41.0-1037-g989d32716
+- Binary: https://github.com/diamondStar35/mpv-winbuild/actions/runs/39941247955/artifacts/12502681752
+- Version: v0.41.0-1292-gb225a4238, shared LGPL x86-64-v2 build
 - Licence: LGPL-2.1-or-later
 
 ## FFmpeg
@@ -20,8 +20,8 @@ Media decoding libraries used by mpv, plus the command-line tool used for conver
 
 - Source: https://github.com/FFmpeg/FFmpeg
 - Build project: https://github.com/diamondStar35/mpv-winbuild
-- Binary: https://github.com/diamondStar35/mpv-winbuild/releases/download/2026-09-07-989d32716e/ffmpeg-lgpl-shared-x86_64-v3-git-ecc7eb519.7z
-- Version: N-126455-gecc7eb519
+- Binary: https://github.com/diamondStar35/mpv-winbuild/actions/runs/39941247955/artifacts/12502631834
+- Version: N-127957-g935f29eaa, shared LGPL x86-64-v2 build
 - Licence: LGPL-3.0-or-later
 
 ## wxWidgets
