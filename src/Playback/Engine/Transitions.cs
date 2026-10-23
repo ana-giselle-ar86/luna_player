@@ -21,6 +21,12 @@ internal sealed partial class Engine
 
     private void HandlePlaybackRestart(MpvEvent _)
     {
+        lock (_loadSync)
+            HandlePlaybackRestartCore();
+    }
+
+    private void HandlePlaybackRestartCore()
+    {
         if (_disposed)
             return;
         if (_awaitingLoadRestart && Paths.AreSame(ReadString("path"), _loadingPath))
@@ -28,8 +34,14 @@ internal sealed partial class Engine
             _awaitingLoadRestart = false;
             _loadingPath = null;
             _loadingPaused = null;
+            _loadingSourceEntryId = null;
+            _lastPosition = null;
+            _activeEntryId = PositiveEntryId();
+            _activePath = ReadString("path");
             if (_queuedNext)
                 _queuedSourceEntryId = PositiveEntryId();
+            if (_crossfade && _nextRequest is LoadRequest next)
+                PrepareAudioSuccessor(next);
         }
         if (_selectionSeekPending)
         {
@@ -48,6 +60,7 @@ internal sealed partial class Engine
             }
             if (play)
                 ResumePlayback();
+            RetryQueuedAudio();
             SelectionSeekCompleted?.Invoke();
         }
         if (_fadeInOnRestart)
@@ -59,15 +72,24 @@ internal sealed partial class Engine
             if (!IsPaused && ReadBoolean("audio-fade/transport-active") != true)
                 FadeVolume(1, _fadeIntervalMilliseconds);
         }
-        if (_gaplessAdvancePending)
+        if (_pendingAdvance is LoadRequest advance
+            && Paths.AreSame(ReadString("path"), advance.Path))
         {
-            _gaplessAdvancePending = false;
-            Ended?.Invoke(EndReason.GaplessAdvance);
+            _pendingAdvance = null;
+            _activeEntryId = PositiveEntryId();
+            _activePath = advance.Path;
+            _lastPosition = null;
+            _completedAdvance = new QueuedAdvance(advance.Path, _pendingSourcePosition);
+            Ended?.Invoke(EndReason.QueuedAdvance);
         }
     }
 
     private void HandlePositionChange(string _, object? value)
     {
+        if (!_awaitingLoadRestart && _pendingAdvance is null
+            && TryConvertDouble(value, out var lastPosition)
+            && (!_activeEntryId.HasValue || PositiveEntryId() == _activeEntryId))
+            _lastPosition = lastPosition;
         UpdateEndFade(value);
         if (_disposed
             || !_releasedSelectionEndPending
@@ -75,7 +97,7 @@ internal sealed partial class Engine
             || !TryConvertDouble(value, out var position)
             || position <= _releasedSelectionEnd + 0.001)
             return;
-        var entryId = ReadInt64("playlist-entry-id");
+        var entryId = PositiveEntryId();
         if (_releasedSelectionEntryId.HasValue
             && entryId.HasValue
             && _releasedSelectionEntryId.Value != entryId.Value)
@@ -90,12 +112,13 @@ internal sealed partial class Engine
         {
             _endBehaviorRestorePending = false;
             ApplyEndBehavior();
+            RetryQueuedAudio();
         }
     }
 
     private void UpdateEndFade(object? value)
     {
-        if (_disposed || !ShouldFadeTransitions || _selectionRangeActive || _repeatFile
+        if (_disposed || _awaitingLoadRestart || !ShouldFadeTransitions || _selectionRangeActive || _repeatFile
             || _endBehavior != EndBehavior.Advance || _queuedNext || IsPaused
             || ReadBoolean("audio-fade/transport-active") == true
             || (!_endFadeActive && ReadBoolean("audio-fade/active") == true)

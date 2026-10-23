@@ -11,7 +11,7 @@ internal sealed partial class Player
     internal bool ToggleShuffle()
     {
         var enabled = _playlist.ToggleShuffle();
-        PrepareGaplessNext();
+        PrepareNext();
         return NotifyStateChanged(enabled);
     }
 
@@ -19,7 +19,7 @@ internal sealed partial class Player
     {
         var enabled = _playlist.ToggleRepeatFile();
         _engine.SetRepeatFile(enabled);
-        PrepareGaplessNext();
+        PrepareNext();
         return NotifyStateChanged(enabled);
     }
 
@@ -48,7 +48,11 @@ internal sealed partial class Player
 
     internal void TrackPositions(bool enabled) => _trackPositions = enabled;
 
-    internal void SavePosition() => SavePosition(CurrentPath, Elapsed);
+    internal void SavePosition()
+    {
+        if (CurrentPath is string path)
+            SavePosition(path, _engine.PositionFor(path));
+    }
 
     internal void SavePosition(string? path, double? elapsed)
     {
@@ -86,12 +90,16 @@ internal sealed partial class Player
     }
 
     internal bool ExitSelectionRange(double end, bool play)
-        => _engine.ExitSelectionRange(end, play);
+    {
+        var exited = _engine.ExitSelectionRange(end, play);
+        PrepareNext();
+        return exited;
+    }
 
     internal bool ClearSelectionRange(bool restoreEndBehavior = true)
     {
         var cleared = _engine.ClearSelectionRange(restoreEndBehavior);
-        PrepareGaplessNext();
+        PrepareNext();
         return cleared;
     }
 }

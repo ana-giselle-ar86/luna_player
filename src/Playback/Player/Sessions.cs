@@ -56,7 +56,8 @@ internal sealed partial class Player
     }
 
     /// <summary>Plays a resolved video in front of the playlist the user opened.</summary>
-    internal bool PlaySessionStream(string url, string? title, string? source, string? audioFile, bool audioOnly = false)
+    internal bool PlaySessionStream(string url, string? title, string? source, string? audioFile,
+        bool audioOnly = false, bool fadeTransition = false)
     {
         EnterSession();
         // The YouTube session owns its complete, durable order. Keep only the stream currently given to
@@ -64,7 +65,7 @@ internal sealed partial class Player
         if (!_playlist.OpenFile(url))
             return false;
         Describe(url, title, source, audioFile, audioOnly);
-        return LoadCurrent();
+        return LoadCurrent(fadeTransition);
     }
 
     /// <summary>The playlist a session was opened in front of, and the point playback had reached in it.

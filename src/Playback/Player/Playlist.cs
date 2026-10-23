@@ -64,12 +64,12 @@ internal sealed partial class Player
         _playlist.SetSource(url, source, audioFile, audioOnly);
     }
 
-    /// <summary>Queues a resolved session stream as the gapless successor without changing what Luna says
+    /// <summary>Queues a resolved session stream as the preloaded successor without changing what Luna says
     /// is current. Split video/audio streams are rejected by the engine and keep the ordinary YouTube path.</summary>
     internal bool QueueSessionStream(string expectedCurrentSource, string url, string? title, string? source,
         string? audioFile, bool audioOnly)
     {
-        if (_gaplessPlayback == GaplessPlaybackMode.Disabled || !_loaded
+        if ((!_crossfade && _gaplessPlayback == GaplessPlaybackMode.Disabled) || !_loaded || _holdAutomaticAdvance
             || !string.Equals(CurrentSource, expectedCurrentSource, StringComparison.Ordinal))
             return false;
         if (_engine.QueueNext(url, audioFile: audioFile, noVideo: audioOnly))
@@ -140,17 +140,19 @@ internal sealed partial class Player
     {
         _endBehavior = behavior;
         _engine.SetEndBehavior(behavior);
-        PrepareGaplessNext();
+        PrepareNext();
     }
 
     internal void ConfigurePlaybackEffects(AudioSettings settings)
     {
         _gaplessPlayback = settings.GaplessPlayback;
+        _crossfade = settings.Crossfade;
         _wrapPlaylist = settings.WrapPlaylist;
-        if (_gaplessPlayback == GaplessPlaybackMode.Disabled)
+        if (!_crossfade && _gaplessPlayback == GaplessPlaybackMode.Disabled)
             _queuedSessionStream = null;
         _engine.ConfigurePlaybackEffects(settings);
-        PrepareGaplessNext();
+        PrepareNext();
+        NextPreparationRequested?.Invoke();
     }
 
     private bool LoadCurrent(bool fadeTransition = false)
@@ -175,40 +177,72 @@ internal sealed partial class Player
         _engine.SetMono(_monoEnabled);
         _engine.SetSilenceRemoval(_silenceEnabled, AudioFilters.SilenceGraph(_silence));
         _loaded = true;
-        PrepareGaplessNext();
+        PrepareNext();
         CurrentChanged?.Invoke();
         StateChanged?.Invoke();
         return true;
     }
 
     /// <summary>Moves Luna's playlist to the item mpv has already started. Called on the UI thread after
-    /// the engine reports its automatic gapless transition.</summary>
-    internal bool AcceptGaplessAdvance()
+    /// the engine reports its native queued transition.</summary>
+    internal bool AcceptQueuedAdvance()
     {
-        SavePosition();
+        if (_engine.TakeQueuedAdvance() is not QueuedAdvance advance)
+            return false;
         if (_queuedSessionStream is PendingSessionStream stream
-            && string.Equals(CurrentSource, stream.CurrentSource, StringComparison.Ordinal))
+            && string.Equals(CurrentSource, stream.CurrentSource, StringComparison.Ordinal)
+            && Paths.AreSame(advance.Path, stream.Url))
         {
+            SavePosition(CurrentPath, advance.PreviousPosition);
             _queuedSessionStream = null;
             if (!_playlist.OpenFile(stream.Url))
                 return false;
             Describe(stream.Url, stream.Title, stream.Source, stream.AudioFile, stream.AudioOnly);
         }
-        else if (!_playlist.MoveNext(_wrapPlaylist))
+        else
         {
-            return false;
+            SavePosition(CurrentPath, advance.PreviousPosition);
+            if (_playlist.PeekNext(_wrapPlaylist) is string next && Paths.AreSame(advance.Path, next))
+            {
+                if (!_playlist.MoveNext(_wrapPlaylist))
+                    return false;
+            }
+            else
+            {
+                // Shuffle or a removal can change the visible order after mpv commits a transition.
+                // Follow the entry it actually started without shuffling again or reloading that file.
+                var files = _playlist.Files;
+                var index = -1;
+                for (var item = 0; item < files.Count; item++)
+                {
+                    if (Paths.AreSame(files[item], advance.Path))
+                    {
+                        index = item;
+                        break;
+                    }
+                }
+                if (index < 0)
+                {
+                    if (_playlist.MoveNext(_wrapPlaylist))
+                        return LoadCurrent();
+                    Stop();
+                    return false;
+                }
+                if (index != _playlist.CurrentIndex && !_playlist.GoToIndex(index))
+                    return false;
+            }
         }
         _loaded = true;
-        PrepareGaplessNext();
+        PrepareNext();
         CurrentChanged?.Invoke();
         StateChanged?.Invoke();
         return true;
     }
 
-    private void PrepareGaplessNext()
+    private void PrepareNext()
     {
         _engine.SetRepeatFile(_playlist.IsRepeatFileEnabled);
-        if (!_loaded || _gaplessPlayback == GaplessPlaybackMode.Disabled
+        if (!_loaded || (!_crossfade && _gaplessPlayback == GaplessPlaybackMode.Disabled) || _holdAutomaticAdvance
             || _endBehavior != EndBehavior.Advance || _playlist.IsRepeatFileEnabled)
         {
             _engine.ClearQueuedNext();
@@ -229,5 +263,18 @@ internal sealed partial class Player
         if (_trackPositions && _positions is not null && File.Exists(path))
             start = _positions.Get(path);
         _engine.QueueNext(path, start, _playlist.GetAudioFile(path), _playlist.GetAudioOnly(path));
+    }
+
+    internal void HoldAutomaticAdvance(bool hold, bool prepare = true)
+    {
+        if (_holdAutomaticAdvance == hold)
+            return;
+        _holdAutomaticAdvance = hold;
+        _engine.HoldAutomaticAdvance(hold);
+        if (!hold && prepare)
+        {
+            PrepareNext();
+            NextPreparationRequested?.Invoke();
+        }
     }
 }

@@ -2545,6 +2545,12 @@ namespace MpvNet
         public object? CrossfadeLoadFile(string path, double duration, bool equalPower = false)
             => NodeCommand("crossfade-loadfile", path, duration, equalPower ? "equal-power" : "linear");
 
+        /// <summary>Queues a native file overlap with per-file options without waiting for the decoder.</summary>
+        public void CrossfadeLoadFileAsync(string path, double duration, bool equalPower = false,
+            IDictionary<string, object?>? options = null)
+            => CommandAsync(0, "crossfade-loadfile", path, duration,
+                equalPower ? "equal-power" : "linear", EncodeOptions(options));
+
         /// <summary>Configures native automatic playlist cross-fading in seconds. Zero disables it.
         /// Set before loading; mpv reserves PCM, prepares queued successors and advances the playlist.
         /// The client supplies playlist entries but does not schedule transition timers.</summary>

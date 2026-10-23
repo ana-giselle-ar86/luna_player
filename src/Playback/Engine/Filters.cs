@@ -4,8 +4,15 @@ namespace LunaPlayer.Playback;
 
 internal sealed partial class Engine
 {
+    private bool? _monoFilterState;
+    private string? _silenceFilterGraph;
+
     public bool SetNormalization(bool enabled)
     {
+        // Rebuilding an unchanged graph discards decoded lookahead just before a native overlap.
+        // Check the persisted filter list too, since a file can supply its own per-file options.
+        if (_normalizationEnabled == enabled && HasFilter("audionormalize") == enabled)
+            return true;
         RemoveFilter("@audionormalize");
         _normalizationEnabled = enabled;
         if (!enabled)
@@ -26,15 +33,30 @@ internal sealed partial class Engine
 
     public bool SetMono(bool enabled)
     {
+        if (_monoFilterState == enabled && HasFilter("audiomono") == enabled)
+            return true;
         RemoveFilter("@audiomono");
-        return !enabled || AddFilter("@audiomono:lavfi=[aformat=channel_layouts=mono]");
+        var applied = !enabled || AddFilter("@audiomono:lavfi=[aformat=channel_layouts=mono]");
+        _monoFilterState = applied ? enabled : null;
+        return applied;
     }
 
     public bool SetSilenceRemoval(bool enabled, string graph)
     {
+        var desired = enabled ? graph : string.Empty;
+        if (_silenceFilterGraph == desired && HasFilter("silenceremove") == enabled)
+            return true;
         RemoveFilter("@silenceremove");
-        return !enabled || (graph.Length > 0 && AddFilter($"@silenceremove:lavfi=[{graph}]"));
+        var applied = !enabled || (graph.Length > 0 && AddFilter($"@silenceremove:lavfi=[{graph}]"));
+        _silenceFilterGraph = applied ? desired : null;
+        return applied;
     }
+
+    private bool HasFilter(string label)
+        => ReadObject("af") is IEnumerable<object?> filters
+            && filters.Any(value => value is IDictionary<string, object?> filter
+                && filter.TryGetValue("label", out var name) && string.Equals(name as string, label, StringComparison.Ordinal)
+                && (!filter.TryGetValue("enabled", out var enabled) || enabled is not false));
 
     public bool SetEqualizer(Preset? preset)
     {

@@ -16,6 +16,12 @@ internal sealed class PlaybackPreferences : PreferencesPage
     private readonly CheckBox _fadeFileTransitions;
     private readonly CheckBox _fadePauseResume;
     private readonly Choice _gapless;
+    private readonly CheckBox _crossfade;
+    private readonly StaticText _crossfadeLabel;
+    private readonly SpinCtrl _crossfadeInterval;
+    private readonly StaticText _curveLabel;
+    private readonly Choice _crossfadeCurve;
+    private readonly CheckBox _crossfadeManual;
 
     internal PlaybackPreferences(Window parent, AudioSettings settings)
         // Translators: Spoken description of the Playback page inside Audio settings.
@@ -51,6 +57,22 @@ internal sealed class PlaybackPreferences : PreferencesPage
             Tr("Compatible files"),
             // Translators: Ask the player to preserve gapless playback even when it must adapt differing audio formats.
             Tr("Always when possible")], (int)settings.GaplessPlayback);
+        // Translators: Checkbox on Audio > Playback that overlaps adjacent audio files. Files with video are excluded.
+        _crossfade = new CheckBox(panel, label: Tr("Enable cross-fading for audio files")) { Checked = settings.Crossfade };
+        // Translators: Label on Audio > Playback for how long two audio files overlap, measured in milliseconds.
+        _crossfadeLabel = new StaticText(panel, label: Tr("Cross-fading duration (milliseconds)"));
+        _crossfadeInterval = new SpinCtrl(panel, settings.CrossfadeMilliseconds, 1,
+            AudioSettings.MaximumCrossfadeMilliseconds);
+        // Translators: Label on Audio > Playback for the shape of the volume changes during an audio overlap.
+        _curveLabel = new StaticText(panel, label: Tr("Cross-fading curve"));
+        _crossfadeCurve = Choice(panel, [
+            // Translators: Cross-fading curve on Audio > Playback that maintains perceived loudness while unrelated sounds overlap.
+            Tr("Equal-power"),
+            // Translators: Cross-fading curve on Audio > Playback that changes the two files' gains at a constant rate.
+            Tr("Linear")], (int)settings.CrossfadeCurve);
+        // Translators: Checkbox on Audio > Playback that also overlaps audio when the user navigates to another file.
+        _crossfadeManual = new CheckBox(panel, label: Tr("Enable cross-fading during manual navigation"))
+            { Checked = settings.CrossfadeManualNavigation };
 
         var sizer = new BoxSizer(Orientation.Vertical);
         AddCheck(sizer, _normalize);
@@ -61,9 +83,15 @@ internal sealed class PlaybackPreferences : PreferencesPage
         AddCheck(sizer, _fadeFileTransitions);
         AddCheck(sizer, _fadePauseResume);
         AddField(sizer, gaplessLabel, _gapless);
+        AddCheck(sizer, _crossfade);
+        AddField(sizer, _crossfadeLabel, _crossfadeInterval);
+        AddField(sizer, _curveLabel, _crossfadeCurve);
+        AddCheck(sizer, _crossfadeManual);
         panel.SetSizer(sizer);
         _fadeSeeking.Toggled += (_, _) => ShowSeekInterval();
         ShowSeekInterval();
+        _crossfade.Toggled += (_, _) => ShowCrossfadeSettings();
+        ShowCrossfadeSettings();
 
         Help(_normalize,
             // Translators: Help text for the tick box that evens out loudness and holds back loud peaks.
@@ -89,6 +117,18 @@ internal sealed class PlaybackPreferences : PreferencesPage
         Help(_gapless,
             // Translators: Help text for gapless playback modes.
             Tr("The Compatible files mode preserves the original audio format. Always when possible may adapt later files to the first file's output format. Online streams use gapless playback only when the next stream is ready."));
+        Help(_crossfade,
+            // Translators: Context help for the cross-fading checkbox on Audio > Playback.
+            Tr("Overlaps the end of one audio file with the beginning of the next. Files containing video are excluded. Cross-fading takes precedence over ordinary file-transition fading and works independently of the gapless setting."));
+        Help(_crossfadeInterval,
+            // Translators: Context help for the cross-fading duration on Audio > Playback.
+            Tr("Sets the overlap from 1 to 30000 milliseconds. The default is 3000. Short files or a stream that is not ready may produce a shorter overlap. Longer overlaps require more decoded audio buffering."));
+        Help(_crossfadeCurve,
+            // Translators: Context help for the cross-fading curve on Audio > Playback.
+            Tr("Equal-power maintains perceived loudness while the files overlap. Linear changes their gains at a constant rate. Equal-power can produce higher peaks."));
+        Help(_crossfadeManual,
+            // Translators: Context help for cross-fading during manual navigation on Audio > Playback.
+            Tr("Also cross-fades when you move to another audio file with navigation commands. This is off by default. Navigation while paused opens the destination without an overlap."));
     }
 
     public override void Apply()
@@ -102,6 +142,10 @@ internal sealed class PlaybackPreferences : PreferencesPage
         _settings.FadeFileTransitions = _fadeFileTransitions.Checked;
         _settings.FadePauseResume = _fadePauseResume.Checked;
         _settings.GaplessPlayback = (GaplessPlaybackMode)Math.Max(0, _gapless.SelectedIndex);
+        _settings.Crossfade = _crossfade.Checked;
+        _settings.CrossfadeMilliseconds = _crossfadeInterval.Value;
+        _settings.CrossfadeCurve = (CrossfadeCurve)Math.Max(0, _crossfadeCurve.SelectedIndex);
+        _settings.CrossfadeManualNavigation = _crossfadeManual.Checked;
     }
 
     public override void Refresh()
@@ -114,7 +158,12 @@ internal sealed class PlaybackPreferences : PreferencesPage
         _fadeFileTransitions.Checked = _settings.FadeFileTransitions;
         _fadePauseResume.Checked = _settings.FadePauseResume;
         _gapless.SelectedIndex = (int)_settings.GaplessPlayback;
+        _crossfade.Checked = _settings.Crossfade;
+        _crossfadeInterval.Value = _settings.CrossfadeMilliseconds;
+        _crossfadeCurve.SelectedIndex = (int)_settings.CrossfadeCurve;
+        _crossfadeManual.Checked = _settings.CrossfadeManualNavigation;
         ShowSeekInterval();
+        ShowCrossfadeSettings();
     }
 
     public override string? Validate()
@@ -138,6 +187,15 @@ internal sealed class PlaybackPreferences : PreferencesPage
 
     private static Choice Choice(Window parent, IEnumerable<string> values, int selected)
     { var choice = new Choice(parent); foreach (var value in values) choice.Add(value); choice.SelectedIndex = selected; return choice; }
+
+    private void ShowCrossfadeSettings()
+    {
+        var visible = _crossfade.Checked;
+        foreach (var control in new Window[] { _crossfadeLabel, _crossfadeInterval, _curveLabel, _crossfadeCurve, _crossfadeManual })
+            control.Show(visible);
+        Window.Layout();
+        Window.FitInside();
+    }
 
     private static void AddCheck(BoxSizer sizer, Window control)
         => sizer.Add(control, flags: SizerFlags.BorderLeft | SizerFlags.BorderRight | SizerFlags.BorderTop, border: 8);

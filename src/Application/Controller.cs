@@ -221,15 +221,11 @@ internal sealed class ApplicationController : IDisposable
     {
         if (_shutDown)
             return;
-        if (reason == EndReason.GaplessAdvance)
+        if (reason == EndReason.QueuedAdvance)
         {
-            if (!_player.AcceptGaplessAdvance())
-            {
-                _player.Stop();
-                SyncViewState();
+            if (!_player.AcceptQueuedAdvance())
                 return;
-            }
-            _sessions.AcceptGaplessAdvance();
+            _sessions.AcceptQueuedAdvance();
             if (_sleepTimer.OnTrackEnded())
             {
                 SyncViewState();

@@ -6,6 +6,12 @@ internal sealed partial class Engine
 {
     public bool TogglePause()
     {
+        lock (_loadSync)
+            return TogglePauseCore();
+    }
+
+    private bool TogglePauseCore()
+    {
         if (IsPaused)
         {
             Play();
@@ -16,6 +22,12 @@ internal sealed partial class Engine
     }
 
     public void Play()
+    {
+        lock (_loadSync)
+            PlayCore();
+    }
+
+    private void PlayCore()
     {
         // Clearing an mpv end boundary does not release its EOF latch. When playback is explicitly resumed
         // from the free slot, seek to the exact current timestamp to re-arm decoding, then play after mpv
@@ -33,7 +45,13 @@ internal sealed partial class Engine
 
     private void ResumePlayback()
     {
-        _loadingPaused = null;
+        lock (_loadSync)
+            ResumePlaybackCore();
+    }
+
+    private void ResumePlaybackCore()
+    {
+        _loadingPaused = _manualRequest is null ? null : false;
         var interval = _fadePauseResume ? _fadeIntervalMilliseconds / 1000.0 : 0;
         if (!TryDo(mpv => mpv.FadePlay(interval)))
         {
@@ -45,9 +63,15 @@ internal sealed partial class Engine
 
     public void Pause()
     {
+        lock (_loadSync)
+            PauseCore();
+    }
+
+    private void PauseCore()
+    {
         if (IsPaused)
             return;
-        _loadingPaused = null;
+        _loadingPaused = _manualRequest is null ? null : true;
         CancelEndFade(restoreVolume: false);
         var interval = _fadePauseResume ? _fadeIntervalMilliseconds / 1000.0 : 0;
         if (!TryDo(mpv => mpv.FadePause(interval)))
@@ -91,6 +115,8 @@ internal sealed partial class Engine
 
     private void Seek(double target, bool absolute)
     {
+        if (SeekPendingManualLoad(target, absolute))
+            return;
         CancelEndFade(restoreVolume: false);
         if (_fadeSeeking && _loaded
             && TryDo(mpv => mpv.FadeSeek(target, _seekFadeIntervalMilliseconds / 1000.0, absolute)))

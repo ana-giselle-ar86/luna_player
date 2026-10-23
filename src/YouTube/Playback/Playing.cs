@@ -28,7 +28,7 @@ internal sealed partial class Sessions
             Prefetch(session, adjacent, 1);
         var successor = index + 1;
         if (successor < session.Items.Count)
-            PrepareGaplessSuccessor(session, index, successor);
+            PrepareSuccessor(session, index, successor);
         return true;
     }
 
@@ -44,7 +44,8 @@ internal sealed partial class Sessions
     {
         _activeChannelUrl = ready.Item.ChannelUrl;
         return Report(_player.PlaySessionStream(
-            ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl, audioOnly));
+            ready.Url, ready.Item.Title, ready.Item.Url, ready.AudioUrl, audioOnly,
+            fadeTransition: _player.InSession && _player.IsLoaded));
     }
 
     /// <summary>Starts a video that came from a link rather than from a list.</summary>
@@ -182,9 +183,9 @@ internal sealed partial class Sessions
 
     /// <summary>Hands the next resolved stream to mpv while the current video is still playing. Resolution
     /// remains best-effort: a failed or late online request simply leaves the ordinary end-of-file path.</summary>
-    private void PrepareGaplessSuccessor(Session session, int current, int next)
+    private void PrepareSuccessor(Session session, int current, int next)
     {
-        if (_settings.Audio.GaplessPlayback == GaplessPlaybackMode.Disabled
+        if ((!_settings.Audio.Crossfade && _settings.Audio.GaplessPlayback == GaplessPlaybackMode.Disabled)
             || next < 0 || next >= session.Items.Count)
             return;
         var item = session.Items[next];
@@ -198,11 +199,11 @@ internal sealed partial class Sessions
         {
             if (!finished.IsCompletedSuccessfully || finished.Result.Value is not Resolved ready)
                 return;
-            _dispatcher.Post(() => QueueGaplessSuccessor(session, current, ready, audioOnly));
+            _dispatcher.Post(() => QueueSuccessor(session, current, ready, audioOnly));
         }, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Default);
     }
 
-    private void QueueGaplessSuccessor(Session session, int current, Resolved ready, bool audioOnly)
+    private void QueueSuccessor(Session session, int current, Resolved ready, bool audioOnly)
     {
         if (!ReferenceEquals(_session, session)
             || CurrentWatchUrl is not string playing
@@ -213,7 +214,7 @@ internal sealed partial class Sessions
     }
 
     /// <summary>Updates the session after mpv starts a preloaded video and begins preparing its successor.</summary>
-    internal void AcceptGaplessAdvance()
+    internal void AcceptQueuedAdvance()
     {
         if (_session is not Session session)
             return;
@@ -226,8 +227,15 @@ internal sealed partial class Sessions
         if (next < session.Items.Count)
         {
             Prefetch(session, next, 1);
-            PrepareGaplessSuccessor(session, index, next);
+            PrepareSuccessor(session, index, next);
         }
+    }
+
+    private void RefreshQueuedSuccessor()
+    {
+        var index = CurrentSessionIndex();
+        if (_session is Session session && index >= 0)
+            PrepareSuccessor(session, index, index + 1);
     }
 
     /// <summary>A move to an adjacent video that is waiting on a resolve.</summary>

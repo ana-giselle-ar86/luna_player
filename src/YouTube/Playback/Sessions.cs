@@ -95,6 +95,7 @@ internal sealed partial class Sessions : IDisposable
         _browse = browse;
         _browsing = new Browsing(
             view, settings, speech, dispatcher, client, backend, cache, favorites, components, Show);
+        _player.NextPreparationRequested += RefreshQueuedSuccessor;
     }
 
     /// <summary>The address of the video playing now, or null when what is playing is not one.</summary>
@@ -220,7 +221,11 @@ internal sealed partial class Sessions : IDisposable
         _player.LeaveSession();
     }
 
-    public void Dispose() => Clear();
+    public void Dispose()
+    {
+        _player.NextPreparationRequested -= RefreshQueuedSuccessor;
+        Clear();
+    }
 
     // ---- showing the list ----
 

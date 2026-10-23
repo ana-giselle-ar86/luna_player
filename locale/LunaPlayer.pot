@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Luna Player\n"
 "Report-Msgid-Bugs-To: https://github.com/diamondStar35/luna_player/issues\n"
-"POT-Creation-Date: 2026-10-22 12:30+0300\n"
+"POT-Creation-Date: 2026-10-23 17:52+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2522,7 +2522,7 @@ msgstr ""
 #. Translators: Title of an error shown while resolving or playing a YouTube video.
 #: Application/Commands/YouTube/CurrentVideo.cs:42
 #: UI/Dialogs/PreferencesDialog.cs:57 YouTube/Playback/Browsing.cs:250
-#: YouTube/Playback/Sessions.cs:357
+#: YouTube/Playback/Sessions.cs:362
 msgid "YouTube"
 msgstr ""
 
@@ -2534,14 +2534,14 @@ msgstr ""
 #. Translators: Spoken when the playing video does not say which channel published it.
 #. Translators: Spoken when the chosen video does not say which channel published it.
 #: Application/Commands/YouTube/CurrentVideo.cs:89 YouTube/Playback/Feed.cs:55
-#: YouTube/Playback/Sessions.cs:285
+#: YouTube/Playback/Sessions.cs:290
 msgid "Channel link is not available."
 msgstr ""
 
 #. Translators: The short wording spoken when the playing video does not name its channel.
 #. Translators: The short wording spoken when the chosen video does not name its channel.
 #: Application/Commands/YouTube/CurrentVideo.cs:91 YouTube/Playback/Feed.cs:57
-#: YouTube/Playback/Sessions.cs:287
+#: YouTube/Playback/Sessions.cs:292
 msgid "No channel link."
 msgstr ""
 
@@ -2788,78 +2788,78 @@ msgstr ""
 
 #. Translators: Spoken when a sleep timer is set to fire after a number of minutes. {minutes} is
 #. that number.
-#: Application/Infrastructure/SleepTimer.cs:77
+#: Application/Infrastructure/SleepTimer.cs:78
 msgid "Sleep timer set for {minutes} minutes."
 msgstr ""
 
 #. Translators: Short announcement after a timer is set. {minutes} is the number of minutes; "m" means minutes.
-#: Application/Infrastructure/SleepTimer.cs:79
+#: Application/Infrastructure/SleepTimer.cs:80
 msgid "Sleep {minutes}m"
 msgstr ""
 
 #. Translators: Spoken when a running sleep timer is turned off.
-#: Application/Infrastructure/SleepTimer.cs:103
+#: Application/Infrastructure/SleepTimer.cs:105
 msgid "Sleep timer cancelled."
 msgstr ""
 
 #. Translators: Short announcement when a running sleep timer is turned off.
-#: Application/Infrastructure/SleepTimer.cs:105
+#: Application/Infrastructure/SleepTimer.cs:107
 msgid "Sleep off"
 msgstr ""
 
 #. Translators: Spoken when the user asks how long is left on the sleep timer. {time} is a clock
 #. reading like 00:12:30.
-#: Application/Infrastructure/SleepTimer.cs:126
+#: Application/Infrastructure/SleepTimer.cs:128
 msgid "Sleep timer: {time} remaining."
 msgstr ""
 
 #. Translators: Spoken once, a minute before a sleep timer fires.
-#: Application/Infrastructure/SleepTimer.cs:173
+#: Application/Infrastructure/SleepTimer.cs:177
 msgid "Sleep timer: one minute remaining."
 msgstr ""
 
 #. Translators: Short warning spoken one minute before a sleep timer fires.
-#: Application/Infrastructure/SleepTimer.cs:175
+#: Application/Infrastructure/SleepTimer.cs:179
 msgid "Sleep 1:00"
 msgstr ""
 
 #. Translators: Spoken when the sleep timer is set to fire at the end of the current track.
-#: Application/Infrastructure/SleepTimer.cs:226
+#: Application/Infrastructure/SleepTimer.cs:230
 msgid "Sleep timer set for the end of the current track."
 msgstr ""
 
 #. Translators: Short announcement when the sleep timer will fire at the end of the track.
-#: Application/Infrastructure/SleepTimer.cs:228
+#: Application/Infrastructure/SleepTimer.cs:232
 msgid "Sleep: end of track"
 msgstr ""
 
 #. Translators: Spoken when the sleep timer fires and stops playback.
-#: Application/Infrastructure/SleepTimer.cs:235
+#: Application/Infrastructure/SleepTimer.cs:239
 msgid "Sleep timer: playback stopped."
 msgstr ""
 
 #. Translators: Short announcement when the sleep timer stops playback.
-#: Application/Infrastructure/SleepTimer.cs:237
+#: Application/Infrastructure/SleepTimer.cs:241
 msgid "Sleep: stopped"
 msgstr ""
 
 #. Translators: Spoken when the sleep timer fires and pauses playback.
-#: Application/Infrastructure/SleepTimer.cs:243
+#: Application/Infrastructure/SleepTimer.cs:247
 msgid "Sleep timer: playback paused."
 msgstr ""
 
 #. Translators: Short announcement when the sleep timer pauses playback.
-#: Application/Infrastructure/SleepTimer.cs:245
+#: Application/Infrastructure/SleepTimer.cs:249
 msgid "Sleep: paused"
 msgstr ""
 
 #. Translators: Spoken when a sleep-timer command is used but no timer is currently set.
-#: Application/Infrastructure/SleepTimer.cs:252
+#: Application/Infrastructure/SleepTimer.cs:256
 msgid "No sleep timer is set."
 msgstr ""
 
 #. Translators: Short announcement when no sleep timer is set.
-#: Application/Infrastructure/SleepTimer.cs:254
+#: Application/Infrastructure/SleepTimer.cs:258
 msgid "No sleep timer"
 msgstr ""
 
@@ -3251,7 +3251,7 @@ msgstr ""
 #. Translators: Spoken description of the Recording settings page, read when the page is opened.
 #. Translators: Spoken description of the YouTube download settings page, read when the page is open.
 #. Translators: Spoken description of the general YouTube settings page, read when the page is open.
-#: UI/Audio/GeneralPreferences.cs:22 UI/Audio/PlaybackPreferences.cs:22
+#: UI/Audio/GeneralPreferences.cs:22 UI/Audio/PlaybackPreferences.cs:28
 #: UI/Preferences/GeneralPreferences.cs:26
 #: UI/Preferences/RecordingPreferences.cs:44
 #: UI/YouTube/DownloadPreferences.cs:56 UI/YouTube/GeneralPreferences.cs:48
@@ -3385,116 +3385,177 @@ msgid "Pitch step must be a number from 0.001 to 12."
 msgstr ""
 
 #. Translators: Tick box that evens out audio loudness and holds back the loudest peaks.
-#: UI/Audio/PlaybackPreferences.cs:28
+#: UI/Audio/PlaybackPreferences.cs:34
 msgid "Enable dynamic normalize and limiter"
 msgstr ""
 
 #. Translators: Tick box that plays the left and right audio channels mixed together.
-#: UI/Audio/PlaybackPreferences.cs:30
+#: UI/Audio/PlaybackPreferences.cs:36
 msgid "Play audio as Mono"
 msgstr ""
 
 #. Translators: Label of the duration used to fade audio when playback starts, stops, pauses, or resumes.
-#: UI/Audio/PlaybackPreferences.cs:32
+#: UI/Audio/PlaybackPreferences.cs:38
 msgid "Volume fading interval (milliseconds)"
 msgstr ""
 
 #. Translators: Tick box that fades audio down and up around a seek operation.
-#: UI/Audio/PlaybackPreferences.cs:36
+#: UI/Audio/PlaybackPreferences.cs:42
 msgid "Enable volume fading during seeking"
 msgstr ""
 
 #. Translators: Label of the duration used to fade audio around a seek operation.
-#: UI/Audio/PlaybackPreferences.cs:38
+#: UI/Audio/PlaybackPreferences.cs:44
 msgid "Seek fading interval (milliseconds)"
 msgstr ""
 
 #. Translators: Tick box that fades audio when moving from one file to another.
-#: UI/Audio/PlaybackPreferences.cs:42
+#: UI/Audio/PlaybackPreferences.cs:48
 msgid "Enable volume fading at the start or end of a file"
 msgstr ""
 
 #. Translators: Tick box that fades audio when playback is paused or resumed.
-#: UI/Audio/PlaybackPreferences.cs:44
+#: UI/Audio/PlaybackPreferences.cs:50
 msgid "Enable volume fading when pausing or resuming playback"
 msgstr ""
 
 #. Translators: Label of the list that controls uninterrupted playback between adjacent files.
-#: UI/Audio/PlaybackPreferences.cs:46
+#: UI/Audio/PlaybackPreferences.cs:52
 msgid "Gapless playback mode"
 msgstr ""
 
 #. Translators: Gapless playback is turned off.
-#: UI/Audio/PlaybackPreferences.cs:49
+#: UI/Audio/PlaybackPreferences.cs:55
 msgid "Disabled"
 msgstr ""
 
 #. Translators: Use gapless playback only when adjacent files have compatible audio formats.
-#: UI/Audio/PlaybackPreferences.cs:51
+#: UI/Audio/PlaybackPreferences.cs:57
 msgid "Compatible files"
 msgstr ""
 
 #. Translators: Ask the player to preserve gapless playback even when it must adapt differing audio formats.
-#: UI/Audio/PlaybackPreferences.cs:53
+#: UI/Audio/PlaybackPreferences.cs:59
 msgid "Always when possible"
 msgstr ""
 
-#. Translators: Help text for the tick box that evens out loudness and holds back loud peaks.
+#. Translators: Checkbox on Audio > Playback that overlaps adjacent audio files. Files with video are excluded.
+#: UI/Audio/PlaybackPreferences.cs:61
+msgid "Enable cross-fading for audio files"
+msgstr ""
+
+#. Translators: Label on Audio > Playback for how long two audio files overlap, measured in milliseconds.
+#: UI/Audio/PlaybackPreferences.cs:63
+msgid "Cross-fading duration (milliseconds)"
+msgstr ""
+
+#. Translators: Label on Audio > Playback for the shape of the volume changes during an audio overlap.
+#: UI/Audio/PlaybackPreferences.cs:67
+msgid "Cross-fading curve"
+msgstr ""
+
+#. Translators: Cross-fading curve on Audio > Playback that maintains perceived loudness while unrelated sounds overlap.
 #: UI/Audio/PlaybackPreferences.cs:70
+msgid "Equal-power"
+msgstr ""
+
+#. Translators: Cross-fading curve on Audio > Playback that changes the two files' gains at a constant rate.
+#: UI/Audio/PlaybackPreferences.cs:72
+msgid "Linear"
+msgstr ""
+
+#. Translators: Checkbox on Audio > Playback that also overlaps audio when the user navigates to another file.
+#: UI/Audio/PlaybackPreferences.cs:74
+msgid "Enable cross-fading during manual navigation"
+msgstr ""
+
+#. Translators: Help text for the tick box that evens out loudness and holds back loud peaks.
+#: UI/Audio/PlaybackPreferences.cs:98
 msgid ""
 "Evens out changing loudness and restrains the loudest peaks to reduce "
 "clipping. Clear this option to hear the source without those filters."
 msgstr ""
 
 #. Translators: Help text for the tick box that mixes the left and right channels together.
-#: UI/Audio/PlaybackPreferences.cs:73
+#: UI/Audio/PlaybackPreferences.cs:101
 msgid ""
 "Combines the left and right channels into one mono output. Clear this option "
 "to preserve the source channel layout."
 msgstr ""
 
 #. Translators: Help text for the normal playback fade duration.
-#: UI/Audio/PlaybackPreferences.cs:76
+#: UI/Audio/PlaybackPreferences.cs:104
 msgid ""
 "Sets how long playback fades take. Zero disables these fades even when a "
 "related option is selected. Seek fading uses its own interval."
 msgstr ""
 
 #. Translators: Help text for the option that fades sound around seeking.
-#: UI/Audio/PlaybackPreferences.cs:79
+#: UI/Audio/PlaybackPreferences.cs:107
 msgid ""
 "Fades the sound out before moving and back in after playback restarts at the "
 "new position."
 msgstr ""
 
 #. Translators: Help text for the seek fade duration.
-#: UI/Audio/PlaybackPreferences.cs:82
+#: UI/Audio/PlaybackPreferences.cs:110
 msgid ""
 "Sets the duration of each fade around a seek, from 1 to 10000 milliseconds."
 msgstr ""
 
 #. Translators: Help text for fading between files without mixing the files together.
-#: UI/Audio/PlaybackPreferences.cs:85
+#: UI/Audio/PlaybackPreferences.cs:113
 msgid ""
 "Fades out as a file reaches its end and fades in when another file starts, "
 "including after manual navigation. This does not mix two files together."
 msgstr ""
 
 #. Translators: Help text for fading when playback is paused or resumed.
-#: UI/Audio/PlaybackPreferences.cs:88
+#: UI/Audio/PlaybackPreferences.cs:116
 msgid "Fades out before pausing and fades in after playback resumes."
 msgstr ""
 
 #. Translators: Help text for gapless playback modes.
-#: UI/Audio/PlaybackPreferences.cs:91
+#: UI/Audio/PlaybackPreferences.cs:119
 msgid ""
 "The Compatible files mode preserves the original audio format. Always when "
 "possible may adapt later files to the first file's output format. Online "
 "streams use gapless playback only when the next stream is ready."
 msgstr ""
 
+#. Translators: Context help for the cross-fading checkbox on Audio > Playback.
+#: UI/Audio/PlaybackPreferences.cs:122
+msgid ""
+"Overlaps the end of one audio file with the beginning of the next. Files "
+"containing video are excluded. Cross-fading takes precedence over ordinary "
+"file-transition fading and works independently of the gapless setting."
+msgstr ""
+
+#. Translators: Context help for the cross-fading duration on Audio > Playback.
+#: UI/Audio/PlaybackPreferences.cs:125
+msgid ""
+"Sets the overlap from 1 to 30000 milliseconds. The default is 3000. Short "
+"files or a stream that is not ready may produce a shorter overlap. Longer "
+"overlaps require more decoded audio buffering."
+msgstr ""
+
+#. Translators: Context help for the cross-fading curve on Audio > Playback.
+#: UI/Audio/PlaybackPreferences.cs:128
+msgid ""
+"Equal-power maintains perceived loudness while the files overlap. Linear "
+"changes their gains at a constant rate. Equal-power can produce higher peaks."
+msgstr ""
+
+#. Translators: Context help for cross-fading during manual navigation on Audio > Playback.
+#: UI/Audio/PlaybackPreferences.cs:131
+msgid ""
+"Also cross-fades when you move to another audio file with navigation "
+"commands. This is off by default. Navigation while paused opens the "
+"destination without an overlap."
+msgstr ""
+
 #. Translators: Error shown when the seek fade duration is not a whole number from 1 through 10000.
-#: UI/Audio/PlaybackPreferences.cs:126
+#: UI/Audio/PlaybackPreferences.cs:175
 msgid ""
 "Seek fading interval must be a whole number from 1 to 10000 milliseconds."
 msgstr ""
@@ -7021,7 +7082,7 @@ msgstr ""
 
 #. Translators: A channel browser tab: the channel's ordinary videos.
 #. Translators: Title of the window listing the videos a search or a playlist turned up.
-#: YouTube/Client/Channels.cs:30 YouTube/Playback/Sessions.cs:257
+#: YouTube/Client/Channels.cs:30 YouTube/Playback/Sessions.cs:262
 msgid "Videos"
 msgstr ""
 
@@ -7240,39 +7301,39 @@ msgid "Loading more videos..."
 msgstr ""
 
 #. Translators: Shown when a video was found but the player could not start playing it.
-#: YouTube/Playback/Playing.cs:68
+#: YouTube/Playback/Playing.cs:69
 msgid "Could not open YouTube stream."
 msgstr ""
 
 #. Translators: Spoken when the video before this one is being fetched before it can be played.
 #. Translators: The short wording spoken while the video before this one is being fetched.
-#: YouTube/Playback/Playing.cs:89 YouTube/Playback/Playing.cs:94
+#: YouTube/Playback/Playing.cs:90 YouTube/Playback/Playing.cs:95
 msgid "Loading previous video..."
 msgstr ""
 
 #. Translators: Spoken when the video after this one is being fetched before it can be played.
 #. Translators: The short wording spoken while the video after this one is being fetched.
-#: YouTube/Playback/Playing.cs:91 YouTube/Playback/Playing.cs:96
+#: YouTube/Playback/Playing.cs:92 YouTube/Playback/Playing.cs:97
 msgid "Loading next video..."
 msgstr ""
 
 #. Translators: Spoken when the video before this one could not be fetched.
-#: YouTube/Playback/Playing.cs:136
+#: YouTube/Playback/Playing.cs:137
 msgid "Could not load the previous video."
 msgstr ""
 
 #. Translators: Spoken when the video after this one could not be fetched, so playback stops.
-#: YouTube/Playback/Playing.cs:138
+#: YouTube/Playback/Playing.cs:139
 msgid "Could not load the next video."
 msgstr ""
 
 #. Translators: The short wording spoken when the previous video could not be fetched.
-#: YouTube/Playback/Playing.cs:141
+#: YouTube/Playback/Playing.cs:142
 msgid "Previous video failed."
 msgstr ""
 
 #. Translators: The short wording spoken when the next video could not be fetched.
-#: YouTube/Playback/Playing.cs:143
+#: YouTube/Playback/Playing.cs:144
 msgid "Next video failed."
 msgstr ""
 
@@ -7287,17 +7348,17 @@ msgid "Playlist videos"
 msgstr ""
 
 #. Translators: Shown when an address looked like a YouTube link but names no video.
-#: YouTube/Playback/Sessions.cs:139
+#: YouTube/Playback/Sessions.cs:140
 msgid "This link does not include a YouTube video."
 msgstr ""
 
 #. Translators: Title of the window shown while the address of a video is being looked up.
-#: YouTube/Playback/Sessions.cs:346
+#: YouTube/Playback/Sessions.cs:351
 msgid "Loading YouTube stream"
 msgstr ""
 
 #. Translators: First message shown while the address of a video is being looked up.
-#: YouTube/Playback/Sessions.cs:348
+#: YouTube/Playback/Sessions.cs:353
 msgid "Fetching stream URL..."
 msgstr ""
 
