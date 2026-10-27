@@ -194,5 +194,6 @@ Include:
 ## License
 
 Contributions to Luna Player's original source code are licensed under the
-[Apache License 2.0](LICENSE). Changes to a separately licensed file remain under that file's
-terms; in particular, contributions to `src/Mpv.cs` are licensed under LGPL-2.1-or-later.
+[GNU General Public License, version 3 or any later version](LICENSE) (`GPL-3.0-or-later`).
+Changes to a separately licensed file remain under that file's terms; in particular,
+contributions to `src/Mpv.cs` are licensed under LGPL-2.1-or-later.

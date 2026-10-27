@@ -169,10 +169,16 @@ Pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before
 
 ## License
 
-Luna Player's original source code is licensed under the [Apache License 2.0](LICENSE).
-The translated [mpv binding](src/Mpv.cs) is licensed under the GNU Lesser General Public
-License, version 2.1 or later.
+Luna Player is free software licensed under the [GNU General Public License](LICENSE),
+version 3 or (at your option) any later version (`GPL-3.0-or-later`). You may redistribute
+and modify it under those terms.
 
-The application also uses separately licensed third-party components. [NOTICE](NOTICE) records
-their copyrights, versions and source locations, and their licence texts are installed with the
-program.
+Luna Player is distributed in the hope that it will be useful, but **without any warranty**,
+including the implied warranties of merchantability or fitness for a particular purpose.
+See [LICENSE](LICENSE) for the full terms.
+
+Separately licensed components retain their own licences. The translated
+[mpv binding](src/Mpv.cs) remains licensed under LGPL-2.1-or-later. [NOTICE](NOTICE) records
+the third-party copyrights, licences, versions and source locations. Their licence texts,
+including [Apache-2.0](third-party/licenses/Apache-2.0.txt) for WxSharp and PrismSharp, are
+installed with the program.

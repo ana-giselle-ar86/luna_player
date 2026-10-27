@@ -1,15 +1,27 @@
 Luna Player
 Copyright 2026 diamondStar35
 
-Luna Player's original source code is licensed under the Apache License,
-Version 2.0. The LICENSE file in the root of this distribution contains those
-terms. The LunaPlayer executable combines that code with the separately
-licensed components described below and is distributed subject to their terms.
+Luna Player is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version (SPDX-License-Identifier: GPL-3.0-or-later).
 
-Luna Player is distributed together with the third-party components listed
-below. Each remains under its own licence, which Luna Player's licence neither
-replaces nor modifies. The root LICENSE file and the licence texts under
-third-party/licenses are installed alongside the program.
+Luna Player is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+A copy of the GNU General Public License is provided in the root LICENSE file
+(installed as LICENSE.txt). Source code and build instructions are available at:
+https://github.com/diamondStar35/luna_player
+Use the release tag matching the distributed version; see CONTRIBUTING.md for
+build instructions.
+
+The application incorporates and ships the separately licensed components
+listed below. Their copyrights, licences and applicable conditions remain in
+force. The component licence texts are in third-party/licenses in the source
+repository and in the licenses folder beside the installed program. In
+particular, Apache-2.0.txt retains the Apache licence for WxSharp and PrismSharp.
+This notice is installed as NOTICE.txt.
 
 -------------------------------------------------------------------------------
 Librespot protocol reference                          LunaPlayer.exe
@@ -37,22 +49,22 @@ mpv                                                                    mpv.dll
 Copyright (c) the mpv developers and the contributors to MPlayer and mplayer2,
 from which mpv is derived.
 
-  Version:   v0.41.0-1037-g989d32716
+  Version:   v0.41.0-1292-gb225a4238
   Home page: https://mpv.io/
-  Source:    https://github.com/mpv-player/mpv/tree/989d32716ed53497e27d11bebf3334fa329329ae
+  Source:    https://github.com/mpv-player/mpv
   Build:     https://github.com/diamondStar35/mpv-winbuild
-  Binary:    https://github.com/diamondStar35/mpv-winbuild/releases/download/2026-09-07-989d32716e/mpv-dev-lgpl-shared-x86_64-v3-20260907-git-989d32716e.7z
+  Binary:    https://github.com/diamondStar35/mpv-winbuild/actions/runs/39941247955/artifacts/12502681752
   Licence:   GNU Lesser General Public License, version 2.1 or later
              third-party/licenses/LGPL-2.1.txt
 
-mpv is used through its client API to decode and play media. It is loaded at
-run time as a shared library and is not linked into the LunaPlayer executable.
+mpv is used through its client API to decode and play media. Luna Player
+dynamically links to it at run time as a separate, replaceable shared library.
 
 The Lesser General Public License entitles a recipient of this distribution to
 the corresponding source code for mpv and to modify and replace that component.
-The exact source revision and binary build are linked above. The shared library
-also remains separate and replaceable: substituting a compatible mpv.dll
-requires no change to Luna Player.
+The source project, build project and binary artifact are linked above. The
+shared library also remains separate and replaceable: substituting a compatible
+mpv.dll requires no change to Luna Player.
 
 
 -------------------------------------------------------------------------------
@@ -117,11 +129,11 @@ FFmpeg                              ffmpeg.exe, avcodec-63.dll, avdevice-63.dll,
 
 Copyright (c) the FFmpeg developers.
 
-  Version:   N-126455-gecc7eb519
+  Version:   N-127957-g935f29eaa
   Home page: https://ffmpeg.org/
-  Source:    https://github.com/FFmpeg/FFmpeg/tree/ecc7eb519ec8a6625eaec5bb6ba0607980d43c82
+  Source:    https://github.com/FFmpeg/FFmpeg
   Build:     https://github.com/diamondStar35/mpv-winbuild
-  Binary:    https://github.com/diamondStar35/mpv-winbuild/releases/download/2026-09-07-989d32716e/ffmpeg-lgpl-shared-x86_64-v3-git-ecc7eb519.7z
+  Binary:    https://github.com/diamondStar35/mpv-winbuild/actions/runs/39941247955/artifacts/12502631834
   Licence:   GNU Lesser General Public License, version 3 or later
              third-party/licenses/LGPL-3.0.txt
 
@@ -187,7 +199,7 @@ Copyright (c) the WxSharp contributors.
 
   Source:    https://github.com/diamondStar35/wx_sharp
   Licence:   Apache License, Version 2.0
-             LICENSE
+             third-party/licenses/Apache-2.0.txt
 
 WxSharp is the managed binding for wxWidgets, together with the native layer
 built as wx.dll. Its sources are compiled into the LunaPlayer executable.
@@ -198,7 +210,8 @@ PrismSharp                                                          (compiled in
 -------------------------------------------------------------------------------
 
   Source:    src/Speech
-  Licence:   Apache License, Version 2.0 (see LICENSE)
+  Licence:   Apache License, Version 2.0
+             third-party/licenses/Apache-2.0.txt
 
 PrismSharp is the managed binding for Prism. Its sources are compiled into the
 LunaPlayer executable.

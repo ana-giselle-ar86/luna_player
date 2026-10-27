@@ -1,8 +1,10 @@
 # Third-party components
 
-The libraries Luna Player ships or compiles into its executable. `NOTICE` in the
-repository root records the terms each one comes under; `licenses/` holds the
-licence texts that are not already represented by the root Apache licence.
+The libraries Luna Player ships or compiles into its executable. The root
+[LICENSE](../LICENSE) covers Luna Player under GPL-3.0-or-later. The components below
+retain their own licences; [NOTICE](../NOTICE) records their copyrights and terms.
+The `licenses/` folder holds their licence texts, including
+[Apache-2.0](licenses/Apache-2.0.txt) for WxSharp and PrismSharp.
 
 ## Spotify protocol implementation
 

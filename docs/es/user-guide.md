@@ -1160,7 +1160,7 @@ Luna Player es publicado por **Diamond Star**.
 
 Copyright © 2026 Diamond Star.
 
-El código fuente original de Luna Player está licenciado bajo la Licencia Apache, versión 2.0. El enlace de mpv traducido en `src/Mpv.cs` está licenciado bajo la Licencia Pública General Reducida de GNU, versión 2.1 o posterior.
+Luna Player es software libre bajo la Licencia Pública General de GNU, versión 3 o, a su elección, cualquier versión posterior (GPL-3.0-or-later). El enlace de mpv traducido en `src/Mpv.cs` está licenciado bajo la Licencia Pública General Reducida de GNU, versión 2.1 o posterior.
 
 Luna Player también usa componentes de terceros con licencias independientes, incluidos mpv, FFmpeg, wxWidgets, Prism, NAudio y PyYt. Cada componente se mantiene bajo su propia licencia. Consulte `NOTICE.txt`, instalado junto con Luna Player, para ver las declaraciones de derechos de autor, las versiones de los componentes, los nombres de las licencias y las ubicaciones del código fuente. Los textos de licencia pertinentes se instalan en la carpeta `licenses`.
 

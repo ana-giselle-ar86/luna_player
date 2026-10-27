@@ -958,7 +958,7 @@ Luna Player được phát hành bởi **Diamond Star**.
 
 Bản quyền © 2026 Diamond Star.
 
-Mã nguồn gốc của Luna Player được cấp phép theo Giấy phép Apache, Phiên bản 2.0. Bản liên kết mpv được dịch trong `src/Mpv.cs` được cấp phép theo Giấy phép Công cộng Ít Tự do hơn GNU (LGPL), phiên bản 2.1 trở lên.
+Luna Player là phần mềm tự do được cấp phép theo Giấy phép Công cộng GNU, phiên bản 3 hoặc (tùy lựa chọn của bạn) bất kỳ phiên bản mới hơn nào (GPL-3.0-or-later). Bản liên kết mpv được dịch trong `src/Mpv.cs` được cấp phép theo Giấy phép Công cộng Ít Tự do hơn GNU (LGPL), phiên bản 2.1 trở lên.
 
 Luna Player cũng sử dụng các thành phần bên thứ ba được cấp phép riêng, bao gồm mpv, FFmpeg, wxWidgets, Prism, NAudio và PyYt. Mỗi thành phần vẫn tuân theo giấy phép riêng của nó. Xem `NOTICE.txt`, được cài đặt cùng với Luna Player, để biết các tuyên bố bản quyền, phiên bản thành phần, tên giấy phép và vị trí mã nguồn. Toàn văn các giấy phép liên quan được cài đặt trong thư mục `licenses`.
 
