@@ -2102,7 +2102,8 @@ namespace MpvNet
             IDictionary<string, object?>? options = null,
             Action<string, string, object?>? logHandler = null,
             bool startEventThread = true,
-            string? logLevel = null
+            string? logLevel = null,
+            IDictionary<string, object?>? optionalOptions = null
         )
         {
             handle = Native.mpv_create();
@@ -2134,6 +2135,19 @@ namespace MpvNet
                                 Native.Z(value)
                             )
                         );
+                    }
+                // Some libmpv builds omit scripting entirely. Only explicitly optional settings may
+                // be absent; malformed values and failures of required settings must still surface.
+                if (optionalOptions != null)
+                    foreach (var pair in optionalOptions)
+                    {
+                        string value = pair.Value is bool b
+                            ? (b ? "yes" : "no")
+                            : Convert.ToString(pair.Value, System.Globalization.CultureInfo.InvariantCulture) ?? "";
+                        int error = Native.mpv_set_option_string(
+                            handle, Native.Z(pair.Key.Replace('_', '-')), Native.Z(value));
+                        if (error != MpvError.OptionNotFound)
+                            MpvError.Throw(error);
                     }
             }
             finally

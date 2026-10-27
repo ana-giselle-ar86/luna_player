@@ -109,7 +109,6 @@ internal sealed partial class Engine : IEngine
         var options = new Dictionary<string, object?>
         {
             ["vo"] = "gpu",
-            ["osc"] = false,
             ["keep_open"] = "no",
             ["input_default_bindings"] = false,
             ["input_vo_keyboard"] = false,
@@ -126,7 +125,11 @@ internal sealed partial class Engine : IEngine
         if (windowHandle != 0)
             options["wid"] = windowHandle.ToString(CultureInfo.InvariantCulture);
 
-        _mpv = new MPV(options: options);
+        _mpv = new MPV(options: options, optionalOptions: new Dictionary<string, object?>
+        {
+            // The on-screen controller option exists only when libmpv includes Lua.
+            ["osc"] = false,
+        });
         SetPropertySafely("network-timeout", 10);
         _endRegistration = _mpv.OnEvent(HandleEndFile, MpvEventId.EndFile);
         _playbackRestartRegistration = _mpv.OnEvent(HandlePlaybackRestart, MpvEventId.PlaybackRestart);

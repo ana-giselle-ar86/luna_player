@@ -58,7 +58,12 @@ internal sealed class Probe : IDisposable
                     {
                         ["vo"] = "null", ["ao"] = "null", ["vid"] = "no",
                         ["pause"] = true, ["terminal"] = false, ["idle"] = "yes",
-                        ["load_scripts"] = false, ["sub_auto"] = "no", ["network_timeout"] = 2,
+                        ["sub_auto"] = "no", ["network_timeout"] = 2,
+                    }, optionalOptions: new Dictionary<string, object?>
+                    {
+                        // Script-free builds may omit this option; builds with scripting must not
+                        // run user scripts while the background probe inspects a media file.
+                        ["load_scripts"] = false,
                     });
                     var loaded = new SemaphoreSlim(0);
                     _loaded = loaded;
